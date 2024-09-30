@@ -131,7 +131,7 @@ exports.deleteFaqContent = async (req, res) => {
 exports.updateFaqContent = async (req, res) => {
     try {
         const id = req.params._id
-        const {question,answer} = req.body;
+        const { question, answer } = req.body;
         const existingFaqContent = await FaqContent.findById(id)
         if (!existingFaqContent) {
             return res.status(400).json({
@@ -143,7 +143,7 @@ exports.updateFaqContent = async (req, res) => {
         existingFaqContent.answer = answer;
 
         const updatedFaqContent = await existingFaqContent.save()
-        if(!updatedFaqContent) {
+        if (!updatedFaqContent) {
             return res.status(400).json({
                 success: false,
                 message: 'Failed to update faq content'
@@ -158,12 +158,12 @@ exports.updateFaqContent = async (req, res) => {
 
 
 
-        } catch (error) {
-            console.log("Internal server error in updating faq content")
-            res.status(500).json({
-                success: false,
-                message: 'Internal server error',
-                error: error.message
-            })
-        }
+    } catch (error) {
+        console.log("Internal server error in updating faq content")
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        })
     }
+}

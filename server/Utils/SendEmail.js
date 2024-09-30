@@ -17,15 +17,15 @@ const sendEmail = async (options) => {
             host: "sandbox.smtp.mailtrap.io",
             port: process.env.SMTP_PORT || 2525,
             auth: {
-              user: process.env.EMAIL_USERNAME,
-              pass: process.env.EMAIL_PASSWORD
+                user: process.env.EMAIL_USERNAME,
+                pass: process.env.EMAIL_PASSWORD
             }
-          });
+        });
 
-          console.log(process.env.EMAIL_USERNAME)
+        console.log(process.env.EMAIL_USERNAME)
 
         const mailOptions = {
-            from: `"Blueace" <${process.env.EMAIL_USERNAME}>`, 
+            from: `"Blueace" <${process.env.EMAIL_USERNAME}>`,
             to: options.email, // list of receivers
             subject: options.subject, // Subject line
             html: options.message // html body
