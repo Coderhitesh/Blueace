@@ -1,0 +1,4 @@
+.disabled {
+    opacity: 0.5; /* Makes the button look faded */
+    pointer-events: none; /* Prevents any click events */
+}

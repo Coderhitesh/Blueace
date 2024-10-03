@@ -25,7 +25,7 @@ const serviceCategorySchema = new mongoose.Schema({
             }
         }
     ]
-});
+}, { timestamps: true });
 
 const ServiceCategory = mongoose.model('ServiceCategory', serviceCategorySchema);
 module.exports = ServiceCategory;

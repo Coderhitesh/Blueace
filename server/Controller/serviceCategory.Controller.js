@@ -6,6 +6,7 @@ exports.createServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
         const { name, description } = req.body;
+        console.log(req.body)
 
         // Check for missing fields
         let emptyField = [];

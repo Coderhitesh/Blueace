@@ -47604,3 +47604,8 @@ label {
 
 
 }
+
+
+.fordisplayflex{
+  display:flex !important;  
+}

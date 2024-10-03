@@ -30,9 +30,10 @@ router.get('/AllUser', getAllUsers)
 
 // Router for service category
 router.post('/create-service-category', upload.fields([
-    { name: 'sliderImage', maxCount: 10 },  // Allow multiple images for sliderImage
-    { name: 'icon', maxCount: 1 }           // Only one image for icon
+    { name: 'sliderImage', maxCount: 10 },
+    { name: 'icon', maxCount: 1 }
 ]), createServiceCategory);
+
 router.put('/update-service-category/:_id', upload.fields([{ name: 'sliderImage', maxCount: 10 }, { name: 'icon' }]), updateServiceCategory);
 router.get('/get-all-service-category',getServiceCategory)
 router.get('/get-single-service-category/:_id',getSingleServiceCategroy)
