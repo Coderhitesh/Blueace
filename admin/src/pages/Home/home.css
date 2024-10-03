@@ -1,0 +1,6 @@
+.page-wrapper .page-body-wrapper .page-body {
+    min-height: calc(100vh - 136px);
+    padding: 0 15px 0 15px;
+    position: relative;
+    transition: 0.5s;
+}

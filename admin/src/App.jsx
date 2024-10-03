@@ -1,16 +1,16 @@
-import './App.css'
-import { BrowserRouter } from 'react-router-dom'
-import toast, { Toaster } from 'react-hot-toast';
 
+import Home from './pages/Home/Home'
+import './App.css'
+import { QueryClient, QueryClientProvider, } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 function App() {
+  const queryClient = new QueryClient()
 
   return (
-    <>
-      <BrowserRouter>
-        <Home />
-        <Toaster />
-      </BrowserRouter>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={true}/>
+      <Home />
+    </QueryClientProvider>
   )
 }
 

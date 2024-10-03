@@ -3,7 +3,7 @@
 
     Template Name: Admiro Admin
     Template URI: http://admin.pixelstrap.com/Admiro/theme
-    Description: This is Admin Template
+    Description: This is Admin Template2
     Author: Pixelstrap
     Author URI: https://themeforest.net/user/pixelstrap
 
@@ -27568,7 +27568,7 @@ input::-webkit-inner-spin-button {
   margin-top: 10px;
   margin-bottom: 10px;
   animation: fadeIn 0.4s;
-  display: none;
+  /* display: none; */
   flex-direction: column;
   border-left: 2px solid var(--theme-default);
 }
@@ -27639,7 +27639,7 @@ input::-webkit-inner-spin-button {
   padding: 15px 25px;
   height: calc(100vh - 70px);
   overflow: auto;
-  display: flex;
+  /* display: block; */
 }
 .sidebar-menu .sidebar-list {
   border-bottom: 1px solid var(--border-color);
@@ -37252,7 +37252,7 @@ p.data-attributes svg {
 }
 .list-product.list-category tr th:nth-child(3),
 .list-product.list-category tr td:nth-child(3) {
-  min-width: 300px;
+  min-width: 20px;
 }
 .list-product.list-category tr th:nth-child(4),
 .list-product.list-category tr td:nth-child(4) {
@@ -37326,48 +37326,7 @@ p.data-attributes svg {
 .list-product tr th:nth-child(1) .datatable-sorter::before, .list-product tr th:nth-child(1) .datatable-sorter::after {
   border: none;
 }
-.list-product tr th:nth-child(1),
-.list-product tr td:nth-child(1) {
-  min-width: 20px;
-}
-.list-product tr th:nth-child(2),
-.list-product tr td:nth-child(2) {
-  min-width: 110px;
-}
-@media (max-width: 1460px) {
-  .list-product tr th:nth-child(2),
-  .list-product tr td:nth-child(2) {
-    min-width: 230px;
-  }
-}
-.list-product tr th:nth-child(3),
-.list-product tr td:nth-child(3) {
-  min-width: 90px;
-}
-.list-product tr th:nth-child(4),
-.list-product tr td:nth-child(4) {
-  min-width: 120px;
-}
-.list-product tr th:nth-child(5),
-.list-product tr td:nth-child(5) {
-  min-width: 120px;
-}
-.list-product tr th:nth-child(6),
-.list-product tr td:nth-child(6) {
-  min-width: 80px;
-}
-.list-product tr th:nth-child(7),
-.list-product tr td:nth-child(7) {
-  min-width: 100px;
-}
-.list-product tr th:nth-child(8),
-.list-product tr td:nth-child(8) {
-  min-width: 140px;
-}
-.list-product tr th:nth-child(9),
-.list-product tr td:nth-child(9) {
-  min-width: 105px;
-}
+
 .list-product:focus-visible {
   outline: 0;
 }
