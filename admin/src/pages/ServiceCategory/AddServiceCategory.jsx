@@ -4,6 +4,7 @@ import FormGroups from '../../components/Forms/FormGroups';
 import Input from '../../components/Forms/Input';
 import axios from 'axios';
 import JoditEditor from 'jodit-react';
+import toast from 'react-hot-toast';
 
 function AddServiceCategory() {
     const [formData, setFormData] = useState({
@@ -109,9 +110,10 @@ function AddServiceCategory() {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            toast.success('Service Created Successfully!')
         } catch (error) {
-            console.error('Error creating service:', error);
-            setError('Failed to create service');
+            console.error('Error creating service category:', error);
+            setError('Failed to create service category');
         } finally {
             setLoading(false); // Ensure loading is set to false after request completion
         }
@@ -138,7 +140,7 @@ function AddServiceCategory() {
             <FormGroups onSubmit={handleSubmit} Elements={
                 <div className='row'>
                     <div className="col-md-6">
-                        <label class="form-label" for="category">Example select</label>
+                        <label class="form-label" for="category">Category</label>
                         <select
                             class="form-select"
                             name='mainCategoryId'
@@ -156,7 +158,7 @@ function AddServiceCategory() {
 
                     </div>
                     <div className="col-md-6">
-                        <label htmlFor="name">Sub Category</label>
+                        <label className='form-label' htmlFor="name">Sub Category</label>
                         <Input
                             type='text'
                             placeholder='Enter Sub Category'

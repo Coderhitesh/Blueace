@@ -5,6 +5,7 @@ import Input from '../../components/Forms/Input';
 import axios from 'axios';
 import { useParams } from 'react-router-dom'; // To get the category ID from URL
 import JoditEditor from 'jodit-react';
+import toast from 'react-hot-toast';
 
 function EditServiceCategory() {
     const { id } = useParams(); // Get category ID from URL parameters
@@ -125,16 +126,17 @@ function EditServiceCategory() {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+            toast.success('Updated Successfully!')
 
             // Reset form and states after update
-            setImagePreviews([]);
-            setIconPreview(null);
-            setFormData({
-                icon: null,
-                name: '',
-                description: '',
-                sliderImage: [],
-            });
+            // setImagePreviews([]);
+            // setIconPreview(null);
+            // setFormData({
+            //     icon: null,
+            //     name: '',
+            //     description: '',
+            //     sliderImage: [],
+            // });
 
             setError(''); // Clear errors
         } catch (error) {

@@ -4,12 +4,13 @@ const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePasswo
 const router = express.Router()
 const upload = require('../Middleware/Multer')
 const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory } = require('../Controller/serviceCategory.Controller')
-const { createService, getService, getSingleService, updateService, deleteService } = require('../Controller/service.Controller')
+const { createService, getService, getSingleService, updateService, deleteService, updateServiceActiveStatus } = require('../Controller/service.Controller')
 const { createMarqueeText, getMarqueeText, getSingleMarquee, updateMarqueeText, deleteMarqueeText } = require('../Controller/marqueeText.Controller')
 const { createPromotionalBanner, getPromotionalBanner, getSinglePromotionalBanner, updatePromotionalBanner, deletePromotionalBanner } = require('../Controller/promotionalBanner.Controller')
 const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, deleteFAQBanner } = require('../Controller/faqBanner.Controller')
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
+const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 
 // user routers 
 
@@ -54,6 +55,7 @@ router.get('/get-all-service',getService)
 router.get('/get-single-service/:_id',getSingleService)
 router.put('/update-service/:_id',upload.fields([{name:'serviceImage',maxCount:1},{name:'serviceBanner',maxCount:1}]),updateService)
 router.delete('/delete-service/:_id',deleteService)
+router.put('/update-service-active-status/:_id',updateServiceActiveStatus)
 
 // Router for marquee text 
 
@@ -86,5 +88,14 @@ router.get('/get-all-faq-content',getFaqContent)
 router.get('/get-single-faq-content/:_id',getSingleFaqContent)
 router.delete('/delete-faq-content/:_id',deleteFaqContent)
 router.put('/update-faq-content/:_id',updateFaqContent)
+
+// Route fro faq content 
+
+router.post('/create-banner',createBanner)
+router.get('/get-all-banner',getBanner)
+router.get('/get-single-banner/:_id',getSingleBanner)
+router.delete('/delete-banner/:_id',deleteBanner)
+router.put('/update-banner/:_id',updateBanner)
+router.put('/update-banner-active-status/:_id',updateBannerActiveStatus)
 
 module.exports = router;

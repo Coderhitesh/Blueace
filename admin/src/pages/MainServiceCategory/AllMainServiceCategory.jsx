@@ -70,7 +70,7 @@ function AllMainServiceCategory() {
 
                             <td className='fw-bolder'>
                                 <div className="product-action">
-                                    <Link to={`/service/edit-category/${category._id}`}>
+                                    <Link to={`/service/edit-main-category/${category._id}`}>
                                         <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>

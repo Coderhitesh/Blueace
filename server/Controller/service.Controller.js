@@ -92,7 +92,7 @@ exports.createService = async (req, res) => {
 
 exports.getService = async (req, res) => {
     try {
-        const allService = await Service.find()
+        const allService = await Service.find().populate('subCategoryId')
         if (!allService) {
             return res.status(400).json({
                 success: false,
@@ -117,7 +117,7 @@ exports.getService = async (req, res) => {
 exports.getSingleService = async (req, res) => {
     try {
         const id = req.params._id;
-        const service = await Service.findById(id)
+        const service = await Service.findById(id).populate('subCategoryId')
         if (!service) {
             return res.status(400).json({
                 success: false,
@@ -252,7 +252,7 @@ exports.deleteService = async (req, res) => {
         if (serviceToDelete.serviceImage && serviceToDelete.serviceImage.public_id) {
             await deleteImageFromCloudinary(serviceToDelete.serviceImage.public_id);
         }
-        
+
         if (serviceToDelete.serviceBanner && serviceToDelete.serviceBanner.public_id) {
             await deleteImageFromCloudinary(serviceToDelete.serviceBanner.public_id);
         }
@@ -270,6 +270,47 @@ exports.deleteService = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal server error in deleting service',
+            error: error.message
+        });
+    }
+};
+
+exports.updateServiceActiveStatus = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const { active } = req.body;
+
+        // Check if 'active' is explicitly undefined
+        if (typeof active === 'undefined') {
+            return res.status(400).json({
+                success: false,
+                message: 'Active status is required'
+            });
+        }
+
+        const serviceActiveStatus = await Service.findById(id);
+        if (!serviceActiveStatus) {
+            return res.status(400).json({
+                success: false,
+                message: 'Service not found'
+            });
+        }
+
+        // Update the active status
+        serviceActiveStatus.active = active;
+
+        await serviceActiveStatus.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Service active status updated successfully'
+        });
+
+    } catch (error) {
+        console.log('Internal server error in updating service active status', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in updating service active status',
             error: error.message
         });
     }

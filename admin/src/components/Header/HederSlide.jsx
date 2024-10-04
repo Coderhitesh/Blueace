@@ -48,7 +48,7 @@ const HederSlide = () => {
                             <ul className="sidebar-submenu">
                                 <li><Link to="/service/main-category">Manage Category</Link></li>
                                 <li><Link to="/service/category">Manage Subcategory</Link></li>
-                                <li><Link to="">Manage Service</Link></li>
+                                <li><Link to="/service/all-service">Manage Service</Link></li>
                             </ul>
                         )}
                     </li>
@@ -67,7 +67,7 @@ const HederSlide = () => {
                         </Link>
                         {activeMenu === 'home-layout' && (
                             <ul className="sidebar-submenu">
-                                <li><Link to="/home-banner/manage">Manage Home Banner</Link></li>
+                                <li><Link to="/home-layout/all-banner">Manage Home Banner</Link></li>
                                 <li><Link to="/offer-banner/manage">Manage Offer Banner</Link></li>
                             </ul>
                         )}

@@ -2,7 +2,6 @@ import React from 'react'
 import Header from '../../components/Header/Header'
 import HederSlide from '../../components/Header/HederSlide'
 import { Route, Routes } from 'react-router-dom'
-// import CreateProduct from '../Product/CreateProduct'
 import './home.css'
 import { Toaster } from 'react-hot-toast'
 import AllServiceCategory from '../ServiceCategory/AllServiceCategory'
@@ -11,17 +10,10 @@ import EditServiceCategory from '../ServiceCategory/EditServiceCategory'
 import AllMainServiceCategory from '../MainServiceCategory/AllMainServiceCategory'
 import AddMainServiceCategory from '../MainServiceCategory/AddMainServiceCategory'
 import EditMainServiceCategory from '../MainServiceCategory/EditMainServiceCategory'
-// import GetAllProduct from '../Product/GetAllProduct'
-// import EditProduct from '../Product/EditProduct'
-// import ManageCategory from '../Category/ManageCategory'
-// import CreateCategoryModel from '../Category/CreateCategory'
-// import EditCategory from '../Category/EditCategory'
-
-// import CreateVouchers from '../Vouchers/CreateVouchers'
-// import ManageVocuhers from '../Vouchers/ManageVocuhers'
-// import EditVocher from '../Vouchers/EditVocher'
-// import CreateService from '../Service/CreateService'
-// import ManagaeService from '../Service/ManagaeService'
+import AddServices from '../Services/AddServices'
+import AllServices from '../Services/AllServices'
+import EditServices from '../Services/EditServices'
+import AllHomeBanner from '../HomeBanner/AllHomeBanner'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -34,17 +26,6 @@ const Home = () => {
                 <HederSlide />
                 <div class="page-body">
                     <Routes>
-                        {/* <Route path='/products/create' element={<CreateProduct />} />
-                        <Route path='/products/manage' element={<GetAllProduct />} />
-                        <Route path='/products/edit' element={<EditProduct />} />
-                        <Route path='/category/manage' element={<ManageCategory />} />
-                        <Route path='/category/create' element={<CreateCategoryModel />} />
-                        <Route path='/category/edit' element={<EditCategory />} />
-                        <Route path='/vouchers/create' element={<CreateVouchers />} />
-                        <Route path='/vouchers/manage' element={<ManageVocuhers />} />
-                        <Route path='/Voucher/edit' element={<EditVocher />} />
-                        <Route path='/Service/create' element={<CreateService />} />
-                        <Route path='/Service/manage' element={<ManagaeService />} /> */}
 
                         {/* service main category route here  */}
                         <Route path='/service/main-category' element={<AllMainServiceCategory />} />
@@ -55,6 +36,16 @@ const Home = () => {
                         <Route path='/service/category' element={<AllServiceCategory />} />
                         <Route path='/service/Add-category' element={<AddServiceCategory />} />
                         <Route path='/service/edit-category/:id' element={<EditServiceCategory />} />
+
+                        {/* service category route here  */}
+                        <Route path='/service/all-service' element={<AllServices />} />
+                        <Route path='/service/add-service' element={<AddServices />} />
+                        <Route path='/service/edit-service/:id' element={<EditServices />} />
+
+                        {/* banner route here  */}
+                        <Route path='/home-layout/all-banner' element={<AllHomeBanner />} />
+                        {/* <Route path='/service/add-service' element={<AddServices />} />
+                        <Route path='/service/edit-service/:id' element={<EditServices />} /> */}
 
 
                         

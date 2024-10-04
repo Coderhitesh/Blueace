@@ -3,6 +3,7 @@ import axios from 'axios';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import FormGroups from '../../components/Forms/FormGroups';
 import Input from '../../components/Forms/Input';
+import toast from 'react-hot-toast';
 
 function AddMainServiceCategory() {
     const [formData, setFormData] = useState({ name: '' });
@@ -18,22 +19,26 @@ function AddMainServiceCategory() {
         e.preventDefault();
         setLoading(true);
     
-        const payload = new FormData();
-        payload.append('name', formData.name);
+        const payload = {
+            name: formData.name.trim(), // Trim spaces
+        };
     
-        console.log('Payload before sending:', payload.get('name')); // Check payload content
+        console.log('Payload before sending:', payload); // Check payload content
     
         try {
-            console.log('i m hit')
+            console.log('Sending request...');
             const res = await axios.post('http://localhost:7000/api/v1/create-service-main-category', payload, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: {
+                    'Content-Type': 'application/json', // Set content type to JSON
+                },
             });
-            console.log('object',res)
-            setFormData({ name: '' });
-            setError('');
+            // console.log('Response:', res.data); // Log the response data
+            toast.success('Category Created Successfully!')
+            setFormData({ name: '' }); // Reset form
+            setError(''); // Clear any previous error messages
         } catch (error) {
-            console.error('Error creating main service Category', error);
-            setError('Failed to create service');
+            console.error('Error creating main service Category:', error.response ? error.response.data : error.message);
+            setError('Failed to create service Category');
         } finally {
             setLoading(false);
         }

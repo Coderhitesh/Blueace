@@ -32,8 +32,13 @@ const serviceSchema = new mongoose.Schema({
     subCategoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ServiceCategory',
+    },
+    active:{
+        type:Boolean,
+        default: true
+
     }
-})
+},{timestamps:true})
 
 const Service = mongoose.model('Service', serviceSchema)
 module.exports = Service;
