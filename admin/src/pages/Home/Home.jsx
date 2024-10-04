@@ -7,6 +7,10 @@ import './home.css'
 import { Toaster } from 'react-hot-toast'
 import AllServiceCategory from '../ServiceCategory/AllServiceCategory'
 import AddServiceCategory from '../ServiceCategory/AddServiceCategory'
+import EditServiceCategory from '../ServiceCategory/EditServiceCategory'
+import AllMainServiceCategory from '../MainServiceCategory/AllMainServiceCategory'
+import AddMainServiceCategory from '../MainServiceCategory/AddMainServiceCategory'
+import EditMainServiceCategory from '../MainServiceCategory/EditMainServiceCategory'
 // import GetAllProduct from '../Product/GetAllProduct'
 // import EditProduct from '../Product/EditProduct'
 // import ManageCategory from '../Category/ManageCategory'
@@ -42,9 +46,15 @@ const Home = () => {
                         <Route path='/Service/create' element={<CreateService />} />
                         <Route path='/Service/manage' element={<ManagaeService />} /> */}
 
+                        {/* service main category route here  */}
+                        <Route path='/service/main-category' element={<AllMainServiceCategory />} />
+                        <Route path='/service/Add-main-category' element={<AddMainServiceCategory />} />
+                        <Route path='/service/edit-main-category/:id' element={<EditMainServiceCategory />} />
+
                         {/* service category route here  */}
                         <Route path='/service/category' element={<AllServiceCategory />} />
                         <Route path='/service/Add-category' element={<AddServiceCategory />} />
+                        <Route path='/service/edit-category/:id' element={<EditServiceCategory />} />
 
 
                         

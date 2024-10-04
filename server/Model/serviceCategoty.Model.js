@@ -24,7 +24,11 @@ const serviceCategorySchema = new mongoose.Schema({
                 required: true
             }
         }
-    ]
+    ],
+    mainCategoryId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MainCategory',
+    }
 }, { timestamps: true });
 
 const ServiceCategory = mongoose.model('ServiceCategory', serviceCategorySchema);

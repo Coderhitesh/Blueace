@@ -1,6 +1,7 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
-const Breadcrumb = ({ heading, subHeading, LastHeading }) => {
+const Breadcrumb = ({ heading, subHeading, LastHeading, backLink }) => {
     return (
         <div className="container-fluid">
             <div className="page-title">
@@ -11,7 +12,7 @@ const Breadcrumb = ({ heading, subHeading, LastHeading }) => {
                     <div className="col-sm-6 col-12">
                         <ol className="breadcrumb">
                             <li className="breadcrumb-item"><a href="/"><i className="iconly-Home icli svg-color"></i></a></li>
-                            <li className="breadcrumb-item">{subHeading}</li>
+                            <li className="breadcrumb-item"><Link to={backLink} >{subHeading}</Link></li>
                             <li className="breadcrumb-item active">{LastHeading}</li>
                         </ol>
                     </div>

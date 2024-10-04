@@ -3,22 +3,24 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import FormGroups from '../../components/Forms/FormGroups';
 import Input from '../../components/Forms/Input';
 import axios from 'axios';
+import { useParams } from 'react-router-dom'; // To get the category ID from URL
 import JoditEditor from 'jodit-react';
 
-function AddServiceCategory() {
+function EditServiceCategory() {
+    const { id } = useParams(); // Get category ID from URL parameters
+    const [categories, setCategories] = useState([]);
+    const editorRef = useRef(null);
     const [formData, setFormData] = useState({
         icon: null,
         name: '',
         description: '',
         sliderImage: [],
-        mainCategoryId: ''
+        mainCategoryId:''
     });
-    const editor = useRef(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [imagePreviews, setImagePreviews] = useState([]);
     const [iconPreview, setIconPreview] = useState(null); // For single icon preview
-    const [categories, setCategories] = useState([]);
 
     const handleFetchCategory = async () => {
         try {
@@ -33,6 +35,31 @@ function AddServiceCategory() {
         handleFetchCategory();
     }, [])
 
+    useEffect(() => {
+        // Fetch the existing service category data based on the ID
+        const fetchCategoryData = async () => {
+            try {
+                const { data } = await axios.get(`http://localhost:7000/api/v1/get-single-service-category/${id}`);
+                const category = data.data;
+
+                setFormData({
+                    name: category.name,
+                    description: category.description,
+                    icon: null, // Keep null for uploading new one, preview existing
+                    sliderImage: [], // Keep empty for uploading new ones
+                    mainCategoryId: category.mainCategoryId?._id // Make sure to use the ObjectId
+                });
+
+                setIconPreview(category.icon?.url || null);
+                setImagePreviews(category.sliderImage.map(img => img.url)); // Set existing slider images
+            } catch (error) {
+                setError('Failed to load category data');
+                console.error(error);
+            }
+        };
+
+        fetchCategoryData();
+    }, [id]);
 
     // Handle input changes
     const handleChange = (e) => {
@@ -71,7 +98,6 @@ function AddServiceCategory() {
     };
 
     // Handle form submission
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); // Set loading state to true before starting the request
@@ -79,66 +105,71 @@ function AddServiceCategory() {
         const payload = new FormData();
         payload.append('name', formData.name);
         payload.append('description', formData.description);
-        // Append the main category ID
         payload.append('mainCategoryId', formData.mainCategoryId);
 
-
-        // Append icon
+        // Append icon if updated
         if (formData.icon) {
             payload.append('icon', formData.icon);
-        } else {
-            setError('Icon is required');
-            setLoading(false); // Reset loading state if there is an error
-            return;
         }
 
-        // Append slider images
+        // Append slider images if updated
         if (formData.sliderImage.length > 0) {
             Array.from(formData.sliderImage).forEach((image) => {
                 payload.append('sliderImage', image);
             });
-        } else {
-            setError('Slider images are required');
-            setLoading(false); // Reset loading state if there is an error
-            return;
         }
 
         try {
-            await axios.post('http://localhost:7000/api/v1/create-service-category', payload, {
+            await axios.put(`http://localhost:7000/api/v1/update-service-category/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+
+            // Reset form and states after update
+            setImagePreviews([]);
+            setIconPreview(null);
+            setFormData({
+                icon: null,
+                name: '',
+                description: '',
+                sliderImage: [],
+            });
+
+            setError(''); // Clear errors
         } catch (error) {
-            console.error('Error creating service:', error);
-            setError('Failed to create service');
+            console.error('Error updating service category:', error);
+            setError('Failed to update service category');
         } finally {
             setLoading(false); // Ensure loading is set to false after request completion
         }
     };
 
+    // Editor Configuration
     const editorConfig = {
         readonly: false,
-        height: 400
+        height: 400,
     };
 
+    // Handle Editor Change for Multiple Fields
     const handleEditorChange = useCallback((newContent, field) => {
-        setFormData(prevFormData => ({ ...prevFormData, [field]: newContent }));
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [field]: newContent
+        }));
     }, []);
-
-
 
 
     return (
         <div>
-            <Breadcrumb heading={'Service'} subHeading={'Sub Category'} LastHeading={'Create Sub Category'} backLink={'/service/category'} />
+            <Breadcrumb heading={'Service'} subHeading={'Sub Category'} LastHeading={'Edit Sub Category'} backLink={'/service/category'} />
 
             {error && <div className="alert alert-danger">{error}</div>}
 
             <FormGroups onSubmit={handleSubmit} Elements={
                 <div className='row'>
                     <div className="col-md-6">
-                        <label class="form-label" for="category">Example select</label>
+                        <label htmlFor="name">Category</label>
                         <select
                             class="form-select"
                             name='mainCategoryId'
@@ -153,13 +184,12 @@ function AddServiceCategory() {
                                 ))
                             }
                         </select>
-
                     </div>
                     <div className="col-md-6">
                         <label htmlFor="name">Sub Category</label>
                         <Input
                             type='text'
-                            placeholder='Enter Sub Category'
+                            placeholder='Enter Sub category'
                             name='name'
                             value={formData.name}
                             onChange={handleChange}
@@ -170,24 +200,13 @@ function AddServiceCategory() {
                     <div className="col-md-12 mb-4 mt-4">
                         <label htmlFor="description" className="form-label">Description</label>
                         <JoditEditor
-                            ref={editor}
+                            ref={editorRef}
                             value={formData.description}
                             config={editorConfig}
-                            onBlur={(newContent) => handleEditorChange(newContent, 'description')} // Pass 'description'
+                            tabIndex={1}
+                            onBlur={(newContent) => handleEditorChange(newContent, 'description')} // Pass 'courseDescription'
                         />
                     </div>
-                    {/* <div className="col-md-12 mb-4 mt-4">
-                        <label htmlFor="description" className="form-label">Description</label>
-                        <textarea
-                            id="description"
-                            className="form-control"
-                            rows="4"
-                            name='description'
-                            value={formData.description}
-                            onChange={handleChange}
-                            placeholder="Enter your text here..."
-                        ></textarea>
-                    </div> */}
 
                     {/* Icon Upload */}
                     <div className="col-md-12 mt-4">
@@ -215,7 +234,6 @@ function AddServiceCategory() {
                                 name="icon"
                                 accept="image/*"
                             />
-
                         </div>
                     </div>
 
@@ -257,18 +275,15 @@ function AddServiceCategory() {
                         </div>
                     </div>
 
-
-
                     <div className='col-md-10 mx-auto mt-4'>
                         <button className={`btn w-100 py-3 btn-primary ${loading ? 'disabled' : ''}`} disabled={loading} type='submit'>
-                            {loading ? 'Please Wait...' : 'Submit'}
+                            {loading ? 'Please Wait...' : 'Update'}
                         </button>
                     </div>
-
                 </div>
             } />
         </div >
     );
 }
 
-export default AddServiceCategory;
+export default EditServiceCategory;

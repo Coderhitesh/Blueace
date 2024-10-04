@@ -9,6 +9,7 @@ const { createMarqueeText, getMarqueeText, getSingleMarquee, updateMarqueeText, 
 const { createPromotionalBanner, getPromotionalBanner, getSinglePromotionalBanner, updatePromotionalBanner, deletePromotionalBanner } = require('../Controller/promotionalBanner.Controller')
 const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, deleteFAQBanner } = require('../Controller/faqBanner.Controller')
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
+const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 
 // user routers 
 
@@ -27,6 +28,13 @@ router.post('/update-Delivery-Address', protect, updateDeliveryAddress)
 router.get('/AllUser', getAllUsers)
 
 // service router here 
+
+// Router for service main category
+router.post('/create-service-main-category', createServiceMainCategory);
+router.put('/update-service-main-category/:_id', updateServiceMainCategory);
+router.get('/get-all-service-main-category',getAllServiceMainCategory)
+router.get('/get-single-service-main-category/:_id',getSingleServiceMainCategory)
+router.delete('/delete-service-main-category/:_id',deleteServiceMainCategory)
 
 // Router for service category
 router.post('/create-service-category', upload.fields([

@@ -46,7 +46,8 @@ const HederSlide = () => {
                         </Link>
                         {activeMenu === 'Service' && (
                             <ul className="sidebar-submenu">
-                                <li><Link to="/service/category">Manage Category</Link></li>
+                                <li><Link to="/service/main-category">Manage Category</Link></li>
+                                <li><Link to="/service/category">Manage Subcategory</Link></li>
                                 <li><Link to="">Manage Service</Link></li>
                             </ul>
                         )}

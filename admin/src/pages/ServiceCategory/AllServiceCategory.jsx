@@ -18,6 +18,7 @@ function AllServiceCategory() {
         try {
             const response = await axios.get('http://localhost:7000/api/v1/get-all-service-category');
             if (response.data.success) {
+                console.log('data',response.data.data)
                 const datasave = response.data.data;
                 // Correct the method name from reverce to reverse
                 const r = datasave.reverse();
@@ -60,12 +61,12 @@ function AllServiceCategory() {
     const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
     // Define headers for the Table component
-    const headers = ['S.No', 'Icon', 'Category Name', 'Discription', 'Slider Image', 'Created At', 'Action'];
+    const headers = ['S.No', 'Icon', 'Category' , 'Sub Category', 'Discription', 'Slider Image', 'Created At', 'Action'];
 
 
     return (
         <div className='page-body'>
-            <Breadcrumb heading={'Category'} subHeading={'Category'} LastHeading={'All Category'} />
+            <Breadcrumb heading={'Sub Category'} subHeading={'Services'} LastHeading={'All Sub Category'} backLink={'/service/category'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -75,6 +76,7 @@ function AllServiceCategory() {
                         <tr key={category._id}>
                             <td>{index + 1}</td>
                             <td className='text-danger fw-bolder'><img src={category?.icon?.url} width={50} alt="" /></td>
+                            <td className='fw-bolder'>{category.mainCategoryId?.name || "Not-Available"}</td>
                             <td className='fw-bolder'>{category.name || "Not-Availdable"}</td>
                             <td className='fw-bolder'>{category.description || "Not-Availdable"}</td>
                             {
@@ -93,7 +95,7 @@ function AllServiceCategory() {
 
                             <td className='fw-bolder'>
                                 <div className="product-action">
-                                    <Link to={`/Service/edit?id=${category._id}`}>
+                                    <Link to={`/service/edit-category/${category._id}`}>
                                         <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
@@ -108,7 +110,7 @@ function AllServiceCategory() {
                     currentPage={currentPage}
                     paginate={setCurrentPage}
                     href="/service/Add-category"
-                    text="Add Category"
+                    text="Add Sub Category"
                     errorMsg=""
                     handleOpen={() => { }}
                 />

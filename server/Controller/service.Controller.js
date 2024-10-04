@@ -5,11 +5,11 @@ const fs = require('fs').promises;
 exports.createService = async (req, res) => {
     const uploadedImages = [];
     try {
-        const { name, description, categoryId } = req.body;
+        const { name, description, subCategoryId } = req.body;
         const emptyField = [];
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
-        if (!categoryId) emptyField.push('categoryId');
+        if (!subCategoryId) emptyField.push('subCategoryId');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -20,7 +20,7 @@ exports.createService = async (req, res) => {
         const newService = new Service({
             name,
             description,
-            categoryId
+            subCategoryId
         });
 
         if (req.files) {
@@ -143,13 +143,13 @@ exports.updateService = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { name, description, categoryId } = req.body;
+        const { name, description, subCategoryId } = req.body;
         const emptyField = [];
 
         if (!id) emptyField.push('id');
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
-        if (!categoryId) emptyField.push('categoryId');
+        if (!subCategoryId) emptyField.push('subCategoryId');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -167,7 +167,7 @@ exports.updateService = async (req, res) => {
 
         existingService.name = name;
         existingService.description = description;
-        existingService.categoryId = categoryId;
+        existingService.subCategoryId = subCategoryId;
 
         if (req.files) {
             const { serviceImage, serviceBanner } = req.files;

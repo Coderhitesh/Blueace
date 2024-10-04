@@ -5,13 +5,14 @@ const fs = require('fs').promises;
 exports.createServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
-        const { name, description } = req.body;
+        const { name, description, mainCategoryId } = req.body;
         console.log(req.body)
 
         // Check for missing fields
         let emptyField = [];
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
+        if (!mainCategoryId) emptyField.push('mainCategoryId');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 status: false,
@@ -19,7 +20,7 @@ exports.createServiceCategory = async (req, res) => {
             });
         }
 
-        const newCategory = new Category({ name, description });
+        const newCategory = new Category({ name, description, mainCategoryId });
 
         if (req.files) {
             const { sliderImage, icon } = req.files;
@@ -102,7 +103,7 @@ exports.createServiceCategory = async (req, res) => {
 
 exports.getServiceCategory = async (req, res) => {
     try {
-        const allServiceCategory = await Category.find();
+        const allServiceCategory = await Category.find().populate('mainCategoryId');
         if (!allServiceCategory) {
             return res.status(400).json({
                 success: false,
@@ -127,7 +128,7 @@ exports.getServiceCategory = async (req, res) => {
 exports.getSingleServiceCategroy = async (req, res) => {
     try {
         const id = req.params._id;
-        const singleServiceCategory = await Category.findById(id);
+        const singleServiceCategory = await Category.findById(id).populate('mainCategoryId');
         if (!singleServiceCategory) {
             return res.status(400).json({
                 success: false,
@@ -200,12 +201,13 @@ exports.updateServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { name, description } = req.body;
+        const { name, description, mainCategoryId } = req.body;
 
         // Check for missing fields
         let emptyField = [];
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
+        if (!mainCategoryId) emptyField.push('mainCategoryId');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 status: false,
@@ -225,6 +227,7 @@ exports.updateServiceCategory = async (req, res) => {
         // Update category fields
         existingCategory.name = name;
         existingCategory.description = description;
+        existingCategory.mainCategoryId = mainCategoryId;
 
         if (req.files) {
             const { sliderImage, icon } = req.files;
