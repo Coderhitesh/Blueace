@@ -8,7 +8,7 @@ import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
 
 function EditServices() {
-    const { id } = useParams(); // Get category ID from URL parameters
+    const { id } = useParams(); 
     const [categories, setCategories] = useState([]);
     const editorRef = useRef(null);
     const [formData, setFormData] = useState({

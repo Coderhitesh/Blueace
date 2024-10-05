@@ -17,7 +17,7 @@ function AddServices() {
     const editor = useRef(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [serviceImagePreviews, setServiceImagePreviews] = useState([]);
+    const [serviceImagePreviews, setServiceImagePreviews] = useState(null);
     const [serviceBannerPreview, setServiceBannerPreview] = useState(null); // For single icon preview
     const [categories, setCategories] = useState([]);
 

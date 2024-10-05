@@ -18,9 +18,8 @@ function AllServiceCategory() {
         try {
             const response = await axios.get('http://localhost:7000/api/v1/get-all-service-category');
             if (response.data.success) {
-                console.log('data',response.data.data)
+                // console.log('data',response.data.data)
                 const datasave = response.data.data;
-                // Correct the method name from reverce to reverse
                 const r = datasave.reverse();
                 setCategory(r);
                 console.log(response.data.data);

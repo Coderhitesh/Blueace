@@ -9,7 +9,7 @@ const faqContentSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+},{timestamps:true})
 
 const FaqContent = mongoose.model('FaqContent',faqContentSchema)
 module.exports = FaqContent

@@ -113,7 +113,7 @@ exports.deleteBanner = async (req, res) => {
         if (promotionalBanner.bannerImage.public_id) {
             await deleteImageFromCloudinary(promotionalBanner.bannerImage.public_id)
         }
-        await PromotionalBanner.findByIdAndDelete(id)
+        await Banner.findByIdAndDelete(id)
         res.status(200).json({
             success: true,
             message: 'Promotional banner deleted',
@@ -203,10 +203,10 @@ exports.updateBannerActiveStatus = async (req, res) => {
             message: 'Banner active status updated successfully',
         })
     } catch (error) {
-        console.log('Internal server error in creating banner', error)
+        console.log('Internal server error in updating active status banner', error)
         res.status(500).json({
             success: false,
-            message: 'Internal server error in creating banner',
+            message: 'Internal server error in updating active status banner',
             error: error.message
         })
     }

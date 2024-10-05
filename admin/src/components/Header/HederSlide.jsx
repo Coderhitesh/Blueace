@@ -68,9 +68,25 @@ const HederSlide = () => {
                         {activeMenu === 'home-layout' && (
                             <ul className="sidebar-submenu">
                                 <li><Link to="/home-layout/all-banner">Manage Home Banner</Link></li>
-                                <li><Link to="/offer-banner/manage">Manage Offer Banner</Link></li>
+                                <li><Link to="/home-layout/all-Offer-banner">Manage Offer Banner</Link></li>
+                                <li><Link to="/home-layout/all-faq-banner">Manage FAQ Banner</Link></li>
+                                <li><Link to="/home-layout/all-faq-content">Manage FAQ Content</Link></li>
+                                <li><Link to="/home-layout/all-marquee">Manage Marquee</Link></li>
                             </ul>
                         )}
+                    </li>
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="/users/all-users"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All User</h6>
+                            {/* <i class="fa-solid fa-arrow-right"></i> */}
+                        </Link>
                     </li>
                 </ul>
             </div>

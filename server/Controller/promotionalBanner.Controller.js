@@ -184,3 +184,31 @@ exports.updatePromotionalBanner = async (req, res) => {
 
     }
 }
+
+exports.updatePromotionalActiveStatus = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const { active } = req.body;
+        const promotionalBanner = await PromotionalBanner.findById(id);
+        if (!promotionalBanner) {
+            return res.status(404).json({
+                success: false,
+                message: 'Promotional banner not found',
+            })
+        }
+        promotionalBanner.active = active;
+        await promotionalBanner.save();
+        res.status(200).json({
+            success: true,
+            message: 'Promotional banner active status updated successfully',
+        })
+
+    } catch (error) {
+        console.log('Internal server error in updating active status banner', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in updating active status banner',
+            error: error.message
+        })
+    }
+}

@@ -33,7 +33,7 @@ exports.createMarqueeText = async (req, res) => {
 
 exports.getMarqueeText = async (req, res) => {
     try {
-        const allMarqueeText = MarqueeText.find()
+        const allMarqueeText = await MarqueeText.find()
         if (!allMarqueeText) {
             return res.status(400).json({
                 success: false,

@@ -1,13 +1,13 @@
 const express = require('express')
 const { protect } = require('../Middleware/Protect')
-const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers } = require('../Controller/Usercontroller')
+const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType } = require('../Controller/Usercontroller')
 const router = express.Router()
 const upload = require('../Middleware/Multer')
 const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory } = require('../Controller/serviceCategory.Controller')
 const { createService, getService, getSingleService, updateService, deleteService, updateServiceActiveStatus } = require('../Controller/service.Controller')
 const { createMarqueeText, getMarqueeText, getSingleMarquee, updateMarqueeText, deleteMarqueeText } = require('../Controller/marqueeText.Controller')
-const { createPromotionalBanner, getPromotionalBanner, getSinglePromotionalBanner, updatePromotionalBanner, deletePromotionalBanner } = require('../Controller/promotionalBanner.Controller')
-const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, deleteFAQBanner } = require('../Controller/faqBanner.Controller')
+const { createPromotionalBanner, getPromotionalBanner, getSinglePromotionalBanner, updatePromotionalBanner, deletePromotionalBanner, updatePromotionalActiveStatus } = require('../Controller/promotionalBanner.Controller')
+const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, deleteFAQBanner, updateFAQBannerStatus } = require('../Controller/faqBanner.Controller')
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
@@ -27,6 +27,7 @@ router.get('/user-details', protect, userDetails)
 router.get('/get-Delivery-Address', protect, GetDeliveryAddressOfUser)
 router.post('/update-Delivery-Address', protect, updateDeliveryAddress)
 router.get('/AllUser', getAllUsers)
+router.put('/update-user-type/:_id', updateUserType)
 
 // service router here 
 
@@ -68,18 +69,20 @@ router.delete('/delete-marquee/:_id',deleteMarqueeText)
 // Router for Promotional banner 
 
 router.post('/create-promotional-banner',upload.single('bannerImage'),createPromotionalBanner)
-router.get('/get-promotional-banner',getPromotionalBanner)
+router.get('/get-all-promotional-banner',getPromotionalBanner)
 router.get('/get-single-promotional-banner/:_id',getSinglePromotionalBanner)
 router.put('/update-promotional-banner/:_id',upload.single('bannerImage'),updatePromotionalBanner)
 router.delete('/delete-promotional-banner/:_id',deletePromotionalBanner)
+router.put('/update-promotional-banner-active-status/:_id',updatePromotionalActiveStatus)
 
 // Router for FAQ banner 
 
 router.post('/create-faq-banner',upload.single('bannerImage'),createFAQBanner)
-router.get('/get-faq-banner',getFAQBanner)
+router.get('/get-all-faq-banner',getFAQBanner)
 router.get('/get-single-faq-banner/:_id',getSingleFAQBanner)
 router.put('/update-faq-banner/:_id',upload.single('bannerImage'),updateFAQBanner)
 router.delete('/delete-faq-banner/:_id',deleteFAQBanner)
+router.put('/update-faq-banner-active-status/:_id',updateFAQBannerStatus)
 
 // Route fro faq content 
 
@@ -91,11 +94,11 @@ router.put('/update-faq-content/:_id',updateFaqContent)
 
 // Route fro faq content 
 
-router.post('/create-banner',createBanner)
+router.post('/create-banner',upload.single('bannerImage'),createBanner)
 router.get('/get-all-banner',getBanner)
 router.get('/get-single-banner/:_id',getSingleBanner)
 router.delete('/delete-banner/:_id',deleteBanner)
-router.put('/update-banner/:_id',updateBanner)
+router.put('/update-banner/:_id',upload.single('bannerImage'),updateBanner)
 router.put('/update-banner-active-status/:_id',updateBannerActiveStatus)
 
 module.exports = router;

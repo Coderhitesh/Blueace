@@ -6,67 +6,60 @@ import Toggle from '../../components/Forms/toggle';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-function AllServices() {
-    const [category, setCategory] = useState([]);
-    // const [errorMsg, setErrorMsg] = useState('');
+function AllPromotionalBanner() {
+    const [banner, setBanner] = useState([])
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 10;
 
-    const fetchVouchers = async () => {
-        setLoading(true); // Set loading state before fetching
+    const handleFetchData = async () => {
+        setLoading(true);
         try {
-            const response = await axios.get('http://localhost:7000/api/v1/get-all-service');
+            const response = await axios.get('http://localhost:7000/api/v1/get-all-promotional-banner');
             if (response.data.success) {
-                console.log('data', response.data.data)
                 const datasave = response.data.data;
-                // Correct the method name from reverce to reverse
                 const r = datasave.reverse();
-                setCategory(r);
-                console.log(response.data.data);
+                setBanner(r);
             } else {
-                toast.error('Failed to fetch service category');
+                toast.error('Failed to fetch banner');
             }
         } catch (error) {
-            toast.error('An error occurred while fetching service category.');
+            toast.error('An error occurred while fetching banner.');
             console.error('Fetch error:', error); // Logging error for debugging
         } finally {
             setLoading(false); // Stop loading regardless of success or error
         }
-    };
-    // Fetch vouchers using Axios
-    useEffect(() => {
-        fetchVouchers();
-    }, []);
+    }
 
+    useEffect(() => {
+        handleFetchData();
+    }, [])
 
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:7000/api/v1/delete-service/${id}`);
+            const response = await axios.delete(`http://localhost:7000/api/v1/delete-promotional-banner/${id}`);
             if (response.data.success) {
-                toast.success('Category deleted successfully!');
-                await fetchVouchers(); // Fetch categories again after deletion
+                toast.success('Banner deleted successfully!');
+                await handleFetchData(); // Fetch categories again after deletion
             } else {
-                toast.error('Failed to delete Category');
+                toast.error('Failed to delete Banner');
             }
         } catch (error) {
-            toast.error('An error occurred while deleting the Category.');
+            toast.error('An error occurred while deleting the Banner.');
         }
     };
 
     const handleToggle = async (id, currentActiveStatus) => {
         try {
-            console.log('currentActiveStatus', currentActiveStatus)
-            const newActiveStatus = !currentActiveStatus; // Toggle the status
-            console.log('newActiveStatus', newActiveStatus)
-            const response = await axios.put(`http://localhost:7000/api/v1/update-service-active-status/${id}`, {
+            const newActiveStatus = !currentActiveStatus; 
+            const response = await axios.put(`http://localhost:7000/api/v1/update-promotional-banner-active-status/${id}`, {
                 active: newActiveStatus
             });
 
             if (response.data.success) {
-                toast.success('Service active status updated successfully!');
-                await fetchVouchers();
+                toast.success('Banner active status updated successfully!');
+                await handleFetchData();
             } else {
                 toast.error('Failed to update service active status.');
             }
@@ -80,14 +73,14 @@ function AllServices() {
     // Calculate the indices of the vouchers to display
     const indexOfLastVoucher = currentPage * productsPerPage;
     const indexOfFirstVoucher = indexOfLastVoucher - productsPerPage;
-    const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
+    const currentServices = banner.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
     // Define headers for the Table component
-    const headers = ['S.No', 'Sub Category', 'Service Name', 'Service Image', 'Service Banner', 'Description', 'Active', 'Created At', 'Action'];
+    const headers = ['S.No', 'Offer Image', 'Active', 'Action'];
 
     return (
         <div className='page-body'>
-            <Breadcrumb heading={'Services'} subHeading={'Services'} LastHeading={'All Services'} backLink={'/service/all-service'} />
+            <Breadcrumb heading={'Offer Banner'} subHeading={'Home Layout'} LastHeading={'All Offer Banner'} backLink={'/home-layout/all-offer-banner'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -96,11 +89,7 @@ function AllServices() {
                     elements={currentServices.map((category, index) => (
                         <tr key={category._id}>
                             <td>{index + 1}</td>
-                            <td className='fw-bolder'>{category.subCategoryId?.name || "Not-Available"}</td>
-                            <td className='fw-bolder'>{category.name || "Not-Availdable"}</td>
-                            <td className='text-danger fw-bolder'><img src={category?.serviceImage?.url} width={50} alt="" /></td>
-                            <td className='text-danger fw-bolder'><img src={category?.serviceBanner?.url} width={50} alt="" /></td>
-                            <td className='fw-bolder'>{category.description || "Not-Availdable"}</td>
+                            <td className='text-danger fw-bolder'><img src={category?.bannerImage?.url} width={50} alt="" /></td>
                             <td>
                                 <Toggle
                                     isActive={category.active}
@@ -108,11 +97,11 @@ function AllServices() {
                                 />
                             </td>
 
-                            <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td>
+                            {/* <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td> */}
 
                             <td className='fw-bolder'>
                                 <div className="product-action">
-                                    <Link to={`/service/edit-service/${category._id}`}>
+                                    <Link to={`/home-layout/edit-offer-banner/${category._id}`}>
                                         <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
@@ -122,12 +111,12 @@ function AllServices() {
                             </td>
                         </tr>
                     ))}
-                    productLength={category.length}
+                    productLength={banner.length}
                     productsPerPage={productsPerPage}
                     currentPage={currentPage}
                     paginate={setCurrentPage}
-                    href="/service/add-service"
-                    text="Add Service"
+                    href="/home-layout/add-offer-banner"
+                    text="Add Banner"
                     errorMsg=""
                     handleOpen={() => { }}
                 />
@@ -136,4 +125,4 @@ function AllServices() {
     )
 }
 
-export default AllServices
+export default AllPromotionalBanner

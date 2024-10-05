@@ -5,7 +5,7 @@ const marqueeTextSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-})
+},{timestamps:true})
 
 const MarqueeText = mongoose.model('MarqueeText',marqueeTextSchema)
 module.exports = MarqueeText

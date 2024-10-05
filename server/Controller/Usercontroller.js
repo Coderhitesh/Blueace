@@ -308,7 +308,7 @@ exports.passwordChangeRequest = async (req, res) => {
 
 
 exports.verifyOtpAndChangePassword = async (req, res) => {
-    const { Email, OTP ,NewPassword} = req.body;
+    const { Email, OTP, NewPassword } = req.body;
 
     try {
         // Check if OTP is valid and not expired
@@ -564,6 +564,34 @@ exports.getAllUsers = async (req, res) => {
         return res.status(500).json({
             success: false,
             msg: 'Internal Server Error'
+        })
+    }
+}
+
+exports.updateUserType = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const { UserType } = req.body;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                msg: 'User not found'
+            })
+        }
+        user.UserType = UserType;
+        await user.save();
+        res.status(200).json({
+            success: true,
+            msg: 'User Type Updated',
+            data: user
+        })
+    } catch (error) {
+        console.log('Internal server error in updating user type', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in updating user type',
+            error: error.message
         })
     }
 }

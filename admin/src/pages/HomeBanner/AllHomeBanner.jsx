@@ -17,12 +17,9 @@ function AllHomeBanner() {
     try {
       const response = await axios.get('http://localhost:7000/api/v1/get-all-banner');
       if (response.data.success) {
-        console.log('data', response.data.data)
         const datasave = response.data.data;
-        // Correct the method name from reverce to reverse
         const r = datasave.reverse();
         setBanner(r);
-        console.log(response.data.data);
       } else {
         toast.error('Failed to fetch banner');
       }
@@ -43,30 +40,30 @@ function AllHomeBanner() {
     try {
       const response = await axios.delete(`http://localhost:7000/api/v1/delete-banner/${id}`);
       if (response.data.success) {
-        toast.success('Category deleted successfully!');
-        await fetchVouchers(); // Fetch categories again after deletion
+        toast.success('Banner deleted successfully!');
+        await handleFetchData(); // Fetch categories again after deletion
       } else {
-        toast.error('Failed to delete Category');
+        toast.error('Failed to delete Banner');
       }
     } catch (error) {
-      toast.error('An error occurred while deleting the Category.');
+      toast.error('An error occurred while deleting the Banner.');
     }
   };
 
   const handleToggle = async (id, currentActiveStatus) => {
     try {
-      console.log('currentActiveStatus', currentActiveStatus)
+      // console.log('currentActiveStatus', currentActiveStatus)
       const newActiveStatus = !currentActiveStatus; // Toggle the status
-      console.log('newActiveStatus', newActiveStatus)
+      // console.log('newActiveStatus', newActiveStatus)
       const response = await axios.put(`http://localhost:7000/api/v1/update-banner-active-status/${id}`, {
         active: newActiveStatus
       });
 
       if (response.data.success) {
-        toast.success('Service active status updated successfully!');
-        await fetchVouchers();
+        toast.success('Banner active status updated successfully!');
+        await handleFetchData();
       } else {
-        toast.error('Failed to update service active status.');
+        toast.error('Failed to update Banner active status.');
       }
     } catch (error) {
       toast.error('An error occurred while updating the active status.');
@@ -81,11 +78,11 @@ function AllHomeBanner() {
   const currentServices = banner.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
   // Define headers for the Table component
-  const headers = ['S.No', 'Banner Image', 'Active', 'Created At', 'Action'];
+  const headers = ['S.No', 'Banner Image', 'Active', 'Action'];
 
   return (
     <div className='page-body'>
-            <Breadcrumb heading={'Services'} subHeading={'Services'} LastHeading={'All Services'} backLink={'/service/all-service'} />
+            <Breadcrumb heading={'Home Layout'} subHeading={'Home Layout'} LastHeading={'All Banner'} backLink={'/home-layout/all-banner'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -102,11 +99,11 @@ function AllHomeBanner() {
                                 />
                             </td>
 
-                            <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td>
+                            {/* <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td> */}
 
                             <td className='fw-bolder'>
                                 <div className="product-action">
-                                    <Link to={`/service/edit-service/${category._id}`}>
+                                    <Link to={`/home-layout/edit-banner/${category._id}`}>
                                         <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
@@ -120,8 +117,8 @@ function AllHomeBanner() {
                     productsPerPage={productsPerPage}
                     currentPage={currentPage}
                     paginate={setCurrentPage}
-                    href="/service/add-service"
-                    text="Add Service"
+                    href="/home-layout/add-banner"
+                    text="Add Banner"
                     errorMsg=""
                     handleOpen={() => { }}
                 />
