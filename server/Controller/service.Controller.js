@@ -5,7 +5,7 @@ const fs = require('fs').promises;
 exports.createService = async (req, res) => {
     const uploadedImages = [];
     try {
-        const { name, description, subCategoryId } = req.body;
+        const { name, description, subCategoryId, metaTitle, metaDescription } = req.body;
         const emptyField = [];
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
@@ -20,7 +20,9 @@ exports.createService = async (req, res) => {
         const newService = new Service({
             name,
             description,
-            subCategoryId
+            subCategoryId,
+            metaTitle,
+            metaDescription
         });
 
         if (req.files) {
@@ -139,11 +141,36 @@ exports.getSingleService = async (req, res) => {
     }
 }
 
+exports.getServiceByName = async (req, res) => {
+    try {
+        const { name } = req.params;
+        const serviceData = await Service.findOne({ name: name }).populate('subCategoryId')
+        if (!serviceData) {
+            return res.status(400).json({
+                success: false,
+                message: 'Service not found'
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Service founded',
+            data: serviceData
+        })
+    } catch (error) {
+        console.log('Internal server error in geting service by name', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in geting service by name',
+            error: error.message
+        })
+    }
+}
+
 exports.updateService = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { name, description, subCategoryId } = req.body;
+        const { name, description, subCategoryId, metaTitle, metaDescription } = req.body;
         const emptyField = [];
 
         if (!id) emptyField.push('id');
@@ -168,6 +195,8 @@ exports.updateService = async (req, res) => {
         existingService.name = name;
         existingService.description = description;
         existingService.subCategoryId = subCategoryId;
+        existingService.metaTitle = metaTitle;
+        existingService.metaDescription = metaDescription;
 
         if (req.files) {
             const { serviceImage, serviceBanner } = req.files;

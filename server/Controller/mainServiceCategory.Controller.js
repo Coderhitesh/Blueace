@@ -2,7 +2,7 @@ const MainCategory = require('../Model/mainServiceCategory.Model')
 
 exports.createServiceMainCategory = async (req, res) => {
     try {
-        const { name } = req.body;
+        const { name, metaTitle, metaDescription } = req.body;
         // console.log('name',name)
         if (!name) {
             return res.status(400).json({
@@ -17,7 +17,8 @@ exports.createServiceMainCategory = async (req, res) => {
                 message: 'Category already exists'
             })
         }
-        const newCategory = new MainCategory({ name })
+        const newCategory = new MainCategory({ name, metaTitle, metaDescription })
+
         await newCategory.save()
         res.status(201).json({
             success: true,
@@ -82,8 +83,8 @@ exports.updateServiceMainCategory = async (req, res) => {
     // console.log('i am hit')
     try {
         const id = req.params._id;
-        const { name } = req.body;
-        console.log('name',name)
+        const { name, metaTitle, metaDescription } = req.body;
+        // console.log('name',name)
 
         // Validate the input
         if (!name || !name.trim()) {
@@ -104,6 +105,8 @@ exports.updateServiceMainCategory = async (req, res) => {
 
         // Update the category name
         category.name = name.trim(); // Trim whitespace from name
+        category.metaTitle = metaTitle;
+        category.metaDescription = metaDescription;
 
         // Save the updated category
         await category.save();

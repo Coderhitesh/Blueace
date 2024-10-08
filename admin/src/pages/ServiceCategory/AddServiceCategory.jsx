@@ -12,7 +12,9 @@ function AddServiceCategory() {
         name: '',
         description: '',
         sliderImage: [],
-        mainCategoryId: ''
+        mainCategoryId: '',
+        metaTitle: '',
+        metaDescription: '',
     });
     const editor = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -72,7 +74,6 @@ function AddServiceCategory() {
     };
 
     // Handle form submission
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true); // Set loading state to true before starting the request
@@ -82,6 +83,8 @@ function AddServiceCategory() {
         payload.append('description', formData.description);
         // Append the main category ID
         payload.append('mainCategoryId', formData.mainCategoryId);
+        payload.append('metaTitle', formData.metaTitle);
+        payload.append('metaDescription', formData.metaDescription);
 
 
         // Append icon
@@ -178,18 +181,6 @@ function AddServiceCategory() {
                             onBlur={(newContent) => handleEditorChange(newContent, 'description')} // Pass 'description'
                         />
                     </div>
-                    {/* <div className="col-md-12 mb-4 mt-4">
-                        <label htmlFor="description" className="form-label">Description</label>
-                        <textarea
-                            id="description"
-                            className="form-control"
-                            rows="4"
-                            name='description'
-                            value={formData.description}
-                            onChange={handleChange}
-                            placeholder="Enter your text here..."
-                        ></textarea>
-                    </div> */}
 
                     {/* Icon Upload */}
                     <div className="col-md-12 mt-4">
@@ -258,7 +249,35 @@ function AddServiceCategory() {
                             />
                         </div>
                     </div>
-
+                    
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Title"
+                            name='metaTitle'
+                            value={formData.metaTitle}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaTitle'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Description"
+                            name='metaDescription'
+                            value={formData.metaDescription}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaDescription'
+                        ></textarea>
+                    </div>
 
 
                     <div className='col-md-10 mx-auto mt-4'>

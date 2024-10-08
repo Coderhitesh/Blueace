@@ -60,7 +60,7 @@ function AllServiceCategory() {
     const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
     // Define headers for the Table component
-    const headers = ['S.No', 'Icon', 'Category' , 'Sub Category', 'Discription', 'Slider Image', 'Created At', 'Action'];
+    const headers = ['S.No', 'Icon', 'Category', 'Sub Category', 'Discription', 'Slider Image', 'Meta Title', 'Meta Description', 'Created At', 'Action'];
 
 
     return (
@@ -77,7 +77,12 @@ function AllServiceCategory() {
                             <td className='text-danger fw-bolder'><img src={category?.icon?.url} width={50} alt="" /></td>
                             <td className='fw-bolder'>{category.mainCategoryId?.name || "Not-Available"}</td>
                             <td className='fw-bolder'>{category.name || "Not-Availdable"}</td>
-                            <td className='fw-bolder'>{category.description || "Not-Availdable"}</td>
+                            <td className='fw-bolder'>
+                                {category.description
+                                    ? category.description.substring(0, 14) + '....'
+                                    : "Not-Available"}
+                            </td>
+
                             {
                                 Array.isArray(category.sliderImage) ? (
                                     category.sliderImage.map((item, index) => (
@@ -87,9 +92,9 @@ function AllServiceCategory() {
                                     <img src={category?.sliderImage?.url} width={50} alt="Single Slider" />
                                 )
                             }
-
-
-
+                            
+                            <td className=' fw-bolder'>{category.metaTitle ? category.metaTitle.substring(0, 14) + '....' : "Not-Available"}</td>
+                            <td className=' fw-bolder'>{category.metaDescription ? category.metaDescription.substring(0, 14) + '....' : "Not-Available"}</td>
                             <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td>
 
                             <td className='fw-bolder'>

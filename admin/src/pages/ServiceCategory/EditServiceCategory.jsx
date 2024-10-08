@@ -16,7 +16,9 @@ function EditServiceCategory() {
         name: '',
         description: '',
         sliderImage: [],
-        mainCategoryId:''
+        mainCategoryId:'',
+        metaTitle: '',
+        metaDescription: '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -46,9 +48,11 @@ function EditServiceCategory() {
                 setFormData({
                     name: category.name,
                     description: category.description,
-                    icon: null, // Keep null for uploading new one, preview existing
-                    sliderImage: [], // Keep empty for uploading new ones
-                    mainCategoryId: category.mainCategoryId?._id // Make sure to use the ObjectId
+                    icon: null, 
+                    sliderImage: [], 
+                    mainCategoryId: category.mainCategoryId?._id,
+                    metaTitle: category.metaTitle,
+                    metaDescription: category.metaDescription,
                 });
 
                 setIconPreview(category.icon?.url || null);
@@ -107,6 +111,8 @@ function EditServiceCategory() {
         payload.append('name', formData.name);
         payload.append('description', formData.description);
         payload.append('mainCategoryId', formData.mainCategoryId);
+        payload.append('metaTitle', formData.metaTitle);
+        payload.append('metaDescription', formData.metaDescription);
 
         // Append icon if updated
         if (formData.icon) {
@@ -127,16 +133,6 @@ function EditServiceCategory() {
                 }
             });
             toast.success('Updated Successfully!')
-
-            // Reset form and states after update
-            // setImagePreviews([]);
-            // setIconPreview(null);
-            // setFormData({
-            //     icon: null,
-            //     name: '',
-            //     description: '',
-            //     sliderImage: [],
-            // });
 
             setError(''); // Clear errors
         } catch (error) {
@@ -275,6 +271,36 @@ function EditServiceCategory() {
                                 accept="image/*"
                             />
                         </div>
+                    </div>
+
+                    
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Title"
+                            name='metaTitle'
+                            value={formData.metaTitle}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaTitle'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Description"
+                            name='metaDescription'
+                            value={formData.metaDescription}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaDescription'
+                        ></textarea>
                     </div>
 
                     <div className='col-md-10 mx-auto mt-4'>

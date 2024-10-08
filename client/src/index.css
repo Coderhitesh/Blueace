@@ -1,0 +1,64 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+footer.light-footer {
+  background: #000f2a;
+}
+.light-footer .footer-bottom {
+  background: #000b1e;
+}
+.br-top {
+  border-top: 1px solid #eef2f51c !important;
+}
+.address{
+  color:#fff;
+}
+.services-bg{
+  overflow: hidden;
+}
+.services-bg a img{
+  transform: scale(1);
+  transition: all 0.5s linear;
+}
+.services-bg a img:hover{
+  transform: scale(1.05);
+}
+/* services page css */
+
+.services-rating i{
+  color:rgb(255, 165, 0)
+}
+
+.services-review{
+  margin-left: 10px;
+  margin-top: -3px;
+}
+
+.promise-list{
+  padding-left: 0px;
+}
+
+.sticky-top {
+  top: 128px!important;
+}
+.quality-logo{
+  width:50px;
+}
+.bg-primary{
+  background-color: #00225f!important;
+}
+.bg-primary:hover{
+  background: #15b8e9!important;
+  transition: 0.5s all;
+}
+.modal-dialog{
+  z-index: 1!important;
+}
+.modal-backdrop{
+  /* --bs-backdrop-bg: none !important; */
+  /* display: none; */
+  z-index: 0 !important;
+}
+.

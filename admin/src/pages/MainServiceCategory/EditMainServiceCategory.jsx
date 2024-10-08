@@ -10,6 +10,8 @@ function EditMainServiceCategory() {
     const { id } = useParams();
     const [formData,setFormData] = useState({
         name: '',
+        metaTitle: '',
+        metaDescription: '',
     })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -19,7 +21,9 @@ function EditMainServiceCategory() {
             const {data} = await axios.get(`http://localhost:7000/api/v1/get-single-service-main-category/${id}`) 
             const category = data.data
             setFormData({
-                name: category.name
+                name: category.name,
+                metaTitle: category.metaTitle,
+                metaDescription: category.metaDescription
             })
         } catch (error) {
             console.error('Faild to load service Category:', error.response ? error.response.data : error.message);
@@ -43,6 +47,8 @@ function EditMainServiceCategory() {
         setLoading(true);
         const payload = new FormData();
         payload.append('name', formData.name);
+        payload.append('metaTitle', formData.metaTitle);
+        payload.append('metaDescription', formData.metaDescription);
         try {
             await axios.put(`http://localhost:7000/api/v1/update-service-main-category/${id}`,payload,{
                 headers: {
@@ -77,6 +83,35 @@ function EditMainServiceCategory() {
                             onChange={handleChange}
                             required={true}
                         />
+                    </div>
+
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Title"
+                            name='metaTitle'
+                            value={formData.metaTitle}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaTitle'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Description"
+                            name='metaDescription'
+                            value={formData.metaDescription}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaDescription'
+                        ></textarea>
                     </div>
 
                     <div className='col-md-10 mx-auto mt-4'>

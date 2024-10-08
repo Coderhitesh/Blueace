@@ -37,6 +37,12 @@ const serviceSchema = new mongoose.Schema({
         type:Boolean,
         default: true
 
+    },
+    metaTitle: {
+        type: String
+    },
+    metaDescription: {
+        type: String
     }
 },{timestamps:true})
 

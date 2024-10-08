@@ -4,6 +4,12 @@ const MainCategorySchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
+    },
+    metaTitle: {
+        type: String
+    },
+    metaDescription: {
+        type: String
     }
 },{timestamps:true})
 

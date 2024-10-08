@@ -46,9 +46,9 @@ const HederSlide = () => {
                         </Link>
                         {activeMenu === 'Service' && (
                             <ul className="sidebar-submenu">
-                                <li><Link to="/service/main-category">Manage Category</Link></li>
-                                <li><Link to="/service/category">Manage Subcategory</Link></li>
-                                <li><Link to="/service/all-service">Manage Service</Link></li>
+                                <li><Link to="/service/main-category">Category</Link></li>
+                                <li><Link to="/service/category">Subcategory</Link></li>
+                                <li><Link to="/service/all-service">Service</Link></li>
                             </ul>
                         )}
                     </li>
@@ -67,11 +67,11 @@ const HederSlide = () => {
                         </Link>
                         {activeMenu === 'home-layout' && (
                             <ul className="sidebar-submenu">
-                                <li><Link to="/home-layout/all-banner">Manage Home Banner</Link></li>
-                                <li><Link to="/home-layout/all-Offer-banner">Manage Offer Banner</Link></li>
-                                <li><Link to="/home-layout/all-faq-banner">Manage FAQ Banner</Link></li>
-                                <li><Link to="/home-layout/all-faq-content">Manage FAQ Content</Link></li>
-                                <li><Link to="/home-layout/all-marquee">Manage Marquee</Link></li>
+                                <li><Link to="/home-layout/all-banner">Home Banner</Link></li>
+                                <li><Link to="/home-layout/all-Offer-banner">Offer Banner</Link></li>
+                                <li><Link to="/home-layout/all-faq-banner">FAQ Banner</Link></li>
+                                <li><Link to="/home-layout/all-faq-content">FAQ Content</Link></li>
+                                <li><Link to="/home-layout/all-marquee">Marquee</Link></li>
                             </ul>
                         )}
                     </li>

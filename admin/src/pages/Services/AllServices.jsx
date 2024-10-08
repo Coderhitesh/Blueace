@@ -83,7 +83,7 @@ function AllServices() {
     const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
     // Define headers for the Table component
-    const headers = ['S.No', 'Sub Category', 'Service Name', 'Service Image', 'Service Banner', 'Description', 'Active', 'Created At', 'Action'];
+    const headers = ['S.No', 'Sub Category', 'Service Name', 'Service Image', 'Service Banner', 'Description', 'Active', 'Meta Title', 'Meta Description', 'Created At', 'Action'];
 
     return (
         <div className='page-body'>
@@ -100,13 +100,15 @@ function AllServices() {
                             <td className='fw-bolder'>{category.name || "Not-Availdable"}</td>
                             <td className='text-danger fw-bolder'><img src={category?.serviceImage?.url} width={50} alt="" /></td>
                             <td className='text-danger fw-bolder'><img src={category?.serviceBanner?.url} width={50} alt="" /></td>
-                            <td className='fw-bolder'>{category.description || "Not-Availdable"}</td>
+                            <td className='fw-bolder'>{category.description ? category.description.substring(0, 14) + '....' : "Not-Availdable"}</td>
                             <td>
                                 <Toggle
                                     isActive={category.active}
                                     onToggle={() => handleToggle(category._id, category.active)} // Pass service id and current active status
                                 />
                             </td>
+                            <td className=' fw-bolder'>{category.metaTitle ? category.metaTitle.substring(0, 14) + '....' : "Not-Available"}</td>
+                            <td className=' fw-bolder'>{category.metaDescription ? category.metaDescription.substring(0, 14) + '....' : "Not-Available"}</td>
 
                             <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td>
 

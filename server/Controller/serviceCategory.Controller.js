@@ -5,7 +5,7 @@ const fs = require('fs').promises;
 exports.createServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
-        const { name, description, mainCategoryId } = req.body;
+        const { name, description, mainCategoryId, metaTitle, metaDescription } = req.body;
         console.log(req.body)
 
         // Check for missing fields
@@ -20,7 +20,7 @@ exports.createServiceCategory = async (req, res) => {
             });
         }
 
-        const newCategory = new Category({ name, description, mainCategoryId });
+        const newCategory = new Category({ name, description, mainCategoryId, metaTitle, metaDescription });
 
         if (req.files) {
             const { sliderImage, icon } = req.files;
@@ -73,7 +73,7 @@ exports.createServiceCategory = async (req, res) => {
 
         const savedCategory = await newCategory.save();
 
-        if(!savedCategory){
+        if (!savedCategory) {
             for (let public_id of uploadedImages) {
                 await deleteImageFromCloudinary(public_id)
             }
@@ -151,6 +151,32 @@ exports.getSingleServiceCategroy = async (req, res) => {
     }
 }
 
+exports.getServiceCategoryByName = async (req, res) => {
+    try {
+        const { name } = req.params;
+        const serviceCategory = await Category.findOne({ name }).populate('mainCategoryId');
+        if (!serviceCategory) {
+            return res.status(400).json({
+                success: false,
+                message: 'Category not found',
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Category retrieved successfully',
+            data: serviceCategory
+        });
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in finding single service category by name',
+            error: error.message
+        })
+    }
+}
+
 exports.deleteServiceCategory = async (req, res) => {
     try {
         const id = req.params._id;
@@ -201,7 +227,7 @@ exports.updateServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { name, description, mainCategoryId } = req.body;
+        const { name, description, mainCategoryId, metaTitle, metaDescription } = req.body;
 
         // Check for missing fields
         let emptyField = [];
@@ -228,6 +254,8 @@ exports.updateServiceCategory = async (req, res) => {
         existingCategory.name = name;
         existingCategory.description = description;
         existingCategory.mainCategoryId = mainCategoryId;
+        existingCategory.metaTitle = metaTitle;
+        existingCategory.metaDescription = metaDescription;
 
         if (req.files) {
             const { sliderImage, icon } = req.files;

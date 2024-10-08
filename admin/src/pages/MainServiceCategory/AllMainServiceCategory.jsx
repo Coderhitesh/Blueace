@@ -49,7 +49,7 @@ function AllMainServiceCategory() {
       const indexOfFirstVoucher = indexOfLastVoucher - productsPerPage;
       const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
-    const headers = ['S.No', 'Category name', 'Created At', 'Action'];
+    const headers = ['S.No', 'Category name', 'Meta Title', 'Meta Description', 'Created At', 'Action'];
   return (
     <div className='page-body'>
             <Breadcrumb heading={'Category'} subHeading={'Services'} LastHeading={'All Category'} backLink={'/service/main-category'} />
@@ -61,12 +61,11 @@ function AllMainServiceCategory() {
                     elements={currentServices.map((category, index) => (
                         <tr key={category._id}>
                             <td>{index + 1}</td>
-                            <td className=' fw-bolder'>{category.name}</td>
+                            <td className=' fw-bolder'>{category.name || "Not-Available"}</td>
+                            <td className=' fw-bolder'>{category.metaTitle ? category.metaTitle.substring(0, 14) + '....' : "Not-Available"}</td>
+                            <td className=' fw-bolder'>{category.metaDescription ? category.metaDescription.substring(0, 14) + '....' : "Not-Available"}</td>
                             
-
-
-
-                            <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td>
+                            <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>
 
                             <td className='fw-bolder'>
                                 <div className="product-action">

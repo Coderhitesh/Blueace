@@ -12,7 +12,9 @@ function AddServices() {
         name: '',
         description: '',
         serviceBanner: null,
-        subCategoryId: ''
+        subCategoryId: '',
+        metaTitle: '',
+        metaDescription: '',
     });
     const editor = useRef(null);
     const [loading, setLoading] = useState(false);
@@ -80,6 +82,8 @@ function AddServices() {
         payload.append('name', formData.name);
         payload.append('description', formData.description);
         payload.append('subCategoryId', formData.subCategoryId);
+        payload.append('metaTitle', formData.metaTitle);
+        payload.append('metaDescription', formData.metaDescription);
 
         if (formData.serviceImage) {
             payload.append('serviceImage', formData.serviceImage);
@@ -180,7 +184,7 @@ function AddServices() {
                                     <img src={serviceImagePreviews} alt="Icon Preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                                 </div>
                             )}
-                            <label className="form-label f-w-600 mb-2">Upload Icon (Single Image)</label>
+                            <label className="form-label f-w-600 mb-2">Upload Service Image (Single Image)</label>
                             <div className="dropzone card" onClick={() => document.getElementById('iconInput').click()} style={{ cursor: 'pointer' }}>
                                 <div className="dz-message needsclick text-center p-4">
                                     <i className="fa-solid fa-cloud-arrow-up mb-3"></i>
@@ -210,7 +214,7 @@ function AddServices() {
                                     <img src={serviceBannerPreview} alt="Icon Preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                                 </div>
                             )}
-                            <label className="form-label f-w-600 mb-2">Upload Category Slider Image</label>
+                            <label className="form-label f-w-600 mb-2">Upload Service Slider Image</label>
                             <div className="dropzone card" onClick={() => document.getElementById('fileInput').click()} style={{ cursor: 'pointer' }}>
                                 <div className="dz-message needsclick text-center p-4">
                                     <i className="fa-solid fa-cloud-arrow-up mb-3"></i>
@@ -229,6 +233,35 @@ function AddServices() {
                                 accept="image/*"
                             />
                         </div>
+                    </div>
+                    
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Title"
+                            name='metaTitle'
+                            value={formData.metaTitle}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaTitle'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Description"
+                            name='metaDescription'
+                            value={formData.metaDescription}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaDescription'
+                        ></textarea>
                     </div>
 
                     {/* Submit Button */}

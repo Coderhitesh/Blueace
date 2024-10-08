@@ -28,6 +28,12 @@ const serviceCategorySchema = new mongoose.Schema({
     mainCategoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MainCategory',
+    },
+    metaTitle: {
+        type: String
+    },
+    metaDescription: {
+        type: String
     }
 }, { timestamps: true });
 

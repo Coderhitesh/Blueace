@@ -6,7 +6,11 @@ import Input from '../../components/Forms/Input';
 import toast from 'react-hot-toast';
 
 function AddMainServiceCategory() {
-    const [formData, setFormData] = useState({ name: '' });
+    const [formData, setFormData] = useState({ 
+        name: '',
+        metaTitle: '',
+        metaDescription: '',
+    });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
@@ -21,12 +25,14 @@ function AddMainServiceCategory() {
     
         const payload = {
             name: formData.name.trim(), // Trim spaces
+            metaTitle: formData.metaTitle,
+            metaDescription: formData.metaDescription
         };
     
-        console.log('Payload before sending:', payload); // Check payload content
+        // console.log('Payload before sending:', payload); // Check payload content
     
         try {
-            console.log('Sending request...');
+            // console.log('Sending request...');
             const res = await axios.post('http://localhost:7000/api/v1/create-service-main-category', payload, {
                 headers: {
                     'Content-Type': 'application/json', // Set content type to JSON
@@ -47,12 +53,12 @@ function AddMainServiceCategory() {
 
     return (
         <div>
-            <Breadcrumb heading={'Service'} subHeading={'Category'} LastHeading={'Create Category'} backLink={'/service/main-category'} />
+            <Breadcrumb heading={'Category'} subHeading={'Service'} LastHeading={'Create Category'} backLink={'/service/main-category'} />
             {error && <div className="alert alert-danger">{error}</div>}
             <FormGroups onSubmit={handleSubmit} Elements={
                 <div className='row'>
-                    <div className="col-md-6">
-                        <label htmlFor="name">Category</label>
+                    <div className="col-md-12">
+                        <label htmlFor="name" className='form-label'>Category</label>
                         <Input
                             type='text'
                             placeholder='Enter Category Name'
@@ -61,6 +67,34 @@ function AddMainServiceCategory() {
                             onChange={handleChange}
                             required={true}
                         />
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Title"
+                            name='metaTitle'
+                            value={formData.metaTitle}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaTitle'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Description"
+                            name='metaDescription'
+                            value={formData.metaDescription}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaDescription'
+                        ></textarea>
                     </div>
                     <div className='col-md-10 mx-auto mt-4'>
                         <button className={`btn w-100 py-3 btn-primary ${loading ? 'disabled' : ''}`} disabled={loading} type='submit'>
