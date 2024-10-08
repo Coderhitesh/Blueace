@@ -18,6 +18,7 @@ import VendorRegistration from "./service-provider/VendorRegistration"
 import MaintenanceofAHUandFCU from "./Pages/services/MaintenanceofAHUandFCU"
 import Category from "./Pages/Category/Category"
 import SubCategory from "./Pages/SubCateogry/SubCategory"
+import Register from "./Components/Register/Register"
 
 function App() {
 
@@ -37,11 +38,12 @@ function App() {
           <Route path="/doctor-detail" element={<DoctorSinglePage />} />
           <Route path="/job-detail" element={<JobSingle />} />
           <Route path="/*" element={<Error />} />
-          <Route path="/category/:name" element={<Category />} />
-          <Route path="/sub-category/:title" element={<SubCategory />} />
+          <Route path="/sub-category/:name" element={<Category />} />
+          <Route path="/service/:title" element={<SubCategory />} />
           {/* <Route path="/Make-a-Service-Provider" element={<RegisterServiceProvider />} /> */}
           <Route path="/vendor-registration" element={<VendorRegistration />} />
           <Route path="/maintenance-ahu-fcu" element={<MaintenanceofAHUandFCU />} />
+          <Route path="/register" element={<Register />} />
 
           
         </Routes>

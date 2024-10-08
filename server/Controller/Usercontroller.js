@@ -5,16 +5,40 @@ const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
         console.log("I am hit")
-        const { FullName, Email, ContactNumber, Password } = req.body;
+        const { FullName, Email, ContactNumber, Password, latitude, longitude, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
 
         // Check if all required fields are provided
-        if (!FullName || !Email || !ContactNumber || !Password) {
-            console.log("i am error")
-            return res.status(403).json({
+        // if (!FullName || !Email || !ContactNumber || !Password) {
+        //     console.log("i am error")
+        //     return res.status(403).json({
+        //         success: false,
+        //         msg: 'Please Fill All Required Fields'
+        //     });
+        // }
+
+        if (!latitude || !longitude) {
+            return res.status(400).json({
                 success: false,
-                msg: 'Please Fill All Required Fields'
+                msg: 'Location data (latitude and longitude) is required'
             });
         }
+
+        const emptyField = [];
+        if (!FullName) emptyField.push('FullName');
+        if (!Email) emptyField.push('Email');
+        if (!ContactNumber) emptyField.push('ContactNumber');
+        if (!City) emptyField.push('City');
+        if (!PinCode) emptyField.push('PinCode');
+        if (!HouseNo) emptyField.push('HouseNo');
+        if (!Street) emptyField.push('Street');
+        if (!NearByLandMark) emptyField.push('NearByLandMark');
+        if (emptyField.length > 0) {
+            return res.status(400).json({
+                success: false,
+                msg: `Please fill all the required fields: ${emptyField.join(', ')}`
+            })
+        }
+
 
         // Check if email or contact number already exists
         const existingUserEmail = await User.findOne({ Email });
@@ -47,6 +71,13 @@ exports.register = async (req, res) => {
             Password,
             Email,
             ContactNumber,
+            latitude,
+            longitude,
+            City,
+            PinCode,
+            HouseNo,
+            Street,
+            NearByLandMark
         };
 
         // Create new user instance

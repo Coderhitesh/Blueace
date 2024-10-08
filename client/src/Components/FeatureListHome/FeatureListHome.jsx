@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ahu from './ahu.webp';
 import fancoil from './fancoil-unit.webp';
@@ -23,8 +23,31 @@ import { FreeMode, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/pagination';
+import axios from 'axios';
 
 function FeatureListHome() {
+	const [allService, setAllService] = useState([])
+
+	const fetchServiceData = async () => {
+		try {
+			const res = await axios.get('http://localhost:7000/api/v1/get-all-service');
+			let data = res.data.data;
+
+			for (let i = data.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[data[i], data[j]] = [data[j], data[i]];
+			}
+
+			setAllService(data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchServiceData();
+	}, []);
+
 	return (
 		<>
 			<div className='container-fluid mb-5 product-list'>
@@ -71,577 +94,55 @@ function FeatureListHome() {
 						modules={[FreeMode, Pagination]}
 						className="mySwiper"
 					>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
+						{
+							allService && allService.slice(0,12).map((item, index) => (
+								<SwiperSlide key={index}>
+									<div class="Goodup-grid-wrap">
+										<div class="Goodup-grid-upper">
 
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={ahu} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
+											<div class="Goodup-grid-thumb">
+												<Link to={`/service/${item.name}`} class="d-block text-center m-auto"><img src={item.serviceImage?.url} class="img-fluid" alt={item.name} /></Link>
 											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
+											{/* <div class="Goodup-rating overlay">
+												<div class="Goodup-pr-average high">4.8</div>
+												<div class="Goodup-aldeio">
+													<div class="Goodup-rates">
+														<i class="fas fa-star"></i>
+														<i class="fas fa-star"></i>
+														<i class="fas fa-star"></i>
+														<i class="fas fa-star"></i>
+														<i class="fas fa-star"></i>
+													</div>
+													<div class="Goodup-all-review"><span>Reviews</span></div>
+												</div>
+											</div> */}
 										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Air Handling Unit </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
+										<div class="Goodup-grid-fl-wrap">
+											<div class="Goodup-caption px-3 py-2">
+												<h4 class="mb-0 ft-medium medium"><Link to={`/service/${item.name}`} class="text-dark fs-md fw-bold">{item.name}</Link></h4>
+												{/* <div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div> */}
+												<div class="Goodup-middle-caption mt-3">
+													{/* <p>At vero eos et accusamus et iusto </p> */}
+												</div>
+											</div>
+											<div class="Goodup-grid-footer py-2 px-3">
+												<div class="Goodup-ft-first">
+													<Link to={`/service/${item.name}`} class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
+												</div>
+												<div class="Goodup-ft-last">
+													<div class="Goodup-inline">
+														{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
+														<div class="Goodup-bookmark-btn "><button type="button"><Link to={`/service/${item.name}`}>Get Enquiry <i class="lni lni-envelope position-absolute"></i></Link></button></div>
 
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
+								</SwiperSlide>
+							))
+						}
 
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={fancoil} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Fan Coil Unit (FCU)  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={chillerWaterCassets} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Chilled Water Cassette  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={highWallFancoil} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">High Wall Fan Coil Unit  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={GrillDuffusser} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Grills and Diffusers  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={chillerWaterp} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Chiller Water Plants  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={ibrSteam} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Ibr Steam Boilers </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={coolingHeating} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Cooling & Heating Coil </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={dxCooling} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">DX Cooling System  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={vrfHitachi} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">VRV / VRF Hitachi Make   </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={DuctableACHitachi} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Ductable AC Hitachi Make </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={hitachiMakeWallMount} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Hitachi Make  Wall Mounted Split AC Units  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
-						<SwiperSlide>
-							<div class="Goodup-grid-wrap">
-								<div class="Goodup-grid-upper">
-
-									<div class="Goodup-grid-thumb">
-										<Link to={'#'} class="d-block text-center m-auto"><img src={heatPump} class="img-fluid" alt="" /></Link>
-									</div>
-									<div class="Goodup-rating overlay">
-										<div class="Goodup-pr-average high">4.8</div>
-										<div class="Goodup-aldeio">
-											<div class="Goodup-rates">
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-												<i class="fas fa-star"></i>
-											</div>
-											<div class="Goodup-all-review"><span>Reviews</span></div>
-										</div>
-									</div>
-								</div>
-								<div class="Goodup-grid-fl-wrap">
-									<div class="Goodup-caption px-3 py-2">
-										<h4 class="mb-0 ft-medium medium"><Link to={''} class="text-dark fs-md fw-bold">Heat Pump  </Link></h4>
-										<div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div>
-										<div class="Goodup-middle-caption mt-3">
-											{/* <p>At vero eos et accusamus et iusto </p> */}
-										</div>
-									</div>
-									<div class="Goodup-grid-footer py-2 px-3">
-										<div class="Goodup-ft-first">
-											<Link to="" class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
-										</div>
-										<div class="Goodup-ft-last">
-											<div class="Goodup-inline">
-												{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-												<div class="Goodup-bookmark-btn "><button type="button">Get Enquiry <i class="lni lni-envelope position-absolute"></i></button></div>
-
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</SwiperSlide>
 
 					</Swiper>
 				</div>

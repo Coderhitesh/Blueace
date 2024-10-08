@@ -17,23 +17,6 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         match: [/\S+@\S+\.\S+/, 'Please provide a valid email address']
     },
-    DeliveryAddress: {
-        City: {
-            type: String,
-        },
-        PinCode: {
-            type: String,
-        },
-        HouseNo: {
-            type: String,
-        },
-        Street: {
-            type: String,
-        },
-        NearByLandMark: {
-            type: String,
-        },
-    },
     Password: {
         type: String,
         required: [true, "Please provide a Password"]
@@ -56,7 +39,32 @@ const UserSchema = new mongoose.Schema({
         type:String,
         enum: ['Normal', 'Corporate'],
         default: 'Normal'
-    }
+    },
+    latitude: {
+        type: String
+    },
+    longitude: {
+        type: String
+    },
+    City: {
+        type: String,
+    },
+    PinCode: {
+        type: String,
+        match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
+    },
+    HouseNo: {
+        type: String,
+        required: true
+    },
+    Street: {
+        type: String,
+        required: true
+    },
+    NearByLandMark: {
+        type: String,
+        required: true
+    },
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {
@@ -72,6 +80,8 @@ UserSchema.pre('save', async function (next) {
         return next(error);
     }
 });
+
+UserSchema.index({ latitude: 1, longitude: 1 });
 
 // Method to compare passwords
 UserSchema.methods.comparePassword = function (candidatePassword) {

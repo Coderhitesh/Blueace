@@ -114,7 +114,7 @@ function Category() {
                         {
                             service && service.map((item, index) => (
                                 <div className='col-lg-4 mt-5' key={index}>
-                                    <Link to={`/sub-category/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>
+                                    <Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>
                                         <div className='card p-1 border-0'>
                                             <img src={item.serviceImage?.url} alt={item.name} />
                                             <h4 className='fw-bold mt-3 mb-3'>{item.name}</h4>
