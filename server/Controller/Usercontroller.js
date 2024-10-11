@@ -5,23 +5,7 @@ const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
         console.log("I am hit")
-        const { FullName, Email, ContactNumber, Password, latitude, longitude, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
-
-        // Check if all required fields are provided
-        // if (!FullName || !Email || !ContactNumber || !Password) {
-        //     console.log("i am error")
-        //     return res.status(403).json({
-        //         success: false,
-        //         msg: 'Please Fill All Required Fields'
-        //     });
-        // }
-
-        if (!latitude || !longitude) {
-            return res.status(400).json({
-                success: false,
-                msg: 'Location data (latitude and longitude) is required'
-            });
-        }
+        const { FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService } = req.body;
 
         const emptyField = [];
         if (!FullName) emptyField.push('FullName');
@@ -71,13 +55,12 @@ exports.register = async (req, res) => {
             Password,
             Email,
             ContactNumber,
-            latitude,
-            longitude,
             City,
             PinCode,
             HouseNo,
             Street,
-            NearByLandMark
+            NearByLandMark,
+            RangeWhereYouWantService
         };
 
         // Create new user instance
@@ -181,17 +164,19 @@ exports.register = async (req, res) => {
         // Handle other errors
         return res.status(500).json({
             success: false,
-            message: 'Internal Server Error'
+            message: 'Internal Server Error in user registration'
         });
     }
 };
 
 exports.login = async (req, res) => {
     const { Email, Password } = req.body;
+    // console.log('Email',Email)
 
     try {
         // Check if user exists
         const user = await User.findOne({ Email });
+        // console.log(user)
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -339,20 +324,20 @@ exports.passwordChangeRequest = async (req, res) => {
 
 
 exports.verifyOtpAndChangePassword = async (req, res) => {
-    const { Email, OTP, NewPassword } = req.body;
+    const { Email, PasswordChangeOtp, NewPassword } = req.body;
 
     try {
         // Check if OTP is valid and not expired
         const user = await User.findOne({
             Email,
-            PasswordChangeOtp: OTP,
+            PasswordChangeOtp: PasswordChangeOtp,
             OtpExpiredTime: { $gt: Date.now() } // Check if OTP is not expired
         });
 
         if (!user) {
             return res.status(400).json({
                 success: false,
-                msg: 'Invalid OTP or OTP expired'
+                msg: 'Invalid OTP or OTP has expired'
             });
         }
         console.log(user)

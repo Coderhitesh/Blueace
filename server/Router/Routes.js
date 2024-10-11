@@ -11,6 +11,7 @@ const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, dele
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
+const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP } = require('../Controller/vendor.Controller')
 
 // user routers 
 
@@ -86,7 +87,7 @@ router.put('/update-faq-banner/:_id',upload.single('bannerImage'),updateFAQBanne
 router.delete('/delete-faq-banner/:_id',deleteFAQBanner)
 router.put('/update-faq-banner-active-status/:_id',updateFAQBannerStatus)
 
-// Route fro faq content 
+// Route for faq content 
 
 router.post('/create-faq-content',createFaqContent)
 router.get('/get-all-faq-content',getFaqContent)
@@ -94,7 +95,7 @@ router.get('/get-single-faq-content/:_id',getSingleFaqContent)
 router.delete('/delete-faq-content/:_id',deleteFaqContent)
 router.put('/update-faq-content/:_id',updateFaqContent)
 
-// Route fro faq content 
+// Route for faq content 
 
 router.post('/create-banner',upload.single('bannerImage'),createBanner)
 router.get('/get-all-banner',getBanner)
@@ -102,5 +103,20 @@ router.get('/get-single-banner/:_id',getSingleBanner)
 router.delete('/delete-banner/:_id',deleteBanner)
 router.put('/update-banner/:_id',upload.single('bannerImage'),updateBanner)
 router.put('/update-banner-active-status/:_id',updateBannerActiveStatus)
+
+// Route for vendor
+
+router.post('/register-vendor', upload.fields([
+    { name: 'panImage', maxCount: 1 },
+    { name: 'adharImage', maxCount: 1 },
+    { name: 'gstImage', maxCount: 1 },
+    { name: 'memberAdharImage', maxCount: 10 } // Allow up to 10 members
+]), registerVendor);
+
+router.post('/vendor-loging',vendorLogin)
+router.get('/vendor-logout',vendorLogout)
+router.post('vendor-password-change',vendorPasswordChangeRequest)
+router.post('vendor-verify-otp',VendorVerifyOtpAndChangePassword)
+router.post('vendor-resend-otp',vendorResendOTP)
 
 module.exports = router;

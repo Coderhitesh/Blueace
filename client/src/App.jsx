@@ -19,6 +19,7 @@ import MaintenanceofAHUandFCU from "./Pages/services/MaintenanceofAHUandFCU"
 import Category from "./Pages/Category/Category"
 import SubCategory from "./Pages/SubCateogry/SubCategory"
 import Register from "./Components/Register/Register"
+import Forget from "./Components/Auth/Forget"
 
 function App() {
 
@@ -44,6 +45,7 @@ function App() {
           <Route path="/vendor-registration" element={<VendorRegistration />} />
           <Route path="/maintenance-ahu-fcu" element={<MaintenanceofAHUandFCU />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<Forget />} />
 
           
         </Routes>

@@ -1,6 +1,20 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
+const rangeSchema = new mongoose.Schema({
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point' 
+        },
+        coordinates: {
+            type: [Number], // [longitude, latitude]
+            required: true
+        }
+    }
+})
+
 const UserSchema = new mongoose.Schema({
     FullName: {
         type: String,
@@ -40,12 +54,6 @@ const UserSchema = new mongoose.Schema({
         enum: ['Normal', 'Corporate'],
         default: 'Normal'
     },
-    latitude: {
-        type: String
-    },
-    longitude: {
-        type: String
-    },
     City: {
         type: String,
     },
@@ -65,6 +73,9 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    RangeWhereYouWantService: [
+        rangeSchema
+    ]
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {
@@ -81,7 +92,7 @@ UserSchema.pre('save', async function (next) {
     }
 });
 
-UserSchema.index({ latitude: 1, longitude: 1 });
+UserSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });
 
 // Method to compare passwords
 UserSchema.methods.comparePassword = function (candidatePassword) {
