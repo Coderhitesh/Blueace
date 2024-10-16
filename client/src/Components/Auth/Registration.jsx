@@ -27,7 +27,7 @@ function Registration() {
     latitude: '',
     longitude: ''
   });
-  const [loading,setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   // Handle input changes
   const handleInputChange = (e) => {
@@ -106,7 +106,7 @@ function Registration() {
     } catch (err) {
       toast.error('Error registering user');
       setLoading(false)
-    }finally{
+    } finally {
       setLoading(false)
     }
   };

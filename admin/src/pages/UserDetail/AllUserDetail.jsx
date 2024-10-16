@@ -74,16 +74,6 @@ function AllUserDetail() {
                                     <option value="Normal">Normal</option>
                                     <option value="Corporate">Corporate</option>
                                 </select>
-
-
-                                {/* <select
-                                    value={category.UserType || 'Normal'}
-                                    onChange={(e) => handleUserTypeChange(category._id, e.target.value)}
-                                    className="form-select"
-                                >
-                                    <option value="Normal">Normal</option>
-                                    <option value="Corporate">Corporate</option>
-                                </select> */}
                             </td>
 
                             <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>
@@ -105,7 +95,7 @@ function AllUserDetail() {
                     currentPage={currentPage}
                     paginate={setCurrentPage}
                     href=""
-                    text="Add User"
+                    text=""
                     errorMsg=""
                     handleOpen={() => { }}
                 />

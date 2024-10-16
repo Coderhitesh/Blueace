@@ -20,6 +20,9 @@ import Category from "./Pages/Category/Category"
 import SubCategory from "./Pages/SubCateogry/SubCategory"
 import Register from "./Components/Register/Register"
 import Forget from "./Components/Auth/Forget"
+import AddMembersForm from "./service-provider/AddMembersForm "
+import MemberShipPlan from "./Pages/MemberShipPlan/MemberShipPlan"
+// import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
 
@@ -46,6 +49,8 @@ function App() {
           <Route path="/maintenance-ahu-fcu" element={<MaintenanceofAHUandFCU />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<Forget />} />
+          <Route path="/add-vendor-member/:id" element={<AddMembersForm />} />
+          <Route path="/membership-plan/:vendorId" element={<MemberShipPlan />} />
 
           
         </Routes>

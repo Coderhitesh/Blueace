@@ -251,6 +251,7 @@ exports.userDetails = async (req, res) => {
         res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
+
 exports.passwordChangeRequest = async (req, res) => {
     try {
         const { Email, NewPassword } = req.body;

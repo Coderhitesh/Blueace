@@ -11,7 +11,8 @@ const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, dele
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
-const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP } = require('../Controller/vendor.Controller')
+const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay } = require('../Controller/vendor.Controller')
+const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
 
 // user routers 
 
@@ -110,13 +111,25 @@ router.post('/register-vendor', upload.fields([
     { name: 'panImage', maxCount: 1 },
     { name: 'adharImage', maxCount: 1 },
     { name: 'gstImage', maxCount: 1 },
-    { name: 'memberAdharImage', maxCount: 10 } // Allow up to 10 members
+    // { name: 'memberAdharImage', maxCount: 10 } // Allow up to 10 members
 ]), registerVendor);
-
+router.post('/register-vendor-member/:vendorId', upload.fields([{ name: 'memberAdharImage', maxCount: 10 }]), addVendorMember);
+router.post('/member-ship-plan/:vendorId', memberShipPlanGateWay);
 router.post('/vendor-loging',vendorLogin)
 router.get('/vendor-logout',vendorLogout)
-router.post('vendor-password-change',vendorPasswordChangeRequest)
-router.post('vendor-verify-otp',VendorVerifyOtpAndChangePassword)
-router.post('vendor-resend-otp',vendorResendOTP)
+router.post('/vendor-password-change',vendorPasswordChangeRequest)
+router.post('/vendor-verify-otp',VendorVerifyOtpAndChangePassword)
+router.post('/vendor-resend-otp',vendorResendOTP)
+router.get('/all-vendor',getAllVendor)
+router.put('/update-deactive-status/:_id',updateDeactive)
+router.delete('/delete-vendor/:_id',deleteVendor)
+
+// Routes for membership plan 
+
+router.post('/create-membership-plan',createMemberShipPlan)
+router.get('/get-all-membership-plan',getAllMemberShipPlan)
+router.get('/get-single-membership-plan/:_id',getSingleMemberShipPlan)
+router.delete('/delete-membership-plan/:_id',deleteMemberShipPlan)
+router.put('/update-membership-plan/:_id',updateMemberShipPlan)
 
 module.exports = router;

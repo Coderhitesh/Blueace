@@ -23,7 +23,7 @@ const rangeSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ['Point'],
-            default: 'Point' 
+            default: 'Point'
         },
         coordinates: {
             type: [Number], // [longitude, latitude]
@@ -126,12 +126,26 @@ const VendorSchema = new mongoose.Schema({
     vendorImage: {
         url: {
             type: String,
-            required: true
+            // required: true
         },
         public_id: {
             type: String,
-            required: true
+            // required: true
         }
+    },
+    isDeactive: {
+        type: Boolean,
+        default: false
+    },
+    memberShipPlan: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'MembershipPlan'
+    },
+    razorpayOrderId: {
+        type: String
+    },
+    memberShipPrice: {
+        type: Number
     }
 }, { timestamps: true })
 

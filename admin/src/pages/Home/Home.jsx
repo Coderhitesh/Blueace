@@ -29,6 +29,10 @@ import AllMarquee from '../Marquee/AllMarquee'
 import AddMarquee from '../Marquee/AddMarquee'
 import EditMarquee from '../Marquee/EditMarquee'
 import AllUserDetail from '../UserDetail/AllUserDetail'
+import AllVendors from '../VendorDetails/AllVendors'
+import AllMemberShipPlan from '../MemberShipPlan/AllMemberShipPlan'
+import AddMemberShipPlan from '../MemberShipPlan/AddMemberShipPlan'
+import EditMemberShipPlan from '../MemberShipPlan/EditMemberShipPlan'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -84,6 +88,14 @@ const Home = () => {
 
                         {/* user route here  */}
                         <Route path='/users/all-users' element={<AllUserDetail />} />
+
+                        {/* Vendor route here  */}
+                        <Route path='/vendors/all-vendor' element={<AllVendors />} />
+
+                        {/* Vendor membership plan route here  */}
+                        <Route path='/vendors/all-membership-plan' element={<AllMemberShipPlan />} />
+                        <Route path='/vendors/add-membership-plan' element={<AddMemberShipPlan />} />
+                        <Route path='/vendors/edit-membership-plan/:id' element={<EditMemberShipPlan />} />
 
                     </Routes>
                 </div>
