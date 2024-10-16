@@ -2,11 +2,36 @@ import React, { useEffect, useState } from 'react';
 import './membership.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import razerPay from 'razorpay'
 
 function MemberShipPlan() {
     const { vendorId } = useParams(); // Extract vendorId from URL parameters
     const [price, setPrice] = useState([]); // State to hold the membership plans
+    const [vendorData, setVendorData] = useState({
+        ownerName: '',
+        ownerNumber: '',
+        registerEmail: ''
+    })
+
+    // console.log('vendorData',vendorData)
+
+    const fetchVendorDetail = async () => {
+        try {
+            const res = await axios.get('http://localhost:7000/api/v1/all-vendor')
+            const allVendorData = res.data.data
+            const filterVendor = allVendorData.filter((item) => item._id === vendorId)
+            setVendorData({
+                ownerName: filterVendor[0].ownerName,
+                ownerNumber: filterVendor[0].ownerNumber,
+                registerEmail: filterVendor[0].registerEmail
+            })
+        } catch (error) {
+            console.log("Internal Server Error in fetching vendor detail", error)
+        }
+    }
+
+    useEffect(() => {
+        fetchVendorDetail()
+    }, [vendorId])
 
     // Fetch all membership plans
     const fetchMemberShipPlan = async () => {
@@ -18,37 +43,59 @@ function MemberShipPlan() {
         }
     };
 
+    // Dynamically load the Razorpay script
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     // Handle submission of selected membership plan for a vendor
-    const handleSubmit = async (vendorId, planId) => {
+    const handleSubmit = async (vendorId, planId, planPrice) => {
         try {
+            // Make sure the Razorpay script is loaded
+            const scriptLoaded = await loadRazorpayScript();
+            if (!scriptLoaded) {
+                alert('Failed to load Razorpay SDK. Please check your connection.');
+                return;
+            }
+
+            // Create the membership plan order
             const { data } = await axios.post(`http://localhost:7000/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
+            console.log("Orders", data.data)
             const order = data.data.razorpayOrder;
 
-            const options = {
-                key: 'rzp_test_cz0vBQnDwFMthJ', // Replace with your Razorpay key_id
-                amount: '50000', // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-                currency: 'INR',
-                name: 'Acme Corp',
-                description: 'Test Transaction',
-                order_id: order.id, // This is the order_id created in the backend
-                callback_url: 'http://localhost:3000/payment-success', // Your success URL
-                prefill: {
-                    name: 'Gaurav Kumar',
-                    email: 'gaurav.kumar@example.com',
-                    contact: '9999999999'
-                },
-                theme: {
-                    color: '#F37254'
-                },
-            };
+            // Razorpay options
+            if (order) {
 
-            const rzp = new razerPay(options);
-            rzp.open();
+                const options = {
+                    key: 'rzp_test_cz0vBQnDwFMthJ',
+                    amount: planPrice * 100,
+                    currency: 'INR',
+                    name: 'Blueace',
+                    description: 'Purchase Membership Plan',
+                    order_id: order?.id || '',
+                    callback_url: "http://localhost:7000/api/v1/payment-verify",
+                    prefill: {
+                        name: vendorData.ownerName, // Prefill customer data
+                        email: vendorData.registerEmail,
+                        contact: vendorData.ownerNumber
+                    },
+                    theme: {
+                        color: '#F37254'
+                    },
+                };
 
-            // console.log(object)
-            console.log('Successfully purchased membership plan:', res.data);
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+            }
+
         } catch (error) {
             console.log('Internal server error in buying membership plan', error);
         }
@@ -85,7 +132,7 @@ function MemberShipPlan() {
                                             }
                                         </ul>
                                         <a
-                                            onClick={() => handleSubmit(vendorId, plan._id)} // Pass vendorId and plan._id
+                                            onClick={() => handleSubmit(vendorId, plan._id, plan.price)} // Pass vendorId and plan._id
                                             className="price_btn"
                                             style={{ cursor: 'pointer' }} // Make the button look clickable
                                         >

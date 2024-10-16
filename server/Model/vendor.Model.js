@@ -144,8 +144,18 @@ const VendorSchema = new mongoose.Schema({
     razorpayOrderId: {
         type: String
     },
+    transactionId: {
+        type: String
+    },
+    PaymentStatus:{
+        type:String,
+        default:'pending' 
+    },
     memberShipPrice: {
         type: Number
+    },
+    paymentMethod:{
+        type:String
     }
 }, { timestamps: true })
 

@@ -11,7 +11,7 @@ const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, dele
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
-const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay } = require('../Controller/vendor.Controller')
+const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
 
 // user routers 
@@ -131,5 +131,9 @@ router.get('/get-all-membership-plan',getAllMemberShipPlan)
 router.get('/get-single-membership-plan/:_id',getSingleMemberShipPlan)
 router.delete('/delete-membership-plan/:_id',deleteMemberShipPlan)
 router.put('/update-membership-plan/:_id',updateMemberShipPlan)
+
+//Paymnet gateway routes
+router.post('/payment-verify',PaymentVerify)
+
 
 module.exports = router;

@@ -3,6 +3,10 @@ const { uploadImage, deleteImageFromCloudinary } = require('../Utils/Cloudnary')
 const sendEmail = require('../Utils/SendEmail');
 const sendToken = require('../Utils/SendToken');
 const fs = require('fs').promises;
+const axios = require('axios')
+
+
+const crypto = require('crypto')
 const MembershipPlan = require('../Model/memberShip.Model')
 const Razorpay = require('razorpay');
 require('dotenv').config()
@@ -391,13 +395,14 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 message: 'Membership plan not found.',
             });
         }
-
+        console.log(foundMembershipPlan)
         // Update vendor's membership plan
         vendor.memberShipPlan = memberShipPlan;
 
-        // If the price is 0, save the vendor without payment
-        if (foundMembershipPlan.price === 0) {
+        if (foundMembershipPlan.price === 0 || foundMembershipPlan.name === 'Free' || foundMembershipPlan.name === 'free') {
+            vendor.PaymentStatus = 'paid'
             await vendor.save();
+            console.log("I am Done with free")
             return res.status(200).json({
                 success: true,
                 message: 'Membership plan updated successfully with free plan.',
@@ -405,8 +410,8 @@ exports.memberShipPlanGateWay = async (req, res) => {
             });
         }
 
-        // Handle cases where the price is not valid (e.g., missing or not a number)
         const planPrice = foundMembershipPlan.price;
+        console.log("Plane", planPrice)
         if (!planPrice && planPrice !== 0) {
             return res.status(400).json({
                 success: false,
@@ -414,13 +419,11 @@ exports.memberShipPlanGateWay = async (req, res) => {
             });
         }
 
-        // If the price is greater than 0, create Razorpay order
         if (planPrice) {
             const razorpayOptions = {
-                amount: planPrice * 100, // Razorpay works in paise, so multiply by 100 for INR
+                amount: planPrice * 100 || 5000000,
                 currency: 'INR',
-                // receipt: `receipt_order_${vendorId}_${Date.now()}`, // Unique receipt identifier
-                payment_capture: 1, // Automatically capture the payment
+                payment_capture: 1,
             };
 
             const razorpayOrder = await razorpayInstance.orders.create(razorpayOptions);
@@ -457,6 +460,80 @@ exports.memberShipPlanGateWay = async (req, res) => {
         });
     }
 };
+
+
+exports.PaymentVerify = async (req, res) => {
+    try {
+
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
+        console.log(req.body)
+
+        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid request',
+            })
+        }
+
+        const genreaterSignature = crypto.createHash('SHA256', {
+            razorpay_payment_id,
+            razorpay_order_id,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
+        }).update(process.env.RAZORPAY_KEY_SECRET).digest('hex')
+
+        // console.log(genreaterSignature)
+
+        if (!genreaterSignature === razorpay_signature) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid signature',
+            })
+        }
+
+        const paymentDetails = await axios.get(`https://api.razorpay.com/v1/payments/${razorpay_payment_id}`, {
+            auth: {
+                username: process.env.RAZORPAY_KEY_ID,
+                password: process.env.RAZORPAY_KEY_SECRET,
+            }
+        });
+
+     
+        const { method, status, bank, wallet, card_id } = paymentDetails.data;
+
+        // If payment is not successful, handle failure
+        if (status !== 'captured') {
+            return res.redirect(`http://localhost:5174/vendors/payment-failure?error=Payment failed via ${method || 'unknown method'}`);
+        }
+
+        // Find the order in the database
+        const findOrder = await Vendor.findOne({ razorpayOrderId: razorpay_order_id });
+        if (!findOrder) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found.',
+            });
+        }
+
+        // Update order details with payment status and method
+        findOrder.transactionId = razorpay_payment_id;
+        findOrder.PaymentStatus = 'paid';
+        findOrder.paymentMethod = method; 
+        
+        await findOrder.save();
+
+
+        res.redirect('http://localhost:5174/vendors/all-vendor')
+    } catch (error) {
+        console.log(error)
+        res.redirect(`https://www.behance.net/gallery/96894417/Pricing-Plan-UI-Design/modules/559496241?error=${error?.message || "Internal server Error"}`)
+
+        // res.status(501).json({
+        //     success: false,
+        //     message: 'Payment verified failed',
+        // })
+    }
+}
+
 
 exports.vendorLogin = async (req, res) => {
     try {
