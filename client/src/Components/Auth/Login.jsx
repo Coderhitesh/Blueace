@@ -36,11 +36,11 @@ function Login() {
                 }
             });
 
-            // console.log(res.data)
+            console.log(res.data)
 
             // Save token and other data (if necessary)
             sessionStorage.setItem('token', res.data.token);
-            sessionStorage.setItem('user', res.data.user);
+            sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
             // Redirect to home or another page
             // window.location.href = '/';

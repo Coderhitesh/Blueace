@@ -1,43 +1,39 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import qualityAssured from './quality-assured-logo.webp'
-import axios from 'axios'
+import { useParams } from 'react-router-dom';
+import qualityAssured from './quality-assured-logo.webp';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 function SubCategory() {
   const { title } = useParams();
-  const [allService, setAllService] = useState([])
-  // Function to convert the title to a normal format
+  const [allService, setAllService] = useState({});
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Function to format the title
   const formatTitle = (title) => {
     return title
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
-
   const newTitle = formatTitle(title);
 
-  console.log('Formatted Title:', newTitle);
-
+  // Fetch service data from the API
   const fetchServiceData = async () => {
     try {
-      const res = await axios.get(`http://localhost:7000/api/v1/get-service-by-name/${newTitle}`)
-      // console.log(res.data.data)
-      setAllService(res.data.data)
+      const res = await axios.get(`http://localhost:7000/api/v1/get-service-by-name/${newTitle}`);
+      setAllService(res.data.data);
     } catch (error) {
-      console.log('Internal server error in fetching services', error)
+      console.log('Internal server error in fetching services', error);
     }
-  }
+  };
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    })
-    fetchServiceData()
-  }, [title])
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    fetchServiceData();
+  }, [title]);
 
-  // ye hai voice recoder
-
+  // Voice Recorder Logic
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [audioChunks, setAudioChunks] = useState([]);
   const [isRecording, setIsRecording] = useState(false);
@@ -64,10 +60,7 @@ function SubCategory() {
         }
 
         // Convert blob to file and add to input
-        const file = new File([audioBlob], 'voiceNote.mp3', {
-          type: 'audio/mpeg',
-        });
-
+        const file = new File([audioBlob], 'voiceNote.mp3', { type: 'audio/mpeg' });
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         if (voiceFileInput.current) {
@@ -84,99 +77,212 @@ function SubCategory() {
     }
   };
 
+  // State for form and location
+  const userDataString = sessionStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+  const userId = userData._id;
+
+  const [formData, setFormData] = useState({
+    userId: userId,
+    serviceId: '',
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    message: '',
+    voiceNote: '',
+    serviceType: '',
+    city: '',
+    pinCode: '',
+    houseNo: '',
+    street: '',
+    nearByLandMark: '',
+    rangeWhereYouWantService: [
+      {
+        location: {
+          type: 'Point',
+          coordinates: [] // Coordinates [longitude, latitude]
+        }
+      }
+    ]
+  });
+
+  const [location, setLocation] = useState({ latitude: '', longitude: '' });
+
+  // Update formData once the serviceId is available
+  useEffect(() => {
+    if (allService._id) {
+      setFormData((prevData) => ({
+        ...prevData,
+        serviceId: allService._id
+      }));
+    }
+  }, [allService]);
+
+  // Get user location
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        },
+        (error) => {
+          toast.error('Unable to retrieve your location');
+        }
+      );
+    } else {
+      toast.error('Geolocation is not supported by this system');
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    console.log('Submitting Form Data:', formData);
+    // No need to prevent default here
+    // Make sure serviceId is available before submitting
+    if (!formData.serviceId) {
+      toast.error('Service ID not available. Please try again.');
+      return;
+    }
+
+    const updatedFormData = new FormData();
+
+    // Append form data
+    updatedFormData.append('userId', formData.userId);
+    updatedFormData.append('serviceId', formData.serviceId);
+    updatedFormData.append('fullName', formData.fullName);
+    updatedFormData.append('email', formData.email);
+    updatedFormData.append('phoneNumber', formData.phoneNumber);
+    updatedFormData.append('message', formData.message);
+    updatedFormData.append('serviceType', formData.serviceType);
+    updatedFormData.append('city', formData.city);
+    updatedFormData.append('pinCode', formData.pinCode);
+    updatedFormData.append('houseNo', formData.houseNo);
+    updatedFormData.append('street', formData.street);
+    updatedFormData.append('nearByLandMark', formData.nearByLandMark);
+
+    // Append voice note file if available
+    if (voiceFileInput.current?.files?.[0]) {
+      updatedFormData.append('voiceNote', voiceFileInput.current.files[0]);
+    }
+
+    // Append location data
+    updatedFormData.append('rangeWhereYouWantService', JSON.stringify([
+      {
+        location: {
+          type: 'Point',
+          coordinates: [location.longitude, location.latitude]
+        }
+      }
+    ]));
+
+    try {
+      await axios.post('http://localhost:7000/api/v1/make-order', updatedFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      toast.success('Order placed successfully!');
+    } catch (error) {
+      toast.error('Error placing the order');
+      console.log(error);
+    }
+  };
+
+  const handleModalSubmit = () => {
+    if (formData.serviceType && formData.houseNo && formData.street && formData.city && formData.pinCode && formData.nearByLandMark) {
+      const modal = document.getElementById('exampleModal');
+      const modalInstance = bootstrap.Modal.getInstance(modal);
+      modalInstance.hide();
+      handleSubmit();
+    } else {
+      toast.error('Please fill all fields in the address form and select a service type.');
+    }
+  };
+
+
+
+
+  useEffect(() => {
+    getLocation();
+  }, []);
 
   return (
-
     <>
-
+      {/* Main Form */}
       <div className='container mb-5'>
         <div className='row mt-5'>
           <div className='col-lg-9 col-md-9'>
             <div className='hero-image mb-3'>
-              <img src={allService?.serviceBanner?.url} className='rounded w-100' alt='Bulk Cold Stores Image' />
+              <img src={allService?.serviceBanner?.url} className='rounded w-100' alt='Service Image' />
             </div>
             <div className='services-content'>
               <div className='services-title'>
                 <h2 className='fw-bold'>{allService.name}</h2>
-                {/* <div class="services-rating d-flex"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><div class="services-review"><span><a href='#'>(4.9) Reviews</a></span></div></div> */}
               </div>
               <div className='content-body mt-3' dangerouslySetInnerHTML={{ __html: allService.description || 'No description available.' }}>
               </div>
             </div>
           </div>
 
-          {/* right sidbar */}
+          {/* Sidebar */}
           <div className='col-lg-3 col-md-3'>
             <div className='services-sidebar sticky-top'>
               <div className='card px-3 py-3'>
-                <div class="d-flex">
-                  <div class="flex-shrink-0">
-                    <img src={qualityAssured} alt="Quality log" className='img-fluid quality-logo' />
+                <div className='d-flex'>
+                  <div className='flex-shrink-0'>
+                    <img src={qualityAssured} alt='Quality log' className='img-fluid quality-logo' />
                   </div>
-                  <div class="flex-grow-1 ms-3">
+                  <div className='flex-grow-1 ms-3'>
                     <h4>Blueace India Promise</h4>
                     <ul className='promise-list'>
-                      <li><i class="fa fa-chevron-right"></i> Verified Professionals</li>
-                      <li><i class="fa fa-chevron-right"></i> Hassle Free Booking</li>
-                      <li><i class="fa fa-chevron-right"></i> Transparent Pricing</li>
+                      <li><i className='fa fa-chevron-right'></i> Verified Professionals</li>
+                      <li><i className='fa fa-chevron-right'></i> Hassle Free Booking</li>
+                      <li><i className='fa fa-chevron-right'></i> Transparent Pricing</li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              {/* chat or call area */}
-
-              <div className='contact-area mt-5'>
-                <Link to="" className='btn btn-success w-100 text-uppercase'><i class="fa-brands fa-whatsapp"></i> Whatsapp Us</Link>
-                <Link to="" className='btn btn-danger w-100 mt-3 text-uppercase'><i class="fa-solid fa-headset"></i> Get A Free Call</Link>
-              </div>
-
-              {/* get service form section */}
-
+              {/* Enquiry Form */}
               <div className='sidebar-form mt-5'>
                 <h3 className='text-white text-center'>Get Enquiry</h3>
-                <form action='' method='POST'>
+                <form onSubmit={handleSubmit}>
                   <div className='row'>
-                    <div class="mb-3 col-lg-12">
-                      <input type="text" class="form-control" id="Name" placeholder='Full Name' required />
+                    <div className='mb-3 col-lg-12'>
+                      <input type='text' name='fullName' className='form-control' placeholder='Full Name' required onChange={handleChange} />
                     </div>
-                    <div class="mb-3 col-lg-12">
-                      <input type="email" class="form-control" id="email" placeholder='Email' required />
+                    <div className='mb-3 col-lg-12'>
+                      <input type='email' name='email' className='form-control' placeholder='Email' required onChange={handleChange} />
                     </div>
-                    <div class="mb-3 col-lg-12">
-                      <input type="tel" class="form-control" id="Phone" placeholder='Phone' required />
+                    <div className='mb-3 col-lg-12'>
+                      <input type='tel' name='phoneNumber' className='form-control' placeholder='Phone' required onChange={handleChange} />
                     </div>
-                    <div class="mb-1 col-lg-12">
-                      <div className='readio-btn'>
-                        <div class="form-check mt-2">
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                          <label class="form-check-label text-white" for="flexRadioDefault1">
-                            Service
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked />
-                          <label class="form-check-label text-white" for="flexRadioDefault2">
-                            AMC
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3" checked />
-                          <label class="form-check-label text-white" for="flexRadioDefault3">
-                            New Purchase
-                          </label>
-                        </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4" checked />
-                          <label class="form-check-label text-white" for="flexRadioDefault4">
-                            Consultation
-                          </label>
-                        </div>
-                      </div>
+                    <div className='mb-3 col-lg-12'>
+                      <select
+                        className='form-select'
+                        name='serviceType'
+                        value={formData.serviceType}
+                        onChange={handleChange}
+                        required
+                      >
+                        <option value=''>Select Service Type:</option>
+                        <option value='Service'>Service</option>
+                        <option value='AMC'>AMC</option>
+                        <option value='New Purchase'>New Purchase</option>
+                        <option value='Consultation'>Consultation</option>
+                      </select>
+
                     </div>
-                    <div class="mb-3 col-lg-12">
-                      <textarea class="form-control messagearea" id="message-text" placeholder='Message' required />
-                    </div>
+
                     <div className='col-lg-12'>
                       <div className='form-group fs-6 text-white mb-2 mt-2'>
                         <label htmlFor='voiceNote col-12'>Recording Voice Note:</label>
@@ -205,56 +311,59 @@ function SubCategory() {
                         <input type='file' id='voiceFile' name='voiceFile' style={{ display: 'none' }} ref={voiceFileInput} />
                       </div>
                     </div>
-                    <div class="mb-3 col-lg-12 text-center">
-                      {/* <button type="button" class="btn btn-primary rounded">Send Message</button> */}
-                      <button type="button" class="btn btn-primary rounded" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@getbootstrap">Send Message</button>
+                    <div className='mb-3 col-lg-12'>
+                      <textarea className='form-control messagearea' name='message' placeholder='Message' required onChange={handleChange} />
+                    </div>
+                    <div className='mb-3 col-lg-12 text-center'>
+                      <button type='button' className='btn btn-primary rounded' data-bs-toggle='modal' data-bs-target='#exampleModal'>
+                        Send Message
+                      </button>
                     </div>
                   </div>
                 </form>
               </div>
-
-
             </div>
           </div>
         </div>
       </div>
 
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">New Address</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      {/* // Modal for Address Entry */}
+      <div className='modal fade' id='exampleModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+        <div className='modal-dialog'>
+          <div className='modal-content'>
+            <div className='modal-header'>
+              <h5 className='modal-title' id='exampleModalLabel'>Enter Address</h5>
+              <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
             </div>
-            <div class="modal-body">
-              <form>
-                <div className="row">
-                  <div class="col-md-6 mb-2">
-                    <label for="recipient-name" class="col-form-label">HouseNo:</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+            <div className='modal-body'>
+              <form onSubmit={handleModalSubmit}>
+                <div className='row'>
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='houseNo' className='col-form-label'>House No:</label>
+                    <input type='text' name='houseNo' className='form-control' id='houseNo' onChange={handleChange} required />
                   </div>
-                  <div class="col-md-6 mb-2">
-                    <label for="recipient-name" class="col-form-label">Street:</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='street' className='col-form-label'>Street:</label>
+                    <input type='text' name='street' className='form-control' id='street' onChange={handleChange} required />
                   </div>
-                  <div class="col-md-6 mb-2">
-                    <label for="recipient-name" class="col-form-label">City:</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='city' className='col-form-label'>City:</label>
+                    <input type='text' name='city' className='form-control' id='city' onChange={handleChange} required />
                   </div>
-                  <div class="col-md-6 mb-2">
-                    <label for="recipient-name" class="col-form-label">PinCode:</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='pinCode' className='col-form-label'>Pin Code:</label>
+                    <input type='text' name='pinCode' className='form-control' id='pinCode' onChange={handleChange} required />
                   </div>
-                  <div class="col-md-12 mb-2">
-                    <label for="recipient-name" class="col-form-label">Land Mark:</label>
-                    <input type="text" class="form-control" id="recipient-name" />
+                  <div className='col-md-12 mb-2'>
+                    <label htmlFor='nearByLandMark' className='col-form-label'>Nearby Landmark:</label>
+                    <input type='text' name='nearByLandMark' className='form-control' id='nearByLandMark' onChange={handleChange} required />
                   </div>
                 </div>
               </form>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Send message</button>
+            <div className='modal-footer'>
+              <button type='button' className='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
+              <button type='button' className='btn btn-primary' onClick={handleModalSubmit}>Submit</button>
             </div>
           </div>
         </div>

@@ -63,22 +63,22 @@ const OrderSchema = new mongoose.Schema({
             required: true // Make public_id required
         }
     },
-    City: {
+    city: {
         type: String,
     },
-    PinCode: {
+    pinCode: {
         type: String,
         match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
     },
-    HouseNo: {
+    houseNo: {
         type: String,
         required: true
     },
-    Street: {
+    street: {
         type: String,
         required: true
     },
-    NearByLandMark: {
+    nearByLandMark: {
         type: String,
         required: true
     },
