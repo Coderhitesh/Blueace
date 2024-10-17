@@ -1,7 +1,7 @@
 const User = require('../Model/UserModel');
 const SendToken = require('../Utils/SendToken');
 const SendEmail = require('../Utils/SendEmail');
-const Orders = require('../Model/OrderModel');
+// const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
         console.log("I am hit")
@@ -220,37 +220,35 @@ exports.logout = async (req, res) => {
     }
 };
 
-exports.userDetails = async (req, res) => {
-    try {
-        const userId = req.user.id;
+// exports.userDetails = async (req, res) => {
+//     try {
+//         const userId = req.user.id;
 
-        if (!userId) {
-            return res.status(401).json({ message: 'Please login to access this resource.' });
-        }
+//         if (!userId) {
+//             return res.status(401).json({ message: 'Please login to access this resource.' });
+//         }
 
-        const user = await User.findById(userId);
+//         const user = await User.findById(userId);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
-        }
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found.' });
+//         }
 
-        // Fetch all orders for the user
-        const allOrders = await Orders.find({ userId: user._id });
+//         const allOrders = await Orders.find({ userId: user._id });
 
-        // Exclude sensitive information from user details
-        const { Password, ...userDetails } = user.toObject();
+//         const { Password, ...userDetails } = user.toObject();
 
-        res.status(200).json({
-            message: 'User details and orders retrieved successfully.',
-            user: userDetails,
-            orders: allOrders
-        });
+//         res.status(200).json({
+//             message: 'User details and orders retrieved successfully.',
+//             user: userDetails,
+//             orders: allOrders
+//         });
 
-    } catch (error) {
-        console.error('Error fetching user details and orders:', error);
-        res.status(500).json({ message: 'Server error. Please try again later.' });
-    }
-};
+//     } catch (error) {
+//         console.error('Error fetching user details and orders:', error);
+//         res.status(500).json({ message: 'Server error. Please try again later.' });
+//     }
+// };
 
 exports.passwordChangeRequest = async (req, res) => {
     try {

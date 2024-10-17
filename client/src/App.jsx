@@ -22,6 +22,8 @@ import Register from "./Components/Register/Register"
 import Forget from "./Components/Auth/Forget"
 import AddMembersForm from "./service-provider/AddMembersForm "
 import MemberShipPlan from "./Pages/MemberShipPlan/MemberShipPlan"
+import SuccessPayment from "./Pages/PaymentStatusPage/SuccessPayment"
+import PaymentFailed from "./Pages/PaymentStatusPage/PaymentFailed"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -51,10 +53,12 @@ function App() {
           <Route path="/forgot-password" element={<Forget />} />
           <Route path="/add-vendor-member/:id" element={<AddMembersForm />} />
           <Route path="/membership-plan/:vendorId" element={<MemberShipPlan />} />
+          <Route path="/successfull-payment" element={<SuccessPayment />} />
+          <Route path="/failed-payment" element={<PaymentFailed />} />
 
           
         </Routes>
-        <NewsLetter />
+        {/* <NewsLetter /> */}
         <Footer />
       </BrowserRouter>
     </>

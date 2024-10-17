@@ -522,10 +522,10 @@ exports.PaymentVerify = async (req, res) => {
         await findOrder.save();
 
 
-        res.redirect('http://localhost:5174/vendors/all-vendor')
+        res.redirect('http://localhost:5173/successfull-payment')
     } catch (error) {
         console.log(error)
-        res.redirect(`https://www.behance.net/gallery/96894417/Pricing-Plan-UI-Design/modules/559496241?error=${error?.message || "Internal server Error"}`)
+        res.redirect(`http://localhost:5173/failed-payment?error=${error?.message || "Internal server Error"}`)
 
         // res.status(501).json({
         //     success: false,

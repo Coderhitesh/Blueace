@@ -73,6 +73,31 @@ const deletePdfFromCloudinary = async (public_id) => {
     }
 }
 
+// Upload Voice Note to Cloudinary
+const uploadVoiceNote = async (file) => {
+    try {
+        const result = await cloudinary.uploader.upload(file, {
+            folder: "voice-notes",      // Store in a separate folder for voice notes
+            resource_type: "video"      // Cloudinary treats audio files as "video" resource type
+        });
+        return { url: result.secure_url, public_id: result.public_id }; // Return URL and public_id
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to upload voice note');
+    }
+};
+
+// Delete Voice Note from Cloudinary
+const deleteVoiceNoteFromCloudinary = async (public_id) => {
+    try {
+        await cloudinary.uploader.destroy(public_id);
+        console.log("Voice note deleted");
+    } catch (error) {
+        console.error("Error deleting voice note from Cloudinary", error);
+        throw new Error('Failed to delete voice note from Cloudinary');
+    }
+};
+
 // const uploadPDF = async (filePath) => {
 //     try {
 //         const result = await cloudinary.uploader.upload(filePath, {
@@ -89,5 +114,5 @@ const deletePdfFromCloudinary = async (public_id) => {
 // };
 
 module.exports = {
-    uploadImage, uploadVideo, deleteImageFromCloudinary, uploadPDF, deletePdfFromCloudinary, uploadPDFTwo
+    uploadImage, uploadVideo, uploadVoiceNote, deleteVoiceNoteFromCloudinary, deleteImageFromCloudinary, uploadPDF, deletePdfFromCloudinary, uploadPDFTwo
 };
