@@ -77,13 +77,10 @@ function SubCategory() {
     }
   };
 
-  // State for form and location
-  const userDataString = sessionStorage.getItem('user');
-  const userData = JSON.parse(userDataString);
-  const userId = userData._id;
+  
 
   const [formData, setFormData] = useState({
-    userId: userId,
+    userId: '',
     serviceId: '',
     fullName: '',
     email: '',
@@ -145,9 +142,13 @@ function SubCategory() {
 
   // Handle form submission
   const handleSubmit = async () => {
-    console.log('Submitting Form Data:', formData);
+    // console.log('Submitting Form Data:', formData);
     // No need to prevent default here
     // Make sure serviceId is available before submitting
+    // State for form and location
+  const userDataString = sessionStorage.getItem('user');
+  const userData = JSON.parse(userDataString);
+  const userId = userData._id;
     if (!formData.serviceId) {
       toast.error('Service ID not available. Please try again.');
       return;
@@ -156,7 +157,7 @@ function SubCategory() {
     const updatedFormData = new FormData();
 
     // Append form data
-    updatedFormData.append('userId', formData.userId);
+    updatedFormData.append('userId', userId);
     updatedFormData.append('serviceId', formData.serviceId);
     updatedFormData.append('fullName', formData.fullName);
     updatedFormData.append('email', formData.email);
