@@ -6,7 +6,7 @@ exports.makeOrder = async (req, res) => {
     try {
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark } = req.body; // change to lowercase
 
-        console.log('body', req.body);
+        // console.log('body', req.body);
 
         const emptyField = [];
         if (!userId) emptyField.push('User');
@@ -34,7 +34,7 @@ exports.makeOrder = async (req, res) => {
 
         // Check if voice note file exists in the request
         if (req.file) {
-            console.log("file", req.file);
+            // console.log("file", req.file);
             const voiceNoteUpload = await uploadVoiceNote(req.file.path);
             const { url, public_id } = voiceNoteUpload;
 
@@ -70,7 +70,7 @@ exports.makeOrder = async (req, res) => {
             nearByLandMark // updated to lowercase
         });
 
-        console.log('newOrder', newOrder);
+        // console.log('newOrder', newOrder);
 
         // Save the order to the database
         await newOrder.save();
@@ -96,9 +96,6 @@ exports.makeOrder = async (req, res) => {
         });
     }
 };
-
-
-
 
 exports.getAllOrder = async (req,res) => {
     try {
