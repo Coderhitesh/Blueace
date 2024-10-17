@@ -6,7 +6,7 @@ const rangeSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ['Point'],
-            default: 'Point' 
+            default: 'Point'
         },
         coordinates: {
             type: [Number], // [longitude, latitude]
@@ -49,8 +49,8 @@ const UserSchema = new mongoose.Schema({
         enum: ['Customer', 'Admin'],
         default: 'Customer'
     },
-    UserType:{
-        type:String,
+    UserType: {
+        type: String,
         enum: ['Normal', 'Corporate'],
         default: 'Normal'
     },

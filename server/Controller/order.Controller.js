@@ -25,6 +25,7 @@ exports.makeOrder = async (req, res) => {
 
         // Check if voice note file exists in the request
         if (req.file) {
+            console.log("file",req.file)
             const voiceNoteUpload = await uploadVoiceNote(req.file.path);
             const { url, public_id } = voiceNoteUpload;
 
@@ -50,7 +51,12 @@ exports.makeOrder = async (req, res) => {
         const newOrder = new Order({
             userId,
             serviceId,
-            voiceNote: voiceNoteDetails
+            voiceNote: voiceNoteDetails,
+            fullName,
+            email,
+            phoneNumber,
+            serviceType,
+            message
         });
 
         // Save the order to the database
@@ -77,3 +83,28 @@ exports.makeOrder = async (req, res) => {
         });
     }
 };
+
+
+exports.getAllOrder = async (req,res) => {
+    try {
+        const orders = await Order.find().populate('userId').populate('serviceId').populate('vendorAlloted')
+        if(!orders){
+            return res.status(404).json({
+                success: false,
+                message: 'No orders found'
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: 'Orders retrieved successfully',
+            data: orders
+        })
+    } catch (error) {
+        console.log("Internal server in geting all order")
+        res.status(500).json({
+            success: setFlagsFromString,
+            message: "Internal server error in getting all order",
+            error: error.message
+        })
+    }
+}

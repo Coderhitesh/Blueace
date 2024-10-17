@@ -13,7 +13,7 @@ const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainC
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder } = require('../Controller/order.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -139,7 +139,8 @@ router.post('/payment-verify',PaymentVerify)
 
 // Order routers
 
-router.post('make-order',upload.single('voiceNote'),makeOrder)
+router.post('/make-order',upload.single('voiceNote'),makeOrder)
+router.get('/get-all-order',getAllOrder)
 
 
 module.exports = router;

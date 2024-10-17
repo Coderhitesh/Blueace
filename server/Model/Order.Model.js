@@ -1,5 +1,19 @@
 const mongoose = require('mongoose')
 
+const rangeSchema = new mongoose.Schema({
+    location: {
+        type: {
+            type: String,
+            enum: ['Point'],
+            default: 'Point'
+        },
+        coordinates: {
+            type: [Number], // [longitude, latitude]
+            required: true
+        }
+    }
+})
+
 const OrderSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -48,8 +62,32 @@ const OrderSchema = new mongoose.Schema({
             type: String,
             required: true // Make public_id required
         }
-    }
+    },
+    City: {
+        type: String,
+    },
+    PinCode: {
+        type: String,
+        match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
+    },
+    HouseNo: {
+        type: String,
+        required: true
+    },
+    Street: {
+        type: String,
+        required: true
+    },
+    NearByLandMark: {
+        type: String,
+        required: true
+    },
+    RangeWhereYouWantService: [
+        rangeSchema
+    ]
 }, { timestamps: true })
+
+OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });
 
 const Order = mongoose.model('Order', OrderSchema)
 module.exports = Order
