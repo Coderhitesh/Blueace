@@ -24,6 +24,7 @@ import AddMembersForm from "./service-provider/AddMembersForm "
 import MemberShipPlan from "./Pages/MemberShipPlan/MemberShipPlan"
 import SuccessPayment from "./Pages/PaymentStatusPage/SuccessPayment"
 import PaymentFailed from "./Pages/PaymentStatusPage/PaymentFailed"
+import UserDashboard from "./Pages/Dashboard/UserDashboard"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -35,7 +36,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/listing" element={<ListingsPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/vendor-dashboard" element={<Dashboard />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/about-us" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />

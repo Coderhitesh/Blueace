@@ -4,16 +4,16 @@ const bcrypt = require('bcrypt');
 const memberSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true
+        // required: true
     },
     memberAdharImage: {
         url: {
             type: String,
-            required: true
+            // required: true
         },
         public_id: {
             type: String,
-            required: true
+            // required: true
         }
     }
 })
@@ -45,7 +45,7 @@ const VendorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    registerEmail: {
+    Email: {
         type: String,
         required: [true, "Please provide an Email"],
         unique: true,
@@ -55,7 +55,7 @@ const VendorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    ownerNumber: {
+    ContactNumber: {
         type: String,
         unique: true,
         required: [true, "Please provide a Contact Number"]

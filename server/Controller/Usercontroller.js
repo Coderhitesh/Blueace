@@ -1,6 +1,7 @@
 const User = require('../Model/UserModel');
 const SendToken = require('../Utils/SendToken');
 const SendEmail = require('../Utils/SendEmail');
+const Vendor = require('../Model/vendor.Model');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -23,13 +24,15 @@ exports.register = async (req, res) => {
             })
         }
 
+        // console.log('body',req.body)
+
 
         // Check if email or contact number already exists
         const existingUserEmail = await User.findOne({ Email });
         if (existingUserEmail) {
-            return res.status(403).json({
+            return res.status(400).json({
                 success: false,
-                msg: 'User Already Exists With This Email'
+                msg: 'Email already exists as a User'
             });
         }
 
@@ -37,7 +40,25 @@ exports.register = async (req, res) => {
         if (existingUserContact) {
             return res.status(403).json({
                 success: false,
-                msg: 'User Already Exists With This Contact Number'
+                msg: 'Number already exists as a User'
+            });
+        }
+
+        // Check for existing vendor email
+        const existingVendorEmail = await Vendor.findOne({ Email });
+        if (existingVendorEmail) {
+            return res.status(403).json({
+                success: false,
+                message: "Email already exists as a Vendor"
+            });
+        }
+
+        // Check for existing vendor number
+        const existingVendorNumber = await Vendor.findOne({ ContactNumber });
+        if (existingVendorNumber) {
+            return res.status(403).json({
+                success: false,
+                message: "Number already exists as a Vendor"
             });
         }
 
@@ -68,6 +89,7 @@ exports.register = async (req, res) => {
 
         // Save user to database
         await newUser.save();
+
 
         // Prepare email options
         const emailOptions = {
@@ -140,8 +162,8 @@ exports.register = async (req, res) => {
         await SendToken(newUser, res, 201);
 
 
-    } catch (error) {
-        console.error('Error creating user:', error);
+    } catch (errerror) {
+        console.or('Error creating user:', error);
 
         // Handle duplicate key error
         if (error.code === 11000) {
@@ -171,29 +193,31 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { Email, Password } = req.body;
-    // console.log('Email',Email)
 
     try {
-        // Check if user exists
         const user = await User.findOne({ Email });
-        // console.log(user)
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                msg: 'User not found'
-            });
-        }
+        if (user) {
+            const isMatch = await user.comparePassword(Password);
+            if (!isMatch) {
+                return res.status(401).json({
+                    success: false,
+                    msg: 'Invalid credentials'
+                });
+            }
 
-        // Validate password
-        const isMatch = await user.comparePassword(Password);
-        if (!isMatch) {
-            return res.status(401).json({
-                success: false,
-                msg: 'Invalid credentials'
-            });
-        }
+            await SendToken(user, res, 201)
+        } else {
+            const vendor = await Vendor.findOne({ Email })
+            const isMatch = await vendor.comparePassword(Password);
+            if (!isMatch) {
+                return res.status(401).json({
+                    success: false,
+                    msg: 'Invalid credentials'
+                });
+            }
 
-        await SendToken(user, res, 201)
+            await SendToken(vendor, res, 201)
+        }
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({

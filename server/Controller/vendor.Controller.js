@@ -9,6 +9,7 @@ const axios = require('axios')
 const crypto = require('crypto')
 const MembershipPlan = require('../Model/memberShip.Model')
 const Razorpay = require('razorpay');
+const User = require('../Model/UserModel');
 require('dotenv').config()
 // Initialize Razorpay instance with your key and secret
 const razorpayInstance = new Razorpay({
@@ -24,13 +25,12 @@ exports.registerVendor = async (req, res) => {
             companyName,
             yearOfRegistration,
             registerAddress,
-            registerEmail,
+            Email,
             ownerName,
-            ownerNumber,
+            ContactNumber,
             panNo,
             gstNo,
             adharNo,
-            // member,
             Password,
             RangeWhereYouWantService
         } = req.body;
@@ -39,13 +39,12 @@ exports.registerVendor = async (req, res) => {
         if (!companyName) emptyField.push('Company Name');
         if (!yearOfRegistration) emptyField.push('Year Of Registration');
         if (!registerAddress) emptyField.push('Register Address');
-        if (!registerEmail) emptyField.push('Register Email');
+        if (!Email) emptyField.push('Email');  // Updated field name to 'Email'
         if (!ownerName) emptyField.push('Owner Name');
-        if (!ownerNumber) emptyField.push('Owner Number');
+        if (!ContactNumber) emptyField.push('Contact Number');
         if (!panNo) emptyField.push('Pan No');
-        if (!gstNo) emptyField.push('Gst No');
+        if (!gstNo) emptyField.push('GST No');
         if (!adharNo) emptyField.push('Adhar No');
-        // if (!member || member.length === 0) emptyField.push('Member');
         if (!Password) emptyField.push('Password');
         if (!RangeWhereYouWantService) emptyField.push('Range Where You Want Service');
 
@@ -54,20 +53,39 @@ exports.registerVendor = async (req, res) => {
         }
 
         // Check for existing vendor email
-        const existingVendorEmail = await Vendor.findOne({ registerEmail });
+        const existingVendorEmail = await Vendor.findOne({ Email });
+        console.log("existingVendorEmail", existingVendorEmail);
         if (existingVendorEmail) {
             return res.status(403).json({
                 success: false,
-                message: "Email already exists"
+                message: "Email already exists as a Vendor"
             });
         }
 
         // Check for existing vendor number
-        const existingVendorNumber = await Vendor.findOne({ ownerNumber });
+        const existingVendorNumber = await Vendor.findOne({ ContactNumber });
         if (existingVendorNumber) {
             return res.status(403).json({
                 success: false,
-                message: "Number already exists"
+                message: "Number already exists as a Vendor"
+            });
+        }
+
+        // Check for existing user email
+        const existingUserEmail = await User.findOne({ Email });
+        if (existingUserEmail) {
+            return res.status(403).json({
+                success: false,
+                message: "Email already exists as a Customer"
+            });
+        }
+
+        // Check for existing user number
+        const existingUserNumber = await User.findOne({ ContactNumber });
+        if (existingUserNumber) {
+            return res.status(403).json({
+                success: false,
+                message: "Number already exists as a User"
             });
         }
 
@@ -79,43 +97,19 @@ exports.registerVendor = async (req, res) => {
             });
         }
 
-        // const membersWithImages = [];
-        // for (const members of member) {
-        //     const { name, memberAdharImage } = members;
-        //     if(name && name){
-        //         membersWithImages.push({
-        //             name: name,
-        //         });
-        //     }
-        //     if (memberAdharImage && memberAdharImage[0]) {
-        //         const imgUrl = await uploadImage(memberAdharImage[0]?.path);
-        //         const { image, public_id } = imgUrl;
-        //         membersWithImages.push({
-        //             memberAdharImage: {
-        //                 url: image,
-        //                 public_id: public_id,
-        //             },
-        //         });
-        //     }
-        // }
-
-        // console.log('membersWithImages',membersWithImages)
-
         const newVendor = new Vendor({
             companyName,
             yearOfRegistration,
             registerAddress,
-            registerEmail,
+            Email,
             ownerName,
-            ownerNumber,
+            ContactNumber,
             panNo,
             gstNo,
             adharNo,
-            // member: membersWithImages, 
             Password,
             RangeWhereYouWantService
         });
-
 
         // Handle main vendor images
         if (req.files) {
@@ -186,7 +180,7 @@ exports.registerVendor = async (req, res) => {
 
         // Send welcome email
         const emailOptions = {
-            email: registerEmail,
+            email: Email,
             subject: 'Welcome to Blueace!',
             message: `
                 <html>
@@ -271,11 +265,12 @@ exports.registerVendor = async (req, res) => {
 
         res.status(500).json({
             success: false,
-            message: 'Internal server error in registration vendor',
+            message: 'Internal server error in registering vendor',
             error: error.message
         });
     }
-}
+};
+
 
 exports.addVendorMember = async (req, res) => {
     try {
@@ -313,12 +308,12 @@ exports.addVendorMember = async (req, res) => {
             // Get the corresponding Aadhar image for this member
             const memberAdharImage = memberAdharImages[i];
 
-            if (!name || !memberAdharImage) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Name and Aadhar image are required for each member.'
-                });
-            }
+            // if (!name || !memberAdharImage) {
+            //     return res.status(400).json({
+            //         success: false,
+            //         message: 'Name and Aadhar image are required for each member.'
+            //     });
+            // }
 
             // Upload the member Aadhar image to Cloudinary or your image hosting service
             const imgUrl = await uploadImage(memberAdharImage.path);
@@ -522,10 +517,10 @@ exports.PaymentVerify = async (req, res) => {
         await findOrder.save();
 
 
-        res.redirect('http://localhost:5173/successfull-payment')
+        res.redirect('http://localhost:5174/successfull-payment')
     } catch (error) {
         console.log(error)
-        res.redirect(`http://localhost:5173/failed-payment?error=${error?.message || "Internal server Error"}`)
+        res.redirect(`http://localhost:5174/failed-payment?error=${error?.message || "Internal server Error"}`)
 
         // res.status(501).json({
         //     success: false,
@@ -537,8 +532,8 @@ exports.PaymentVerify = async (req, res) => {
 
 exports.vendorLogin = async (req, res) => {
     try {
-        const { registerEmail, Password } = req.body;
-        const availablevendor = await Vendor.findOne({ registerEmail })
+        const { Email, Password } = req.body;
+        const availablevendor = await Vendor.findOne({ Email })
 
         if (!availablevendor) {
             return res.staus(400).json({
@@ -584,7 +579,7 @@ exports.vendorLogout = async (req, res) => {
 
 exports.vendorPasswordChangeRequest = async (req, res) => {
     try {
-        const { registerEmail, NewPassword } = req.body;
+        const { Email, NewPassword } = req.body;
         if (NewPassword.length <= 6) {
             return res.status(404).json({
                 success: false,
@@ -592,7 +587,7 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
             })
         }
 
-        const existingVendor = await Vendor.findOne({ registerEmail });
+        const existingVendor = await Vendor.findOne({ Email });
         if (!existingVendor) {
             return res.staus(404).json({
                 success: false,
@@ -605,7 +600,7 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
 
         await Vendor.findOneAndUpdate(
-            { registerEmail },
+            { Email },
             {
                 $set: {
                     PasswordChangeOtp: OTP,
@@ -617,7 +612,7 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
         )
 
         const emailOptions = {
-            email: registerEmail,
+            email: Email,
             subject: 'Password Reset OTP',
             message: `
                 <html>
@@ -649,9 +644,9 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
 
 exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
     try {
-        const { registerEmail, PasswordChangeOtp, NewPassword } = req.body;
+        const { Email, PasswordChangeOtp, NewPassword } = req.body;
         const vendor = await Vendor.findOne({
-            registerEmail,
+            Email,
             PasswordChangeOtp: PasswordChangeOtp,
             OtpExpiredTime: { $gt: Date.now() }
         });
@@ -671,7 +666,7 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
         await vendor.save();
 
         const successEmailOptions = {
-            email: registerEmail,
+            email: Email,
             subject: 'Password Changed Successfully',
             message: `
                 <html>
@@ -705,8 +700,8 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
 
 exports.vendorResendOTP = async (req, res) => {
     try {
-        const { registerEmail } = req.body;
-        const vendor = await Vendor.findOne({ registerEmail });
+        const { Email } = req.body;
+        const vendor = await Vendor.findOne({ Email });
         if (!vendor) {
             return res.status(404).json({
                 success: false,
@@ -723,7 +718,7 @@ exports.vendorResendOTP = async (req, res) => {
         await vendor.save();
 
         const emailOptions = {
-            email: registerEmail,
+            email: Email,
             subject: 'Password Reset OTP',
             message: `
                 <html>

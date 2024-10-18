@@ -78,6 +78,8 @@ function Registration() {
       // Send data to the backend
       const res = await axios.post('http://localhost:7000/api/v1/Create-User', updatedFormData);
 
+      window.location.href = '/'
+
       if (res.data.success) {
         toast.success('User registered successfully');
         setFormData({
@@ -104,8 +106,13 @@ function Registration() {
         });
       }
     } catch (err) {
-      toast.error('Error registering user');
-      setLoading(false)
+      console.log(err)
+      if (err.response) {
+        toast.error(err.response.data.msg || 'An error occurred');
+    } else {
+        // Fallback for unexpected errors
+        toast.error('Something went wrong. Please try again.');
+    }
     } finally {
       setLoading(false)
     }

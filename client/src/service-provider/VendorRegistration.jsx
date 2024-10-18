@@ -21,9 +21,9 @@ function VendorRegistration() {
         panImage: null,
         adharImage: null,
         gstImage: null,
-        registerEmail: '',
+        Email: '',
         ownerName: '',
-        ownerNumber: '',
+        ContactNumber: '',
         panNo: '',
         gstNo: '',
         adharNo: '',
@@ -101,20 +101,20 @@ function VendorRegistration() {
 
     const validateFields = () => {
         const {
-            companyName, yearOfRegistration, registerAddress, registerEmail, ownerName,
-            ownerNumber, panNo, gstNo, adharNo, Password, panImage, adharImage, gstImage
+            companyName, yearOfRegistration, registerAddress, Email, ownerName,
+            ContactNumber, panNo, gstNo, adharNo, Password, panImage, adharImage, gstImage
         } = formData;
 
         // Basic field validation
-        if (!companyName || !yearOfRegistration || !registerAddress || !registerEmail || !ownerName ||
-            !ownerNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
+        if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
+            !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
             toast.error("All fields are required");
             return false;
         }
 
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(registerEmail)) {
+        if (!emailRegex.test(Email)) {
             toast.error("Invalid email format");
             return false;
         }
@@ -137,7 +137,7 @@ function VendorRegistration() {
             toast.error("Invalid Aadhar number. It must be a 12-digit number.");
             return false;
         }
-        if (!phoneRegex.test(ownerNumber)) {
+        if (!phoneRegex.test(ContactNumber)) {
             toast.error("Invalid phone number");
             return false;
         }
@@ -161,9 +161,9 @@ function VendorRegistration() {
         payload.append('companyName', formData.companyName);
         payload.append('yearOfRegistration', formData.yearOfRegistration);
         payload.append('registerAddress', formData.registerAddress);
-        payload.append('registerEmail', formData.registerEmail);
+        payload.append('Email', formData.Email);
         payload.append('ownerName', formData.ownerName);
-        payload.append('ownerNumber', formData.ownerNumber);
+        payload.append('ContactNumber', formData.ContactNumber);
         payload.append('panNo', formData.panNo);
         payload.append('adharNo', formData.adharNo);
         payload.append('gstNo', formData.gstNo);
@@ -193,8 +193,13 @@ function VendorRegistration() {
             const userId = res.data.user._id;
             window.location.href = `/add-vendor-member/${userId}`;
         } catch (error) {
-            console.log('Error in create vendor', error);
-            toast.error('Vendor registration failed');
+            // Check if error.response exists to handle specific errors
+            if (error.response) {
+                toast.error(error.response.data.message || 'An error occurred');
+            } else {
+                // Fallback for unexpected errors
+                toast.error('Something went wrong. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -229,13 +234,13 @@ function VendorRegistration() {
                                         </div>
                                         <div className='row'>
                                             <div className="form-group col-lg-6">
-                                                <input type="email" value={formData.registerEmail} name='registerEmail' onChange={handleChange} className="form-control rounded" placeholder="Registered Email*" />
+                                                <input type="email" value={formData.Email} name='Email' onChange={handleChange} className="form-control rounded" placeholder="Registered Email*" />
                                             </div>
                                             <div className="form-group col-lg-6">
                                                 <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" placeholder="Name of Owner*" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.ownerNumber} name='ownerNumber' onChange={handleChange} className="form-control rounded" placeholder="Contact Number of Owner*" required />
+                                                <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Contact Number of Owner*" required />
                                             </div>
                                             <div className="form-group col-lg-6">
                                                 <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control rounded" placeholder="PAN Number*" required />
@@ -249,7 +254,7 @@ function VendorRegistration() {
                                         </div>
 
                                         <div className="row">
-                                        <div className="form-group col-lg-12">
+                                            <div className="form-group col-lg-12">
                                                 <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Address of Registration*" required />
                                             </div>
                                             <div className="form-group col-lg-12">
@@ -257,17 +262,20 @@ function VendorRegistration() {
                                             </div>
                                         </div>
                                         <div className='row'>
-                                        <h4 className='bg-primary text-white p-2 mb-5'>Documents Upload</h4>
+                                            <h4 className='bg-primary text-white p-2 mb-5'>Documents Upload</h4>
                                             <div className="form-group col-lg-4">
-                                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control" placeholder="Upload PAN*" required />
+                                                <label htmlFor="" className=''>PAN Card Upload</label>
+                                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control mt-2" placeholder="Upload PAN*" required />
                                                 {previewPanImage && <img src={previewPanImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                             <div className="form-group col-lg-4">
-                                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control" placeholder="Upload Aadhar*" required />
+                                                <label htmlFor="" className=''>Aadhar Card Upload</label>
+                                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control mt-2" placeholder="Upload Aadhar*" required />
                                                 {previewAdharImage && <img src={previewAdharImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                             <div className="form-group col-lg-4">
-                                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control" placeholder="Upload GST*" required />
+                                                <label htmlFor="" className=''>GST Card Upload</label>
+                                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control mt-2" placeholder="Upload GST*" required />
                                                 {previewGstImage && <img src={previewGstImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                         </div>

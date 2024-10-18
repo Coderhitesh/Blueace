@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
 const AddMembersForm = () => {
@@ -71,6 +71,10 @@ const AddMembersForm = () => {
         }
     };
 
+    const handleSkip =() => {
+        window.location.href = `/membership-plan/${vendorId}`
+    }
+
     return (
         <>
         <Toaster />
@@ -124,9 +128,21 @@ const AddMembersForm = () => {
                                                 Add Another Member
                                             </button>
                                         </div>
-                                        <div className="form-group">
-                                        <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
+                                        <div className="row">
+                                            <div className="col-md-6">
+                                            <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
+                                            </div>
+                                            <div className="col-md-6">
+                                            <button type="button" onClick={handleSkip} class="btn btn-success full-width rounded text-light ft-medium">Skip</button>
+                                            </div>
                                         </div>
+                                        {/* <div className="form-group">
+                                        <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
+                                        </div> */}
+                                        {/* <div className="form-group">
+                                            <Link onClick={handleSkip}>Skip</Link>
+                                        </div> */}
+
                                     </form>
                                 </div>
                             </div>

@@ -88,8 +88,8 @@ function AllVendors() {
                                 <td>{index + 1}</td>
                                 <td className='fw-bolder'>{vendor.companyName}</td>
                                 <td className='fw-bolder'>{vendor.ownerName || "Not-Available"}</td>
-                                <td className='fw-bolder'>{vendor.ownerNumber || "Not-Available"}</td>
-                                <td className='fw-bolder'>{vendor.registerEmail || "Not-Available"}</td>
+                                <td className='fw-bolder'>{vendor.ContactNumber || "Not-Available"}</td>
+                                <td className='fw-bolder'>{vendor.Email || "Not-Available"}</td>
                                 <td className='fw-bolder'>
                                     <button className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" type="button" onClick={() => handleView(vendor)}>
                                         View
@@ -131,8 +131,8 @@ function AllVendors() {
                                     <div className="modal-body">
                                         {/* <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Company Name:</strong> {selectedVendor.companyName}</p>
                                         <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Owner Name:</strong> {selectedVendor.ownerName}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Owner Number:</strong> {selectedVendor.ownerNumber}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Email:</strong> {selectedVendor.registerEmail}</p>
+                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Owner Number:</strong> {selectedVendor.ContactNumber}</p>
+                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Email:</strong> {selectedVendor.Email}</p>
                                         <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Year of Registration:</strong> {selectedVendor.yearOfRegistration}</p>
                                         <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Year of Address:</strong> {selectedVendor.registerAddress}</p>
                                         <p style={{fontSize:'16px', fontWeight:'400'}}><strong>PAN No:</strong> {selectedVendor.panNo}</p>
@@ -162,11 +162,11 @@ function AllVendors() {
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Owner Number</td>
-                                                    <td>{selectedVendor.ownerNumber || "Not Available"}</td>
+                                                    <td>{selectedVendor.ContactNumber || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Email</td>
-                                                    <td>{selectedVendor.registerEmail || "Not Available"}</td>
+                                                    <td>{selectedVendor.Email || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Year of Registration</td>

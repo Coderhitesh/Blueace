@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
 function Login() {
-    const [loading,setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         Email: '',
         Password: ''
@@ -40,17 +40,34 @@ function Login() {
 
             // Save token and other data (if necessary)
             sessionStorage.setItem('token', res.data.token);
-            sessionStorage.setItem('user', JSON.stringify(res.data.user));
+            // sessionStorage.setItem('user', JSON.stringify(res.data.user));
+
+            // Retrieve the user data
+        let userData = res.data.user;
+
+        // Check if the userData is a string and appears to be a JSON string
+        if (typeof userData === 'string' && userData.startsWith('{') && userData.endsWith('}')) {
+            try {
+                // Parse the stringified JSON
+                userData = JSON.parse(userData);
+            } catch (parseError) {
+                console.error('Error parsing user data:', parseError);
+                toast.error('Error parsing user data.');
+            }
+        }
+
+        // Store the user data in sessionStorage
+        sessionStorage.setItem('user', JSON.stringify(userData));
 
             // Redirect to home or another page
-            // window.location.href = '/';
             toast.success('Login successful');
+            window.location.href = '/';
 
         } catch (error) {
             console.error('Error logging in:', error.response?.data || error.message);
             toast.error('Login failed. Please check your credentials.');
             setLoading(false)
-        }finally{
+        } finally {
             setLoading(false)
         }
     };

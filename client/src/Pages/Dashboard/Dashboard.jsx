@@ -9,7 +9,7 @@ import Profile from './Profile';
 import ChangePassword from './ChangePassword';
 
 function Dashboard() {
-	const [activeTab,setActiveTab] = useState('Dashboard')
+	const [activeTab, setActiveTab] = useState('Dashboard')
 	// console.log(activeTab)
 	useEffect(() => {
 		window.scrollTo({
@@ -17,6 +17,12 @@ function Dashboard() {
 			behavior: 'smooth',
 		})
 	}, [])
+
+	const userDataString = sessionStorage.getItem('user');
+	// console.log('datatype',userDataString)
+	const userData = userDataString ? JSON.parse(userDataString) : null;
+	console.log('userdata',userData)
+
 	return (
 		<>
 			{/* =============================== Dashboard Header ========================== */}
@@ -77,33 +83,33 @@ function Dashboard() {
 					<div className="goodup-dashboard-nav sticky-top">
 						<div className="goodup-dashboard-inner">
 							<ul data-submenu-title="Main Navigation">
-								<li onClick={()=> setActiveTab('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-dashboard me-2"></i>Dashboard
 									</a>
 								</li>
-								<li onClick={()=> setActiveTab('My-listings')} className={`${activeTab === 'My-listings' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('My-listings')} className={`${activeTab === 'My-listings' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-files me-2"></i>My Listings
 									</a>
 								</li>
-								<li onClick={()=> setActiveTab('Add-listing')} className={`${activeTab === 'Add-listing' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('Add-listing')} className={`${activeTab === 'Add-listing' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-add-files me-2"></i>Add Listing
 									</a>
 								</li>
-								<li onClick={()=> setActiveTab('saved-listing')} className={`${activeTab === 'saved-listing' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('saved-listing')} className={`${activeTab === 'saved-listing' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-bookmark me-2"></i>Saved Listing
 									</a>
 								</li>
-								<li onClick={()=> setActiveTab('my-booking')} className={`${activeTab === 'my-booking' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('my-booking')} className={`${activeTab === 'my-booking' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-briefcase me-2"></i>My Bookings
 										<span className="count-tag bg-warning">4</span>
 									</a>
 								</li>
-								<li onClick={()=> setActiveTab('wallet')} className={`${activeTab === 'wallet' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('wallet')} className={`${activeTab === 'wallet' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-mastercard me-2"></i>Wallet
 									</a>
@@ -116,12 +122,12 @@ function Dashboard() {
 								</li> */}
 							</ul>
 							<ul data-submenu-title="My Accounts">
-								<li onClick={()=> setActiveTab('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-user me-2"></i>My Profile
 									</a>
 								</li>
-								<li onClick={()=> setActiveTab('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
+								<li onClick={() => setActiveTab('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
 									<a>
 										<i className="lni lni-lock-alt me-2"></i>Change Password
 									</a>
@@ -144,60 +150,60 @@ function Dashboard() {
 				{
 					activeTab === 'Dashboard' && (
 						<>
-						<DashboardContent />
+							<DashboardContent />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'My-listings' && (
 						<>
-						<MyListing />
+							<MyListing />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'Add-listing' && (
 						<>
-						<AddListing />
+							<AddListing />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'saved-listing' && (
 						<>
-						<SaveListing />
+							<SaveListing />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'my-booking' && (
 						<>
-						<MyBooking />
+							<MyBooking />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'wallet' && (
 						<>
-						<Wallet />
+							<Wallet />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'profile' && (
 						<>
-						<Profile />
+							<Profile />
 						</>
-					) 
+					)
 				}
 				{
 					activeTab === 'changePassword' && (
 						<>
-						<ChangePassword />
+							<ChangePassword />
 						</>
-					) 
+					)
 				}
-				
+
 			</div>
 			{/* ======================= dashboard Detail ======================== */}
 		</>

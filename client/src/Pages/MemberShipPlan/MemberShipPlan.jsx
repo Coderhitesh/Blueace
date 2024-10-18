@@ -8,8 +8,8 @@ function MemberShipPlan() {
     const [price, setPrice] = useState([]); // State to hold the membership plans
     const [vendorData, setVendorData] = useState({
         ownerName: '',
-        ownerNumber: '',
-        registerEmail: ''
+        ContactNumber: '',
+        Email: ''
     })
 
     // console.log('vendorData',vendorData)
@@ -21,8 +21,8 @@ function MemberShipPlan() {
             const filterVendor = allVendorData.filter((item) => item._id === vendorId)
             setVendorData({
                 ownerName: filterVendor[0].ownerName,
-                ownerNumber: filterVendor[0].ownerNumber,
-                registerEmail: filterVendor[0].registerEmail
+                ContactNumber: filterVendor[0].ContactNumber,
+                Email: filterVendor[0].Email
             })
         } catch (error) {
             console.log("Internal Server Error in fetching vendor detail", error)
@@ -84,8 +84,8 @@ function MemberShipPlan() {
                     callback_url: "http://localhost:7000/api/v1/payment-verify",
                     prefill: {
                         name: vendorData.ownerName, // Prefill customer data
-                        email: vendorData.registerEmail,
-                        contact: vendorData.ownerNumber
+                        email: vendorData.Email,
+                        contact: vendorData.ContactNumber
                     },
                     theme: {
                         color: '#F37254'

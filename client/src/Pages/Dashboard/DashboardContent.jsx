@@ -1,19 +1,20 @@
 import React, { useEffect } from 'react'
 
-function DashboardContent() {
+function DashboardContent({userData}) {
     useEffect(()=>{
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         })
     },[])
+
   return (
     <>
       <div className="goodup-dashboard-content">
 					<div className="dashboard-tlbar d-block mb-5">
 						<div className="row">
 							<div className="colxl-12 col-lg-12 col-md-12">
-								<h1 className="ft-medium">Hello, Darnell Johns</h1>
+								<h1 className="ft-medium">Hello, {userData.FullName}</h1>
 								<nav aria-label="breadcrumb">
 									<ol className="breadcrumb">
 										<li className="breadcrumb-item text-muted"><a href="#">Home</a></li>
