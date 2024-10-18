@@ -77,7 +77,7 @@ function SubCategory() {
     }
   };
 
-  
+
 
   const [formData, setFormData] = useState({
     userId: '',
@@ -93,7 +93,7 @@ function SubCategory() {
     houseNo: '',
     street: '',
     nearByLandMark: '',
-    rangeWhereYouWantService: [
+    RangeWhereYouWantService: [
       {
         location: {
           type: 'Point',
@@ -142,13 +142,19 @@ function SubCategory() {
 
   // Handle form submission
   const handleSubmit = async () => {
-    // console.log('Submitting Form Data:', formData);
-    // No need to prevent default here
-    // Make sure serviceId is available before submitting
-    // State for form and location
-  const userDataString = sessionStorage.getItem('user');
-  const userData = JSON.parse(userDataString);
-  const userId = userData._id;
+    // e.preventDefault();
+    const userDataString = sessionStorage.getItem('user');
+    const userData = JSON.parse(userDataString);
+
+    // Check if userId exists and redirect if not available
+    if (!userData || !userData._id) {
+      toast.error('User not logged in. Redirecting to sign-in.');
+      window.location.href = '/sign-in';
+      return;
+    }
+
+    const userId = userData._id;
+
     if (!formData.serviceId) {
       toast.error('Service ID not available. Please try again.');
       return;
@@ -156,7 +162,7 @@ function SubCategory() {
 
     const updatedFormData = new FormData();
 
-    // Append form data
+    // Append userId directly to the form data
     updatedFormData.append('userId', userId);
     updatedFormData.append('serviceId', formData.serviceId);
     updatedFormData.append('fullName', formData.fullName);
@@ -176,20 +182,23 @@ function SubCategory() {
     }
 
     // Append location data
-    updatedFormData.append('rangeWhereYouWantService', JSON.stringify([
-      {
-        location: {
-          type: 'Point',
-          coordinates: [location.longitude, location.latitude]
+    updatedFormData.append(
+      'RangeWhereYouWantService',
+      JSON.stringify([
+        {
+          location: {
+            type: 'Point',
+            coordinates: [location.longitude, location.latitude]
+          }
         }
-      }
-    ]));
+      ])
+    );
 
     try {
       await axios.post('http://localhost:7000/api/v1/make-order', updatedFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-        }
+        },
       });
       toast.success('Order placed successfully!');
     } catch (error) {
@@ -198,12 +207,13 @@ function SubCategory() {
     }
   };
 
+
   const handleModalSubmit = () => {
     if (formData.serviceType && formData.houseNo && formData.street && formData.city && formData.pinCode && formData.nearByLandMark) {
       const modal = document.getElementById('exampleModal');
       const modalInstance = bootstrap.Modal.getInstance(modal);
-      modalInstance.hide();
       handleSubmit();
+      modalInstance.hide();
     } else {
       toast.error('Please fill all fields in the address form and select a service type.');
     }

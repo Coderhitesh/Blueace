@@ -64,9 +64,9 @@ function Login() {
             window.location.href = '/';
 
         } catch (error) {
-            console.error('Error logging in:', error.response?.data || error.message);
-            toast.error('Login failed. Please check your credentials.');
-            setLoading(false)
+            const errorMessage = error.response.data.msg;
+            toast.error(`Error logging in: ${errorMessage}`);
+            console.error('Login failed. Please check your credentials.',error.response.data.msg);
         } finally {
             setLoading(false)
         }

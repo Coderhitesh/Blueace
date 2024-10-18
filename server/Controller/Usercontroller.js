@@ -201,7 +201,7 @@ exports.login = async (req, res) => {
             if (!isMatch) {
                 return res.status(401).json({
                     success: false,
-                    msg: 'Invalid credentials'
+                    msg: 'Enter Correct Password'
                 });
             }
 
@@ -212,7 +212,7 @@ exports.login = async (req, res) => {
             if (!isMatch) {
                 return res.status(401).json({
                     success: false,
-                    msg: 'Invalid credentials'
+                    msg: 'Enter Correct Password'
                 });
             }
 

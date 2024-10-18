@@ -11,7 +11,7 @@ function Header() {
   const role = userData?.Role || null;
 
   const handleLogOut = () => {
-    sessionStorage.removeItem('user');
+    sessionStorage.clear();
     navigate('/sign-in');
   };
 

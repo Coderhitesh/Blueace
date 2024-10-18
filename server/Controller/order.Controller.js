@@ -4,10 +4,10 @@ const { deleteVoiceNoteFromCloudinary, uploadVoiceNote } = require('../Utils/Clo
 
 exports.makeOrder = async (req, res) => {
     try {
-        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark } = req.body; // change to lowercase
+        console.log('body', req.body);
+        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark, RangeWhereYouWantService } = req.body;
 
-        // console.log('body', req.body);
-
+        // Check for missing required fields
         const emptyField = [];
         if (!userId) emptyField.push('User');
         if (!serviceId) emptyField.push('Service');
@@ -15,11 +15,11 @@ exports.makeOrder = async (req, res) => {
         if (!email) emptyField.push('Email');
         if (!phoneNumber) emptyField.push('Phone Number');
         if (!serviceType) emptyField.push('Service Type');
-        if (!city) emptyField.push('City'); // updated to lowercase
-        if (!pinCode) emptyField.push('Pin Code'); // updated to lowercase
-        if (!houseNo) emptyField.push('House No'); // updated to lowercase
-        if (!street) emptyField.push('Street'); // updated to lowercase
-        if (!nearByLandMark) emptyField.push('NearByLandMark'); // updated to lowercase
+        if (!city) emptyField.push('City');
+        if (!pinCode) emptyField.push('Pin Code');
+        if (!houseNo) emptyField.push('House No');
+        if (!street) emptyField.push('Street');
+        if (!nearByLandMark) emptyField.push('NearByLandMark');
 
         // If there are any empty fields, return an error response
         if (emptyField.length > 0) {
@@ -29,12 +29,24 @@ exports.makeOrder = async (req, res) => {
             });
         }
 
+        // Parse RangeWhereYouWantService if it exists
+        let parsedRangeWhereYouWantService = null;
+        if (RangeWhereYouWantService) {
+            try {
+                parsedRangeWhereYouWantService = JSON.parse(RangeWhereYouWantService);
+            } catch (parseError) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid format for RangeWhereYouWantService. It must be a valid JSON.'
+                });
+            }
+        }
+
         // Initialize voice note details
         let voiceNoteDetails = null;
 
         // Check if voice note file exists in the request
         if (req.file) {
-            // console.log("file", req.file);
             const voiceNoteUpload = await uploadVoiceNote(req.file.path);
             const { url, public_id } = voiceNoteUpload;
 
@@ -57,20 +69,19 @@ exports.makeOrder = async (req, res) => {
         const newOrder = new Order({
             userId,
             serviceId,
-            voiceNote: voiceNoteDetails || null, // Allow null if no voice note is provided
+            voiceNote: voiceNoteDetails || null,
             fullName,
             email,
             phoneNumber,
             serviceType,
             message,
-            city, // updated to lowercase
-            pinCode, // updated to lowercase
-            houseNo, // updated to lowercase
-            street, // updated to lowercase
-            nearByLandMark // updated to lowercase
+            city,
+            pinCode,
+            houseNo,
+            street,
+            nearByLandMark,
+            RangeWhereYouWantService: parsedRangeWhereYouWantService // Use parsed JSON
         });
-
-        // console.log('newOrder', newOrder);
 
         // Save the order to the database
         await newOrder.save();
@@ -96,6 +107,7 @@ exports.makeOrder = async (req, res) => {
         });
     }
 };
+
 
 exports.getAllOrder = async (req,res) => {
     try {
