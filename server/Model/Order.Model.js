@@ -31,8 +31,15 @@ const OrderSchema = new mongoose.Schema({
     },
     OrderStatus: {
         type: String,
-        enum: ["Pending", 'Vendor Assign', 'Vendor Ready To Go', 'Service Done', 'Cancelled'],
+        enum: ["Pending", 'Vendor Assigned', 'Vendor Ready To Go', 'Service Done', 'Cancelled'],
         default: 'Pending'
+    },
+    VendorAllotedTime: {
+        type: String
+    },
+    VendorAllotedStatus: {
+        type: Boolean,
+        default: false
     },
     fullName: {
         type: String,
@@ -53,35 +60,42 @@ const OrderSchema = new mongoose.Schema({
     message: {
         type: String,
     },
+
     voiceNote: {
         url: {
             type: String,
-            required: true // Make URL required
+            // required: true // Make URL required
         },
         public_id: {
             type: String,
-            required: true // Make public_id required
+            // required: true // Make public_id required
         }
     },
+
     city: {
         type: String,
     },
+
     pinCode: {
         type: String,
         match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
     },
+
     houseNo: {
         type: String,
         required: true
     },
+
     street: {
         type: String,
         required: true
     },
+
     nearByLandMark: {
         type: String,
         required: true
     },
+
     RangeWhereYouWantService: [
         rangeSchema
     ]

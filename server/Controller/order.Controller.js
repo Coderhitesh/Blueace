@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Order = require('../Model/Order.Model');
 const { deleteVoiceNoteFromCloudinary, uploadVoiceNote } = require('../Utils/Cloudnary');
-
+const Vendor = require('../Model/vendor.Model')
 exports.makeOrder = async (req, res) => {
     try {
         console.log('body', req.body);
@@ -111,7 +111,7 @@ exports.makeOrder = async (req, res) => {
 
 exports.getAllOrder = async (req, res) => {
     try {
-        const orders = await Order.find().populate('userId').populate('serviceId').populate('vendorAlloted')
+        const orders = await Order.find().populate('userId').populate('serviceId').populate('vendorAlloted').sort({ 'createdAt': -1 })
         if (!orders) {
             return res.status(404).json({
                 success: false,
@@ -164,24 +164,152 @@ exports.updateOrderStatus = async (req, res) => {
 exports.deleteOrder = async (req, res) => {
     try {
         const id = req.params._id;
-        const order = Order.findById(id)
+        console.log(id);
+
+        // Find the order by ID
+        const order = await Order.findById(id);
+        console.log(order);
+
+        // Check if the order exists
         if (!order) {
             return res.status(404).json({
                 success: false,
-                message: 'order is not found'
-            })
+                message: 'Order not found'
+            });
         }
-        await Order.findOneAndDelete(id)
+
+        // Delete the order by ID
+        await Order.findByIdAndDelete(id);
+
         res.status(200).json({
             success: true,
-            message: 'Order is deleted successfully',
+            message: 'Order deleted successfully',
             data: order
-        })
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({
             success: false,
             message: 'Internal server error in deleting order',
-        })
+        });
     }
-}
+};
+
+
+exports.fetchVendorByLocation = async (req, res) => {
+    try {
+        const { orderId, limit = 10, Page = 1 } = req.query;
+
+        if (!orderId) {
+            return res.status(402).json({
+                success: false,
+                message: 'Order id is required',
+            });
+        }
+
+        const findOrder = await Order.findById(orderId);
+
+        if (!findOrder) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order is not found',
+            });
+        }
+        const venorWhichAllotedPast = findOrder.vendorAlloted
+
+        const OrderServiceLocation = findOrder.RangeWhereYouWantService[0].location;
+        const skip = (Page - 1) * limit;
+
+
+
+
+        const locationResults = await Vendor.find({
+            'RangeWhereYouWantService.location': {
+                $near: {
+                    $geometry: OrderServiceLocation,
+                    $maxDistance: 5000
+                }
+            }
+        })
+            .limit(parseInt(limit))
+            .skip(skip);
+
+
+        const totalPages = Math.ceil(locationResults.length / limit);
+
+        res.status(201).json({
+            success: true,
+            AlreadyAlootedVebdor:venorWhichAllotedPast || "No-Vendor In Past",
+            currentPage: parseInt(Page),
+            limit: parseInt(limit),
+            totalPages,
+            data: locationResults,
+            message: 'Vendors fetched successfully',
+        });
+
+    } catch (error) {
+        res.status(501).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+exports.AssignVendor = async (req, res) => {
+    try {
+        const { orderId, Vendorid, type } = req.params;
+
+        if (!orderId || !Vendorid) {
+            return res.status(404).json({
+                success: false,
+                message: "Order and Vendor ID are required"
+            });
+        }
+
+        const order = await Order.findOne({ _id: orderId });
+
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found"
+            });
+        }
+
+        if (type === "new-vendor" && order.VendorAllotedStatus) {
+            return res.status(404).json({
+                success: false,
+                message: "Vendor already allotted"
+            });
+        }
+
+        const currentISTTime = new Date().toLocaleString('en-US', {
+            timeZone: 'Asia/Kolkata',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        });
+
+        console.log(currentISTTime);
+
+        order.vendorAlloted = Vendorid;
+        order.OrderStatus = "Vendor Assigned";
+        order.VendorAllotedTime = currentISTTime;
+        order.VendorAllotedStatus = true;
+
+        await order.save();
+
+        res.status(201).json({
+            success: true,
+            data: order,
+            message: type === "change-vendor" ? "Vendor changed successfully" : "Vendor assigned successfully"
+        });
+
+    } catch (error) {
+        res.status(501).json({
+            
+            success: false,
+            message: error.message
+        });
+    }
+};

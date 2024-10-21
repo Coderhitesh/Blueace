@@ -38,8 +38,8 @@ const Table = ({
                                     </Link>
                                 </div>
                             </div>
-                            <div className="list-product">
-                                <table className="table" id="project-status">
+                            <div className="list-product table-responsive">
+                                <table className="table table-striped table-bordered" id="project-status">
                                     <thead>
                                         <tr>
                                             {headers.map((header, index) => (
@@ -53,7 +53,9 @@ const Table = ({
                                         {elements}
                                     </tbody>
                                 </table>
-                                <div className="pagination mt-4 d-flex gap-2">
+                               
+                            </div>
+                            <div className="pagination mt-4 d-flex gap-2">
                                     {Array.from({ length: Math.ceil(productLength / productsPerPage) }, (_, i) => (
                                         <button
                                             key={i}
@@ -64,7 +66,6 @@ const Table = ({
                                         </button>
                                     ))}
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>

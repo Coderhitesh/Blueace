@@ -13,7 +13,7 @@ const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainC
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor } = require('../Controller/order.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -161,7 +161,12 @@ router.post('/payment-verify', PaymentVerify)
 router.post('/make-order', upload.single('voiceNote'), makeOrder)
 router.get('/get-all-order', getAllOrder)
 router.put('/update-order-status/:_id', updateOrderStatus)
-router.put('/delete-order/:_id', deleteOrder)
+router.delete('/delete-order/:_id', deleteOrder)
+
+
+//for fetching vendor for order
+router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
+router.post('/assign-Vendor/:orderId/:Vendorid/:type', AssignVendor)
 
 
 module.exports = router;
