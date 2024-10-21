@@ -3,6 +3,7 @@ import axios from 'axios';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
+import Toggle from '../../components/Forms/toggle';
 
 function AllUserDetail() {
     const [users, setUsers] = useState([]);
@@ -45,7 +46,25 @@ function AllUserDetail() {
         }
     };
 
-    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Role', 'Type of user', 'Created At'];
+    const handleToggle = async (id, currentDeactiveStatus) => {
+        try {
+            const newDeactiveStatus = !currentDeactiveStatus;
+            const response = await axios.put(`http://localhost:7000/api/v1/update-user-deactive-status/${id}`, {
+                isDeactive: newDeactiveStatus
+            })
+            if (response.data.success) {
+                toast.success('User status updated successfully.');
+                await fetchUserDetail();
+            } else {
+                toast.error('Failed to update User status.');
+            }
+        } catch (error) {
+            toast.error("An error occurred while updating the deactive status")
+            console.error("Toggle error:", error)
+        }
+    }
+
+    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Role', 'Type of user', 'Deactive', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -75,6 +94,13 @@ function AllUserDetail() {
                                     <option value="Corporate">Corporate</option>
                                 </select>
                             </td>
+
+                            <td>
+                                    <Toggle
+                                        isActive={category.isDeactive}
+                                        onToggle={() => handleToggle(category._id, category.isDeactive)} // Pass vendor id and current active status
+                                    />
+                                </td>
 
                             <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>
 

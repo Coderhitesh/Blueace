@@ -6117,6 +6117,12 @@ div#myTabContent {
     padding-bottom: 0;
     position: relative;
     z-index:1;
+    width: 70%;
+}
+@media (max-width:750px) {
+    .goodup-dashboard-content {
+        width: 100%;
+    }
 }
 .dsd-boxed-widget{
 	margin-bottom:30px;

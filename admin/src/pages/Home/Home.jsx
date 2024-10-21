@@ -33,6 +33,7 @@ import AllVendors from '../VendorDetails/AllVendors'
 import AllMemberShipPlan from '../MemberShipPlan/AllMemberShipPlan'
 import AddMemberShipPlan from '../MemberShipPlan/AddMemberShipPlan'
 import EditMemberShipPlan from '../MemberShipPlan/EditMemberShipPlan'
+import Order from '../Orders/Order'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -96,6 +97,9 @@ const Home = () => {
                         <Route path='/vendors/all-membership-plan' element={<AllMemberShipPlan />} />
                         <Route path='/vendors/add-membership-plan' element={<AddMemberShipPlan />} />
                         <Route path='/vendors/edit-membership-plan/:id' element={<EditMemberShipPlan />} />
+
+                        {/* Order route here  */}
+                        <Route path='/Orders/all-order' element={<Order />} />
 
                     </Routes>
                 </div>

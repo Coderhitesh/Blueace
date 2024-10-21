@@ -109,10 +109,10 @@ exports.makeOrder = async (req, res) => {
 };
 
 
-exports.getAllOrder = async (req,res) => {
+exports.getAllOrder = async (req, res) => {
     try {
         const orders = await Order.find().populate('userId').populate('serviceId').populate('vendorAlloted')
-        if(!orders){
+        if (!orders) {
             return res.status(404).json({
                 success: false,
                 message: 'No orders found'
@@ -129,6 +129,59 @@ exports.getAllOrder = async (req,res) => {
             success: setFlagsFromString,
             message: "Internal server error in getting all order",
             error: error.message
+        })
+    }
+}
+
+exports.updateOrderStatus = async (req, res) => {
+    try {
+        const orderId = req.params._id;
+        const { OrderStatus } = req.body;
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found'
+            })
+        }
+        order.OrderStatus = OrderStatus
+        await order.save();
+        res.status(200).json({
+            success: true,
+            message: 'Order status updated successfully',
+            data: order
+        })
+    } catch (error) {
+        console.log('Internal server error in updating order status', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in updating order status',
+            error: error.message
+        })
+    }
+}
+
+exports.deleteOrder = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const order = Order.findById(id)
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: 'order is not found'
+            })
+        }
+        await Order.findOneAndDelete(id)
+        res.status(200).json({
+            success: true,
+            message: 'Order is deleted successfully',
+            data: order
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in deleting order',
         })
     }
 }

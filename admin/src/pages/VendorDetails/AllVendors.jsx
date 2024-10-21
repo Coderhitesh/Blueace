@@ -129,20 +129,6 @@ function AllVendors() {
                                         </button>
                                     </div>
                                     <div className="modal-body">
-                                        {/* <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Company Name:</strong> {selectedVendor.companyName}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Owner Name:</strong> {selectedVendor.ownerName}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Owner Number:</strong> {selectedVendor.ContactNumber}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Email:</strong> {selectedVendor.Email}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Year of Registration:</strong> {selectedVendor.yearOfRegistration}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Year of Address:</strong> {selectedVendor.registerAddress}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>PAN No:</strong> {selectedVendor.panNo}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>GST No:</strong> {selectedVendor.gstNo}</p>
-                                        <p style={{fontSize:'16px', fontWeight:'400'}}><strong>Aadhar No:</strong> {selectedVendor.adharNo}</p>
-                                        <div className="row">
-                                            <div className="col-4"><p>PAN Image</p><a href={`${selectedVendor.panImage?.url}`}><img style={{width:"60px"}} src={selectedVendor.panImage?.url} alt="" /></a></div>
-                                            <div className="col-4"><p>GST Image</p><a href={`${selectedVendor.gstImage?.url}`}><img style={{width:"60px"}} src={selectedVendor.gstImage?.url} alt="" /></a></div>
-                                            <div className="col-4"><p>Aadhar Image</p><a href={`${selectedVendor.adharImage?.url}`}><img style={{width:"60px"}} src={selectedVendor.adharImage?.url} alt="" /></a></div>
-                                        </div> */}
 
                                         <table className="table table-bordered">
                                             <thead>
@@ -187,6 +173,10 @@ function AllVendors() {
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Aadhar No</td>
                                                     <td>{selectedVendor.adharNo || "Not Available"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Membership Plan</td>
+                                                    <td>{selectedVendor?.memberShipPlan?.name || "No Plan is activated"}</td>
                                                 </tr>
                                             </tbody>
 

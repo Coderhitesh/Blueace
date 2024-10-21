@@ -75,7 +75,21 @@ const UserSchema = new mongoose.Schema({
     },
     RangeWhereYouWantService: [
         rangeSchema
-    ]
+    ],
+    userImage: {
+        url: {
+            type: String,
+            // required: true
+        },
+        public_id: {
+            type: String,
+            // required: true
+        }
+    },
+    isDeactive: {
+        type: Boolean,
+        default: false
+    },
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {

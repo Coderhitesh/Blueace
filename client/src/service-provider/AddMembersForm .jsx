@@ -62,7 +62,7 @@ const AddMembersForm = () => {
             );
             toast.success(response.data.message); // Success message
             setMembers([]); // Clear form
-            window.location.href = `/membership-plan/${vendorId}`
+            // window.location.href = `/membership-plan/${vendorId}`
         } catch (error) {
             console.error('Error:', error);
             alert(error.response?.data?.message || 'Error occurred');
@@ -71,9 +71,6 @@ const AddMembersForm = () => {
         }
     };
 
-    const handleSkip =() => {
-        window.location.href = `/membership-plan/${vendorId}`
-    }
 
     return (
         <>
@@ -136,12 +133,6 @@ const AddMembersForm = () => {
                                             <button type="button" onClick={handleSkip} class="btn btn-success full-width rounded text-light ft-medium">Skip</button>
                                             </div>
                                         </div>
-                                        {/* <div className="form-group">
-                                        <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
-                                        </div> */}
-                                        {/* <div className="form-group">
-                                            <Link onClick={handleSkip}>Skip</Link>
-                                        </div> */}
 
                                     </form>
                                 </div>

@@ -271,7 +271,6 @@ exports.registerVendor = async (req, res) => {
     }
 };
 
-
 exports.addVendorMember = async (req, res) => {
     try {
 
@@ -279,10 +278,10 @@ exports.addVendorMember = async (req, res) => {
         const { members } = req.body;
 
 
-        // Handle uploaded files correctly
+    
         const memberAdharImages = req.files['memberAdharImage']; // Array of uploaded files
 
-        // Check if members exist
+     
         if (!vendorId || !Array.isArray(members) || members.length === 0) {
             return res.status(400).json({
                 success: false,
@@ -290,7 +289,7 @@ exports.addVendorMember = async (req, res) => {
             });
         }
 
-        // Find vendor by ID
+
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({
@@ -299,7 +298,7 @@ exports.addVendorMember = async (req, res) => {
             });
         }
 
-        const addedMembers = []; // Store newly added members
+        const addedMembers = []; 
 
         for (let i = 0; i < members.length; i++) {
             const member = members[i];
@@ -358,6 +357,178 @@ exports.addVendorMember = async (req, res) => {
         });
     }
 };
+
+exports.addNewVendorMember = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        const { name } = req.body;
+        const memberAdharImage = req.file; // Assuming single file upload for Aadhar image
+
+        // Check if vendorId is provided
+        if (!vendorId || !name) {
+            return res.status(400).json({
+                success: false,
+                message: 'Vendor ID and member name are required.'
+            });
+        }
+
+        // Find the vendor by ID
+        const vendor = await Vendor.findById(vendorId);
+
+        // Check if the vendor exists
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Vendor not found.'
+            });
+        }
+
+        // Handle the uploaded Aadhar image (if provided)
+        let memberAdharImageData = null;
+        if (memberAdharImage) {
+            // Assuming you have an uploadImage function to handle Cloudinary or similar services
+            const imgUrl = await uploadImage(memberAdharImage.path);
+            memberAdharImageData = {
+                url: imgUrl.image,
+                public_id: imgUrl.public_id
+            };
+
+            // Cleanup the uploaded file
+            await fs.unlink(memberAdharImage.path);
+        }
+
+        // Add new member to the vendor's members array
+        const newMember = {
+            name: name,
+            memberAdharImage: memberAdharImageData
+        };
+        vendor.member.push(newMember);
+
+        // Save the updated vendor document
+        await vendor.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Member added successfully.',
+            member: newMember
+        });
+
+    } catch (error) {
+        console.error(error);
+        // Handle any errors that occurred during the process
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while adding member.',
+            error: error.message
+        });
+    }
+};
+
+
+exports.getMembersByVendorId = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+
+        // Check if vendorId is provided
+        if (!vendorId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Vendor ID is required.'
+            });
+        }
+
+        // Find the vendor by ID and return only the members array
+        const vendor = await Vendor.findById(vendorId).select('member');
+
+        // Check if the vendor exists
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Vendor not found.'
+            });
+        }
+
+        // Return the members array
+        return res.status(200).json({
+            success: true,
+            data: vendor.member
+        });
+    } catch (error) {
+        console.error(error);
+        // Handle any errors that occurred during the process
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while retrieving members.',
+            error: error.message
+        });
+    }
+};
+
+exports.updateMember = async (req, res) => {
+    try {
+        const { vendorId, memberId } = req.params;
+        const { name } = req.body;
+        const memberAdharImage = req.file; 
+
+        if (!vendorId || !memberId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Vendor ID and Member ID are required.'
+            });
+        }
+
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Vendor not found.'
+            });
+        }
+
+        const memberIndex = vendor.member.findIndex(m => m._id.toString() === memberId);
+        if (memberIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Member not found.'
+            });
+        }
+
+        if (name) {
+            vendor.member[memberIndex].name = name;
+        }
+
+        // If an Aadhar image is uploaded, update it
+        if (memberAdharImage) {
+            if (vendor.member[memberIndex].memberAdharImage) {
+                await deleteImageFromCloudinary(vendor.member[memberIndex].memberAdharImage.public_id); // Pass the old public ID
+            }
+            const imgUrl = await uploadImage(memberAdharImage.path);
+            vendor.member[memberIndex].memberAdharImage = {
+                url: imgUrl.image,
+                public_id: imgUrl.public_id
+            };
+
+            await fs.unlink(memberAdharImage.path);
+        }
+
+        await vendor.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Member updated successfully.',
+            member: vendor.member[memberIndex]
+        });
+
+    } catch (error) {
+        console.error('Error updating member:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error while updating member.',
+            error: error.message
+        });
+    }
+};
+
 
 
 exports.memberShipPlanGateWay = async (req, res) => {
@@ -492,7 +663,7 @@ exports.PaymentVerify = async (req, res) => {
             }
         });
 
-     
+
         const { method, status, bank, wallet, card_id } = paymentDetails.data;
 
         // If payment is not successful, handle failure
@@ -512,8 +683,8 @@ exports.PaymentVerify = async (req, res) => {
         // Update order details with payment status and method
         findOrder.transactionId = razorpay_payment_id;
         findOrder.PaymentStatus = 'paid';
-        findOrder.paymentMethod = method; 
-        
+        findOrder.paymentMethod = method;
+
         await findOrder.save();
 
 
@@ -573,6 +744,63 @@ exports.vendorLogout = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal server error in vendor logout',
+        })
+    }
+}
+
+exports.ChangeOldVendorPassword = async (req, res) => {
+    try {
+        const vendorId = req.params._id;
+        const { Password, NewPassword } = req.body;
+
+        if (!Password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Old Password is required'
+            });
+        }
+
+        if (!NewPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'New Password is required'
+            });
+        }
+
+        console.log('vendorid',vendorId)
+
+        const user = await Vendor.findById(vendorId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                msg: 'User not found'
+            });
+        }
+
+        const isMatch = await user.comparePassword(Password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                msg: 'Enter Correct Old Password'
+            });
+        }
+
+        user.Password = NewPassword;
+
+        await user.save();
+        res.status(200).json({
+            success: true,
+            msg: 'Password changed successfully'
+        });
+
+    } catch (error) {
+        console.log("Internal server error in changing password")
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
         })
     }
 }
@@ -751,7 +979,7 @@ exports.vendorResendOTP = async (req, res) => {
 
 exports.getAllVendor = async (req, res) => {
     try {
-        const allVendor = await Vendor.find()
+        const allVendor = await Vendor.find().populate('memberShipPlan')
         if (!allVendor) {
             return res.status(404).json({
                 success: false,
@@ -823,5 +1051,186 @@ exports.deleteVendor = async (req, res) => {
             success: false,
             message: 'Internal Server Error in deleting vendor',
         })
+    }
+}
+
+exports.updateVendor = async (req, res) => {
+    const uploadedImages = [];
+    try {
+        const vendorId = req.params._id;
+        const {
+            companyName,
+            yearOfRegistration,
+            registerAddress,
+            Email,
+            ownerName,
+            ContactNumber,
+            panNo,
+            gstNo,
+            adharNo,
+            RangeWhereYouWantService
+        } = req.body;
+
+        // Find the vendor to update
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: "Vendor not found"
+            });
+        }
+
+        // Check for duplicate email or contact number
+        if (Email && Email !== vendor.Email) {
+            const existingVendorEmail = await Vendor.findOne({ Email });
+            if (existingVendorEmail) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Email already exists as a Vendor"
+                });
+            }
+        }
+
+        if (ContactNumber && ContactNumber !== vendor.ContactNumber) {
+            const existingVendorNumber = await Vendor.findOne({ ContactNumber });
+            if (existingVendorNumber) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Contact number already exists as a Vendor"
+                });
+            }
+        }
+
+        // Update the vendor fields
+        vendor.companyName = companyName || vendor.companyName;
+        vendor.yearOfRegistration = yearOfRegistration || vendor.yearOfRegistration;
+        vendor.registerAddress = registerAddress || vendor.registerAddress;
+        vendor.Email = Email || vendor.Email;
+        vendor.ownerName = ownerName || vendor.ownerName;
+        vendor.ContactNumber = ContactNumber || vendor.ContactNumber;
+        vendor.panNo = panNo || vendor.panNo;
+        vendor.gstNo = gstNo || vendor.gstNo;
+        vendor.adharNo = adharNo || vendor.adharNo;
+        vendor.RangeWhereYouWantService = RangeWhereYouWantService || vendor.RangeWhereYouWantService;
+
+        // Handle main vendor images if updated
+        if (req.files) {
+            const { panImage, adharImage, gstImage, vendorImage } = req.files;
+
+            // Upload and update Pan Image
+            if (panImage && panImage[0]) {
+                if (vendor.panImage?.public_id) {
+                    await deleteImageFromCloudinary(vendor.panImage.public_id);
+                }
+                const imgUrl = await uploadImage(panImage[0]?.path);
+                vendor.panImage = {
+                    url: imgUrl.image,
+                    public_id: imgUrl.public_id
+                };
+                uploadedImages.push(imgUrl.public_id);
+                await fs.unlink(panImage[0].path);
+            }
+
+            // Upload and update Adhar Image
+            if (adharImage && adharImage[0]) {
+                if (vendor.adharImage?.public_id) {
+                    await deleteImageFromCloudinary(vendor.adharImage.public_id);
+                }
+                const imgUrl = await uploadImage(adharImage[0]?.path);
+                vendor.adharImage = {
+                    url: imgUrl.image,
+                    public_id: imgUrl.public_id
+                };
+                uploadedImages.push(imgUrl.public_id);
+                await fs.unlink(adharImage[0].path);
+            }
+
+            // Upload and update GST Image
+            if (gstImage && gstImage[0]) {
+                if (vendor.gstImage?.public_id) {
+                    await deleteImageFromCloudinary(vendor.gstImage.public_id);
+                }
+                const imgUrl = await uploadImage(gstImage[0]?.path);
+                vendor.gstImage = {
+                    url: imgUrl.image,
+                    public_id: imgUrl.public_id
+                };
+                uploadedImages.push(imgUrl.public_id);
+                await fs.unlink(gstImage[0].path);
+            }
+
+            // Upload and update GST Image
+            if (vendorImage && vendorImage[0]) {
+                if (vendor.vendorImage?.public_id) {
+                    await deleteImageFromCloudinary(vendor.vendorImage.public_id);
+                }
+                const imgUrl = await uploadImage(vendorImage[0]?.path);
+                vendor.vendorImage = {
+                    url: imgUrl.image,
+                    public_id: imgUrl.public_id
+                };
+                uploadedImages.push(imgUrl.public_id);
+                await fs.unlink(vendorImage[0].path);
+            }
+        }
+
+        // Save the updated vendor
+        const updatedVendor = await vendor.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Vendor updated successfully",
+            data: updatedVendor
+        });
+    } catch (error) {
+        console.log(error);
+
+        if (error.code === 11000) {
+            const duplicateField = Object.keys(error.keyValue)[0];
+            return res.status(400).json({
+                success: false,
+                message: `${duplicateField} already exists`
+            });
+        }
+
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map(err => err.message);
+            return res.status(400).json({
+                success: false,
+                message: messages.join('. ')
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in updating vendor',
+            error: error.message
+        });
+    }
+};
+
+exports.getSingleVendor = async (req, res) => {
+    try {
+        const vendorId = req.params._id;
+        const vendor = await Vendor.findById(vendorId).populate('memberShipPlan');
+        if (!vendor) {
+            return res.status(400).json({
+                success: false,
+                message: "Vendor not found"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "Vendor found",
+            data: vendor
+        })
+    } catch (error) {
+        console.log("Internal server error in getting single vendor", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        })
+
     }
 }

@@ -101,7 +101,7 @@ function FeatureListHome() {
 										<div class="Goodup-grid-upper">
 
 											<div class="Goodup-grid-thumb">
-												<Link to={`/service/${item.name}`} class="d-block text-center m-auto"><img src={item.serviceImage?.url} class="img-fluid" alt={item.name} /></Link>
+												<Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} class="d-block text-center m-auto"><img src={item.serviceImage?.url} class="img-fluid" alt={item.name} /></Link>
 											</div>
 											{/* <div class="Goodup-rating overlay">
 												<div class="Goodup-pr-average high">4.8</div>
@@ -119,7 +119,7 @@ function FeatureListHome() {
 										</div>
 										<div class="Goodup-grid-fl-wrap">
 											<div class="Goodup-caption px-3 py-2">
-												<h4 class="mb-0 ft-medium medium"><Link to={`/service/${item.name}`} class="text-dark fs-md fw-bold">{item.name}</Link></h4>
+												<h4 class="mb-0 ft-medium medium"><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} class="text-dark fs-md fw-bold">{item.name}</Link></h4>
 												{/* <div class="Goodup-location"><i class="fas fa-map-marker-alt me-1 theme-cl text-dark"></i>Naraina Industrial Area, Phase – 01</div> */}
 												<div class="Goodup-middle-caption mt-3">
 													{/* <p>At vero eos et accusamus et iusto </p> */}
@@ -127,12 +127,12 @@ function FeatureListHome() {
 											</div>
 											<div class="Goodup-grid-footer py-2 px-3">
 												<div class="Goodup-ft-first">
-													<Link to={`/service/${item.name}`} class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
+													<Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} class="Goodup-cats-wrap"><div class="cats-ico bg-2"><i class="lni lni-slim"></i></div><span class="cats-title">Blueace Limited</span></Link>
 												</div>
 												<div class="Goodup-ft-last">
 													<div class="Goodup-inline">
 														{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-														<div class="Goodup-bookmark-btn "><button type="button"><Link to={`/service/${item.name}`}>Get Enquiry <i class="lni lni-envelope position-absolute"></i></Link></button></div>
+														<div class="Goodup-bookmark-btn "><button type="button"><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>Get Enquiry <i class="lni lni-envelope position-absolute"></i></Link></button></div>
 
 													</div>
 												</div>

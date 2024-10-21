@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './logo.webp';
 import './Header.css';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 function Header() {
   const navigate = useNavigate();
@@ -9,10 +11,43 @@ function Header() {
   // console.log('datatype',userDataString)
   const userData = userDataString ? JSON.parse(userDataString) : null;
   const role = userData?.Role || null;
+  const token = sessionStorage.getItem('token')
 
-  const handleLogOut = () => {
-    sessionStorage.clear();
-    navigate('/sign-in');
+  // const handleLogOut = () => {
+  //   sessionStorage.clear();
+  //   navigate('/sign-in');
+  // };
+
+  const handleLogOut = async () => {
+    try {
+      const res = await axios.get('http://localhost:7000/api/v1/Logout', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      sessionStorage.clear();
+      toast.success('Logout successfully');
+      navigate('/sign-in');
+    } catch (error) {
+      console.log('Internal server in logout account', error);
+      toast.error(error?.response?.data?.msg || 'Internal server error during logout');
+    }
+  };
+
+  const handleVendorLogOut = async () => {
+    try {
+      const res = await axios.get('http://localhost:7000/api/v1/vendor-logout', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      sessionStorage.clear();
+      toast.success('Logout successfully');
+      navigate('/sign-in');
+    } catch (error) {
+      console.log('Internal server in logout account', error);
+      toast.error(error?.response?.data?.msg || 'Internal server error during logout');
+    }
   };
 
   return (
@@ -65,7 +100,7 @@ function Header() {
               <div className="nav-toggle"></div>
               <div className="mobile_nav">
                 <ul>
-                  
+
                   <>
                     {/* Check if the role is Customer */}
                     {role === 'Customer' && (
@@ -100,7 +135,7 @@ function Header() {
                           </Link>
                         </li>
                         <li>
-                          <Link onClick={handleLogOut} className="crs_yuo12 w-auto text-dark gray">
+                          <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
                             <span className="embos_45">
                               <i className="lni lni-power-switch mr-1"></i>Logout
                             </span>
@@ -185,7 +220,7 @@ function Header() {
                         </Link>
                       </li>
                       <li>
-                        <Link onClick={handleLogOut} className="crs_yuo12 w-auto text-dark gray">
+                        <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
                           <span className="embos_45">
                             <i className="lni lni-power-switch mr-1"></i>Logout
                           </span>

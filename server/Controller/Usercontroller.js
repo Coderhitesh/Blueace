@@ -2,6 +2,7 @@ const User = require('../Model/UserModel');
 const SendToken = require('../Utils/SendToken');
 const SendEmail = require('../Utils/SendEmail');
 const Vendor = require('../Model/vendor.Model');
+const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -197,6 +198,13 @@ exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ Email });
         if (user) {
+            const isDeactive = user.isDeactive;
+            if (isDeactive) {
+                return res.status(401).json({
+                    success: false,
+                    msg: 'Your account is deactivated'
+                });
+            }
             const isMatch = await user.comparePassword(Password);
             if (!isMatch) {
                 return res.status(401).json({
@@ -208,6 +216,14 @@ exports.login = async (req, res) => {
             await SendToken(user, res, 201)
         } else {
             const vendor = await Vendor.findOne({ Email })
+            const isDeactive = vendor.isDeactive;
+            if (isDeactive) {
+                return res.status(401).json({
+                    success: false,
+                    msg: 'Your account is deactivated'
+                });
+            }
+
             const isMatch = await vendor.comparePassword(Password);
             if (!isMatch) {
                 return res.status(401).json({
@@ -227,6 +243,89 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.updateUserDeactive = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const { isDeactive } = req.body;
+        const user = await User.findById(id)
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User is not found'
+            })
+        }
+        user.isDeactive = isDeactive;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+        })
+
+    } catch (error) {
+        console.log("Internal server error in updating deactive status", error)
+        res.status(500).json({
+            success: false,
+            message: ' Internal Server Error',
+        })
+    }
+}
+
+exports.ChangeOldPassword = async (req, res) => {
+    try {
+        const userId = req.params._id;
+        const { Password, NewPassword } = req.body;
+
+        if (!Password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Old Password is required'
+            });
+        }
+
+        if (!NewPassword) {
+            return res.status(400).json({
+                success: false,
+                message: 'New Password is required'
+            });
+        }
+
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                msg: 'User not found'
+            });
+        }
+
+        const isMatch = await user.comparePassword(Password);
+
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                msg: 'Enter Correct Old Password'
+            });
+        }
+
+        user.Password = NewPassword;
+
+        await user.save();
+        res.status(200).json({
+            success: true,
+            msg: 'Password changed successfully'
+        });
+
+    } catch (error) {
+        console.log("Internal server error in changing password")
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        })
+    }
+}
+
 exports.logout = async (req, res) => {
     try {
         // Clearing cookies directly
@@ -239,40 +338,10 @@ exports.logout = async (req, res) => {
         console.error('Logout error:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            msg: 'Internal Server Error in user logout'
         });
     }
 };
-
-// exports.userDetails = async (req, res) => {
-//     try {
-//         const userId = req.user.id;
-
-//         if (!userId) {
-//             return res.status(401).json({ message: 'Please login to access this resource.' });
-//         }
-
-//         const user = await User.findById(userId);
-
-//         if (!user) {
-//             return res.status(404).json({ message: 'User not found.' });
-//         }
-
-//         const allOrders = await Orders.find({ userId: user._id });
-
-//         const { Password, ...userDetails } = user.toObject();
-
-//         res.status(200).json({
-//             message: 'User details and orders retrieved successfully.',
-//             user: userDetails,
-//             orders: allOrders
-//         });
-
-//     } catch (error) {
-//         console.error('Error fetching user details and orders:', error);
-//         res.status(500).json({ message: 'Server error. Please try again later.' });
-//     }
-// };
 
 exports.passwordChangeRequest = async (req, res) => {
     try {
@@ -344,6 +413,33 @@ exports.passwordChangeRequest = async (req, res) => {
         });
     }
 };
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const userId = req.params._id;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                msg: 'User not found'
+            });
+        }
+        // Delete user
+        await User.findByIdAndDelete(userId);
+        res.status(200).json({
+            success: true,
+            msg: 'User deleted successfully'
+        });
+
+    } catch (error) {
+        console.log("Internal server error in deleting user")
+        res.status(500).json({
+            success: false,
+            msg: 'Internal Server Error',
+            error: error.message
+        })
+    }
+}
 
 
 exports.verifyOtpAndChangePassword = async (req, res) => {
@@ -603,6 +699,104 @@ exports.getAllUsers = async (req, res) => {
         return res.status(500).json({
             success: false,
             msg: 'Internal Server Error'
+        })
+    }
+}
+
+exports.getSingleUserById = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const user = await User.findById(id)
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                msg: 'User not found'
+            })
+        }
+        res.status(200).json({
+            success: true,
+            msg: 'User found',
+            data: user
+        })
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            msg: 'Internal Server Error in fetchin single user by id',
+            message: error.message
+        })
+    }
+}
+
+exports.updateUser = async (req, res) => {
+    const uploadedImages = [];
+    try {
+        const id = req.params._id;
+        const { FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
+
+        const existingUser = await User.findById(id)
+        if (!existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: 'User not found',
+            })
+        }
+
+        existingUser.FullName = FullName;
+        existingUser.ContactNumber = ContactNumber;
+        existingUser.Email = Email;
+        existingUser.City = City;
+        existingUser.PinCode = PinCode;
+        existingUser.HouseNo = HouseNo;
+        existingUser.Street = Street;
+        existingUser.NearByLandMark = NearByLandMark;
+
+        if (req.file) {
+            if (existingUser.userImage.public_id) {
+                await deleteImageFromCloudinary(existingUser.userImage.public_id)
+            }
+            const imgUrl = await uploadImage(req.file.path)
+            const { image, public_id } = imgUrl;
+            existingUser.userImage.url = image;
+            existingUser.userImage.public_id = public_id;
+            uploadedImages.push = existingUser.userImage.public_id
+            try {
+                fs.unlink(req.file.path)
+            } catch (error) {
+                console.log('Error in deleting file from local', error)
+            }
+        } else {
+            res.status(400).json({
+                success: false,
+                message: 'No image uploaded',
+            })
+        }
+        console.log('mid', existingUser)
+
+        const userupdated = await existingUser.save()
+        console.log('aftersve', userupdated)
+
+        if (!userupdated) {
+            await deleteImageFromCloudinary(existingUser.userImage.public_id)
+            return res.status(400).json({
+                success: false,
+                message: 'Failed to update user',
+            })
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+            data: userupdated
+        })
+
+    } catch (error) {
+        console.log('Internal server error', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            message: error.message
+
         })
     }
 }
