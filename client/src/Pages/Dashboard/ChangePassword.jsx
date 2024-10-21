@@ -27,7 +27,7 @@ function ChangePassword({ userData }) {
 			const PayLoad = new FormData();
 			PayLoad.append('Password', formData.Password);
 			PayLoad.append('NewPassword', formData.NewPassword);
-			const res = await axios.put(`http://localhost:7000/api/v1/update-old-password/${userId}`, PayLoad, {
+			const res = await axios.put(`https://api.blueace.co.in/api/v1/update-old-password/${userId}`, PayLoad, {
 				headers: {
 					'Content-Type': 'application/json'
 				}

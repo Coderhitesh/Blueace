@@ -20,7 +20,7 @@ function Header() {
 
   const handleLogOut = async () => {
     try {
-      const res = await axios.get('http://localhost:7000/api/v1/Logout', {
+      const res = await axios.get('https://api.blueace.co.in/api/v1/Logout', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -36,7 +36,7 @@ function Header() {
 
   const handleVendorLogOut = async () => {
     try {
-      const res = await axios.get('http://localhost:7000/api/v1/vendor-logout', {
+      const res = await axios.get('https://api.blueace.co.in/api/v1/vendor-logout', {
         headers: {
           Authorization: `Bearer ${token}`
         }

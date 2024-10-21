@@ -14,7 +14,7 @@ function AllMarquee() {
     const fetchMarqueeData = async() => {
         setLoading(true)
         try {
-            const res = await axios.get('http://localhost:7000/api/v1/get-all-marquee')
+            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-marquee')
             if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
@@ -37,7 +37,7 @@ function AllMarquee() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:7000/api/v1/delete-marquee/${id}`);
+            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-marquee/${id}`);
             if (response.data.success) {
                 toast.success('Marquee deleted successfully!');
                 await fetchMarqueeData(); // Fetch categories again after deletion

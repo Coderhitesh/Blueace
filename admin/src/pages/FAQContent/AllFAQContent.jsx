@@ -14,7 +14,7 @@ function AllFAQContent() {
     const fetchFAQData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:7000/api/v1/get-all-faq-content')
+            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-faq-content')
             if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
@@ -37,7 +37,7 @@ function AllFAQContent() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:7000/api/v1/delete-faq-content/${id}`);
+            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-faq-content/${id}`);
             if (response.data.success) {
                 toast.success('FAQ deleted successfully!');
                 await fetchFAQData(); // Fetch categories again after deletion

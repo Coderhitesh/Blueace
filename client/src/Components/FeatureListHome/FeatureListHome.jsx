@@ -30,7 +30,7 @@ function FeatureListHome() {
 
 	const fetchServiceData = async () => {
 		try {
-			const res = await axios.get('http://localhost:7000/api/v1/get-all-service');
+			const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service');
 			let data = res.data.data;
 
 			for (let i = data.length - 1; i > 0; i--) {

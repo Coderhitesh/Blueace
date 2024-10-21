@@ -184,7 +184,7 @@ function VendorRegistration() {
         payload.append('RangeWhereYouWantService[0][location][coordinates][1]', location.latitude);
 
         try {
-            const res = await axios.post('http://localhost:7000/api/v1/register-vendor', payload, {
+            const res = await axios.post('https://api.blueace.co.in/api/v1/register-vendor', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

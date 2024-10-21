@@ -19,7 +19,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`http://localhost:7000/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
             //    Swal.fire("Success", "Order status updated successfully", "success");
             toast.success('Order status updated successfully')
         } catch (error) {

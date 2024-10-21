@@ -76,7 +76,7 @@ function Registration() {
 
     try {
       // Send data to the backend
-      const res = await axios.post('http://localhost:7000/api/v1/Create-User', updatedFormData);
+      const res = await axios.post('https://api.blueace.co.in/api/v1/Create-User', updatedFormData);
 
       window.location.href = '/'
 

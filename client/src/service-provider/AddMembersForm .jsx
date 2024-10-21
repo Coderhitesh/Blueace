@@ -52,7 +52,7 @@ const AddMembersForm = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:7000/api/v1/register-vendor-member/${vendorId}`,
+                `https://api.blueace.co.in/api/v1/register-vendor-member/${vendorId}`,
                 formData,
                 {
                     headers: {

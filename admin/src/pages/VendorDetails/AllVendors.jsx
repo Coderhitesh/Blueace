@@ -15,7 +15,7 @@ function AllVendors() {
 
     const fetchVendorDetail = async () => {
         try {
-            const res = await axios.get('http://localhost:7000/api/v1/all-vendor');
+            const res = await axios.get('https://api.blueace.co.in/api/v1/all-vendor');
             const datasave = res.data.data;
             const r = datasave.reverse();
             setVendors(r);
@@ -38,7 +38,7 @@ function AllVendors() {
     const handleToggle = async (id, currentDeactiveStatus) => {
         try {
             const newDeactiveStatus = !currentDeactiveStatus;
-            const response = await axios.put(`http://localhost:7000/api/v1/update-deactive-status/${id}`, {
+            const response = await axios.put(`https://api.blueace.co.in/api/v1/update-deactive-status/${id}`, {
                 isDeactive: newDeactiveStatus
             })
             if (response.data.success) {
@@ -55,7 +55,7 @@ function AllVendors() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:7000/api/v1/delete-vendor/${id}`);
+            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-vendor/${id}`);
             if (response.data.success) {
                 toast.success('Vendor deleted successfully!');
                 await fetchVendorDetail(); // Fetch vendors again after deletion
