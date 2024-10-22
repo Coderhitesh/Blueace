@@ -45,3 +45,20 @@
         width: 50px;
     }
 }
+
+.activeInMob{
+    display: none !important;
+}
+
+.activeInDes{
+    display: block !important;
+}
+
+@media (max-width:500px) {
+    .activeInMob{
+        display: block !important;
+    }
+    .activeInDes{
+        display: none !important;
+    }
+}

@@ -43,7 +43,7 @@ function CategoryHome() {
                 className="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-6"
               >
                 <div className="cats-wrap text-center">
-                  <a  className="Goodup-catg-wrap">
+                  <Link to={`/sub-category/${category.name}`} className="Goodup-catg-wrap">
                     <div className="Goodup-catg-icon">
                       {/* <i className={`fas ${category.icon}`}></i> */}
                       <img style={{width:'70%', height:'70%', objectFit:'cover'}} src={category?.icon?.url} alt="" />
@@ -53,7 +53,7 @@ function CategoryHome() {
                         {category.name}
                       </Link>
                     </div>
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

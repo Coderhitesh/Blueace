@@ -8422,8 +8422,28 @@ footer.skin-dark-footer ul.footer-bottom-social li a:hover, footer.skin-dark-foo
     }
  }
 
+ @media (max-width:1200px) {
+    .category-mySwiper{
+        height:23px;
+    }
+ }
+
  @media (max-width:750px) {
     .category-mySwiper{
         height: auto;
+    }
+ }
+
+ @media (max-width:500px) {
+    .navigation-portrait .nav-brand{
+        width: auto;
+        flex: none;
+        margin-left: 0px;
+        padding-left: 0px;
+    }
+
+    .nav-toggle{
+        right: 0%;
+        left: auto;
     }
  }

@@ -105,7 +105,7 @@ function Header() {
                     {/* Check if the role is Customer */}
                     {role === 'Customer' && (
                       <>
-                        <li>
+                        <li className='activeInDes'>
                           <Link to={'/user-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                             <span className="embos_45">
                               <i className="fas fa-plus me-2"></i>
@@ -113,7 +113,7 @@ function Header() {
                             </span>
                           </Link>
                         </li>
-                        <li>
+                        <li className='activeInDes'>
                           <Link onClick={handleLogOut} className="crs_yuo12 w-auto text-dark gray">
                             <span className="embos_45">
                               <i className="lni lni-power-switch mr-1"></i>Logout
@@ -126,7 +126,7 @@ function Header() {
                     {/* Check if the role is Vendor */}
                     {role === 'vendor' && (
                       <>
-                        <li>
+                        <li className='activeInDes'>
                           <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                             <span className="embos_45">
                               <i className="fas fa-plus me-2"></i>
@@ -134,7 +134,7 @@ function Header() {
                             </span>
                           </Link>
                         </li>
-                        <li>
+                        <li className='activeInDes'>
                           <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
                             <span className="embos_45">
                               <i className="lni lni-power-switch mr-1"></i>Logout
@@ -147,12 +147,12 @@ function Header() {
                     {/* For non-authenticated users or other roles */}
                     {role !== 'Customer' && role !== 'vendor' && (
                       <>
-                        <li>
+                        <li className='activeInDes'>
                           <Link to={'/sign-in'} className="ft-bold">
                             <i className="fas fa-sign-in-alt me-1 theme-cl"></i>Sign in
                           </Link>
                         </li>
-                        <li className="add-listing theme-bg">
+                        <li className="add-listing theme-bg activeInDes">
                           <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                             <i className="fas fa-plus me-2"></i>Vendor Registration
                           </Link>
@@ -184,6 +184,73 @@ function Header() {
                 <li>
                   <Link to={'/contact'}>Contact Us</Link>
                 </li>
+                {/* Check if the role is Customer */}
+                {role === 'Customer' && (
+                  <>
+                    <li className='activeInMob'>
+                      <Link to={'/user-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
+                        <span className="embos_45">
+                          <i className="fas fa-plus me-2"></i>
+                          Dashboard
+                        </span>
+                      </Link>
+                    </li>
+                    <li className='activeInMob'>
+                      <Link onClick={handleLogOut} className="crs_yuo12 w-auto text-dark gray">
+                        <span className="embos_45">
+                          <i className="lni lni-power-switch mr-1"></i>Logout
+                        </span>
+                      </Link>
+                    </li>
+                  </>
+                )}
+
+                {/* Check if the role is Vendor */}
+                {role === 'vendor' && (
+                  <>
+                    <li className='activeInMob'>
+                      <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
+                        <span className="embos_45">
+                          <i className="fas fa-plus me-2"></i>
+                          Vendor Dashboard
+                        </span>
+                      </Link>
+                    </li>
+                    <li className='activeInMob'>
+                      <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
+                        <span className="embos_45">
+                          <i className="lni lni-power-switch mr-1"></i>Logout
+                        </span>
+                      </Link>
+                    </li>
+                  </>
+                )}
+
+                {/* For non-authenticated users or other roles */}
+                {role !== 'Customer' && role !== 'vendor' && (
+                  <>
+                    <li className='activeInMob'>
+                      <Link to={'/sign-in'} className="ft-bold">
+                        <i className="fas fa-sign-in-alt me-1 theme-cl"></i>Sign in
+                      </Link>
+                    </li>
+                    <li className="add-listing theme-bg activeInMob">
+                      <Link style={{ color: 'white' }} to={'/vendor-registration'}>
+                        <i className="fas fa-plus me-2"></i>Vendor Registration
+                      </Link>
+                    </li>
+                  </>
+                )}
+                {/* {role === 'Customer' && (
+                  <>
+                    <li>
+                      <Link to={'/contact'}>Contact Us</Link>
+                    </li>
+                    <li>
+                      <Link to={'/contact'}>Contact Us</Link>
+                    </li>
+                  </>
+                )} */}
               </ul>
               <ul className="nav-menu nav-menu-social align-to-right">
                 <>

@@ -93,7 +93,7 @@ function Footer() {
                   <ul className="footer-menu">
                     {
                       allService && allService.map((item,index)=>(
-                        <li key={index}><Link to={item.name}>- {item.name}</Link></li>
+                        <li key={index}><Link to={`/service/${item.name}`}>- {item.name}</Link></li>
                       ))
                     }
                   </ul>
@@ -106,7 +106,7 @@ function Footer() {
                   <ul className="footer-menu">
                   {
                       allService && allService.map((item,index)=>(
-                        <li key={index}><Link to={item.name}>- {item.name}</Link></li>
+                        <li key={index}><Link to={`/service/${item.name}`}>- {item.name}</Link></li>
                       ))
                     }
                   </ul>
