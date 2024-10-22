@@ -83,7 +83,7 @@ function AllServices() {
     const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
     // Define headers for the Table component
-    const headers = ['S.No', 'Sub Category', 'Service Name', 'Service Image', 'Service Banner', 'Description', 'Active', 'Meta Title', 'Meta Description', 'Created At', 'Action'];
+    const headers = ['S.No', 'Main Category','Sub Category', 'Service Name', 'Service Image', 'Service Banner', 'Description', 'Active', 'Meta Title', 'Meta Description', 'Created At', 'Action'];
 
     return (
         <div className='page-body'>
@@ -96,6 +96,7 @@ function AllServices() {
                     elements={currentServices.map((category, index) => (
                         <tr key={category._id}>
                             <td>{index + 1}</td>
+                            <td className='fw-bolder'>{category.categoryId?.name || "Not-Available"}</td>
                             <td className='fw-bolder'>{category.subCategoryId?.name || "Not-Available"}</td>
                             <td className='fw-bolder'>{category.name || "Not-Availdable"}</td>
                             <td className='text-danger fw-bolder'><img src={category?.serviceImage?.url} width={50} alt="" /></td>

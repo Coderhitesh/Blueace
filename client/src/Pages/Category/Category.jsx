@@ -21,12 +21,15 @@ function Category() {
     };
 
     const newName = formatName(name);
+    console.log('name',newName)
 
     const fetchdata = async () => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-service-category-by-name/${newName}`);
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-service-category-by-name/${name}`);
             setSubCategory(res.data.data);
+            console.log('data',res.data)
         } catch (error) {
+
             console.log(error);
         }
     };
@@ -101,7 +104,7 @@ function Category() {
                 <div className='container text-center'>
                     <div className='row'>
                         <div className='col-lg-12'>
-                            <div className='category-title align-item-center mx-5'>
+                            <div className='category-title align-item-center'>
                                 <h3 className='fw-bold text-uppercase bg-primary text-white p-2'>
                                     Type of {subCategory.name}
                                 </h3>

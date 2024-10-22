@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import qualityAssured from './quality-assured-logo.webp';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
@@ -8,6 +8,7 @@ function SubCategory() {
   const { title } = useParams();
   const [allService, setAllService] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Function to format the title
   const formatTitle = (title) => {
@@ -146,10 +147,10 @@ function SubCategory() {
     const userDataString = sessionStorage.getItem('user');
     const userData = JSON.parse(userDataString);
 
-    // Check if userId exists and redirect if not available
     if (!userData || !userData._id) {
       toast.error('User not logged in. Redirecting to sign-in.');
-      window.location.href = '/sign-in';
+      // window.location.href = '/sign-in';
+      navigate(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
 
@@ -246,7 +247,7 @@ function SubCategory() {
 
           {/* Sidebar */}
           <div className='col-lg-3 col-md-3'>
-            <div className='services-sidebar sticky-top'>
+            <div className={`services-sidebar ${window.innerWidth >= 992 ? 'sticky-top' : ''}`}>
               <div className='card px-3 py-3'>
                 <div className='d-flex'>
                   <div className='flex-shrink-0'>

@@ -8,7 +8,7 @@ import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
 
 function EditServices() {
-    const { id } = useParams(); 
+    const { id } = useParams();
     const [categories, setCategories] = useState([]);
     const editorRef = useRef(null);
     const [formData, setFormData] = useState({
@@ -16,25 +16,39 @@ function EditServices() {
         name: '',
         description: '',
         serviceBanner: null,
-        subCategoryId: ''
+        subCategoryId: '',
+        categoryId: '',
+        metaTitle: '',
+        metaDescription: '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [serviceImagePreviews, setServiceImagePreviews] = useState([]);
     const [serviceBannerPreview, setServiceBannerPreview] = useState(null);
+    const [mainCategories, setMainCategories] = useState([]);
+    const [subCategories, setSubCategories] = useState([]);
 
-    const handleFetchCategory = async () => {
+    const handleFetchMainCategory = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-category')
-            setCategories(res.data.data);
+            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-main-category');
+            setMainCategories(res.data.data);
         } catch (error) {
-            console.log(error)
+            console.error(error);
         }
-    }
+    };
+
+    const handleFetchSubCategory = async (categoryId) => {
+        try {
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-all-service-category?mainCategoryId=${categoryId}`);
+            setSubCategories(res.data.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     useEffect(() => {
-        handleFetchCategory();
-    }, [])
+        handleFetchMainCategory();
+    }, []);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -45,13 +59,22 @@ function EditServices() {
                 setFormData({
                     name: category.name,
                     description: category.description,
-                    serviceImage: null, 
-                    serviceBanner: null, 
-                    subCategoryId: category.subCategoryId?._id 
+                    serviceImage: null,
+                    serviceBanner: null,
+                    subCategoryId: category.subCategoryId?._id || '',
+                    categoryId: category.categoryId?._id || '',
+                    metaTitle: category.metaTitle,
+                    metaDescription: category.metaDescription,
                 });
 
                 setServiceImagePreviews(category.serviceImage?.url || null);
                 setServiceBannerPreview(category.serviceBanner?.url || null);
+
+                console.log('existing serviceimage', category.serviceImage?.url)
+
+                if (category.categoryId?._id) {
+                    handleFetchSubCategory(category.categoryId._id);
+                }
 
             } catch (error) {
                 setError('Failed to load service data');
@@ -65,20 +88,29 @@ function EditServices() {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
+        if (name === 'categoryId') {
+            setFormData(prevData => ({
+                ...prevData,
+                categoryId: value,
+                subCategoryId: '', // Reset subCategoryId when categoryId changes
+            }));
+            handleFetchSubCategory(value); // Fetch subcategories based on categoryId
+        } else {
+            setFormData(prevData => ({
+                ...prevData,
+                [name]: value
+            }));
+        }
     };
 
     const handleServiceImageUpload = (e) => {
-        const file = e.target.files[0]; 
+        const file = e.target.files[0];
         if (file) {
             setFormData(prevData => ({
                 ...prevData,
                 serviceImage: file
             }));
-            setServiceImagePreviews(URL.createObjectURL(file)); 
+            setServiceImagePreviews(URL.createObjectURL(file));
         }
     };
 
@@ -89,34 +121,63 @@ function EditServices() {
                 ...prevData,
                 serviceBanner: file
             }));
-            setServiceBannerPreview(URL.createObjectURL(file)); 
+            setServiceBannerPreview(URL.createObjectURL(file));
         }
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true); 
+        setLoading(true);
+
+        // Check if categoryId and subCategoryId are selected
+        if (!formData.categoryId) {
+            setError('Main Category is required.');
+            setLoading(false);
+            return;
+        }
+        if (!formData.subCategoryId) {
+            setError('Sub Category is required.');
+            setLoading(false);
+            return;
+        }
 
         const payload = new FormData();
         payload.append('name', formData.name);
         payload.append('description', formData.description);
         payload.append('subCategoryId', formData.subCategoryId);
+        payload.append('categoryId', formData.categoryId);
+        payload.append('metaTitle', formData.metaTitle);
+        payload.append('metaDescription', formData.metaDescription);
 
+        // console.log('sending serviceimage', formData.serviceImage)
+
+        // Check if a new service image has been uploaded
         if (formData.serviceImage) {
             payload.append('serviceImage', formData.serviceImage);
         } else {
-            setError('Service image is required.');
-            setLoading(false);
-            return;
+            // If no new image is uploaded, use the existing one
+            if (serviceImagePreviews) {
+                payload.append('serviceImage', serviceImagePreviews);
+            } else {
+                setError('Service image is required.');
+                setLoading(false);
+                return;
+            }
         }
 
+        // Check if a new service banner has been uploaded
         if (formData.serviceBanner) {
             payload.append('serviceBanner', formData.serviceBanner);
         } else {
-            setError('Service banner is required.');
-            setLoading(false);
-            return;
+            // If no new banner is uploaded, use the existing one
+            if (serviceBannerPreview) {
+                payload.append('serviceBanner', serviceBannerPreview);
+            } else {
+                setError('Service banner is required.');
+                setLoading(false);
+                return;
+            }
         }
 
         try {
@@ -127,12 +188,12 @@ function EditServices() {
             });
             toast.success('Updated Successfully!')
 
-            setError(''); 
+            setError('');
         } catch (error) {
             console.error('Error updating service category:', error);
             setError('Failed to update service category');
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     };
 
@@ -158,24 +219,39 @@ function EditServices() {
             <FormGroups onSubmit={handleSubmit} Elements={
                 <div className='row'>
                     <div className="col-md-6">
-                        <label htmlFor="name">Sub Category</label>
+                        <label className="form-label" htmlFor="categoryId">Main Category</label>
                         <select
-                            class="form-select"
-                            name='subCategoryId'
-                            id="category"
-                            value={formData.subCategoryId}
-                            onChange={handleChange} 
+                            className="form-select"
+                            name='categoryId'
+                            id="categoryId"
+                            value={formData.categoryId}
+                            onChange={handleChange}
                         >
-                            <option value="">Select Main Category</option> {/* Add a default empty option */}
-                            {
-                                categories && categories.map((item, index) => (
-                                    <option key={index} value={item._id}>{item.name}</option>
-                                ))
-                            }
+                            <option value="">Select Main Category</option>
+                            {mainCategories.map((item) => (
+                                <option key={item._id} value={item._id}>{item.name}</option>
+                            ))}
                         </select>
                     </div>
+
                     <div className="col-md-6">
-                        <label htmlFor="name">Service Name</label>
+                        <label className="form-label" htmlFor="subCategoryId">Sub Category</label>
+                        <select
+                            className="form-select"
+                            name='subCategoryId'
+                            id="subCategoryId"
+                            value={formData.subCategoryId}
+                            onChange={handleChange}
+                            disabled={!formData.categoryId} // Disable if no category is selected
+                        >
+                            <option value="">Select Sub Category</option>
+                            {subCategories.map((item) => (
+                                <option key={item._id} value={item._id}>{item.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="col-md-6 mt-2">
+                        <label className='form-label' htmlFor="name">Service Name</label>
                         <Input
                             type='text'
                             placeholder='Enter Service Name'
@@ -255,6 +331,36 @@ function EditServices() {
                             />
                         </div>
                     </div>
+
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Title"
+                            name='metaTitle'
+                            value={formData.metaTitle}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaTitle'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Description"
+                            name='metaDescription'
+                            value={formData.metaDescription}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaDescription'
+                        ></textarea>
+                    </div>
+
 
                     <div className='col-md-10 mx-auto mt-4'>
                         <button className={`btn w-100 py-3 btn-primary ${loading ? 'disabled' : ''}`} disabled={loading} type='submit'>

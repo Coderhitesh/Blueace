@@ -5,11 +5,12 @@ const fs = require('fs').promises;
 exports.createService = async (req, res) => {
     const uploadedImages = [];
     try {
-        const { name, description, subCategoryId, metaTitle, metaDescription } = req.body;
+        const { name, description, subCategoryId, metaTitle, metaDescription, categoryId } = req.body;
         const emptyField = [];
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
         if (!subCategoryId) emptyField.push('subCategoryId');
+        if (!categoryId) emptyField.push('categoryId');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -22,7 +23,8 @@ exports.createService = async (req, res) => {
             description,
             subCategoryId,
             metaTitle,
-            metaDescription
+            metaDescription,
+            categoryId
         });
 
         if (req.files) {
@@ -94,7 +96,7 @@ exports.createService = async (req, res) => {
 
 exports.getService = async (req, res) => {
     try {
-        const allService = await Service.find().populate('subCategoryId')
+        const allService = await Service.find().populate('subCategoryId').populate('categoryId')
         if (!allService) {
             return res.status(400).json({
                 success: false,
@@ -119,7 +121,7 @@ exports.getService = async (req, res) => {
 exports.getSingleService = async (req, res) => {
     try {
         const id = req.params._id;
-        const service = await Service.findById(id).populate('subCategoryId')
+        const service = await Service.findById(id).populate('subCategoryId').populate('categoryId')
         if (!service) {
             return res.status(400).json({
                 success: false,
@@ -144,7 +146,7 @@ exports.getSingleService = async (req, res) => {
 exports.getServiceByName = async (req, res) => {
     try {
         const { name } = req.params;
-        const serviceData = await Service.findOne({ name: name }).populate('subCategoryId')
+        const serviceData = await Service.findOne({ name: name }).populate('subCategoryId').populate('categoryId')
         if (!serviceData) {
             return res.status(400).json({
                 success: false,
@@ -170,13 +172,14 @@ exports.updateService = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { name, description, subCategoryId, metaTitle, metaDescription } = req.body;
+        const { name, description, subCategoryId, metaTitle, metaDescription, categoryId } = req.body;
         const emptyField = [];
 
         if (!id) emptyField.push('id');
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
         if (!subCategoryId) emptyField.push('subCategoryId');
+        if (!categoryId) emptyField.push('categoryId');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -197,6 +200,7 @@ exports.updateService = async (req, res) => {
         existingService.subCategoryId = subCategoryId;
         existingService.metaTitle = metaTitle;
         existingService.metaDescription = metaDescription;
+        existingService.categoryId = categoryId;
 
         if (req.files) {
             const { serviceImage, serviceBanner } = req.files;

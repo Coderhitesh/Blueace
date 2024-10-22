@@ -1,14 +1,20 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
 function Login() {
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         Email: '',
         Password: ''
     });
+    
+    const location = useLocation();  // Get the current location
+    const navigate = useNavigate();  // Use this for navigation after login
+
+    // Get redirect URL from query parameter or default to home page
+    const redirectUrl = new URLSearchParams(location.search).get('redirect') || '/';
 
     // Handle input changes
     const handleChange = (e) => {
@@ -22,8 +28,7 @@ function Login() {
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true)
-        // Prepare Payload
+        setLoading(true);
         const Payload = {
             Email: formData.Email,
             Password: formData.Password
@@ -36,43 +41,35 @@ function Login() {
                 }
             });
 
-            console.log(res.data)
-
-            // Save token and other data (if necessary)
             sessionStorage.setItem('token', res.data.token);
-            // sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
-            // Retrieve the user data
-        let userData = res.data.user;
+            let userData = res.data.user;
 
-        // Check if the userData is a string and appears to be a JSON string
-        if (typeof userData === 'string' && userData.startsWith('{') && userData.endsWith('}')) {
-            try {
-                // Parse the stringified JSON
-                userData = JSON.parse(userData);
-            } catch (parseError) {
-                console.error('Error parsing user data:', parseError);
-                toast.error('Error parsing user data.');
+            if (typeof userData === 'string' && userData.startsWith('{') && userData.endsWith('}')) {
+                try {
+                    userData = JSON.parse(userData);
+                } catch (parseError) {
+                    console.error('Error parsing user data:', parseError);
+                    toast.error('Error parsing user data.');
+                }
             }
-        }
 
-        // Store the user data in sessionStorage
-        sessionStorage.setItem('user', JSON.stringify(userData));
+            sessionStorage.setItem('user', JSON.stringify(userData));
 
-            // Redirect to home or another page
             toast.success('Login successful');
-            window.location.href = '/';
+            
+            // Redirect to the original page or default to home
+            navigate(redirectUrl);
 
         } catch (error) {
             const errorMessage = error.response.data.msg;
             toast.error(`Error logging in: ${errorMessage}`);
-            console.error('Login failed. Please check your credentials.',error.response.data.msg);
+            console.error('Login failed. Please check your credentials.', errorMessage);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
-    // Scroll to top on mount
     useEffect(() => {
         window.scrollTo({
             top: 0,
@@ -83,7 +80,6 @@ function Login() {
     return (
         <>
             <Toaster />
-            {/* Log In Modal */}
             <div className="bg-dark">
                 <div className="modal-dialog login-pop-form" role="document">
                     <div className="modal-content py-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F4F4F7' }} id="loginmodal">
@@ -146,12 +142,12 @@ function Login() {
                                         type="submit"
                                         className="btn btn-md full-width theme-bg text-light rounded ft-medium"
                                     >
-                                        Sign In
+                                        {loading ? 'Loading...' : 'Sign In'}
                                     </button>
                                 </div>
 
                                 <div className="form-group text-center mt-4 mb-0">
-                                    <p className="mb-0">Don't Have An Account? <Link to={'/sign-up'} className="ft-medium text-success">{`${loading ? 'Loading...' : 'Sign Up'}`}</Link></p>
+                                    <p className="mb-0">Don't Have An Account? <Link to={'/sign-up'} className="ft-medium text-success">Sign Up</Link></p>
                                 </div>
 
                             </form>
@@ -159,7 +155,6 @@ function Login() {
                     </div>
                 </div>
             </div>
-            {/* End Modal */}
         </>
     );
 }

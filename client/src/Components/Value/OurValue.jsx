@@ -11,7 +11,7 @@ export default function OurValue() {
                     <div className='row'>
                         <div className='col-lg-3'>
                             <div className='section-title'>
-                                <h2 class="ft-bold mb-3 text-white mt-2 pt-5">Our Values </h2>
+                                <h2 class={`ft-bold mb-3 text-white mt-2 ${window.innerWidth >= 992 ? 'pt-5' : ''}`}>Our Values </h2>
                                 <p className='text-white'>At Blueace India Limited, our values emphasize integrity, innovation, customer focus, sustainability, and teamwork, driving excellence and lasting partnerships.</p>
                             </div>
                         </div>

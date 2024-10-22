@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
 function Registration() {
   // State to store form inputs and location
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     FullName: '',
     Email: '',
@@ -78,7 +79,30 @@ function Registration() {
       // Send data to the backend
       const res = await axios.post('https://api.blueace.co.in/api/v1/Create-User', updatedFormData);
 
-      window.location.href = '/'
+      
+      // console.log('register',res.data)
+      // Save token and other data (if necessary)
+      sessionStorage.setItem('token', res.data.token);
+      // sessionStorage.setItem('user', JSON.stringify(res.data.user));
+
+      // Retrieve the user data
+      let userData = res.data.user;
+
+      // Check if the userData is a string and appears to be a JSON string
+      if (typeof userData === 'string' && userData.startsWith('{') && userData.endsWith('}')) {
+        try {
+          // Parse the stringified JSON
+          userData = JSON.parse(userData);
+        } catch (parseError) {
+          console.error('Error parsing user data:', parseError);
+          toast.error('Error parsing user data.');
+        }
+      }
+
+      // Store the user data in sessionStorage
+      sessionStorage.setItem('user', JSON.stringify(userData));
+
+      navigate('/')
 
       if (res.data.success) {
         toast.success('User registered successfully');
@@ -109,10 +133,10 @@ function Registration() {
       console.log(err)
       if (err.response) {
         toast.error(err.response.data.msg || 'An error occurred');
-    } else {
+      } else {
         // Fallback for unexpected errors
         toast.error('Something went wrong. Please try again.');
-    }
+      }
     } finally {
       setLoading(false)
     }

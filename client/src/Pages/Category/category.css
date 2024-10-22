@@ -8,3 +8,20 @@
     height: 100%;
     object-fit: cover;
 }
+
+@media (max-width:750px) {
+    .category-mySwiper{
+        height: auto;
+    }
+}
+
+.category-title{
+    margin: 0rem 3rem;
+}
+
+@media (max-width:750px) {
+    .category-title{
+        margin: 0rem;
+    }
+
+}

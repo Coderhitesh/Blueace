@@ -15,37 +15,58 @@ function AddServices() {
         subCategoryId: '',
         metaTitle: '',
         metaDescription: '',
+        categoryId: '',
     });
     const editor = useRef(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [serviceImagePreviews, setServiceImagePreviews] = useState(null);
-    const [serviceBannerPreview, setServiceBannerPreview] = useState(null); // For single icon preview
-    const [categories, setCategories] = useState([]);
+    const [serviceBannerPreview, setServiceBannerPreview] = useState(null);
 
-    // Fetching the categories from the backend
-    const handleFetchCategory = async () => {
+    const [mainCategories, setMainCategories] = useState([]); // Store main categories
+    const [subCategories, setSubCategories] = useState([]);   // Store subcategories
+
+    // Fetching the main categories from the backend
+    const handleFetchMainCategory = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-category');
-            setCategories(res.data.data);
+            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-main-category');
+            setMainCategories(res.data.data); // Assuming `data` contains the list of main categories
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    // Fetch subcategories based on the selected categoryId
+    const handleFetchSubCategory = async (categoryId) => {
+        try {
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-all-service-category?mainCategoryId=${categoryId}`);
+            setSubCategories(res.data.data); // Assuming `data` contains the list of subcategories
         } catch (error) {
             console.log(error);
         }
     };
 
     useEffect(() => {
-        handleFetchCategory();
+        handleFetchMainCategory(); // Fetch main categories on component mount
     }, []);
 
     // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Update form data state
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
+        if (name === 'categoryId') {
+            setFormData(prevData => ({
+                ...prevData,
+                categoryId: value,
+                subCategoryId: '', // Reset subCategoryId when categoryId changes
+            }));
+            handleFetchSubCategory(value); // Fetch subcategories based on categoryId
+        } else {
+            setFormData(prevData => ({
+                ...prevData,
+                [name]: value
+            }));
+        }
     };
 
     // Handle service image upload
@@ -84,6 +105,7 @@ function AddServices() {
         payload.append('subCategoryId', formData.subCategoryId);
         payload.append('metaTitle', formData.metaTitle);
         payload.append('metaDescription', formData.metaDescription);
+        payload.append('categoryId', formData.categoryId);
 
         if (formData.serviceImage) {
             payload.append('serviceImage', formData.serviceImage);
@@ -107,8 +129,7 @@ function AddServices() {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            // console.log('Service created successfully:', res.data);
-            toast.success('Service Created Successfully!')
+            toast.success('Service Created Successfully!');
         } catch (error) {
             console.error('Error creating service:', error);
             setError('Failed to create service.');
@@ -134,6 +155,23 @@ function AddServices() {
 
             <FormGroups onSubmit={handleSubmit} Elements={
                 <div className='row'>
+                    {/* Main Category Select */}
+                    <div className="col-md-6">
+                        <label className="form-label" htmlFor="categoryId">Main Category</label>
+                        <select
+                            className="form-select"
+                            name='categoryId'
+                            id="categoryId"
+                            value={formData.categoryId}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Main Category</option>
+                            {mainCategories.map((item) => (
+                                <option key={item._id} value={item._id}>{item.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
                     {/* Sub Category Select */}
                     <div className="col-md-6">
                         <label className="form-label" htmlFor="subCategoryId">Sub Category</label>
@@ -143,10 +181,11 @@ function AddServices() {
                             id="subCategoryId"
                             value={formData.subCategoryId}
                             onChange={handleChange}
+                            disabled={!formData.categoryId} // Disable if no category is selected
                         >
-                            <option value="">Select Category</option>
-                            {categories.map((item, index) => (
-                                <option key={index} value={item._id}>{item.name}</option>
+                            <option value="">Select Sub Category</option>
+                            {subCategories.map((item) => (
+                                <option key={item._id} value={item._id}>{item.name}</option>
                             ))}
                         </select>
                     </div>
@@ -234,7 +273,7 @@ function AddServices() {
                             />
                         </div>
                     </div>
-                    
+
                     <div className="col-md-12 mt-3">
                         <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
                         <textarea

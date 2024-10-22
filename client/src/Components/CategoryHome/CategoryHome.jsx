@@ -49,7 +49,7 @@ function CategoryHome() {
                       <img style={{width:'70%', height:'70%', objectFit:'cover'}} src={category?.icon?.url} alt="" />
                     </div>
                     <div className="Goodup-catg-caption">
-                      <Link to={`/sub-category/${category.name.replace(/\s+/g, '-').toLowerCase()}`} className="services-box-title mb-3 ft-medium m-catrio">
+                      <Link to={`/sub-category/${category.name}`} className="services-box-title mb-3 ft-medium m-catrio">
                         {category.name}
                       </Link>
                     </div>

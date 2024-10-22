@@ -153,7 +153,7 @@ function Header() {
                           </Link>
                         </li>
                         <li className="add-listing theme-bg">
-                          <Link style={{color:'white'}} to={'/vendor-registration'}>
+                          <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                             <i className="fas fa-plus me-2"></i>Vendor Registration
                           </Link>
                         </li>
@@ -173,10 +173,10 @@ function Header() {
                   <Link to={'/about-us'}>About Us</Link>
                 </li>
                 <li>
-                  <Link to={''}>Services</Link>
+                  <Link to={'/services'}>Services</Link>
                 </li>
                 <li>
-                  <Link to={''}>Products</Link>
+                  <Link to={'/products'}>Products</Link>
                 </li>
                 <li>
                   <Link to={''}>Blog</Link>
@@ -238,7 +238,7 @@ function Header() {
                         </Link>
                       </li>
                       <li className="add-listing theme-bg">
-                        <Link style={{color:'white'}} to={'/vendor-registration'}>
+                        <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                           <i className="fas fa-plus me-2"></i>Vendor Registration
                         </Link>
                       </li>

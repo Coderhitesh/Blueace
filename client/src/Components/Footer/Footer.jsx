@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from './logo.webp'
+import axios from 'axios';
 
 function Footer() {
+  const [allService,setService] = useState([])
+  const fetchService = async() => {
+    try {
+      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service')
+      setService(res.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(()=>{
+    fetchService();
+  },[])
   return (
     <>
       {/* ============================ Footer Start ================================== */}
@@ -65,6 +78,8 @@ function Footer() {
                     <li><Link to={'/'}>- Home</Link></li>
                     <li><Link to={'/about'}>- About</Link></li>
                     <li><Link to={'/contact'}>- Contact</Link></li>
+                    <li><Link to={'/services'}>- Services</Link></li>
+                    <li><Link to={'/products'}>- Products</Link></li>
                     <li><Link to={''}>- Blog</Link></li>
                     <li><Link to={'/privacy'}>- Privacy</Link></li>
                     {/* <li><Link to={'/'}>Dashboard</Link></li> */}
@@ -76,14 +91,11 @@ function Footer() {
                 <div className="footer_widget">
                   <h4 className="widget_title">Our Products</h4>
                   <ul className="footer-menu">
-                    <li><a href="#">- Fan Coil Unit (FCU)  </a></li>
-                    <li><a href="#">- Chilled Water Cassette  </a></li>
-                    <li><a href="#">- High Wall Fan Coil Unit  </a></li>
-                    <li><a href="#">- Grills and Diffusers  </a></li>
-                    <li><a href="#">- Chiller Water Plants    </a></li>
-                    <li><a href="#">- Ibr Steam Boilers   </a></li>
-                    <li><a href="#">- Cooling & Heating Coil    </a></li>
-                    <li><a href="#">- DX Cooling System </a></li>
+                    {
+                      allService && allService.map((item,index)=>(
+                        <li key={index}><Link to={item.name}>- {item.name}</Link></li>
+                      ))
+                    }
                   </ul>
                 </div>
               </div>
@@ -92,11 +104,11 @@ function Footer() {
                 <div className="footer_widget">
                   <h4 className="widget_title">Services</h4>
                   <ul className="footer-menu">
-                    <li><a href="#">- Maintenance of AHU and FCU</a></li>
-                    <li><a href="#">- Maintenance of Ductable Air Conditioners</a></li>
-                    <li><a href="#">- Maintenance of Cold Rooms-Cold Storages</a></li>
-                    <li><a href="#">- Servicing of Water-Air Cooled Chillers</a></li>
-                    <li><a href="#">- Servicing of VRV-VRF Air Conditioning System </a></li>
+                  {
+                      allService && allService.map((item,index)=>(
+                        <li key={index}><Link to={item.name}>- {item.name}</Link></li>
+                      ))
+                    }
                   </ul>
                 </div>
               </div>
@@ -122,7 +134,7 @@ function Footer() {
             <div className="row align-items-center">
               <div className="col-lg-12 col-md-12 text-center">
                 <p className="mb-0">
-                  © 2022 URBAN. Designed By <a href="https://hoverbusinessservices.com/">Hover Business Services LLP</a>.
+                  © 2022 Blueace. Designed By <a href="https://hoverbusinessservices.com/">Hover Business Services LLP</a>.
                 </p>
               </div>
             </div>

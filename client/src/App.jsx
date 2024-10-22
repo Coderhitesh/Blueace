@@ -25,6 +25,7 @@ import MemberShipPlan from "./Pages/MemberShipPlan/MemberShipPlan"
 import SuccessPayment from "./Pages/PaymentStatusPage/SuccessPayment"
 import PaymentFailed from "./Pages/PaymentStatusPage/PaymentFailed"
 import UserDashboard from "./Pages/Dashboard/UserDashboard"
+import Service from "./Pages/Service/Service"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -57,6 +58,8 @@ function App() {
           <Route path="/membership-plan/:vendorId" element={<MemberShipPlan />} />
           <Route path="/successfull-payment" element={<SuccessPayment />} />
           <Route path="/failed-payment" element={<PaymentFailed />} />
+          <Route path="/services" element={<Service />} />
+          <Route path="/products" element={<Service />} />
 
           
         </Routes>

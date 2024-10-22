@@ -7,7 +7,7 @@ function AboutUs() {
             <section class="space aboutus-h-top">
                 <div class="container">
                     <div class="row align-items-center justify-content-between">
-                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 py-4">
                             <div class="m-spaced">
                                 <div class="position-relative">
 
