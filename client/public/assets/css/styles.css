@@ -2449,7 +2449,7 @@ nav a {
     justify-content: center;
     color: #748194;
     position: relative;
-    margin-left: 7px;
+    /* margin-left: 7px; */
 }
 .nav-menu>li>a.crs_yuo12, .mobile_nav .crs_yuo12.w-auto {
     width: auto;
@@ -2758,10 +2758,11 @@ li._my_prt_list a span {
     margin: 0;
     padding: 0;
     align-items: center;
+    gap: 10px;
 }
 .mobile_nav ul li {
     display: inline-block;
-    padding-left:12px;
+    /* padding-left:12px; */
 }
 .mobile_nav ul li:first-child{
 	padding-left:0;
@@ -2772,6 +2773,7 @@ li._my_prt_list a span {
     font-weight:500;
     color:#293544;
     font-family: 'Jost', sans-serif;
+    align-items: center;
 }
 .mobile_nav ul li._my_prt_list a span {
     width: auto;

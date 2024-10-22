@@ -145,7 +145,7 @@ function Header() {
                     )}
 
                     {/* For non-authenticated users or other roles */}
-                    {role !== 'Customer' && role !== 'Vendor' && (
+                    {role !== 'Customer' && role !== 'vendor' && (
                       <>
                         <li>
                           <Link to={'/sign-in'} className="ft-bold">
@@ -153,7 +153,7 @@ function Header() {
                           </Link>
                         </li>
                         <li className="add-listing theme-bg">
-                          <Link to={'/vendor-registration'}>
+                          <Link style={{color:'white'}} to={'/vendor-registration'}>
                             <i className="fas fa-plus me-2"></i>Vendor Registration
                           </Link>
                         </li>
@@ -238,7 +238,7 @@ function Header() {
                         </Link>
                       </li>
                       <li className="add-listing theme-bg">
-                        <Link to={'/vendor-registration'}>
+                        <Link style={{color:'white'}} to={'/vendor-registration'}>
                           <i className="fas fa-plus me-2"></i>Vendor Registration
                         </Link>
                       </li>
