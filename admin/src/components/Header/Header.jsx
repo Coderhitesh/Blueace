@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logo from './logo.webp'
 
 const Header = () => {
     return (
@@ -8,8 +9,8 @@ const Header = () => {
             <header className="page-header row">
                 <div className="logo-wrapper d-flex align-items-center col-auto">
                     <Link to="/">
-                        <img className="light-logo img-fluid" src="../assets/images/logo/logo1.png" alt="logo" />
-                        <img className="dark-logo img-fluid" src="../assets/images/logo/logo-dark.png" alt="logo" />
+                        <img className="light-logo img-fluid" style={{width:'50px'}} src={logo} alt="logo" />
+                        <img className="dark-logo img-fluid" style={{width:'50px'}} src={logo} alt="logo" />
                     </Link>
                     <Link className="close-btn toggle-sidebar" to="#" data-action="toggle-sidebar">
                         <svg className="svg-color">
