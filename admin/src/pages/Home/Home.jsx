@@ -35,6 +35,9 @@ import AddMemberShipPlan from '../MemberShipPlan/AddMemberShipPlan'
 import EditMemberShipPlan from '../MemberShipPlan/EditMemberShipPlan'
 import Order from '../Orders/Order'
 import VendorForOrder from '../Orders/VendorForOrder'
+import AllBlog from '../Blog/AllBlog'
+import AddBlog from '../Blog/AddBlog'
+import EditBlog from '../Blog/EditBlog'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -87,6 +90,11 @@ const Home = () => {
                         <Route path='/home-layout/all-marquee' element={<AllMarquee />} />
                         <Route path='/home-layout/add-marquee' element={<AddMarquee />} />
                         <Route path='/home-layout/edit-marquee/:id' element={<EditMarquee />} />
+
+                        {/* marquee route here  */}
+                        <Route path='/home-layout/all-blog' element={<AllBlog />} />
+                        <Route path='/home-layout/add-blog' element={<AddBlog />} />
+                        <Route path='/home-layout/edit-blog/:id' element={<EditBlog />} />
 
                         {/* user route here  */}
                         <Route path='/users/all-users' element={<AllUserDetail />} />

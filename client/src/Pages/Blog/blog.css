@@ -1,0 +1,33 @@
+.blg_desc p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Correct property to clamp to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3.8em; /* Adjust height to fit 2 lines properly */
+}
+
+.blg_title h4{
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Correct property to clamp to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 3.2em; 
+}
+
+.gup_blg_grid_thumb{
+    height: 300px;
+}
+
+.gup_blg_grid_thumb img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.blog-image{
+    height: 400px;
+    width: 100%;
+    object-fit: cover;
+}

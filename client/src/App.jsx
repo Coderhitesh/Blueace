@@ -26,6 +26,8 @@ import SuccessPayment from "./Pages/PaymentStatusPage/SuccessPayment"
 import PaymentFailed from "./Pages/PaymentStatusPage/PaymentFailed"
 import UserDashboard from "./Pages/Dashboard/UserDashboard"
 import Service from "./Pages/Service/Service"
+import BlogPage from "./Pages/Blog/BlogPage"
+import BlogSinglePage from "./Pages/Blog/BlogSinglePage"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -60,6 +62,8 @@ function App() {
           <Route path="/failed-payment" element={<PaymentFailed />} />
           <Route path="/services" element={<Service />} />
           <Route path="/products" element={<Service />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogSinglePage />} />
 
           
         </Routes>

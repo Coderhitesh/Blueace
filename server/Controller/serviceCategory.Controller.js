@@ -156,7 +156,7 @@ exports.getServiceCategoryByName = async (req, res) => {
         const { name } = req.params;
         const searchName = name.trim()
         // console.log('name',searchName)
-        const serviceCategory = await Category.findOne({ name:searchName }).populate('mainCategoryId');
+        const serviceCategory = await Category.findOne({ name: searchName }).populate('mainCategoryId');
         if (!serviceCategory) {
             return res.status(400).json({
                 success: false,

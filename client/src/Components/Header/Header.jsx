@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './logo.webp';
 import './Header.css';
@@ -12,6 +12,7 @@ function Header() {
   const userData = userDataString ? JSON.parse(userDataString) : null;
   const role = userData?.Role || null;
   const token = sessionStorage.getItem('token')
+  const [allMarquee,serAllMarquee] = useState([])
 
   // const handleLogOut = () => {
   //   sessionStorage.clear();
@@ -34,6 +35,16 @@ function Header() {
     }
   };
 
+  const handleFetchMarquee = async () => {
+    try {
+      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-marquee')
+      serAllMarquee(res.data.data)
+    } catch (error) {
+      console.log("Internal server error in fetching marquee",error)
+      toast.error('Internal server error in fetching marquee')
+    }
+  }
+
   const handleVendorLogOut = async () => {
     try {
       const res = await axios.get('https://api.blueace.co.in/api/v1/vendor-logout', {
@@ -49,6 +60,10 @@ function Header() {
       toast.error(error?.response?.data?.msg || 'Internal server error during logout');
     }
   };
+
+  useEffect(()=>{
+    handleFetchMarquee();
+  },[])
 
   return (
     <>
@@ -78,13 +93,18 @@ function Header() {
             </div>
             <div className="col-lg-6">
               <div className="topheader-marquee">
-                <marquee>
+                {/* <marquee>
                   Blueace Limited mission has always been to provide top-notch{' '}
                   <span style={{ color: '#47d2fc', fontWeight: '700' }}>Heating</span>,{' '}
                   <span style={{ color: '#47d2fc', fontWeight: '700' }}>ventilation</span>, and{' '}
                   <span style={{ color: '#47d2fc', fontWeight: '700' }}>Air Conditioning</span>{' '}
                   solutions tailored to the unique needs of each customer.
-                </marquee>
+                </marquee> */}
+                {
+                  allMarquee && allMarquee.slice(0,1).map((item,index)=>(
+                    <marquee>{item.text}</marquee>
+                  ))
+                }
               </div>
             </div>
           </div>
@@ -179,7 +199,7 @@ function Header() {
                   <Link to={'/products'}>Products</Link>
                 </li>
                 <li>
-                  <Link to={''}>Blog</Link>
+                  <Link to={'/blog'}>Blog</Link>
                 </li>
                 <li>
                   <Link to={'/contact'}>Contact Us</Link>

@@ -14,6 +14,7 @@ const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, up
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
 const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor } = require('../Controller/order.Controller')
+const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -168,5 +169,13 @@ router.delete('/delete-order/:_id', deleteOrder)
 router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
 router.post('/assign-Vendor/:orderId/:Vendorid/:type', AssignVendor)
 
+// for blog routes 
+
+router.post('/create-blog',upload.fields([{ name: 'smallImage', maxCount: 1 }, { name: 'largeImage', maxCount: 1 }]),createBlog)
+router.get('/get-all-blogs',getAllBlog)
+router.get('/get-single-blog/:_id',getSingleBlog)
+router.put('/update-blog/:_id',upload.fields([{ name: 'smallImage', maxCount: 1 }, { name: 'largeImage', maxCount: 1 }]),updateBlog)
+router.delete('/delete-blog/:_id',deleteBlog)
+router.put('/update-isTranding/:_id',updateBlogIsTranding)
 
 module.exports = router;
