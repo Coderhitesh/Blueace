@@ -13,7 +13,7 @@ const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainC
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 // const { createCart } = require('../Controller/Cart.Controller')
@@ -165,6 +165,8 @@ router.post('/make-order', upload.single('voiceNote'), makeOrder)
 router.get('/get-all-order', getAllOrder)
 router.put('/update-order-status/:_id', updateOrderStatus)
 router.delete('/delete-order/:_id', deleteOrder)
+router.put('/update-befor-work-image/:_id',upload.single('beforeWorkImage'), updateBeforWorkImage)
+router.put('/update-after-work-image/:_id',upload.single('afterWorkImage'), updateAfterWorkImage)
 
 
 //for fetching vendor for order

@@ -1,6 +1,7 @@
-const fs = require('fs');
+// const fs = require('fs');
 const Order = require('../Model/Order.Model');
-const { deleteVoiceNoteFromCloudinary, uploadVoiceNote } = require('../Utils/Cloudnary');
+const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
+const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
 exports.makeOrder = async (req, res) => {
     try {
@@ -239,7 +240,7 @@ exports.fetchVendorByLocation = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            AlreadyAlootedVebdor:venorWhichAllotedPast || "No-Vendor In Past",
+            AlreadyAlootedVebdor: venorWhichAllotedPast || "No-Vendor In Past",
             currentPage: parseInt(Page),
             limit: parseInt(limit),
             totalPages,
@@ -307,10 +308,112 @@ exports.AssignVendor = async (req, res) => {
 
     } catch (error) {
         res.status(501).json({
-            
+
             success: false,
             message: error.message
         });
     }
 };
 
+exports.updateBeforWorkImage = async (req, res) => {
+    const uploadedImages = [];
+    try {
+        const id = req.params._id;
+        const order = await Order.findById(id)
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found'
+            })
+        }
+        if (req.file) {
+            if (order.beforeWorkImage.public_id) {
+                await deleteImageFromCloudinary(order.beforeWorkImage.public_id)
+            }
+            const imgUrl = await uploadImage(req.file.path)
+            const { image, public_id } = imgUrl
+            order.beforeWorkImage.url = image;
+            order.beforeWorkImage.public_id = public_id;
+            uploadedImages.push = order.beforeWorkImage.public_id;
+            try {
+                fs.unlink(req.file.path)
+            } catch (error) {
+                console.log('Error in deleting file from local', error)
+            }
+        } else {
+            res.status(400).json({
+                success: false,
+                message: 'No image uploaded'
+            })
+        }
+        const updatedOrder = await order.save()
+
+        res.status(200).json({
+            success: true,
+            message: 'Before work image is uploaded',
+            data: updatedOrder
+        })
+
+    } catch (error) {
+        console.log("Internal server error in updating the before image", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error in updating the before work image",
+            error: error.message
+
+        })
+    }
+}
+
+exports.updateAfterWorkImage = async (req, res) => {
+    const uploadedImages = [];
+    try {
+        const id = req.params._id;
+        const order = await Order.findById(id)
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found'
+            })
+        }
+        if (req.file) {
+            if (order.afterWorkImage.public_id) {
+                await deleteImageFromCloudinary(order.afterWorkImage.public_id)
+            }
+            const imgUrl = await uploadImage(req.file.path)
+            const { image, public_id } = imgUrl
+            order.afterWorkImage.url = image;
+            order.afterWorkImage.public_id = public_id;
+            uploadedImages.push = order.afterWorkImage.public_id;
+            try {
+                fs.unlink(req.file.path)
+            } catch (error) {
+                console.log('Error in deleting file from local', error)
+            }
+        } else {
+            res.status(400).json({
+                success: false,
+                message: 'No image uploaded'
+            })
+        }
+        const updatedOrder = await order.save()
+
+        res.status(200).json({
+            success: true,
+            message: 'Before work image is uploaded',
+            data: updatedOrder
+        })
+
+    } catch (error) {
+        console.log("Internal server error in updating the before image", error)
+        if (uploadedImages) {
+            deleteImageFromCloudinary(uploadedImages)
+        }
+        res.status(500).json({
+            success: false,
+            message: "Internal server error in updating the before work image",
+            error: error.message
+
+        })
+    }
+}

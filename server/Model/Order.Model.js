@@ -98,7 +98,27 @@ const OrderSchema = new mongoose.Schema({
 
     RangeWhereYouWantService: [
         rangeSchema
-    ]
+    ],
+    beforeWorkImage: {
+        url: {
+            type: String,
+            // required: true
+        },
+        public_id: {
+            type: String,
+            // required: true
+        }
+    },
+    afterWorkImage: {
+        url: {
+            type: String,
+            // required: true
+        },
+        public_id: {
+            type: String,
+            // required: true
+        }
+    },
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

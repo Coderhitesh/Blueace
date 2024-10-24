@@ -221,8 +221,8 @@ function Dashboard() {
                 {activeTab === 'All-Order' && <AllVendorOrder userData={userData} allOrder={allOrder} />}
                 {activeTab === 'members' && <VendorMember userData={userData} />}
                 {activeTab === 'add-members' && <AddVendorMember />}
-                {activeTab === 'profile' && <VendorProfile />}
-                {activeTab === 'changePassword' && <VendorChangePassword />}
+                {activeTab === 'profile' && <VendorProfile  userData={userData} />}
+                {activeTab === 'changePassword' && <VendorChangePassword  userData={userData} />}
             </div>
         </>
     );

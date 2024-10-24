@@ -9,6 +9,7 @@ function VendorProfile({ userData }) {
             behavior: 'smooth',
         });
     }, []);
+    console.log('user',userData)
 
     const userId = userData?._id; // Ensure userData is provided or fetched correctly.
 

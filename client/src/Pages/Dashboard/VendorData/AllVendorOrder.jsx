@@ -58,9 +58,9 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>LandMark</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Voice Note</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
                                                 {/* <th style={{whiteSpace:"nowrap"}}>City</th>
-                                               <th style={{whiteSpace:"nowrap"}}>Pin Code</th>
-                                               <th style={{whiteSpace:"nowrap"}}>Address</th>
                                                <th style={{whiteSpace:"nowrap"}}>Message</th> */}
                                                 {/* <th style={{whiteSpace:"nowrap"}}>Created At</th> */}
                                             </tr>
@@ -86,6 +86,21 @@ function AllVendorOrder({ userData, allOrder }) {
                                                             )}
                                                         </td>
                                                         <td>{order.OrderStatus}</td>
+                                                        <td>
+                                                            {order?.beforeWorkImage?.url ? (
+                                                                <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
+                                                            ) : (
+                                                                <span>No image uploaded</span>
+                                                            )}
+                                                        </td>
+                                                        <td>
+                                                            {order?.afterWorkImage?.url ? (
+                                                                <img style={{ width: '100px', height: '80px' }} src={order?.afterWorkImage?.url} alt={order?.serviceId?.name} />
+                                                            ) : (
+                                                                <span>No image uploaded</span>
+                                                            )}
+                                                        </td>
+
                                                         {/* <td>{order.city}</td>
                                                        <td>{order.pinCode}</td>
                                                        <td>{`${order.houseNo}, ${order.street}, ${order.nearByLandMark}`}</td> */}

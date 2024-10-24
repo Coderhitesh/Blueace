@@ -97,7 +97,7 @@ const HederSlide = () => {
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
-                            <h6 className="lan-2">Home Layout</h6>
+                            <h6 className="lan-2">Vendors</h6>
                             {/* <i class="fa-solid fa-arrow-right"></i> */}
                         </Link>
                         {activeMenu === 'vendors' && (
@@ -107,7 +107,7 @@ const HederSlide = () => {
                             </ul>
                         )}
                     </li>
-                    <li className="sidebar-list">
+                    {/* <li className="sidebar-list">
                         <i className="fa-solid fa-thumbtack"></i>
                         <Link
                             className="sidebar-link"
@@ -118,7 +118,7 @@ const HederSlide = () => {
                             </svg>
                             <h6 className="lan-2">All Vendor</h6>
                         </Link>
-                    </li>
+                    </li> */}
                     <li className="sidebar-list">
                         <i className="fa-solid fa-thumbtack"></i>
                         <Link

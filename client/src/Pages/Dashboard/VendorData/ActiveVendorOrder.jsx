@@ -8,6 +8,10 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
 
+    // State to store selected images for each order
+    const [beforeWorkImage, setBeforeWorkImage] = useState({});
+    const [afterWorkImage, setAfterWorkImage] = useState({});
+
     // Calculate the current orders to display
     const indexOfLastOrder = currentPage * itemsPerPage;
     const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
@@ -20,11 +24,42 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
             await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
-            //    Swal.fire("Success", "Order status updated successfully", "success");
-            toast.success('Order status updated successfully')
+            toast.success('Order status updated successfully');
         } catch (error) {
             console.error(error);
             Swal.fire("Error", "Failed to update order status", "error");
+        }
+    };
+
+    // Handle Before Work Image Upload
+    const handleBeforeWorkImageUpload = async (orderId) => {
+        const formData = new FormData();
+        formData.append('beforeWorkImage', beforeWorkImage[orderId]);
+
+        try {
+            await axios.put(`https://api.blueace.co.in/api/v1/update-befor-work-image/${orderId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            toast.success('Before work image uploaded successfully');
+        } catch (error) {
+            console.error(error);
+            Swal.fire("Error", "Failed to upload before work image", "error");
+        }
+    };
+
+    // Handle After Work Image Upload
+    const handleAfterWorkImageUpload = async (orderId) => {
+        const formData = new FormData();
+        formData.append('afterWorkImage', afterWorkImage[orderId]);
+
+        try {
+            await axios.put(`https://api.blueace.co.in/api/v1/update-after-work-image/${orderId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            toast.success('After work image uploaded successfully');
+        } catch (error) {
+            console.error(error);
+            Swal.fire("Error", "Failed to upload after work image", "error");
         }
     };
 
@@ -72,6 +107,8 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>LandMark</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Voice Note</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Order Status</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Before Work Image</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>After Work Image</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -106,6 +143,26 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                 <option value="Cancelled">Cancelled</option>
                                                             </select>
                                                         </td>
+                                                        <td>
+                                                            <input
+                                                                type="file"
+                                                                onChange={(e) => setBeforeWorkImage({ ...beforeWorkImage, [order._id]: e.target.files[0] })}
+                                                                className='form-control'
+                                                            />
+                                                            <button className='btn btn-sm theme-bg text-light rounded ft-medium' onClick={() => handleBeforeWorkImageUpload(order._id)}>
+                                                                Upload
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <input
+                                                                type="file"
+                                                                onChange={(e) => setAfterWorkImage({ ...afterWorkImage, [order._id]: e.target.files[0] })}
+                                                                className='form-control'
+                                                            />
+                                                            <button className='btn btn-sm theme-bg text-light rounded ft-medium' onClick={() => handleAfterWorkImageUpload(order._id)}>
+                                                                Upload
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 ))
                                             ) : (
@@ -133,6 +190,8 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                 </nav>
                             </div>
                         </div>
+
+
                     </div>
                 </div>
             </div>

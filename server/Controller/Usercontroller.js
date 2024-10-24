@@ -91,7 +91,6 @@ exports.register = async (req, res) => {
         // Save user to database
         await newUser.save();
 
-
         // Prepare email options
         const emailOptions = {
             email: Email,
