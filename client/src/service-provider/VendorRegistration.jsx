@@ -42,11 +42,67 @@ function VendorRegistration() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: value
         }));
+
+        // Validate Contact Number
+        if (name === 'ContactNumber') {
+            const regex = /^\+?\d{10}$/; // Allows optional + followed by exactly 10 digits
+
+            if (value.length === 10) {
+                if (regex.test(value)) {
+                    toast.success('Valid contact number');
+                } else {
+                    toast.error('Invalid contact number. Please enter exactly 10 digits.');
+                }
+            } else if (value.length > 10) {
+                toast.error('Invalid contact number. Please enter exactly 10 digits.');
+            }
+        }
+
+        // Validate Aadhar Number
+        else if (name === 'adharNo') {
+            const regex = /^\d{12}$/; // Matches exactly 12 digits
+            if (value.length === 12) { // Check for exactly 12 digits
+                if (regex.test(value)) {
+                    toast.success('Valid Aadhar number');
+                } else {
+                    toast.error('Invalid Aadhar number. Please enter exactly 12 digits.');
+                }
+            } else if (value.length > 12) {
+                toast.error('Invalid Aadhar number. Please enter exactly 12 digits.');
+            }
+        }
+        else if (name === 'Email') {
+
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+            if (emailRegex.test(value)) {
+                toast.success('Valid email address');
+            } else {
+                toast.error('Invalid email address. Please enter a valid format.');
+            }
+
+        }
+
+        // Validate PAN Number
+        else if (name === 'panNo') {
+            const panRegex = /^[a-z]{5}[0-9]{4}[a-z]{1}$/;
+            if (value.length === 10) {
+                if (panRegex.test(value)) {
+                    toast.success('Valid PAN number');
+                } else {
+                    toast.error('Invalid PAN number. Please enter a valid PAN.');
+                }
+            } else if (value.length > 10) {
+                toast.error('Invalid PAN number. Please enter exactly 10 characters.');
+            }
+        }
     };
+
 
     const getLocation = () => {
         if (navigator.geolocation) {
@@ -211,7 +267,6 @@ function VendorRegistration() {
 
     return (
         <>
-            <Toaster />
             {/* ======================= RegisterServiceProvider Detail ======================== */}
             <section className="gray">
                 <div className="container">
@@ -243,7 +298,7 @@ function VendorRegistration() {
                                                 <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Contact Number of Owner*" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control rounded" placeholder="PAN Number*" required />
+                                                <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control text-uppercase rounded" placeholder="PAN Number*" required />
                                             </div>
                                             <div className="form-group col-lg-6">
                                                 <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" placeholder="GST Number*" required />

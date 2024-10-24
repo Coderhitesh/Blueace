@@ -1,7 +1,31 @@
-import React, { useEffect } from 'react'
-
-function VendorDashboard({userData}) {
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+function VendorDashboard({ userData }) {
     // console.log(userData)
+    const [dashboard, setDashboard] = useState({})
+    const token = sessionStorage.getItem('token');
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        })
+    }, [])
+    const fetchDashboardData = async () => {
+        try {
+            const { data } = await axios.get('http://localhost:7000/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            console.log(data)
+            setDashboard(data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        fetchDashboardData()
+    }, [token])
+
     useEffect(() => {
         window.scrollTo({
             top: 0,
@@ -26,14 +50,7 @@ function VendorDashboard({userData}) {
                 </div>
 
                 <div className="dashboard-widg-bar d-block">
-                    <div className="row">
-                        <div className="col-xl-12 col-lg-12 col-md-12 mb-3">
-                            <div className="alert bg-inverse text-light d-flex align-items-center" role="alert">
-                                <p className="p-0 m-0 ft-medium full-width">Your listing <a href="#" className="text-success">Wedding Willa Resort</a> has been approved!</p>
-                                <button type="button" className="btn-close text-light" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        </div>
-                    </div>
+
                     <div className="row">
                         <div className="col-xl-3 col-lg-3 col-md-6 col-sm-6">
                             <div className="dsd-boxed-widget py-5 px-4 bg-danger rounded">

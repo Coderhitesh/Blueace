@@ -15,6 +15,7 @@ const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, 
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
 const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
+const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -40,6 +41,7 @@ router.put('/update-old-password/:_id', ChangeOldPassword)
 router.delete('/delete-user/:_id', deleteUser)
 
 // service router here 
+router.get('/getAnylaticalData',protect, getAnylaticalData)
 
 // Router for service main category
 router.post('/create-service-main-category', createServiceMainCategory);

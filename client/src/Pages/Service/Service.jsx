@@ -20,6 +20,7 @@ function Service() {
         }
     };
 
+
     const fetchSubCategory = async () => {
         try {
             const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-category');
@@ -67,7 +68,7 @@ function Service() {
                                 <div className="sidebar_header d-flex align-items-center justify-content-between px-4 py-3 br-bottom">
                                     <h4 className="ft-medium fs-lg mb-0">Search Filter</h4>
                                     <div className="ssh-header">
-                                        <a href="javascript:void(0);" className="clear_all ft-medium text-muted">Clear All</a>
+                                        <a href="javascript:void(0);" onClick={()=>setSelectedSubCategories([])} className="clear_all ft-medium text-muted">Clear All</a>
                                         <a href="#search_open" data-bs-toggle="collapse" aria-expanded="false" role="button" className="collapsed _filter-ico ml-2">
                                             <i className="lni lni-text-align-right"></i>
                                         </a>

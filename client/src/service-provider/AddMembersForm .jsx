@@ -74,7 +74,6 @@ const AddMembersForm = () => {
 
     return (
         <>
-        <Toaster />
             <section className="gray">
                 <div className="container">
                     <div className="row align-items-start justify-content-center">

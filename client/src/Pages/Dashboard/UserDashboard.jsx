@@ -108,6 +108,21 @@ function UserDashboard() {
         }
     };
 
+    if(!token){
+        return   <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+        <div className="container">
+            <div className="row">
+                <div className="col text-center">
+                    <div className="alert alert-danger" role="alert">
+                        <h1 className="display-4">You are not logged in.</h1>
+                        <p className="lead">Please login to access your dashboard.</p>
+                        <a href="/sign-in" className="btn btn-primary btn-lg custom-btn">Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
     return (
         <>
             <section

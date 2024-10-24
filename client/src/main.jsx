@@ -7,6 +7,6 @@ import './index.css'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
-    <Toaster />
+    <Toaster   position="top-right"  reverseOrder={false}  />
   </StrictMode>,
 )

@@ -149,7 +149,6 @@ function Registration() {
 
   return (
     <>
-      <Toaster />
       {/* ======================= Registration Detail ======================== */}
       <section className="gray">
         <div className="container">
