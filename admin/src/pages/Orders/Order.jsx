@@ -140,6 +140,11 @@ function Order() {
                                         vendor?.OrderStatus || "Not-Available"
                                     )}
                                 </td>
+                                <td>
+                                    <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                        Delete
+                                    </button>
+                                </td>
                                 <td className='fw-bolder'>
                                     {vendor?.beforeWorkImage?.url ? (
                                         <img style={{ width: '100px', height: '80px' }} src={vendor?.beforeWorkImage?.url} alt={vendor?.serviceId?.name} />
@@ -153,11 +158,6 @@ function Order() {
                                     ) : (
                                         <span>No image uploaded</span>
                                     )}
-                                </td>
-                                <td>
-                                    <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
-                                        Delete
-                                    </button>
                                 </td>
                                 <td>{new Date(vendor.createdAt).toLocaleString() || "Not-Available"}</td>
                             </tr>
