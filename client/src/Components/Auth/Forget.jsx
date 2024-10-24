@@ -96,7 +96,6 @@ function Forget() {
 
   return (
     <>
-      <Toaster />
       {/* Log In Modal */}
       <div className="bg-dark">
         <div className="modal-dialog login-pop-form" role="document">

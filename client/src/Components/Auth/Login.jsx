@@ -79,7 +79,6 @@ function Login() {
 
     return (
         <>
-            <Toaster />
             <div className="bg-dark">
                 <div className="modal-dialog login-pop-form" role="document">
                     <div className="modal-content py-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F4F4F7' }} id="loginmodal">

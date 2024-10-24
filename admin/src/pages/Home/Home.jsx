@@ -117,7 +117,6 @@ const Home = () => {
                     </Routes>
                 </div>
             </div>
-            <Toaster />
         </div>
     )
 }

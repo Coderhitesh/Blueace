@@ -1,0 +1,31 @@
+.custom-btn {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border-radius: 30px; /* Rounded corners */
+    padding: 10px 30px; /* Custom padding */
+    font-weight: bold; /* Bold text */
+}
+
+.custom-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.3); /* Light overlay */
+    transition: transform 0.3s ease;
+    transform: scale(0); /* Scale down initially */
+    border-radius: 30px; /* Match the button's border radius */
+}
+
+.custom-btn:hover::before {
+    transform: scale(1); /* Scale up on hover */
+}
+
+.custom-btn:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+    color: #fff; /* Change text color on hover */
+    box-shadow: 0 4px 20px rgba(0, 86, 179, 0.3); /* Add shadow on hover */
+}

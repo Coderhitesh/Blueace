@@ -29,6 +29,21 @@ function SubCategory() {
     }
   };
 
+  const handleOpenModel = () => {
+    // Check if fullName is not filled or email is not filled
+    if (!formData.fullName || !formData.email || !formData.phoneNumber || !formData.message) {
+
+      toast.error("Please fill all the required fields");
+      return;
+    } else {
+      setIsModalOpen(true);
+    }
+  };
+  
+  const handleCloseModel = () => {
+    setIsModalOpen(false);
+  }
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     fetchServiceData();
@@ -153,6 +168,7 @@ function SubCategory() {
       navigate(`/sign-in?redirect=${encodeURIComponent(window.location.pathname)}`);
       return;
     }
+
 
     const userId = userData._id;
 
@@ -327,7 +343,7 @@ function SubCategory() {
                       <textarea className='form-control messagearea' name='message' placeholder='Message' required onChange={handleChange} />
                     </div>
                     <div className='mb-3 col-lg-12 text-center'>
-                      <button type='button' className='btn btn-primary rounded' data-bs-toggle='modal' data-bs-target='#exampleModal'>
+                      <button type='button' onClick={handleOpenModel} className='btn btn-primary rounded'  data-bs-target='#exampleModal'>
                         Send Message
                       </button>
                     </div>
@@ -340,12 +356,12 @@ function SubCategory() {
       </div>
 
       {/* // Modal for Address Entry */}
-      <div className='modal fade' id='exampleModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+      <div className='modal '     style={{ display: `${isModalOpen ? 'block' : 'none'}` }} id='exampleModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
         <div className='modal-dialog'>
           <div className='modal-content'>
             <div className='modal-header'>
               <h5 className='modal-title' id='exampleModalLabel'>Enter Address</h5>
-              <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+              <button type='button' onClick={handleCloseModel} className='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
             </div>
             <div className='modal-body'>
               <form onSubmit={handleModalSubmit}>
@@ -374,7 +390,7 @@ function SubCategory() {
               </form>
             </div>
             <div className='modal-footer'>
-              <button type='button' className='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
+              <button type='button' onClick={handleCloseModel} className='btn btn-secondary' data-bs-dismiss='modal'>Close</button>
               <button type='button' className='btn btn-primary' onClick={handleModalSubmit}>Submit</button>
             </div>
           </div>
