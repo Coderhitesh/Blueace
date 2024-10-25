@@ -73,6 +73,8 @@ const HederSlide = () => {
                                 <li><Link to="/home-layout/all-faq-content">FAQ Content</Link></li>
                                 <li><Link to="/home-layout/all-marquee">Marquee</Link></li>
                                 <li><Link to="/home-layout/all-blog">Blogs</Link></li>
+                                <li><Link to="/home-layout/all-gallery-title">Gallery Title</Link></li>
+                                <li><Link to="/home-layout/all-gallery-image">Gallery Image</Link></li>
                             </ul>
                         )}
                     </li>

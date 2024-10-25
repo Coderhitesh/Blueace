@@ -15,7 +15,7 @@ function AllHomeBanner() {
   const handleFetchData = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:7000/api/v1/get-all-banner');
+      const response = await axios.get('https://api.blueace.co.in/api/v1/get-all-banner');
       if (response.data.success) {
         const datasave = response.data.data;
         const r = datasave.reverse();
@@ -38,7 +38,7 @@ function AllHomeBanner() {
   // Handle deleting a category
   const handleDelete = async (id) => {
     try {
-      const response = await axios.delete(`http://localhost:7000/api/v1/delete-banner/${id}`);
+      const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-banner/${id}`);
       if (response.data.success) {
         toast.success('Banner deleted successfully!');
         await handleFetchData(); // Fetch categories again after deletion
@@ -55,7 +55,7 @@ function AllHomeBanner() {
       // console.log('currentActiveStatus', currentActiveStatus)
       const newActiveStatus = !currentActiveStatus; // Toggle the status
       // console.log('newActiveStatus', newActiveStatus)
-      const response = await axios.put(`http://localhost:7000/api/v1/update-banner-active-status/${id}`, {
+      const response = await axios.put(`https://api.blueace.co.in/api/v1/update-banner-active-status/${id}`, {
         active: newActiveStatus
       });
 

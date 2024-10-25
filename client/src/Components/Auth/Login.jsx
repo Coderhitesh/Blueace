@@ -35,7 +35,7 @@ function Login() {
         };
 
         try {
-            const res = await axios.post('http://localhost:7000/api/v1/Login', Payload, {
+            const res = await axios.post('https://api.blueace.co.in/api/v1/Login', Payload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

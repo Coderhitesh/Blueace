@@ -41,7 +41,7 @@ function Dashboard() {
 
     const fetchOrderData = async () => {
         try {
-            const res = await axios.get('http://localhost:7000/api/v1/get-all-order');
+            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
             const orderData = res.data.data;
             const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
             setAllOrder(filterData);
@@ -66,7 +66,7 @@ function Dashboard() {
 
     const handleLogout = async () => {
         try {
-            const res = await axios.get('http://localhost:7000/api/v1/vendor-logout', {
+            const res = await axios.get('https://api.blueace.co.in/api/v1/vendor-logout', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -91,7 +91,7 @@ function Dashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`http://localhost:7000/api/v1/delete-vendor/${userId}`);
+                    await axios.delete(`https://api.blueace.co.in/api/v1/delete-vendor/${userId}`);
                     sessionStorage.clear()
                     toast.success("User Deleted Successfully");
                     window.location.href = '/'

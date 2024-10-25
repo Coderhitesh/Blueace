@@ -83,7 +83,7 @@ function AddBlog() {
         }
 
         try {
-            const res = await axios.post('http://localhost:7000/api/v1/create-blog', payload, {
+            const res = await axios.post('https://api.blueace.co.in/api/v1/create-blog', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

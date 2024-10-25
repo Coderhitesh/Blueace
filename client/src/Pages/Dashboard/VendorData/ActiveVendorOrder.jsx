@@ -23,7 +23,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`http://localhost:7000/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
             toast.success('Order status updated successfully');
         } catch (error) {
             console.error(error);
@@ -38,7 +38,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         formData.append('beforeWorkImage', beforeWorkImage[orderId]);
 
         try {
-            await axios.put(`http://localhost:7000/api/v1/update-befor-work-image/${orderId}`, formData, {
+            await axios.put(`https://api.blueace.co.in/api/v1/update-befor-work-image/${orderId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('Before work image uploaded successfully');
@@ -54,7 +54,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         formData.append('afterWorkImage', afterWorkImage[orderId]);
 
         try {
-            await axios.put(`http://localhost:7000/api/v1/update-after-work-image/${orderId}`, formData, {
+            await axios.put(`https://api.blueace.co.in/api/v1/update-after-work-image/${orderId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('After work image uploaded successfully');

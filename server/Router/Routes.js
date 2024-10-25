@@ -17,6 +17,8 @@ const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLoc
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
+const { createGalleryCategory, getAllImageCategory, singleGalleryCategory, deleteGalleryCategory, updateGalleryCategory } = require('../Controller/GalleryCategory.Controller')
+const { createGalleryImage, getSingleGalleryImage, getAllGalleryImage, deleteGalleryImage, updateGalleryImage } = require('../Controller/GalleryImage.controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -189,6 +191,22 @@ router.post('/make-Estimated-bills', makeEstimated)
 router.put('/update-status-bills/:billId', UpdateStatusOfBill)
 router.delete('/delete-Estimated-bills/:billId', deleteBill)
 router.put('/update-Estimated-bills/:billId', updateBill)
+
+// gallery category name routes 
+
+router.post('/create-gallery-category-name',createGalleryCategory)
+router.get('/get-all-gallery-category-name',getAllImageCategory)
+router.get('/get-single-gallery-category-name/:_id',singleGalleryCategory)
+router.delete('/delete-gallery-category-name/:_id',deleteGalleryCategory)
+router.put('/update-gallery-category-name/:_id',updateGalleryCategory)
+
+// gallery image router 
+
+router.post('/create-gallery-image',upload.single('image'),createGalleryImage)
+router.get('/get-single-gallery-image/:_id',getSingleGalleryImage)
+router.get('/get-all-gallery-image',getAllGalleryImage)
+router.delete('/delete-gallery-image/:_id',deleteGalleryImage)
+router.put('/update-gallery-image/:_id',upload.single('image'),updateGalleryImage)
 
 
 module.exports = router;

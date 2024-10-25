@@ -4,12 +4,12 @@ import FormGroups from '../../components/Forms/FormGroups';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import Input from '../../components/Forms/Input';
 
-function EditFAQContent() {
+function EditGalleryName() {
     const { id } = useParams();
     const [formData, setFormData] = useState({
-        question: '',
-        answer: '',
+        name: '',
     })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -17,15 +17,14 @@ function EditFAQContent() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get(`https://api.blueace.co.in/api/v1/get-single-faq-content/${id}`)
+                const { data } = await axios.get(`https://api.blueace.co.in/api/v1/get-single-gallery-category-name/${id}`)
                 const faq = data.data;
                 setFormData({
-                    question: faq.question,
-                    answer: faq.answer
+                    name: faq.name,
                 })
             } catch (error) {
-                setError('Failed to load previous faq data')
-                console.log("Failed to load faq:", error)
+                setError('Failed to load previous Gallery title')
+                console.log("Failed to load gallery title:", error)
             }
         }
         fetchData();
@@ -45,20 +44,19 @@ function EditFAQContent() {
         setLoading(true);
 
         const payload = new FormData()
-        payload.append('question', formData.question)
-        payload.append('answer', formData.answer)
+        payload.append('name', formData.name)
 
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-faq-content/${id}`, payload, {
+            await axios.put(`https://api.blueace.co.in/api/v1/update-gallery-category-name/${id}`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
             })
-            toast.success('Faq updated successfully!')
+            toast.success('Gallery Title updated successfully!')
             setError('')
         } catch (error) {
-            console.error('Error updating FAQ Content:', error);
-            setError('Failed to update FAQ Content');
+            console.error('Error updating Gallery Title:', error);
+            setError('Failed to update Gallery Title');
         } finally {
             setLoading(false);
         }
@@ -66,7 +64,7 @@ function EditFAQContent() {
 
     return (
         <div>
-            <Breadcrumb heading={'FAQ Content'} subHeading={'All FAQ Content'} LastHeading={'Edit FAQ Content'} backLink={'/home-layout/all-faq-content'} />
+            <Breadcrumb heading={'Gallery Title'} subHeading={'All Gallery Title'} LastHeading={'Edit Gallery Title'} backLink={'/home-layout/all-gallery-title'} />
 
             {error && <div className="alert alert-danger">{error}</div>}
 
@@ -74,33 +72,15 @@ function EditFAQContent() {
                 <div className='row'>
 
                     <div className="col-md-12">
-                        <label className='form-label' htmlFor="question">Question</label>
-                        <textarea
-                            class="form-control"
-                            rows="5"
-                            cols="5"
-                            placeholder="Enter Question"
-                            name='question'
-                            value={formData.question}
+                        <label className='form-label' htmlFor="name">Title</label>
+                        <Input
+                            placeholder="Enter Title"
+                            name='name'
+                            value={formData.name}
                             onChange={handleChange}
                             required={true}
-                            id='question'
-                        ></textarea>
-                    </div>
-
-                    <div className="col-md-12 mt-4">
-                        <label className='form-label' htmlFor="Answer">Answer</label>
-                        <textarea
-                            class="form-control"
-                            rows="5"
-                            cols="5"
-                            placeholder="Enter Answer"
-                            name='answer'
-                            value={formData.answer}
-                            onChange={handleChange}
-                            required={true}
-                            id='Answer'
-                        ></textarea>
+                            id='name'
+                        />
                     </div>
 
                     <div className='col-md-10 mx-auto mt-4'>
@@ -114,4 +94,4 @@ function EditFAQContent() {
     )
 }
 
-export default EditFAQContent
+export default EditGalleryName

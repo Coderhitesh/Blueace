@@ -5,59 +5,59 @@ import Table from '../../components/Table/Table';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-function AllMarquee() {
-    const [marquees, setMarquees] = useState([]);
+function AllGalleryName() {
+    const [faq, setFaq] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 10;
 
-    const fetchMarqueeData = async() => {
-        setLoading(true)
+    const fetchFAQData = async () => {
+        setLoading(true);
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-marquee')
+            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-gallery-category-name')
             if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
                 const r = datasave.reverse();
-                setMarquees(r);
+                setFaq(r);
             } else {
-                toast.error('Failed to fetch marquee');
+                toast.error('Failed to fetch Gallery content');
             }
         } catch (error) {
-            toast.error('An error occurred while fetching marquee.');
-            console.error('Fetch error:', error); 
+            toast.error('An error occurred while fetching Gallery content.');
+            console.error('Fetch error:', error);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
     }
 
-    useEffect(()=>{
-        fetchMarqueeData();
-    },[])
+    useEffect(() => {
+        fetchFAQData();
+    }, [])
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-marquee/${id}`);
+            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-gallery-category-name/${id}`);
             if (response.data.success) {
-                toast.success('Marquee deleted successfully!');
-                await fetchMarqueeData(); // Fetch categories again after deletion
+                toast.success('Gallery Title deleted successfully!');
+                await fetchFAQData(); // Fetch categories again after deletion
             } else {
-                toast.error('Failed to delete Marquee');
+                toast.error('Failed to delete Gallery title');
             }
         } catch (error) {
-            toast.error('An error occurred while deleting the Marquee.');
+            toast.error('An error occurred while deleting the gallery title.');
         }
     };
 
     const indexOfLastVoucher = currentPage * productsPerPage;
     const indexOfFirstVoucher = indexOfLastVoucher - productsPerPage;
-    const currentServices = marquees.slice(indexOfFirstVoucher, indexOfLastVoucher);
+    const currentServices = faq.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
-    const headers = ['S.No', 'Marquee' , 'Created At', 'Action'];
+    const headers = ['S.No', 'Gallery Title', 'Action'];
 
   return (
     <div className='page-body'>
-            <Breadcrumb heading={'Marquee'} subHeading={'Home Layout'} LastHeading={'All Marquee'} backLink={'/home-layout/all-marquee'} />
+            <Breadcrumb heading={'Gallery Title'} subHeading={'Home Layout'} LastHeading={'All Gallery Title'} backLink={'/home-layout/all-gallery-title'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -66,13 +66,11 @@ function AllMarquee() {
                     elements={currentServices.map((category, index) => (
                         <tr key={category._id}>
                             <td>{index + 1}</td>
-                            <td className='fw-bolder'>{category.text || "Not-Availdable"}</td>
+                            <td className='fw-bolder'>{category.name || "Not-Availdable"}</td>
                             
-                            <td>{new Date(category.createdAt).toLocaleString() || "Not-Availdable"}</td>
-
                             <td className='fw-bolder'>
                                 <div className="product-action">
-                                    <Link to={`/home-layout/edit-marquee/${category._id}`}>
+                                    <Link to={`/home-layout/Edit-gallery-title/${category._id}`}>
                                         <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
@@ -82,12 +80,12 @@ function AllMarquee() {
                             </td>
                         </tr>
                     ))}
-                    productLength={marquees.length}
+                    productLength={faq.length}
                     productsPerPage={productsPerPage}
                     currentPage={currentPage}
                     paginate={setCurrentPage}
-                    href="/home-layout/add-marquee"
-                    text="Add Marquee"
+                    href="/home-layout/add-gallery-title"
+                    text="Add Gallery Title"
                     errorMsg=""
                     handleOpen={() => { }}
                 />
@@ -96,4 +94,4 @@ function AllMarquee() {
   )
 }
 
-export default AllMarquee
+export default AllGalleryName

@@ -3,12 +3,11 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import FormGroups from '../../components/Forms/FormGroups';
 import Input from '../../components/Forms/Input';
 import axios from 'axios';
-import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
 
-function AddMarquee() {
+function AddGalleryName() {
     const [formData, setFormData] = useState({
-        text: ''
+        name: '',
     })
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -26,17 +25,19 @@ function AddMarquee() {
         setLoading(true)
         setError('')
         const payload = new FormData();
-        payload.append('text', formData.text);
+        payload.append('name', formData.name);
+        // payload.append('answer', formData.answer);
         try {
-            await axios.post(`https://api.blueace.co.in/api/v1/create-marquee`, payload, {
+            await axios.post('https://api.blueace.co.in/api/v1/create-gallery-category-name', payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
             })
-            toast.success('Marquee Added Successfully')
+            // toast.success('Gallery Title Added Successfully');
+            toast.success('Gallery Title Added Successfully')
         } catch (error) {
-            console.error('Error creating marquee:', error);
-            setError('Failed to create marquee.');
+            toast.error('Error creating Gallery Title:');
+            setError('Failed to create Gallery Title.');
         } finally {
             setLoading(false);
         }
@@ -44,7 +45,7 @@ function AddMarquee() {
 
     return (
         <div>
-            <Breadcrumb heading={'Create Marquee'} subHeading={'All Marquee'} LastHeading={'Create Marquee'} backLink={'/home-layout/all-marquee'} />
+            <Breadcrumb heading={'Add Gallery Title'} subHeading={'All Gallery Title'} LastHeading={'Create Gallery Title'} backLink={'/home-layout/all-gallery-title'} />
 
             {error && <div className="alert alert-danger">{error}</div>}
 
@@ -52,18 +53,16 @@ function AddMarquee() {
                 <div className='row'>
 
                     <div className="col-md-12">
-                        <label className='form-label' htmlFor="text">Marquee</label>
-                        <textarea
-                            class="form-control"
-                            rows="5"
-                            cols="5"
-                            placeholder="Enter Marquee"
-                            name='text'
-                            value={formData.text}
+                        <label className='form-label' htmlFor="name">Title</label>
+                        
+                        <Input
+                            placeholder="Enter Title"
+                            name='name'
+                            value={formData.name}
                             onChange={handleChange}
                             required={true}
-                            id='text'
-                        ></textarea>
+                            id='name'
+                        />
                     </div>
 
                     {/* Submit Button */}
@@ -78,4 +77,4 @@ function AddMarquee() {
     )
 }
 
-export default AddMarquee
+export default AddGalleryName

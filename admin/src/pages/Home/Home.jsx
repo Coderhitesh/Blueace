@@ -39,6 +39,12 @@ import AllBlog from '../Blog/AllBlog'
 import AddBlog from '../Blog/AddBlog'
 import EditBlog from '../Blog/EditBlog'
 import SeeEstimatedBudget from '../Orders/SeeEstimatedBudget'
+import AllGalleryName from '../GalleryName/AllGalleryName'
+import AddGalleryName from '../GalleryName/AddGalleryName'
+import EditGalleryName from '../GalleryName/EditGalleryName'
+import AllGalleryImage from '../GalleryImage/AllGalleryImage'
+import AddGalleryImage from '../GalleryImage/AddGalleryImage'
+import EditGalleryImage from '../GalleryImage/EditGalleryImage'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -110,7 +116,16 @@ const Home = () => {
                         <Route path='/Alloted/:id' element={<VendorForOrder />} />
                         <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
 
-                        
+                        {/* galley title route here  */}
+                        <Route path="/home-layout/all-gallery-title" element={<AllGalleryName />} />
+                        <Route path="/home-layout/Add-gallery-title" element={<AddGalleryName />} />
+                        <Route path="/home-layout/Edit-gallery-title/:id" element={<EditGalleryName />} />
+
+                        {/* galley title route here  */}
+                        <Route path="/home-layout/all-gallery-image" element={<AllGalleryImage />} />
+                        <Route path="/home-layout/Add-gallery-image" element={<AddGalleryImage />} />
+                        <Route path="/home-layout/Edit-gallery-image/:id" element={<EditGalleryImage />} />
+
 
 
                         {/* Order route here  */}
@@ -119,6 +134,7 @@ const Home = () => {
                     </Routes>
                 </div>
             </div>
+            {/* <Toaster /> */}
         </div>
     )
 }
