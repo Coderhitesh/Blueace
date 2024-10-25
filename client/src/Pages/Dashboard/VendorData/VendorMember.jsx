@@ -28,7 +28,7 @@ const VendorMember = ({ userData }) => {
   // Function to fetch existing member data
   const handleFetchExistingMember = async () => {
     try {
-      const res = await axios.get(`https://api.blueace.co.in/api/v1/get-vendor-member/${userId}`);
+      const res = await axios.get(`http://localhost:7000/api/v1/get-vendor-member/${userId}`);
       const existingMembers = res.data.data.map((member) => ({
         name: member.name || '',
         memberAdharImageUrl: member.memberAdharImage?.url || '', // For displaying the image URL
@@ -65,7 +65,7 @@ const VendorMember = ({ userData }) => {
 
         // Update the member
         await axios.put(
-          `https://api.blueace.co.in/api/v1/update-vendor-member/${userId}/${member._id}`, // Ensure userId and memberId are passed correctly
+          `http://localhost:7000/api/v1/update-vendor-member/${userId}/${member._id}`, // Ensure userId and memberId are passed correctly
           formData,
           {
             headers: {

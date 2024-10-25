@@ -10,7 +10,7 @@ function BlogPage() {
 
     const fetchAllBlog = async (page) => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-all-blogs?page=${page}&limit=6`);
+            const res = await axios.get(`http://localhost:7000/api/v1/get-all-blogs?page=${page}&limit=6`);
             setAllBlog(res.data.data);
             setTotalPages(res.data.totalPages);  // Set total pages based on the backend response
         } catch (error) {

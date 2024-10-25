@@ -15,7 +15,7 @@ function Order() {
 
     const fetchAllOrders = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+            const res = await axios.get('http://localhost:7000/api/v1/get-all-order');
             setAllOrders(res.data.data);
             setLoading(false);
         } catch (error) {
@@ -26,7 +26,7 @@ function Order() {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`http://localhost:7000/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
 
             toast.success('Order status updated successfully');
             fetchAllOrders();
@@ -42,7 +42,7 @@ function Order() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-order/${id}`);
+            const response = await axios.delete(`http://localhost:7000/api/v1/delete-order/${id}`);
             if (response.data.success) {
                 toast.success('Order deleted successfully!');
                 await fetchAllOrders(); // Fetch vendors again after deletion
@@ -72,7 +72,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = allOrders.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'OrderStatus', 'Delete', "Before Image Upload", "After Image Upload", 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Image Upload", "After Image Upload", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -140,11 +140,25 @@ function Order() {
                                         vendor?.OrderStatus || "Not-Available"
                                     )}
                                 </td>
+
                                 <td>
-                                    <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
-                                        Delete
+                                    <button
+                                        onClick={() => {
+                                            const estimatedBillStr = JSON.stringify(vendor.EstimatedBill);
+                                            window.location.href = `/see-esitimated-bill?OrderId=${vendor._id}&vendor=${vendor?.vendorAlloted?._id}&Estimate=${encodeURIComponent(estimatedBillStr)}`;
+                                        }}
+                                        style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                        className='btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm'
+                                        disabled={!vendor.EstimatedBill}
+                                    >
+                                        {vendor?.EstimatedBill ? "See Budget" : "Bill Not Available"}
                                     </button>
                                 </td>
+                                <td className={`text-center ${vendor.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
+                                    {/* { console.log(vendor.EstimatedBill?._id?.statusOfBill)} */}
+                                    {vendor.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
+                                </td>
+                                
                                 <td className='fw-bolder'>
                                     {vendor?.beforeWorkImage?.url ? (
                                         <img style={{ width: '100px', height: '80px' }} src={vendor?.beforeWorkImage?.url} alt={vendor?.serviceId?.name} />
@@ -159,6 +173,12 @@ function Order() {
                                         <span>No image uploaded</span>
                                     )}
                                 </td>
+                                <td>
+                                    <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                        Delete
+                                    </button>
+                                </td>
+
                                 <td>{new Date(vendor.createdAt).toLocaleString() || "Not-Available"}</td>
                             </tr>
                         ))}

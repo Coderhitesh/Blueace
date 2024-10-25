@@ -52,7 +52,7 @@ function AddVendorMember({ userData }) {
 
         try {
             const response = await axios.post(
-                `https://api.blueace.co.in/api/v1/register-vendor-member/${vendorId}`,
+                `http://localhost:7000/api/v1/register-vendor-member/${vendorId}`,
                 formData,
                 {
                     headers: {

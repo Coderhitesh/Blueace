@@ -47,15 +47,18 @@ function UserActiveOrder({ userData, activeOrder }) {
                                     <table className="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th style={{whiteSpace:"nowrap"}}>Service Image</th>
-                                                <th style={{whiteSpace:"nowrap"}}>Service Name</th>
-                                                <th style={{whiteSpace:"nowrap"}}>Service Type</th>
-                                                <th style={{whiteSpace:"nowrap"}}>Vendor Company</th>
-                                                <th style={{whiteSpace:"nowrap"}}>Vendor Email</th>
-                                                <th style={{whiteSpace:"nowrap"}}>Vendor Number</th>
-                                                <th style={{whiteSpace:"nowrap"}}>Order Status</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Service Image</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Service Name</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Service Type</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Vendor Company</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Vendor Email</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Vendor Number</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
+
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
+
                                                 {/* <th style={{whiteSpace:"nowrap"}}>City</th>
                                                 <th style={{whiteSpace:"nowrap"}}>Pin Code</th>
                                                 <th style={{whiteSpace:"nowrap"}}>Address</th>
@@ -67,14 +70,30 @@ function UserActiveOrder({ userData, activeOrder }) {
                                         <tbody>
                                             {currentOrders && currentOrders.length > 0 ? (
                                                 currentOrders.map((order) => (
+
                                                     <tr key={order._id}>
-                                                        <td><img style={{width:'100px',height:'80px'}} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td>
+                                                        {console.log(order)}
+                                                        <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td>
                                                         <td>{order?.serviceId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.vendorAlloted?.companyName || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.ContactNumber || "Vendor is not allowted"}</td>
                                                         <td>{order.OrderStatus}</td>
+                                                        <td>
+                                                            <button
+                                                                onClick={() => {
+                                                                    const estimatedBillStr = JSON.stringify(order.EstimatedBill);
+                                                                    window.location.href = `/see-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}&Estimate=${encodeURIComponent(estimatedBillStr)}`;
+                                                                }}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                            >
+                                                                {order?.EstimatedBill ? "See Budget" : "Bill Not Available"}
+                                                            </button>
+
+                                                        </td>
+
                                                         <td>
                                                             {order?.beforeWorkImage?.url ? (
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
@@ -116,17 +135,17 @@ function UserActiveOrder({ userData, activeOrder }) {
 
                                     {/* Pagination */}
                                 </div>
-                                    <nav className="mt-3">
-                                        <ul className="pagination justify-content-center">
-                                            {Array.from({ length: Math.ceil(activeOrder.length / itemsPerPage) }, (_, i) => (
-                                                <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-                                                    <button className="page-link" onClick={() => paginate(i + 1)}>
-                                                        {i + 1}
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </nav>
+                                <nav className="mt-3">
+                                    <ul className="pagination justify-content-center">
+                                        {Array.from({ length: Math.ceil(activeOrder.length / itemsPerPage) }, (_, i) => (
+                                            <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                                <button className="page-link" onClick={() => paginate(i + 1)}>
+                                                    {i + 1}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>

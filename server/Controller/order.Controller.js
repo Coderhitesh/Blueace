@@ -112,7 +112,7 @@ exports.makeOrder = async (req, res) => {
 
 exports.getAllOrder = async (req, res) => {
     try {
-        const orders = await Order.find().populate('userId').populate('serviceId').populate('vendorAlloted').sort({ 'createdAt': -1 })
+        const orders = await Order.find().populate('userId EstimatedBill serviceId vendorAlloted').sort({ 'createdAt': -1 })
         if (!orders) {
             return res.status(404).json({
                 success: false,
@@ -127,7 +127,7 @@ exports.getAllOrder = async (req, res) => {
     } catch (error) {
         console.log("Internal server in geting all order")
         res.status(500).json({
-            success: setFlagsFromString,
+            success: false,
             message: "Internal server error in getting all order",
             error: error.message
         })
@@ -396,6 +396,7 @@ exports.updateAfterWorkImage = async (req, res) => {
                 message: 'No image uploaded'
             })
         }
+        order.OrderStatus = "Service Done"
         const updatedOrder = await order.save()
 
         res.status(200).json({

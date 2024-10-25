@@ -12,7 +12,7 @@ function VendorDashboard({ userData }) {
     }, [])
     const fetchDashboardData = async () => {
         try {
-            const { data } = await axios.get('https://api.blueace.co.in/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
+            const { data } = await axios.get('http://localhost:7000/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
                 headers: { Authorization: `Bearer ${token}` }
             })
 

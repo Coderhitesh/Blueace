@@ -29,6 +29,8 @@ import UserDashboard from "./Pages/Dashboard/UserDashboard"
 import Service from "./Pages/Service/Service"
 import BlogPage from "./Pages/Blog/BlogPage"
 import BlogSinglePage from "./Pages/Blog/BlogSinglePage"
+import EstimatedBudget from "./Pages/Dashboard/VendorData/EstimatedBudget"
+import SeeEstimatedBudget from "./Pages/Dashboard/VendorData/SeeEstimatedBudget"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -41,6 +43,10 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/listing" element={<ListingsPage />} />
           <Route path="/vendor-dashboard" element={<Dashboard />} />
+          <Route path="/make-esitimated-bill" element={<EstimatedBudget />} />
+          <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
+
+          
           <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/about-us" element={<About />} />
           <Route path="/contact" element={<Contact />} />

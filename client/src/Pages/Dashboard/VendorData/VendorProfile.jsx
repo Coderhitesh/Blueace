@@ -39,7 +39,7 @@ function VendorProfile({ userData }) {
 
     const fetchExistingUser = async () => {
         try {
-            const { data } = await axios.get(`https://api.blueace.co.in/api/v1/single-vendor/${userId}`);
+            const { data } = await axios.get(`http://localhost:7000/api/v1/single-vendor/${userId}`);
             const existinguser = data.data;
     
             setFormData({
@@ -113,7 +113,7 @@ function VendorProfile({ userData }) {
         if (formData.gstImage) Payload.append('gstImage', formData.gstImage);
 
         try {
-            const res = await axios.put(`https://api.blueace.co.in/api/v1/update-vendor/${userId}`, Payload, {
+            const res = await axios.put(`http://localhost:7000/api/v1/update-vendor/${userId}`, Payload, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success(res.data.message);

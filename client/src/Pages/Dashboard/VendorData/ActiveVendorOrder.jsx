@@ -23,7 +23,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`http://localhost:7000/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
             toast.success('Order status updated successfully');
         } catch (error) {
             console.error(error);
@@ -37,7 +37,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         formData.append('beforeWorkImage', beforeWorkImage[orderId]);
 
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-befor-work-image/${orderId}`, formData, {
+            await axios.put(`http://localhost:7000/api/v1/update-befor-work-image/${orderId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('Before work image uploaded successfully');
@@ -53,7 +53,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         formData.append('afterWorkImage', afterWorkImage[orderId]);
 
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-after-work-image/${orderId}`, formData, {
+            await axios.put(`http://localhost:7000/api/v1/update-after-work-image/${orderId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('After work image uploaded successfully');
@@ -97,7 +97,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                     <table className="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th style={{ whiteSpace: 'nowrap' }}>Service Image</th>
+                                                {/* <th style={{ whiteSpace: 'nowrap' }}>Service Image</th> */}
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Name</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Type</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Name</th>
@@ -106,6 +106,12 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Address</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>LandMark</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Voice Note</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Make Estimated </th>
+
+                                                <th style={{ whiteSpace: 'nowrap' }}>Watch Estimated </th>
+                                                <th style={{ whiteSpace: 'nowrap' }}> Estimated Status</th>
+
+
                                                 <th style={{ whiteSpace: 'nowrap' }}>Order Status</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Before Work Image</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>After Work Image</th>
@@ -115,7 +121,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                             {currentOrders && currentOrders.length > 0 ? (
                                                 currentOrders.map((order) => (
                                                     <tr key={order._id}>
-                                                        <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td>
+                                                        {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
                                                         <td>{order?.serviceId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.userId?.FullName || "User is not available"}</td>
@@ -132,13 +138,34 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             )}
                                                         </td>
                                                         <td>
+                                                            <button onClick={() => window.location.href = `/make-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
+                                                                Estimated Budget
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <button
+                                                                onClick={() => {
+                                                                    const estimatedBillStr = JSON.stringify(order.EstimatedBill);
+                                                                    window.location.href = `/see-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}&Estimate=${encodeURIComponent(estimatedBillStr)}`;
+                                                                }}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                disabled={!order.EstimatedBill}
+                                                            >
+                                                                {order?.EstimatedBill ? "See Budget" : "Bill Not Available"}
+                                                            </button>
+                                                        </td>
+                                                        <td className={`text-center ${order.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
+                                                          {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
+                                                            {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
+                                                        </td>
+
+                                                        <td>
                                                             <select
                                                                 value={order.OrderStatus}
                                                                 onChange={(e) => handleOrderStatusChange(order._id, e.target.value)}
                                                             >
                                                                 <option value="Pending">Pending</option>
-                                                                <option value="Vendor Assign">Vendor Assign</option>
-                                                                <option value="Vendor Ready To Go">Vendor Ready To Go</option>
                                                                 <option value="Service Done">Service Done</option>
                                                                 <option value="Cancelled">Cancelled</option>
                                                             </select>
@@ -146,23 +173,55 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                         <td>
                                                             <input
                                                                 type="file"
+                                                                id={`before-file-input-${order._id}`}
+                                                                style={{ display: 'none' }}  // Hide the actual file input
                                                                 onChange={(e) => setBeforeWorkImage({ ...beforeWorkImage, [order._id]: e.target.files[0] })}
-                                                                className='form-control'
                                                             />
-                                                            <button className='btn btn-sm theme-bg text-light rounded ft-medium' onClick={() => handleBeforeWorkImageUpload(order._id)}>
+
+                                                            {/* Small icon button to trigger file input */}
+                                                            <button
+                                                                className='btn btn-sm p-1'
+                                                                onClick={() => document.getElementById(`before-file-input-${order._id}`).click()}
+                                                                style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
+                                                            >
+                                                                <i className="fas fa-upload" aria-hidden="true"></i>  {/* FontAwesome upload icon */}
+                                                            </button>
+
+                                                            <button
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                onClick={() => handleBeforeWorkImageUpload(order._id)}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
+                                                            >
                                                                 Upload
                                                             </button>
                                                         </td>
+
                                                         <td>
                                                             <input
                                                                 type="file"
+                                                                id={`file-input-${order._id}`}
+                                                                style={{ display: 'none' }}  // Hide the actual file input
                                                                 onChange={(e) => setAfterWorkImage({ ...afterWorkImage, [order._id]: e.target.files[0] })}
-                                                                className='form-control'
                                                             />
-                                                            <button className='btn btn-sm theme-bg text-light rounded ft-medium' onClick={() => handleAfterWorkImageUpload(order._id)}>
+
+                                                            {/* Small icon button to trigger file input */}
+                                                            <button
+                                                                className='btn btn-sm p-1'
+                                                                onClick={() => document.getElementById(`file-input-${order._id}`).click()}
+                                                                style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
+                                                            >
+                                                                <i className="fas fa-upload" aria-hidden="true"></i>  {/* FontAwesome upload icon */}
+                                                            </button>
+
+                                                            <button
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                onClick={() => handleAfterWorkImageUpload(order._id)}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
+                                                            >
                                                                 Upload
                                                             </button>
                                                         </td>
+
                                                     </tr>
                                                 ))
                                             ) : (

@@ -28,7 +28,7 @@ function AddFAQContent() {
         payload.append('question', formData.question);
         payload.append('answer', formData.answer);
         try {
-            await axios.post('https://api.blueace.co.in/api/v1/create-faq-content', payload, {
+            await axios.post('http://localhost:7000/api/v1/create-faq-content', payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

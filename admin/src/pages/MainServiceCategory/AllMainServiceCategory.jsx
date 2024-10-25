@@ -16,7 +16,7 @@ function AllMainServiceCategory() {
     const handleFetchCategory = async() => {
         setLoading(true)
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-main-category')
+            const res = await axios.get('http://localhost:7000/api/v1/get-all-service-main-category')
             setCategory(res.data.data)
         } catch (error) {
             console.log(error)
@@ -32,7 +32,7 @@ function AllMainServiceCategory() {
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-service-main-category/${id}`);
+            const response = await axios.delete(`http://localhost:7000/api/v1/delete-service-main-category/${id}`);
             if (response.data.success) {
                 toast.success('Category deleted successfully!');
                 await handleFetchCategory(); // Fetch categories again after deletion

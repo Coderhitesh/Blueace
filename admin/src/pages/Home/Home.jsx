@@ -38,6 +38,7 @@ import VendorForOrder from '../Orders/VendorForOrder'
 import AllBlog from '../Blog/AllBlog'
 import AddBlog from '../Blog/AddBlog'
 import EditBlog from '../Blog/EditBlog'
+import SeeEstimatedBudget from '../Orders/SeeEstimatedBudget'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -107,6 +108,7 @@ const Home = () => {
                         <Route path='/vendors/add-membership-plan' element={<AddMemberShipPlan />} />
                         <Route path='/vendors/edit-membership-plan/:id' element={<EditMemberShipPlan />} />
                         <Route path='/Alloted/:id' element={<VendorForOrder />} />
+                        <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
 
                         
 

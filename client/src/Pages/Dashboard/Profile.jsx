@@ -28,7 +28,7 @@ function Profile({ userData }) {
 
 	const fetchExistingUser = async () => {
 		try {
-			const { data } = await axios.get(`https://api.blueace.co.in/api/v1/get-single-user/${userId}`);
+			const { data } = await axios.get(`http://localhost:7000/api/v1/get-single-user/${userId}`);
 			const existinguser = data.data;
 			setFormData({
 				FullName: existinguser.FullName,
@@ -94,7 +94,7 @@ function Profile({ userData }) {
 		}
 
 		try {
-			const res = await axios.put(`https://api.blueace.co.in/api/v1/update-user/${userId}`, Payload, {
+			const res = await axios.put(`http://localhost:7000/api/v1/update-user/${userId}`, Payload, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 			});
 			toast.success(res.data.message);

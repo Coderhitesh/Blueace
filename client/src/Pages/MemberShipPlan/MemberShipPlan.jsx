@@ -16,7 +16,7 @@ function MemberShipPlan() {
 
     const fetchVendorDetail = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/all-vendor')
+            const res = await axios.get('http://localhost:7000/api/v1/all-vendor')
             const allVendorData = res.data.data
             const filterVendor = allVendorData.filter((item) => item._id === vendorId)
             setVendorData({
@@ -36,7 +36,7 @@ function MemberShipPlan() {
     // Fetch all membership plans
     const fetchMemberShipPlan = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-membership-plan');
+            const res = await axios.get('http://localhost:7000/api/v1/get-all-membership-plan');
             setPrice(res.data.data); // Set membership plans to state
         } catch (error) {
             console.log(error);
@@ -65,7 +65,7 @@ function MemberShipPlan() {
             }
 
             // Create the membership plan order
-            const { data } = await axios.post(`https://api.blueace.co.in/api/v1/member-ship-plan/${vendorId}`, {
+            const { data } = await axios.post(`http://localhost:7000/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
             console.log("Orders", data.data)
@@ -81,7 +81,7 @@ function MemberShipPlan() {
                     name: 'Blueace',
                     description: 'Purchase Membership Plan',
                     order_id: order?.id || '',
-                    callback_url: "https://api.blueace.co.in/api/v1/payment-verify",
+                    callback_url: "http://localhost:7000/api/v1/payment-verify",
                     prefill: {
                         name: vendorData.ownerName, // Prefill customer data
                         email: vendorData.Email,

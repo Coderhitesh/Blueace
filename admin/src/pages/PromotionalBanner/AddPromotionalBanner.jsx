@@ -38,7 +38,7 @@ function AddPromotionalBanner() {
         }
 
         try {
-            await axios.post('https://api.blueace.co.in/api/v1/create-promotional-banner', payload, {
+            await axios.post('http://localhost:7000/api/v1/create-promotional-banner', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

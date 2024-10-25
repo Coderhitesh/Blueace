@@ -31,7 +31,7 @@ const OrderSchema = new mongoose.Schema({
     },
     OrderStatus: {
         type: String,
-        enum: ["Pending", 'Vendor Assigned', 'Vendor Ready To Go', 'Service Done', 'Cancelled'],
+        enum: ["Pending", 'Vendor Assigned', 'Service Done', 'Cancelled'],
         default: 'Pending'
     },
     VendorAllotedTime: {
@@ -117,8 +117,14 @@ const OrderSchema = new mongoose.Schema({
         public_id: {
             type: String,
             // required: true
-        }
+        },
+        
+       
     },
+    EstimatedBill:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:'EstimatedBudget'
+    }
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

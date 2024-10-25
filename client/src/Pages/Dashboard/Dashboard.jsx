@@ -13,7 +13,7 @@ import AllVendorOrder from './VendorData/AllVendorOrder';
 import ActiveVendorOrder from './VendorData/ActiveVendorOrder';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import VendorProfile from './VendorData/VendorProfile';
 import VendorChangePassword from './VendorData/VendorChangePassword';
 import VendorMember from './VendorData/VendorMember';
@@ -25,6 +25,7 @@ function Dashboard() {
     const [activeOrder, setActiveOrder] = useState([]);
     const [allOrder, setAllOrder] = useState([]);
     const [activeTab, setActiveTab] = useState('Dashboard');
+    const url = window.location.hash.substring(1);
 
     useEffect(() => {
         window.scrollTo({
@@ -40,7 +41,7 @@ function Dashboard() {
 
     const fetchOrderData = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+            const res = await axios.get('http://localhost:7000/api/v1/get-all-order');
             const orderData = res.data.data;
             const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
             setAllOrder(filterData);
@@ -55,9 +56,17 @@ function Dashboard() {
         fetchOrderData();
     }, []);
 
+    useEffect(() => {
+        if (url) {
+            setActiveTab(url);
+        } else {
+            setActiveTab('Dashboard')
+        }
+    }, [url])
+
     const handleLogout = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/vendor-logout', {
+            const res = await axios.get('http://localhost:7000/api/v1/vendor-logout', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -82,7 +91,7 @@ function Dashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`https://api.blueace.co.in/api/v1/delete-vendor/${userId}`);
+                    await axios.delete(`http://localhost:7000/api/v1/delete-vendor/${userId}`);
                     sessionStorage.clear()
                     toast.success("User Deleted Successfully");
                     window.location.href = '/'
@@ -165,39 +174,39 @@ function Dashboard() {
                         <div className="goodup-dashboard-inner">
                             <ul data-submenu-title="Main Navigation">
                                 <li onClick={() => handleTabClick('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#Dashboard'>
                                         <i className="lni lni-dashboard me-2"></i>Dashboard
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#Active-Order'>
                                         <i className="lni lni-files me-2"></i>Active Order
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('All-Order')} className={`${activeTab === 'All-Order' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#All-Order'>
                                         <i className="lni lni-add-files me-2"></i>All Orders
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('members')} className={`${activeTab === 'members' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#members'>
                                         <i className="lni lni-bookmark me-2"></i>Member
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('add-members')} className={`${activeTab === 'add-members' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#add-members'>
                                         <i className="lni lni-bookmark me-2"></i>Add Member
                                     </a>
                                 </li>
                             </ul>
                             <ul data-submenu-title="My Accounts">
                                 <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#profile'>
                                         <i className="lni lni-user me-2"></i>My Profile
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
-                                    <a>
+                                    <a href='#changePassword'>
                                         <i className="lni lni-lock-alt me-2"></i>Change Password
                                     </a>
                                 </li>
@@ -221,8 +230,8 @@ function Dashboard() {
                 {activeTab === 'All-Order' && <AllVendorOrder userData={userData} allOrder={allOrder} />}
                 {activeTab === 'members' && <VendorMember userData={userData} />}
                 {activeTab === 'add-members' && <AddVendorMember />}
-                {activeTab === 'profile' && <VendorProfile  userData={userData} />}
-                {activeTab === 'changePassword' && <VendorChangePassword  userData={userData} />}
+                {activeTab === 'profile' && <VendorProfile userData={userData} />}
+                {activeTab === 'changePassword' && <VendorChangePassword userData={userData} />}
             </div>
         </>
     );

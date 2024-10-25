@@ -16,6 +16,7 @@ const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, del
 const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
+const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -41,7 +42,7 @@ router.put('/update-old-password/:_id', ChangeOldPassword)
 router.delete('/delete-user/:_id', deleteUser)
 
 // service router here 
-router.get('/getAnylaticalData',protect, getAnylaticalData)
+router.get('/getAnylaticalData', protect, getAnylaticalData)
 
 // Router for service main category
 router.post('/create-service-main-category', createServiceMainCategory);
@@ -164,9 +165,9 @@ router.post('/payment-verify', PaymentVerify)
 router.post('/make-order', upload.single('voiceNote'), makeOrder)
 router.get('/get-all-order', getAllOrder)
 router.put('/update-order-status/:_id', updateOrderStatus)
-router.delete('/delete-order/:_id', deleteOrder)
-router.put('/update-befor-work-image/:_id',upload.single('beforeWorkImage'), updateBeforWorkImage)
-router.put('/update-after-work-image/:_id',upload.single('afterWorkImage'), updateAfterWorkImage)
+router.delete('/delete-order/:billId', deleteOrder)
+router.put('/update-befor-work-image/:billId', upload.single('beforeWorkImage'), updateBeforWorkImage)
+router.put('/update-after-work-image/:billId', upload.single('afterWorkImage'), updateAfterWorkImage)
 
 
 //for fetching vendor for order
@@ -175,11 +176,19 @@ router.post('/assign-Vendor/:orderId/:Vendorid/:type', AssignVendor)
 
 // for blog routes 
 
-router.post('/create-blog',upload.fields([{ name: 'smallImage', maxCount: 1 }, { name: 'largeImage', maxCount: 1 }]),createBlog)
-router.get('/get-all-blogs',getAllBlog)
-router.get('/get-single-blog/:_id',getSingleBlog)
-router.put('/update-blog/:_id',upload.fields([{ name: 'smallImage', maxCount: 1 }, { name: 'largeImage', maxCount: 1 }]),updateBlog)
-router.delete('/delete-blog/:_id',deleteBlog)
-router.put('/update-isTranding/:_id',updateBlogIsTranding)
+router.post('/create-blog', upload.fields([{ name: 'smallImage', maxCount: 1 }, { name: 'largeImage', maxCount: 1 }]), createBlog)
+router.get('/get-all-blogs', getAllBlog)
+router.get('/get-single-blog/:_id', getSingleBlog)
+router.put('/update-blog/:_id', upload.fields([{ name: 'smallImage', maxCount: 1 }, { name: 'largeImage', maxCount: 1 }]), updateBlog)
+router.delete('/delete-blog/:_id', deleteBlog)
+router.put('/update-isTranding/:_id', updateBlogIsTranding)
+
+// for esitmated bills routes 
+router.get('/get-all-bills', getAllBills)
+router.post('/make-Estimated-bills', makeEstimated)
+router.put('/update-status-bills/:billId', UpdateStatusOfBill)
+router.delete('/delete-Estimated-bills/:billId', deleteBill)
+router.put('/update-Estimated-bills/:billId', updateBill)
+
 
 module.exports = router;

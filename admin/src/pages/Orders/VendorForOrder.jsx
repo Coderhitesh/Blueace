@@ -14,7 +14,7 @@ const VendorForOrder = () => {
     const type = url.get('type')
     const fetchData = async (page) => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/fetch-Vendor-By-Location`, {
+            const res = await axios.get(`http://localhost:7000/api/v1/fetch-Vendor-By-Location`, {
                 params: {
                     orderId: id,
                     Page: page,
@@ -37,7 +37,7 @@ const VendorForOrder = () => {
     const handleAssignOrder = async (vendorId) => {
         try {
             let res;
-            const url = `https://api.blueace.co.in/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}`;
+            const url = `http://localhost:7000/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}`;
     
             // Make a request depending on the type
             if (type === "change-vendor") {

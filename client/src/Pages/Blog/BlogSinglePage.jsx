@@ -9,7 +9,7 @@ function BlogSinglePage() {
 
     const fetchBlog = async () => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-single-blog/${id}`);
+            const res = await axios.get(`http://localhost:7000/api/v1/get-single-blog/${id}`);
             setBlog(res.data.data);
         } catch (error) {
             console.log("Internal server error in fetching blog", error);
@@ -18,7 +18,7 @@ function BlogSinglePage() {
 
     const fetchAllBlog = async () => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-all-blogs`);
+            const res = await axios.get(`http://localhost:7000/api/v1/get-all-blogs`);
             const result = res.data.data;
             const filterData = result.filter((item) => item.isTranding === true);
             setAllBlog(filterData);

@@ -58,6 +58,8 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>LandMark</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Voice Note</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Watch Estimated</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Estimated Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
                                                 {/* <th style={{whiteSpace:"nowrap"}}>City</th>
@@ -86,6 +88,23 @@ function AllVendorOrder({ userData, allOrder }) {
                                                             )}
                                                         </td>
                                                         <td>{order.OrderStatus}</td>
+                                                        <td>
+                                                            <button
+                                                                onClick={() => {
+                                                                    const estimatedBillStr = JSON.stringify(order.EstimatedBill);
+                                                                    window.location.href = `/see-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}&Estimate=${encodeURIComponent(estimatedBillStr)}`;
+                                                                }}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                disabled={!order.EstimatedBill}
+                                                            >
+                                                                {order?.EstimatedBill ? "See Budget" : "Bill Not Available"}
+                                                            </button>
+                                                        </td>
+                                                        <td className={`text-center ${order.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
+                                                          {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
+                                                            {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
+                                                        </td>
                                                         <td>
                                                             {order?.beforeWorkImage?.url ? (
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
