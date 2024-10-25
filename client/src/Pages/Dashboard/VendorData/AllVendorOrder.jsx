@@ -48,7 +48,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                     <table className="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th style={{ whiteSpace: "nowrap" }}>Service Image</th>
+                                                {/* <th style={{ whiteSpace: "nowrap" }}>Service Image</th> */}
                                                 <th style={{ whiteSpace: "nowrap" }}>Service Name</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Service Type</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>User Name</th>
@@ -71,7 +71,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                             {currentOrders && currentOrders.length > 0 ? (
                                                 currentOrders.map((order) => (
                                                     <tr key={order._id}>
-                                                        <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td>
+                                                        {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
                                                         <td>{order?.serviceId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.userId?.FullName || "User is not available"}</td>

@@ -33,6 +33,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
 
     // Handle Before Work Image Upload
     const handleBeforeWorkImageUpload = async (orderId) => {
+        // console.log("orderid",orderId)
         const formData = new FormData();
         formData.append('beforeWorkImage', beforeWorkImage[orderId]);
 
@@ -165,7 +166,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                 value={order.OrderStatus}
                                                                 onChange={(e) => handleOrderStatusChange(order._id, e.target.value)}
                                                             >
-                                                                <option value="Pending">Pending</option>
+                                                                <option defaultValue={order.OrderStatus}>{order.OrderStatus}</option>
                                                                 <option value="Service Done">Service Done</option>
                                                                 <option value="Cancelled">Cancelled</option>
                                                             </select>

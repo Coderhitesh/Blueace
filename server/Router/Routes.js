@@ -165,9 +165,9 @@ router.post('/payment-verify', PaymentVerify)
 router.post('/make-order', upload.single('voiceNote'), makeOrder)
 router.get('/get-all-order', getAllOrder)
 router.put('/update-order-status/:_id', updateOrderStatus)
-router.delete('/delete-order/:billId', deleteOrder)
-router.put('/update-befor-work-image/:billId', upload.single('beforeWorkImage'), updateBeforWorkImage)
-router.put('/update-after-work-image/:billId', upload.single('afterWorkImage'), updateAfterWorkImage)
+router.delete('/delete-order/:_id', deleteOrder)
+router.put('/update-befor-work-image/:_id', upload.single('beforeWorkImage'), updateBeforWorkImage)
+router.put('/update-after-work-image/:_id', upload.single('afterWorkImage'), updateAfterWorkImage)
 
 
 //for fetching vendor for order

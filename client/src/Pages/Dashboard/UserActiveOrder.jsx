@@ -47,7 +47,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                     <table className="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th style={{ whiteSpace: "nowrap" }}>Service Image</th>
+                                                {/* <th style={{ whiteSpace: "nowrap" }}>Service Image</th> */}
                                                 <th style={{ whiteSpace: "nowrap" }}>Service Name</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Service Type</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Company</th>
@@ -72,8 +72,8 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 currentOrders.map((order) => (
 
                                                     <tr key={order._id}>
-                                                        {console.log(order)}
-                                                        <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td>
+                                                        {/* {console.log(order)} */}
+                                                        {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
                                                         <td>{order?.serviceId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.vendorAlloted?.companyName || "Vendor is not allowted"}</td>
@@ -88,6 +88,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                                 }}
                                                                 style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
                                                                 className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                disabled={!order.EstimatedBill}
                                                             >
                                                                 {order?.EstimatedBill ? "See Budget" : "Bill Not Available"}
                                                             </button>

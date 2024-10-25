@@ -29,7 +29,7 @@ const SeeEstimatedBudget = () => {
 
     const handleApprove = async () => {
         try {
-            const response = await axios.put(`http://localhost:7000/api/v1/update-order-status/${estimatedBill._id}`, {
+            const response = await axios.put(`http://localhost:7000/api/v1/update-status-bills/${estimatedBill._id}`, {
                 status: true
             });
             if (response.status === 200) {

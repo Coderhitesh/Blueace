@@ -319,6 +319,7 @@ exports.updateBeforWorkImage = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
+        console.log("id",id)
         const order = await Order.findById(id)
         if (!order) {
             return res.status(400).json({
