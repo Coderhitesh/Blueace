@@ -3,7 +3,6 @@ const GalleryCategory = require('../Model/GalleryCategory.Model')
 exports.createGalleryCategory = async (req, res) => {
     try {
         const { name } = req.body;
-        // console.log('i am hit')
         if (!name) {
             return res.status(400).json({ success: false, message: 'Please enter name' })
         }

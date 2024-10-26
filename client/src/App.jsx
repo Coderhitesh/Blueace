@@ -31,6 +31,7 @@ import BlogPage from "./Pages/Blog/BlogPage"
 import BlogSinglePage from "./Pages/Blog/BlogSinglePage"
 import EstimatedBudget from "./Pages/Dashboard/VendorData/EstimatedBudget"
 import SeeEstimatedBudget from "./Pages/Dashboard/VendorData/SeeEstimatedBudget"
+import GalleryPage from "./Pages/GalleryPage/GalleryPage"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
           <Route path="/products" element={<Service />} />
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/blog/:id" element={<BlogSinglePage />} />
+          <Route path="/gallery" element={<GalleryPage />} />
 
           
         </Routes>

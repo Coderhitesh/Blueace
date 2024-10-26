@@ -1,0 +1,130 @@
+.gallery-section {
+    width: 100%;
+}
+
+.gallery-section .gallery-container {
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 40px 60px;
+    background-color: #eaeef1;
+}
+
+.forbg{
+    background-color: #0a62a0;
+    border: 1px solid white !important;
+    padding: 10px 0px;
+    border-radius: 10px;
+}
+
+/* .forbtbg{
+    background-color: black;
+} */
+
+.nav-tabs {
+    justify-content: center; /* Center align tabs */
+    border: none;
+    margin-bottom: 20px; /* Spacing below tabs */
+    /* border: none !important; */
+    gap: 10px;
+    /* background-color: #AA5C18; */
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent; /* Make border transparent for hover effect */
+    /* color: #AA5C18; Text color */
+    color: black;
+    background-color: white; /* Light background */
+    border-radius: 0.5rem; /* Rounded corners */
+    padding: 10px 20px; /* Padding for tabs */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #00225f ; /* Blue background on hover */
+    color: white; /* White text on hover */
+    border: 1px solid white !important; /* Blue border on hover */
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #00225f !important; /* Active tab background */
+    color: white !important; /* Active tab text color */
+    border: 1px solid white !important; /* Active tab border */
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0 4px;
+}
+
+.column {
+    flex: 1 0 25%; /* 4 images per row on large screens */
+    /* margin: 5px; */
+    margin-top: 16px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+}
+
+.column img {
+    border: 6px solid white;
+    width: 100%;
+    height: 350px; /* Set a fixed height */
+    object-fit: cover; /* Ensure the image covers the area */
+    border-radius: 0.5rem; /* Rounded corners for images */
+    transition: transform 0.3s; /* Smooth scaling */
+    /* box-shadow: 0px 0px 10px rgb(112, 112, 112); */
+}
+
+
+
+.modal-content {
+    border-radius: 0.5rem; /* Rounded corners for modal */
+}
+
+.modal-body img {
+    width: 100%; /* Responsive modal image */
+    border-radius: 0.5rem; /* Rounded corners for modal image */
+    /* box-shadow: 0px 0px 10px black !important; */
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 800px) {
+    .column {
+        flex: 1 0 50%; /* 2 images per row on medium screens */
+    }
+
+    .column img {
+        width: 100%;
+        height: 300px; /* Set a fixed height */
+        object-fit: cover; /* Ensure the image covers the area */
+        border-radius: 0.5rem; /* Rounded corners for images */
+        transition: transform 0.3s; /* Smooth scaling */
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .column {
+        flex: 1 0 100%; /* 1 image per row on small screens */
+    }
+}
+
+
+@media (max-width:750px) {
+
+    .gallery-section .gallery-container {
+        max-width: 1920px;
+        margin: 0 auto;
+        padding: 40px 20px !important;
+    }
+    
+}
+
+.galleryImage{
+    height: 210px;
+}
+
+.galleryImage img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

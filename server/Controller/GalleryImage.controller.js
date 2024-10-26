@@ -82,7 +82,7 @@ exports.getSingleGalleryImage = async (req, res) => {
 
 exports.getAllGalleryImage = async (req, res) => {
     try {
-        const allImage = await GalleryImage.find()
+        const allImage = await GalleryImage.find().populate('galleryCategoryId')
         if (!allImage) {
             return res.status(404).json({
                 success: false,

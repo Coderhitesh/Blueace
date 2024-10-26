@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import FormGroups from '../../components/Forms/FormGroups';
 import axios from 'axios';
-import { useParams } from 'react-router-dom'; 
+import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function EditFAQBanner() {
@@ -66,8 +66,8 @@ function EditFAQBanner() {
             setLoading(false);
         }
     }
-  return (
-    <div>
+    return (
+        <div>
             <Breadcrumb heading={'Home Layout'} subHeading={'All Offer Banner'} LastHeading={'Edit Offer Banner'} backLink={'/home-layout/all-offer-banner'} />
 
             {error && <div className="alert alert-danger">{error}</div>}
@@ -113,7 +113,7 @@ function EditFAQBanner() {
                 </div>
             } />
         </div >
-  )
+    )
 }
 
 export default EditFAQBanner
