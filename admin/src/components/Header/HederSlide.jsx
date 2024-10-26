@@ -105,6 +105,7 @@ const HederSlide = () => {
                         {activeMenu === 'vendors' && (
                             <ul className="sidebar-submenu">
                                 <li><Link to="/vendors/all-membership-plan">Membership Plan</Link></li>
+                                {/* <li><Link to="/vendors/add-vendor">Add Vendor</Link></li> */}
                                 <li><Link to="/vendors/all-vendor">All Vendor</Link></li>
                             </ul>
                         )}

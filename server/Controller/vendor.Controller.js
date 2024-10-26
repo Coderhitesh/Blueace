@@ -32,7 +32,8 @@ exports.registerVendor = async (req, res) => {
             gstNo,
             adharNo,
             Password,
-            RangeWhereYouWantService
+            RangeWhereYouWantService,
+            Role
         } = req.body;
 
         const emptyField = [];
@@ -54,7 +55,7 @@ exports.registerVendor = async (req, res) => {
 
         // Check for existing vendor email
         const existingVendorEmail = await Vendor.findOne({ Email });
-        console.log("existingVendorEmail", existingVendorEmail);
+        // console.log("existingVendorEmail tt", existingVendorEmail);
         if (existingVendorEmail) {
             return res.status(403).json({
                 success: false,
@@ -108,7 +109,8 @@ exports.registerVendor = async (req, res) => {
             gstNo,
             adharNo,
             Password,
-            RangeWhereYouWantService
+            RangeWhereYouWantService,
+            Role
         });
 
         // Handle main vendor images
@@ -273,15 +275,13 @@ exports.registerVendor = async (req, res) => {
 
 exports.addVendorMember = async (req, res) => {
     try {
-
+        // console.log('i am hit')
         const { vendorId } = req.params;
         const { members } = req.body;
 
-
-    
         const memberAdharImages = req.files['memberAdharImage']; // Array of uploaded files
 
-     
+
         if (!vendorId || !Array.isArray(members) || members.length === 0) {
             return res.status(400).json({
                 success: false,
@@ -298,7 +298,7 @@ exports.addVendorMember = async (req, res) => {
             });
         }
 
-        const addedMembers = []; 
+        const addedMembers = [];
 
         for (let i = 0; i < members.length; i++) {
             const member = members[i];
@@ -315,6 +315,7 @@ exports.addVendorMember = async (req, res) => {
             // }
 
             // Upload the member Aadhar image to Cloudinary or your image hosting service
+            // console.log("vendor image",memberAdharImage.path)
             const imgUrl = await uploadImage(memberAdharImage.path);
             const memberData = {
                 name,
@@ -468,7 +469,7 @@ exports.updateMember = async (req, res) => {
     try {
         const { vendorId, memberId } = req.params;
         const { name } = req.body;
-        const memberAdharImage = req.file; 
+        const memberAdharImage = req.file;
 
         if (!vendorId || !memberId) {
             return res.status(400).json({
@@ -569,15 +570,11 @@ exports.memberShipPlanGateWay = async (req, res) => {
             vendor.PaymentStatus = 'paid'
             await vendor.save();
             console.log("I am Done with free")
-            return res.status(200).json({
-                success: true,
-                message: 'Membership plan updated successfully with free plan.',
-                data: vendor
-            });
+            res.redirect('http://localhost:5174/successfull-payment')
         }
 
         const planPrice = foundMembershipPlan.price;
-        console.log("Plane", planPrice)
+        console.log("Plan", planPrice)
         if (!planPrice && planPrice !== 0) {
             return res.status(400).json({
                 success: false,
@@ -767,7 +764,7 @@ exports.ChangeOldVendorPassword = async (req, res) => {
             });
         }
 
-        console.log('vendorid',vendorId)
+        console.log('vendorid', vendorId)
 
         const user = await Vendor.findById(vendorId);
 

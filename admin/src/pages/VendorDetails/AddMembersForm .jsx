@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { Link, useParams } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 const AddMembersForm = () => {
     const { id } = useParams();
     const vendorId = id;
     const [members, setMembers] = useState([]); // State to hold members
-    const [loading, setLoading] = useState(false)
+    const [loading,setLoading] = useState(false)
 
     // Function to handle input change for member details
     const handleInputChange = (index, event) => {
@@ -44,7 +44,7 @@ const AddMembersForm = () => {
         event.preventDefault();
         setLoading(true)
         const formData = new FormData();
-
+        
 
         // Loop through members and append each file under the correct name
         members.forEach((member, index) => {
@@ -70,7 +70,7 @@ const AddMembersForm = () => {
         } catch (error) {
             console.error('Error:', error);
             alert(error.response?.data?.message || 'Error occurred');
-        } finally {
+        }finally{
             setLoading(false)
         }
     };
@@ -78,10 +78,10 @@ const AddMembersForm = () => {
 
     return (
         <>
-            <section className="gray">
-                <div className="container">
-                    <div className="row align-items-start justify-content-center">
-                        <div className="col-xl-6 col-lg-8 col-md-12">
+            <section style={{height:"80vh"}} className="gray">
+                <div style={{height:"80vh"}} className="container">
+                    <div style={{height:"80vh", display:'flex', alignItems:'start',justifyContent:'center'}} className="row justify-content-center">
+                        <div style={{backgroundColor:"white" , padding:"10px", border:"10px"}} className="col-xl-6 col-lg-8 col-md-12 mt-5">
                             <div className="signup-screen-wrap">
                                 <div className="signup-screen-single light">
                                     <div className="text-center mb-4">
@@ -124,16 +124,16 @@ const AddMembersForm = () => {
                                             </div>
                                         ))}
                                         <div className="form-group mt-4">
-                                            <button type="button" className='btn btn-md full-width theme-bg text-light rounded ft-medium' onClick={addMemberField}>
+                                            <button type="button" style={{backgroundColor:'#00225F', color:'white'}} className='btn btn-md w-100 py-3' onClick={addMemberField}>
                                                 Add Another Member
                                             </button>
                                         </div>
-                                        <div className="row">
+                                        <div className="row mt-3">
                                             <div className="col-md-6">
-                                                <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
+                                            <button type="submit" className={`btn w-100 py-3 btn-primary ${loading ? 'disabled' : ''}`} disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
                                             </div>
                                             <div className="col-md-6">
-                                                <button type="button" onClick={handleSkip} class="btn btn-md btn-success full-width rounded text-light ft-medium">Skip</button>
+                                            <button type="button" onClick={handleSkip} class="btn btn-success w-100 py-3">Skip</button>
                                             </div>
                                         </div>
 

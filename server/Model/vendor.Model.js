@@ -4,16 +4,13 @@ const bcrypt = require('bcrypt');
 const memberSchema = new mongoose.Schema({
     name: {
         type: String,
-        // required: true
     },
     memberAdharImage: {
         url: {
             type: String,
-            // required: true
         },
         public_id: {
             type: String,
-            // required: true
         }
     }
 })
@@ -118,7 +115,8 @@ const VendorSchema = new mongoose.Schema({
     },
     Role: {
         type: String,
-        default: 'vendor'
+        default: 'vendor',
+        enum: ['vendor', 'employ'],
     },
     RangeWhereYouWantService: [
         rangeSchema

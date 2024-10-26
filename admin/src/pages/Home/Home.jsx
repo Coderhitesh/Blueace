@@ -45,6 +45,9 @@ import EditGalleryName from '../GalleryName/EditGalleryName'
 import AllGalleryImage from '../GalleryImage/AllGalleryImage'
 import AddGalleryImage from '../GalleryImage/AddGalleryImage'
 import EditGalleryImage from '../GalleryImage/EditGalleryImage'
+import AddVendor from '../VendorDetails/AddVendor'
+import AddMembersForm from '../VendorDetails/AddMembersForm '
+import MemberShipPlan from '../VendorDetails/MemberShipPlan'
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -108,6 +111,9 @@ const Home = () => {
 
                         {/* Vendor route here  */}
                         <Route path='/vendors/all-vendor' element={<AllVendors />} />
+                        <Route path='/vendors/add-vendor' element={<AddVendor />} />
+                        <Route path='/add-vendor-member/:id' element={<AddMembersForm />} />
+                        <Route path='/membership-plan/:vendorId' element={<MemberShipPlan />} />
 
                         {/* Vendor membership plan route here  */}
                         <Route path='/vendors/all-membership-plan' element={<AllMemberShipPlan />} />

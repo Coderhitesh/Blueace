@@ -208,21 +208,48 @@ exports.fetchVendorByLocation = async (req, res) => {
             });
         }
 
-        const findOrder = await Order.findById(orderId);
+        const findOrder = await Order.findById(orderId).populate('userId'); // Populate the userId field
 
         if (!findOrder) {
             return res.status(404).json({
                 success: false,
-                message: 'Order is not found',
+                message: 'Order not found',
             });
         }
+
+        const userType = findOrder.userId?.UserType; // Optional chaining to avoid undefined errors
+
+        if (userType === 'Corporate') {
+            // console.log("Entered in corporate section");
+
+            const vendorWhichAllotedPast = findOrder.vendorAlloted || "No Vendor In Past";
+            // console.log('vendorWhichAllotedPast',vendorWhichAllotedPast)
+
+            const limit = parseInt(req.query.limit) || 10; // default limit
+            const page = parseInt(req.query.page) || 1; // default to first page
+            const skip = (page - 1) * limit;
+
+            // Fetch only vendors with role 'employ'
+            const employVendors = await Vendor.find({ Role: 'employ' }).skip(skip).limit(limit);
+            const totalEmployVendors = await Vendor.countDocuments({ Role: 'employ' });
+            const totalPages = Math.ceil(totalEmployVendors / limit);
+
+            return res.status(200).json({
+                success: true,
+                AlreadyAllottedVendor: vendorWhichAllotedPast,
+                currentPage: page,
+                limit,
+                totalPages,
+                data: employVendors,
+                message: 'Vendors fetched successfully',
+            });
+        }
+
+
         const venorWhichAllotedPast = findOrder.vendorAlloted
 
         const OrderServiceLocation = findOrder.RangeWhereYouWantService[0].location;
         const skip = (Page - 1) * limit;
-
-
-
 
         const locationResults = await Vendor.find({
             'RangeWhereYouWantService.location': {
@@ -240,7 +267,7 @@ exports.fetchVendorByLocation = async (req, res) => {
 
         res.status(201).json({
             success: true,
-            AlreadyAlootedVebdor: venorWhichAllotedPast || "No-Vendor In Past",
+            AlreadyAllottedVendor: venorWhichAllotedPast || "No-Vendor In Past",
             currentPage: parseInt(Page),
             limit: parseInt(limit),
             totalPages,
@@ -319,7 +346,7 @@ exports.updateBeforWorkImage = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        console.log("id",id)
+        console.log("id", id)
         const order = await Order.findById(id)
         if (!order) {
             return res.status(400).json({

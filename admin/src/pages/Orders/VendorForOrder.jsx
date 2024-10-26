@@ -22,7 +22,7 @@ const VendorForOrder = () => {
                 },
             });
             console.log(res.data)
-            setPreSelect(res.data.AlreadyAlootedVebdor)
+            setPreSelect(res.data.AlreadyAllottedVendor)
             setData(res.data.data);
             setCurrentPage(res.data.currentPage);
             setTotalPages(res.data.totalPages);
@@ -31,9 +31,12 @@ const VendorForOrder = () => {
         }
     };
 
+    
+
     useEffect(() => {
         fetchData(currentPage);
     }, [currentPage]);
+    console.log("preSelect",preSelect)
     const handleAssignOrder = async (vendorId) => {
         try {
             let res;

@@ -104,11 +104,34 @@ function Order() {
                                     ) : 'No voice note'}
                                 </td>
 
-                                <td style={{ whiteSpace: 'nowrap' }}>
+                                {/* <td style={{ whiteSpace: 'nowrap' }}>
                                     {vendor?.userId?.UserType === 'Corporate' ? (
-                                        <a href={`/SendMember/${vendor._id}`} className="btn btn-primary btn-activity-primary rounded-pill px-4 py-2 shadow-sm">
+                                        <a href={`/Alloted/${vendor._id}`} className="btn btn-primary btn-activity-primary rounded-pill px-4 py-2 shadow-sm">
                                             Send Your Member
                                         </a>
+                                    ) : (
+                                        vendor.VendorAllotedStatus ? (
+                                            <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                                Change Vendor
+                                            </a>
+                                        ) : (
+                                            <a href={`/Alloted/${vendor._id}`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                                Allot Vendor
+                                            </a>
+                                        )
+                                    )}
+                                </td> */}
+                                <td style={{ whiteSpace: 'nowrap' }}>
+                                    {vendor?.userId?.UserType === 'Corporate' ? (
+                                        vendor.VendorAllotedStatus ? (
+                                            <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                                Change Member
+                                            </a>
+                                        ):(
+                                            <a href={`/Alloted/${vendor._id}`} className="btn btn-primary btn-activity-primary rounded-pill px-4 py-2 shadow-sm">
+                                                Send Your Member
+                                            </a>
+                                        )
                                     ) : (
                                         vendor.VendorAllotedStatus ? (
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">

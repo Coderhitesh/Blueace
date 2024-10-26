@@ -79,7 +79,7 @@ function Registration() {
       // Send data to the backend
       const res = await axios.post('https://api.blueace.co.in/api/v1/Create-User', updatedFormData);
 
-      
+
       // console.log('register',res.data)
       // Save token and other data (if necessary)
       sessionStorage.setItem('token', res.data.token);
@@ -273,18 +273,35 @@ function Registration() {
                         </div>
                       </div>
                     </div>
-                    <div className="form-group">
-                      <input
-                        type="password"
-                        className="form-control rounded"
-                        placeholder="Password"
-                        name="Password"
-                        value={formData.Password}
-                        onChange={handleInputChange}
-                        required
-                      />
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="form-group">
+                          <input
+                            type="password"
+                            className="form-control rounded"
+                            placeholder="Password"
+                            name="Password"
+                            value={formData.Password}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                      </div>
+                      {/* <div className="col-6">
+                        <div className="">
+                          <select
+                            className='form-select'
+                            name="UserType"
+                            value={formData.UserType}
+                            onChange={handleInputChange}
+                          >
+                            <option value="">--Select Your Type--</option>
+                            <option value="Normal">Normal</option>
+                            <option value="Corporate">Corporate</option>
+                          </select>
+                        </div>
+                      </div> */}
                     </div>
-
                     <div className="form-group">
                       <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium">{`${loading ? "lLoading..." : "Sign Up"}`}</button>
                     </div>

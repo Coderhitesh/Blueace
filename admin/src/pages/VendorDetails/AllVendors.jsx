@@ -72,11 +72,11 @@ function AllVendors() {
         setModalVisible(true); // Open the modal
     };
 
-    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', 'View', 'Deactive', 'Delete', 'Created At'];
+    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
-            <Breadcrumb heading={'Users'} subHeading={'Users'} LastHeading={'All Users'} backLink={'/users/all-users'} />
+            <Breadcrumb heading={'Vendors'} subHeading={'Venodrs'} LastHeading={'All Vendors'} backLink={'/users/all-users'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -90,6 +90,7 @@ function AllVendors() {
                                 <td className='fw-bolder'>{vendor.ownerName || "Not-Available"}</td>
                                 <td className='fw-bolder'>{vendor.ContactNumber || "Not-Available"}</td>
                                 <td className='fw-bolder'>{vendor.Email || "Not-Available"}</td>
+                                <td className='fw-bolder'>{vendor.Role || "Not-Available"}</td>
                                 <td className='fw-bolder'>
                                     <button className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" type="button" onClick={() => handleView(vendor)}>
                                         View
@@ -113,8 +114,8 @@ function AllVendors() {
                         productsPerPage={productsPerPage}
                         currentPage={currentPage}
                         paginate={setCurrentPage}
-                        href=""
-                        text=""
+                        href="/vendors/add-vendor"
+                        text="Add Vendor"
                         errorMsg=""
                         handleOpen={() => { }}
                     />
@@ -177,6 +178,10 @@ function AllVendors() {
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Membership Plan</td>
                                                     <td>{selectedVendor?.memberShipPlan?.name || "No Plan is activated"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Type</td>
+                                                    <td>{selectedVendor?.Role || "No Plan is activated"}</td>
                                                 </tr>
                                             </tbody>
 

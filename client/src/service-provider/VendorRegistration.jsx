@@ -4,10 +4,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 function VendorRegistration() {
     useEffect(() => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
     const [previewPanImage, setPanImage] = useState(null);
@@ -29,80 +26,15 @@ function VendorRegistration() {
         adharNo: '',
         Password: '',
         RangeWhereYouWantService: [{
-            location: {
-                type: 'Point',
-                coordinates: []
-            }
+            location: { type: 'Point', coordinates: [] }
         }]
     });
-    const [location, setLocation] = useState({
-        latitude: '',
-        longitude: ''
-    });
+    const [location, setLocation] = useState({ latitude: '', longitude: '' });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
-
-        // Validate Contact Number
-        if (name === 'ContactNumber') {
-            const regex = /^\+?\d{10}$/; // Allows optional + followed by exactly 10 digits
-
-            if (value.length === 10) {
-                if (regex.test(value)) {
-                    toast.success('Valid contact number');
-                } else {
-                    toast.error('Invalid contact number. Please enter exactly 10 digits.');
-                }
-            } else if (value.length > 10) {
-                toast.error('Invalid contact number. Please enter exactly 10 digits.');
-            }
-        }
-
-        // Validate Aadhar Number
-        else if (name === 'adharNo') {
-            const regex = /^\d{12}$/; // Matches exactly 12 digits
-            if (value.length === 12) { // Check for exactly 12 digits
-                if (regex.test(value)) {
-                    toast.success('Valid Aadhar number');
-                } else {
-                    toast.error('Invalid Aadhar number. Please enter exactly 12 digits.');
-                }
-            } else if (value.length > 12) {
-                toast.error('Invalid Aadhar number. Please enter exactly 12 digits.');
-            }
-        }
-        else if (name === 'Email') {
-
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-            if (emailRegex.test(value)) {
-                toast.success('Valid email address');
-            } else {
-                toast.error('Invalid email address. Please enter a valid format.');
-            }
-
-        }
-
-        // Validate PAN Number
-        else if (name === 'panNo') {
-            const panRegex = /^[a-z]{5}[0-9]{4}[a-z]{1}$/;
-            if (value.length === 10) {
-                if (panRegex.test(value)) {
-                    toast.success('Valid PAN number');
-                } else {
-                    toast.error('Invalid PAN number. Please enter a valid PAN.');
-                }
-            } else if (value.length > 10) {
-                toast.error('Invalid PAN number. Please enter exactly 10 characters.');
-            }
-        }
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
-
 
     const getLocation = () => {
         if (navigator.geolocation) {
@@ -113,9 +45,7 @@ function VendorRegistration() {
                         longitude: position.coords.longitude
                     });
                 },
-                (error) => {
-                    toast.error('Unable to retrieve your location');
-                }
+                () => toast.error('Unable to retrieve your location')
             );
         } else {
             toast.error('Geolocation is not supported by this system');
@@ -125,33 +55,24 @@ function VendorRegistration() {
     const handlePanImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData((prevData) => ({
-                ...prevData,
-                panImage: file
-            }));
-            setPanImage(URL.createObjectURL(file)); // Preview the selected PAN
+            setFormData((prevData) => ({ ...prevData, panImage: file }));
+            setPanImage(URL.createObjectURL(file));
         }
     };
 
     const handleAdharImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData((prevData) => ({
-                ...prevData,
-                adharImage: file
-            }));
-            setAdharImage(URL.createObjectURL(file)); // Preview the selected Aadhar
+            setFormData((prevData) => ({ ...prevData, adharImage: file }));
+            setAdharImage(URL.createObjectURL(file));
         }
     };
 
     const handleGstImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData((prevData) => ({
-                ...prevData,
-                gstImage: file
-            }));
-            setGstImage(URL.createObjectURL(file)); // Preview the selected GST
+            setFormData((prevData) => ({ ...prevData, gstImage: file }));
+            setGstImage(URL.createObjectURL(file));
         }
     };
 
@@ -225,15 +146,9 @@ function VendorRegistration() {
         payload.append('gstNo', formData.gstNo);
         payload.append('Password', formData.Password);
 
-        if (formData.panImage) {
-            payload.append('panImage', formData.panImage);
-        }
-        if (formData.adharImage) {
-            payload.append('adharImage', formData.adharImage);
-        }
-        if (formData.gstImage) {
-            payload.append('gstImage', formData.gstImage);
-        }
+        if (formData.panImage) payload.append('panImage', formData.panImage);
+        if (formData.adharImage) payload.append('adharImage', formData.adharImage);
+        if (formData.gstImage) payload.append('gstImage', formData.gstImage);
 
         payload.append('RangeWhereYouWantService[0][location][type]', 'Point');
         payload.append('RangeWhereYouWantService[0][location][coordinates][0]', location.longitude);
@@ -241,19 +156,15 @@ function VendorRegistration() {
 
         try {
             const res = await axios.post('https://api.blueace.co.in/api/v1/register-vendor', payload, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Vendor Registration Successful!');
             const userId = res.data.user._id;
             window.location.href = `/add-vendor-member/${userId}`;
         } catch (error) {
-            // Check if error.response exists to handle specific errors
             if (error.response) {
                 toast.error(error.response.data.message || 'An error occurred');
             } else {
-                // Fallback for unexpected errors
                 toast.error('Something went wrong. Please try again.');
             }
         } finally {
