@@ -72,6 +72,11 @@ function MemberShipPlan() {
             console.log("Orders", res.data.data)
             const order = res.data.data.razorpayOrder;
 
+            if(!order){
+                toast.success('Membership Plan Purchase successfully!')
+                window.location.href = '/vendors/all-vendor'
+            }
+
             // Razorpay options
             if (order) {
 
@@ -82,7 +87,7 @@ function MemberShipPlan() {
                     name: 'Blueace',
                     description: 'Purchase Membership Plan',
                     order_id: order?.id || '',
-                    callback_url: "https://api.blueace.co.in/api/v1/payment-verify",
+                    // callback_url: "https://api.blueace.co.in/api/v1/payment-verify",
                     prefill: {
                         name: vendorData.ownerName, // Prefill customer data
                         email: vendorData.Email,
@@ -91,14 +96,23 @@ function MemberShipPlan() {
                     theme: {
                         color: '#F37254'
                     },
+                    handler: function (response) {
+                        // Successful payment redirection
+                        window.location.href = '/successfull-payment';
+                    },
                 };
 
                 const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    // Failed payment redirection
+                    window.location.href = '/failed-payment';
+                });
+        
                 rzp.open();
             }
 
-            toast.success('Membership Plan Purchase successfully!')
-
+            // toast.success('Membership Plan Purchase successfully!')
+            
         } catch (error) {
             console.log('Internal server error in buying membership plan', error);
         }
@@ -139,7 +153,7 @@ function MemberShipPlan() {
                                             className="price_btn"
                                             style={{ cursor: 'pointer' }} // Make the button look clickable
                                         >
-                                            Order Now
+                                            Become a Member
                                         </a>
                                     </div>
                                 </div>

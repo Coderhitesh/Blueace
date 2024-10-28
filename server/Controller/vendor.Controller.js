@@ -125,7 +125,12 @@ exports.registerVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(panImage[0].path);
+                if (await fs.access(panImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(panImage[0].path);
+                    console.log("unlink panimage")
+                } else {
+                    console.warn("File not found, skipping unlink:", panImage[0].path);
+                }
             } else {
                 return res.status(400).json({
                     success: false,
@@ -141,7 +146,12 @@ exports.registerVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(adharImage[0].path);
+                if (await fs.access(adharImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(adharImage[0].path);
+                    console.log("unlink adharImage")
+                } else {
+                    console.warn("File not found, skipping unlink:", adharImage[0].path);
+                }
             } else {
                 return res.status(400).json({
                     success: false,
@@ -150,19 +160,42 @@ exports.registerVendor = async (req, res) => {
             }
 
             // Upload GST Image
+            // if (gstImage && gstImage[0]) {
+            //     const imgUrl = await uploadImage(gstImage[0]?.path);
+            //     newVendor.gstImage = {
+            //         url: imgUrl.image,
+            //         public_id: imgUrl.public_id
+            //     };
+            //     uploadedImages.push(imgUrl.public_id);
+            //     if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
+            //         await fs.unlink(gstImage[0].path);
+            //         console.log("unlink gstImage")
+            //     } else {
+            //         console.warn("File not found, skipping unlink:", gstImage[0].path);
+            //     }
+            // } else {
+            //     return res.status(400).json({
+            //         success: false,
+            //         message: "Please upload GST Image"
+            //     });
+            // }
+
+
             if (gstImage && gstImage[0]) {
-                const imgUrl = await uploadImage(gstImage[0]?.path);
+                const imgUrl = await uploadImage(gstImage[0].path);
                 newVendor.gstImage = {
                     url: imgUrl.image,
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(gstImage[0].path);
-            } else {
-                return res.status(400).json({
-                    success: false,
-                    message: "Please upload GST Image"
-                });
+        
+                // Unlink after successful upload
+                if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(gstImage[0].path);
+                    console.log("File unlinked successfully");
+                } else {
+                    console.warn("File not found, skipping unlink:", gstImage[0].path);
+                }
             }
         }
 
@@ -329,7 +362,12 @@ exports.addVendorMember = async (req, res) => {
             addedMembers.push(memberData);
 
             // Cleanup the uploaded file
-            await fs.unlink(memberAdharImage.path);
+            // await fs.unlink(memberAdharImage.path);
+            if (await fs.access(memberAdharImage.path).then(() => true).catch(() => false)) {
+                await fs.unlink(memberAdharImage.path);
+            } else {
+                console.warn("File not found, skipping unlink:", memberAdharImage.path);
+            }
         }
 
         // Save the vendor with the new members
@@ -395,7 +433,12 @@ exports.addNewVendorMember = async (req, res) => {
             };
 
             // Cleanup the uploaded file
-            await fs.unlink(memberAdharImage.path);
+            // await fs.unlink(memberAdharImage.path);
+            if (await fs.access(memberAdharImage.path).then(() => true).catch(() => false)) {
+                await fs.unlink(memberAdharImage.path);
+            } else {
+                console.warn("File not found, skipping unlink:", memberAdharImage.path);
+            }
         }
 
         // Add new member to the vendor's members array
@@ -509,7 +552,12 @@ exports.updateMember = async (req, res) => {
                 public_id: imgUrl.public_id
             };
 
-            await fs.unlink(memberAdharImage.path);
+            // await fs.unlink(memberAdharImage.path);
+            if (await fs.access(memberAdharImage.path).then(() => true).catch(() => false)) {
+                await fs.unlink(memberAdharImage.path);
+            } else {
+                console.warn("File not found, skipping unlink:", memberAdharImage.path);
+            }
         }
 
         await vendor.save();
@@ -570,7 +618,11 @@ exports.memberShipPlanGateWay = async (req, res) => {
             vendor.PaymentStatus = 'paid'
             await vendor.save();
             console.log("I am Done with free")
-            res.redirect('http://localhost:5174/successfull-payment')
+            // res.redirect('http://localhost:5174/successfull-payment')
+            res.status(200).json({
+                success: true,
+                data:  vendor
+            })
         }
 
         const planPrice = foundMembershipPlan.price;
@@ -683,17 +735,19 @@ exports.PaymentVerify = async (req, res) => {
         findOrder.paymentMethod = method;
 
         await findOrder.save();
-
-
-        res.redirect('http://localhost:5174/successfull-payment')
+        // res.redirect('http://localhost:5174/successfull-payment')
+        res.status(400).json({
+            success: true,
+            message: 'Payment successful',
+        })
     } catch (error) {
         console.log(error)
-        res.redirect(`http://localhost:5174/failed-payment?error=${error?.message || "Internal server Error"}`)
+        // res.redirect(`http://localhost:5174/failed-payment?error=${error?.message || "Internal server Error"}`)
 
-        // res.status(501).json({
-        //     success: false,
-        //     message: 'Payment verified failed',
-        // })
+        res.status(501).json({
+            success: false,
+            message: 'Payment verified failed',
+        })
     }
 }
 
@@ -1125,7 +1179,12 @@ exports.updateVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(panImage[0].path);
+                // await fs.unlink(panImage[0].path);
+                if (await fs.access(panImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(panImage[0].path);
+                } else {
+                    console.warn("File not found, skipping unlink:", panImage[0].path);
+                }
             }
 
             // Upload and update Adhar Image
@@ -1139,7 +1198,12 @@ exports.updateVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(adharImage[0].path);
+                // await fs.unlink(adharImage[0].path);
+                if (await fs.access(adharImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(adharImage[0].path);
+                } else {
+                    console.warn("File not found, skipping unlink:", adharImage[0].path);
+                }
             }
 
             // Upload and update GST Image
@@ -1153,7 +1217,12 @@ exports.updateVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(gstImage[0].path);
+                // await fs.unlink(gstImage[0].path);
+                if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(gstImage[0].path);
+                } else {
+                    console.warn("File not found, skipping unlink:", gstImage[0].path);
+                }
             }
 
             // Upload and update GST Image
@@ -1167,7 +1236,12 @@ exports.updateVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                await fs.unlink(vendorImage[0].path);
+                // await fs.unlink(vendorImage[0].path);
+                if (await fs.access(vendorImage[0].path).then(() => true).catch(() => false)) {
+                    await fs.unlink(vendorImage[0].path);
+                } else {
+                    console.warn("File not found, skipping unlink:", vendorImage[0].path);
+                }
             }
         }
 

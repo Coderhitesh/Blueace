@@ -197,12 +197,6 @@ function AddVendor() {
                     <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" placeholder="Aadhar Number*" required />
                     </div>
-                    <div className="col-lg-6 mt-3">
-                        <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
-                    </div>
-                    <div className="col-lg-6 mt-3">
-                        <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
-                    </div>
                     <div className="col-md-6 mt-3">
                         <select
                             className="form-select"
@@ -216,27 +210,109 @@ function AddVendor() {
                             <option value='employ'>Employ</option>
                         </select>
                     </div>
+                    {formData.Role === '' && (
+                        <>
+                            <div className="col-lg-6 mt-3">
+                                <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
+                            </div>
+                            <div className="col-lg-6 mt-3">
+                                <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
+                            </div>
+                        </>
+                    )}
+                    {formData.Role === 'vendor' && (
+                        <>
+                            <div className="col-lg-6 mt-3">
+                                <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
+                            </div>
+                            <div className="col-lg-6 mt-3">
+                                <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
+                            </div>
+                        </>
+                    )}
+                    {/* <div className="col-lg-6 mt-3">
+                        <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
+                    </div>
+                    <div className="col-lg-6 mt-3">
+                        <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
+                    </div> */}
+                    {/* <div className="col-md-6 mt-3">
+                        <select
+                            className="form-select"
+                            name='Role'
+                            id="Role"
+                            value={formData.Role}
+                            onChange={handleChange}
+                        >
+                            <option value="">Select Role</option>
+                            <option value='vendor'>Vendor</option>
+                            <option value='employ'>Employ</option>
+                        </select>
+                    </div> */}
                     <div className="col-lg-6 mt-3">
                         <input type="password" value={formData.Password} name='Password' onChange={handleChange} className="form-control rounded" placeholder="Password*" required />
                     </div>
                     <div className="col-lg-12 mt-3">
                         <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Address*" required />
                     </div>
-                    <div className="col-lg-4 mt-3">
-                        <label className='form-label' htmlFor="">Pan Card Image</label>
-                        <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control" />
-                        {previewPanImage && <img src={previewPanImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
-                    </div>
-                    <div className="col-lg-4 mt-3">
-                        <label className='form-label' htmlFor="">Aadhar Card Image</label>
-                        <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control" />
-                        {previewAdharImage && <img src={previewAdharImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
-                    </div>
-                    <div className="col-lg-4 mt-3">
-                        <label className='form-label' htmlFor="">Gst Image</label>
-                        <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control" />
-                        {previewGstImage && <img src={previewGstImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
-                    </div>
+                    {formData.Role === '' && (
+                        <>
+                            <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Pan Card Image</label>
+                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control" />
+                                {previewPanImage && <img src={previewPanImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Aadhar Card Image</label>
+                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control" />
+                                {previewAdharImage && <img src={previewAdharImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Gst Image</label>
+                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control" />
+                                {previewGstImage && <img src={previewGstImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                        </>
+                    )}
+                    {formData.Role === 'vendor' && (
+                        <>
+                            <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Pan Card Image</label>
+                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control" />
+                                {previewPanImage && <img src={previewPanImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Aadhar Card Image</label>
+                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control" />
+                                {previewAdharImage && <img src={previewAdharImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                            <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Gst Image</label>
+                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control" />
+                                {previewGstImage && <img src={previewGstImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                        </>
+                    )}
+                    {formData.Role === 'employ' && (
+                        <>
+                            <div className="col-lg-6 mt-3">
+                                <label className='form-label' htmlFor="">Pan Card Image</label>
+                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control" />
+                                {previewPanImage && <img src={previewPanImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                            <div className="col-lg-6 mt-3">
+                                <label className='form-label' htmlFor="">Aadhar Card Image</label>
+                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control" />
+                                {previewAdharImage && <img src={previewAdharImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div>
+                            {/* <div className="col-lg-4 mt-3">
+                                <label className='form-label' htmlFor="">Gst Image</label>
+                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control" />
+                                {previewGstImage && <img src={previewGstImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
+                            </div> */}
+                        </>
+                    )}
+
 
                     <div className='col-md-10 mx-auto mt-4'>
                         <button className={`btn w-100 py-3 btn-primary ${loading ? 'disabled' : ''}`} disabled={loading} type='submit'>

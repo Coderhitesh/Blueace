@@ -1,0 +1,70 @@
+/* Dashboard.css */
+.dashboard h1 {
+    width: 100%;
+    background-color: #308E87;
+    color: white; /* Dark color for the title */
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.container {
+    padding: 20px; /* Padding around the container */
+}
+
+.dashboard .row {
+    margin-top: 20px; /* Space between title and cards */
+}
+
+/* Card styles */
+.dashboard .card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 15px; /* Rounded corners */
+}
+
+.dashboard .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-description {
+    font-size: 0.9rem;
+    color: white; /* Muted text color */
+}
+
+/* Custom Styles for Different Cards */
+.dashboard .vendor-card {
+    background-color: #28a745 !important; /* Green */
+    color: white !important;
+}
+
+.dashboard .corporate-card {
+    background-color: #17a2b8 !important; /* Teal */
+    color: white !important;
+}
+
+.dashboard .user-card {
+    background-color: #007bff !important; /* Blue */
+    color: white !important;
+}
+
+.dashboard .employ-card {
+    background-color: #ffc107 !important; /* Yellow */
+    color: white !important;
+}
+
+.dashboard .order-card {
+    background-color: #dc3545 !important; /* Red */
+    color: white !important;
+}
+
+.dashboard .active-order-card {
+    background-color: #6f42c1 !important; /* Purple */
+    color: white !important;
+}
+
+/* Optionally add responsive styling */
+@media (max-width: 768px) {
+    .dashboard .card {
+        margin-bottom: 20px; /* Space between cards on smaller screens */
+    }
+}

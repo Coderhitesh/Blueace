@@ -1,6 +1,7 @@
 const multer = require("multer");
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 // MIME types for voice notes
 const voiceMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'];
@@ -8,7 +9,7 @@ const voiceMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'];
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let uploadDir;
-    
+
     // Check the file type to determine the upload directory
     if (voiceMimeTypes.includes(file.mimetype)) {
       // Directory for voice notes
@@ -32,15 +33,17 @@ const storage = multer.diskStorage({
     }
   },
   filename: function (req, file, cb) {
-    // Keep the original filename logic
-    cb(null, Date.now() + '-' + file.originalname);
+    const uniqueSuffix = crypto.randomBytes(16).toString('hex'); // Generates a 32-character unique string
+    const extension = file.originalname.split('.').pop(); // Get the file extension
+
+    cb(null, `${uniqueSuffix}.${extension}`); // Save as uniqueSuffix.extension
   }
 });
 
 // File filter to restrict uploads to images, videos, and voice notes
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
-    'image/jpeg', 'image/png', 'video/mp4', 'video/mpeg', 
+    'image/jpeg', 'image/png', 'video/mp4', 'video/mpeg',
     ...voiceMimeTypes // Add voice MIME types
   ];
 
@@ -52,7 +55,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 // Set up multer with storage and file filter
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   fileFilter: fileFilter
 });

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './membership.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 function MemberShipPlan() {
     const { vendorId } = useParams(); // Extract vendorId from URL parameters
@@ -65,11 +66,16 @@ function MemberShipPlan() {
             }
 
             // Create the membership plan order
-            const { data } = await axios.post(`https://api.blueace.co.in/api/v1/member-ship-plan/${vendorId}`, {
+            const res = await axios.post(`https://api.blueace.co.in/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
-            console.log("Orders", data.data)
-            const order = data.data.razorpayOrder;
+            console.log("Orders", res.data.data)
+            const order = res.data.data.razorpayOrder;
+
+            if(!order){
+                toast.success('Membership Plan Purchase successfully!')
+                window.location.href = '/'
+            }
 
             // Razorpay options
             if (order) {
@@ -81,7 +87,7 @@ function MemberShipPlan() {
                     name: 'Blueace',
                     description: 'Purchase Membership Plan',
                     order_id: order?.id || '',
-                    callback_url: "https://api.blueace.co.in/api/v1/payment-verify",
+                    // callback_url: "https://api.blueace.co.in/api/v1/payment-verify",
                     prefill: {
                         name: vendorData.ownerName, // Prefill customer data
                         email: vendorData.Email,
@@ -90,12 +96,23 @@ function MemberShipPlan() {
                     theme: {
                         color: '#F37254'
                     },
+                    handler: function (response) {
+                        // Successful payment redirection
+                        window.location.href = '/successfull-payment';
+                    },
                 };
 
                 const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    // Failed payment redirection
+                    window.location.href = '/failed-payment';
+                });
+        
                 rzp.open();
             }
 
+            toast.success('Membership Plan Purchase successfully!')
+            
         } catch (error) {
             console.log('Internal server error in buying membership plan', error);
         }
@@ -107,7 +124,7 @@ function MemberShipPlan() {
     }, []);
 
     return (
-        <section id="pricing" className="pricing-content section-padding">
+        <section id="pricing" className="pricing-content section-padding pt-3 pb-3">
             <div className="container">
                 <div className="section-title text-center">
                     <h2>Subscription Plans</h2>
@@ -136,7 +153,7 @@ function MemberShipPlan() {
                                             className="price_btn"
                                             style={{ cursor: 'pointer' }} // Make the button look clickable
                                         >
-                                            Order Now
+                                            Become a Member
                                         </a>
                                     </div>
                                 </div>

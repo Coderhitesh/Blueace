@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import logo from './logo.webp'
 
 const Header = () => {
+    const handleLogout = () => {
+        sessionStorage.clear()
+        window.location.href = "/"
+    }
     return (
   
                
@@ -41,7 +45,7 @@ const Header = () => {
                                 </div>
                             </div>
                         </form>
-                        <div className="form-group-header d-lg-block d-none">
+                        {/* <div className="form-group-header d-lg-block d-none">
                             <div className="Typeahead Typeahead--twitterUsers">
                                 <div className="u-posRelative d-flex align-items-center">
                                     <input
@@ -54,12 +58,12 @@ const Header = () => {
                                     <i className="search-bg iconly-Search icli"></i>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="nav-right">
                         <ul className="header-right">
                         
-                            <li className="search d-lg-none d-flex">
+                            {/* <li className="search d-lg-none d-flex">
                                 <Link to="#" data-action="toggle-search">
                                     <svg>
                                         <use href="../assets/svg/iconly-sprite.svg#Search" />
@@ -92,7 +96,8 @@ const Header = () => {
                                         <use href="../assets/svg/iconly-sprite.svg#scanfull" />
                                     </svg>
                                 </Link>
-                            </li>
+                            </li> */}
+                            <button onClick={handleLogout} className='btn btn-danger'>Log Out</button>
                         </ul>
                     </div>
                 </div>

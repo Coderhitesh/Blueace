@@ -24,7 +24,7 @@ const rangeSchema = new mongoose.Schema({
         },
         coordinates: {
             type: [Number], // [longitude, latitude]
-            required: true
+            // required: true
         }
     }
 })
@@ -92,11 +92,11 @@ const VendorSchema = new mongoose.Schema({
     gstImage: {
         url: {
             type: String,
-            required: true
+            // required: true
         },
         public_id: {
             type: String,
-            required: true
+            // required: true
         }
     },
     member: [memberSchema],

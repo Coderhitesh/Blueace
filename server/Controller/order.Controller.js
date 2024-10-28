@@ -3,6 +3,7 @@ const Order = require('../Model/Order.Model');
 const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
 const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
+require("dotenv").config()
 exports.makeOrder = async (req, res) => {
     try {
         console.log('body', req.body);
@@ -147,11 +148,83 @@ exports.updateOrderStatus = async (req, res) => {
         }
         order.OrderStatus = OrderStatus
         await order.save();
+        // if (OrderStatus === "Cancelled") {
+        //     const AdminEmail = process.env.ADMIN_MAIL;
+        //     const emailOptions = {
+        //         email: AdminEmail,
+        //         subject: 'Order Cancellation Notice - Reassign New Vendor',
+        //         message: `
+        //             <html>
+        //             <head>
+        //                 <style>
+        //                     body {
+        //                         font-family: Arial, sans-serif;
+        //                         line-height: 1.6;
+        //                         background-color: #f5f5f5;
+        //                         padding: 20px;
+        //                     }
+        //                     .container {
+        //                         max-width: 600px;
+        //                         margin: 0 auto;
+        //                         background-color: #fff;
+        //                         padding: 20px;
+        //                         border-radius: 8px;
+        //                         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        //                     }
+        //                     .header {
+        //                         background-color: #d9534f;
+        //                         color: #fff;
+        //                         padding: 10px;
+        //                         text-align: center;
+        //                         border-top-left-radius: 8px;
+        //                         border-top-right-radius: 8px;
+        //                     }
+        //                     .content {
+        //                         padding: 20px;
+        //                     }
+        //                     .content p {
+        //                         margin-bottom: 10px;
+        //                     }
+        //                     .footer {
+        //                         text-align: center;
+        //                         margin-top: 20px;
+        //                         color: #666;
+        //                     }
+        //                 </style>
+        //             </head>
+        //             <body>
+        //                 <div class="container">
+        //                     <div class="header">
+        //                         <h1>Order Cancellation Notice</h1>
+        //                     </div>
+        //                     <div class="content">
+        //                         <p>Dear Admin,</p>
+        //                         <p>We want to inform you that the order was canceled as the assigned vendor could not accept it.</p>
+        //                         <p>Please review this order and consider assigning a new vendor.</p>
+        //                     </div>
+        //                     <div class="footer">
+        //                         <p>Best regards,</p>
+        //                         <p>Blueace Team</p>
+        //                     </div>
+        //                 </div>
+        //             </body>
+        //             </html>
+        //         `
+        //     };
+        
+        //     await sendEmail(emailOptions);
+        //     res.status(200).json({
+        //         success: true,
+        //         message: 'Order status updated successfully',
+        //         data: order
+        //     });
+        // }
         res.status(200).json({
             success: true,
             message: 'Order status updated successfully',
             data: order
         })
+
     } catch (error) {
         console.log('Internal server error in updating order status', error)
         res.status(500).json({

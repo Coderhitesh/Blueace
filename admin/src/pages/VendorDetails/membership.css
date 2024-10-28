@@ -8,7 +8,7 @@
 }
 
 .pricing_design .single-pricing {
-    background: #00225F;
+    background: #308e87;
     padding: 60px 40px;
     border-radius: 30px;
     box-shadow: 0 10px 40px -10px rgba(0, 64, 128, .2);
@@ -56,7 +56,7 @@
 }
 
 .single-pricing ul li i {
-    background: #00225F;
+    background: #308e87;
     color: #fff;
     width: 20px;
     height: 20px;
@@ -70,7 +70,7 @@
 .pricing-price {}
 
 .price_btn {
-    background: #00225F;
+    background: #308e87;
     padding: 10px 30px;
     color: #fff;
     display: inline-block;
@@ -81,7 +81,8 @@
 }
 
 .price_btn:hover {
-    background: #02A2D2;
+    background: #216e69;
+    color: white;
 }
 
 a {

@@ -1,5 +1,7 @@
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config()
+const fs = require('fs').promises;
+const path = require('path');
 
 cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -28,14 +30,36 @@ const uploadPDFTwo = async (file) => {
     }
 }
 
-const uploadImage = async (file) => {
+// const uploadImage = async (file) => {
+//     console.log('file',file)
+//     try {
+//         const result = await cloudinary.uploader.upload(file, {
+//             folder: "artists"
+//         });
+//         return { image: result.secure_url, public_id: result.public_id };
+//     } catch (error) {
+//         console.error(error);
+//         throw new Error('Failed to upload Image');
+//     }
+// };
+
+const uploadImage = async (filePath) => {
     try {
-        const result = await cloudinary.uploader.upload(file, {
-            folder: "artists"
-        });
-        return { image: result.secure_url, public_id: result.public_id };
+        // console.log('Attempting to upload file at:', filePath);
+
+        // Ensure file exists before upload
+        if (await fs.access(filePath).then(() => true).catch(() => false)) {
+            const result = await cloudinary.uploader.upload(filePath, {
+                folder: "artists"
+            });
+            // console.log('Upload successful:', result.secure_url);
+            return { image: result.secure_url, public_id: result.public_id };
+        } else {
+            // console.error('File not found at:', filePath);
+            throw new Error('File does not exist for upload');
+        }
     } catch (error) {
-        console.error(error);
+        console.error('Error during image upload:', error);
         throw new Error('Failed to upload Image');
     }
 };

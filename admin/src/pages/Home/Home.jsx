@@ -48,6 +48,10 @@ import EditGalleryImage from '../GalleryImage/EditGalleryImage'
 import AddVendor from '../VendorDetails/AddVendor'
 import AddMembersForm from '../VendorDetails/AddMembersForm '
 import MemberShipPlan from '../VendorDetails/MemberShipPlan'
+import SuccessPayment from '../PaymentStatusPage/SuccessPayment'
+import PaymentFailed from '../PaymentStatusPage/PaymentFailed'
+import DashBoard from '../DashBoard/DashBoard'
+
 const Home = () => {
     return (
         <div class="page-wrapper compact-wrapper" id="pageWrapper">
@@ -60,7 +64,8 @@ const Home = () => {
                 <HederSlide />
                 <div class="page-body">
                     <Routes>
-
+                        {/* dashboard routes here  */}
+                        <Route path="/" element={<DashBoard />} />
                         {/* service main category route here  */}
                         <Route path='/service/main-category' element={<AllMainServiceCategory />} />
                         <Route path='/service/Add-main-category' element={<AddMainServiceCategory />} />
@@ -136,6 +141,12 @@ const Home = () => {
 
                         {/* Order route here  */}
                         <Route path='/Orders/all-order' element={<Order />} />
+
+                        {/* payment status route here  */}
+
+                        <Route path='/successfull-payment' element={<SuccessPayment />} />
+                        <Route path='/failed-payment' element={<PaymentFailed />} />
+                        {/* <Route path='/' element={<Login />} /> */}
 
                     </Routes>
                 </div>
