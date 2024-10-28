@@ -193,7 +193,8 @@ exports.registerVendor = async (req, res) => {
                 if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
                     await fs.unlink(gstImage[0].path);
                     console.log("File unlinked successfully");
-                } else {
+                } 
+                else {
                     console.warn("File not found, skipping unlink:", gstImage[0].path);
                 }
             }

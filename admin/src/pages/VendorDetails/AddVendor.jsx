@@ -72,11 +72,11 @@ function AddVendor() {
         } = formData;
 
         // Basic field validation
-        if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
-            !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
-            toast.error("All fields are required");
-            return false;
-        }
+        // if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
+        //     !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
+        //     toast.error("All fields are required");
+        //     return false;
+        // }
 
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -155,6 +155,7 @@ function AddVendor() {
                 const userId = res.data.user._id;
                 window.location.href = `/add-vendor-member/${userId}`;
             }
+            window.location.href = '/vendors/all-vendor'
         } catch (error) {
             console.log(error)
             if (error.response) {
