@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 const FormGroups = ({ onSubmit, Elements }) => {
     return (
@@ -20,10 +19,5 @@ const FormGroups = ({ onSubmit, Elements }) => {
     );
 };
 
-// Adding PropTypes for better type checking (optional)
-FormGroups.propTypes = {
-    onSubmit: PropTypes.func.isRequired, // onSubmit must be a function
-    Elements: PropTypes.node.isRequired, // Elements must be a valid React node
-};
 
 export default FormGroups;
