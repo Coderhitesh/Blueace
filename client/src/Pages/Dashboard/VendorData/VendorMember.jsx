@@ -93,7 +93,7 @@ const VendorMember = ({ userData }) => {
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb">
                   <li className="breadcrumb-item text-muted"><a href="#">Home</a></li>
-                  <li className="breadcrumb-item text-muted"><a href="/user-dashboard">Dashboard</a></li>
+                  <li className="breadcrumb-item text-muted"><a href="/vendor-dashboard">Dashboard</a></li>
                   <li className="breadcrumb-item"><a className="theme-cl">Members</a></li>
                 </ol>
               </nav>
