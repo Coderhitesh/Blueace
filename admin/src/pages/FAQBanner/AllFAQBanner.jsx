@@ -52,7 +52,7 @@ function AllFAQBanner() {
 
     const handleToggle = async (id, currentActiveStatus) => {
         try {
-            const newActiveStatus = !currentActiveStatus; 
+            const newActiveStatus = !currentActiveStatus;
             const response = await axios.put(`https://api.blueace.co.in/api/v1/update-faq-banner-active-status/${id}`, {
                 active: newActiveStatus
             });
@@ -78,8 +78,8 @@ function AllFAQBanner() {
     // Define headers for the Table component
     const headers = ['S.No', 'FAQ Banner Image', 'Active', 'Action'];
 
-  return (
-    <div className='page-body'>
+    return (
+        <div className='page-body'>
             <Breadcrumb heading={'FAQ Banner'} subHeading={'Home Layout'} LastHeading={'All FAQ Banner'} backLink={'/home-layout/all-faq-banner'} />
             {loading ? (
                 <div>Loading...</div>
@@ -102,11 +102,13 @@ function AllFAQBanner() {
                             <td className='fw-bolder'>
                                 <div className="product-action">
                                     <Link to={`/home-layout/edit-faq-banner/${category._id}`}>
-                                        <svg><use href="/assets/svg/icon-sprite.svg#edit-content"></use></svg>
+                                        {/* <i class="ri-pencil-fill"></i> */}
+                                        <i class="ri-pencil-fill"></i>
                                     </Link>
-                                    <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
+                                    {/* <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
                                         <use href="/assets/svg/icon-sprite.svg#trash1"></use>
-                                    </svg>
+                                    </svg> */}
+                                    <i onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }} class="ri-delete-bin-fill"></i>
                                 </div>
                             </td>
                         </tr>
@@ -122,7 +124,7 @@ function AllFAQBanner() {
                 />
             )}
         </div>
-  )
+    )
 }
 
 export default AllFAQBanner

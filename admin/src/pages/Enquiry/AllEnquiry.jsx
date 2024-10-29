@@ -75,11 +75,13 @@ function AllEnquiry() {
                             <td className='fw-bolder'>
                                 <div className="product-action">
                                     {/* <Link to={`/home-layout/edit-faq-content/${category._id}`}>
-                                        <svg><use href="/assets/svg/icon-sprite.svg#edit-content"></use></svg>
+                                        <i class="ri-pencil-fill"></i>
                                     </Link> */}
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
                                         <use href="/assets/svg/icon-sprite.svg#trash1"></use>
                                     </svg>
+
+                                    <i onClick={() => handleDelete(category._id)} class="ri-delete-bin-fill"></i>
                                 </div>
                             </td>
                         </tr>
