@@ -3,6 +3,7 @@ const Order = require('../Model/Order.Model');
 const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
 const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
+const User = require('../Model/UserModel')
 require("dotenv").config()
 exports.makeOrder = async (req, res) => {
     try {
@@ -135,6 +136,97 @@ exports.getAllOrder = async (req, res) => {
     }
 }
 
+exports.findOrderById = async (req, res) => {
+    try {
+        // Extract vendorAlloted and userId from query parameters
+        const { vendorAlloted } = req.query;
+        // console.log(vendorAlloted)
+        // Define a filter object
+        const filter = {};
+
+        // Add conditions to filter based on the presence of vendorAlloted and userId in the query
+        if (vendorAlloted) {
+            filter.vendorAlloted = vendorAlloted;
+        }
+
+
+        // Find orders based on the filter
+        const orders = await Order.find({
+            $or: [{
+                VendorAllotedStatus: true,
+                vendorAlloted: vendorAlloted
+            }]
+        })
+            .populate('userId EstimatedBill serviceId vendorAlloted')
+            .sort({ createdAt: -1 });
+        // console.log(orders)
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No orders found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Orders retrieved successfully',
+            data: orders
+        });
+    } catch (error) {
+        console.error("Internal server error in getting all orders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in getting all orders',
+            error: error.message
+        });
+    }
+}
+
+exports.findOrderByUserId = async (req, res) => {
+    try {
+        // Extract vendorAlloted and userId from query parameters
+        const { userId } = req.query;
+        // console.log(vendorAlloted)
+        // Define a filter object
+        const filter = {};
+
+        // Add conditions to filter based on the presence of vendorAlloted and userId in the query
+        // if (vendorAlloted) {
+        //     filter.vendorAlloted = vendorAlloted;
+        // }
+
+
+        // Find orders based on the filter
+        const orders = await Order.find({
+            $or: [{
+                userId: userId
+            }]
+        })
+            .populate('userId EstimatedBill serviceId vendorAlloted')
+            .sort({ createdAt: -1 });
+        // console.log(orders)
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No orders found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Orders retrieved successfully',
+            data: orders
+        });
+    } catch (error) {
+        console.error("Internal server error in getting all orders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in getting all orders',
+            error: error.message
+        });
+    }
+}
+
 exports.updateOrderStatus = async (req, res) => {
     try {
         const orderId = req.params._id;
@@ -211,7 +303,7 @@ exports.updateOrderStatus = async (req, res) => {
         //             </html>
         //         `
         //     };
-        
+
         //     await sendEmail(emailOptions);
         //     res.status(200).json({
         //         success: true,
@@ -219,7 +311,7 @@ exports.updateOrderStatus = async (req, res) => {
         //         data: order
         //     });
         // }
-        
+
 
         res.status(200).json({
             success: true,
@@ -293,6 +385,7 @@ exports.fetchVendorByLocation = async (req, res) => {
         }
 
         const userType = findOrder.userId?.UserType; // Optional chaining to avoid undefined errors
+        console.log("userType",userType)
 
         if (userType === 'Corporate') {
             // console.log("Entered in corporate section");

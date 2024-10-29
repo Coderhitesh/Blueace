@@ -64,7 +64,22 @@ function AllUserDetail() {
         }
     }
 
-    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Role', 'Type of user', 'Deactive', 'Created At'];
+     // Handle deleting a category
+     const handleDelete = async (id) => {
+        try {
+            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-user/${id}`);
+            if (response.data.success) {
+                toast.success('User deleted successfully!');
+                await fetchUserDetail(); // Fetch categories again after deletion
+            } else {
+                toast.error('Failed to delete user');
+            }
+        } catch (error) {
+            toast.error('An error occurred while deleting the user.');
+        }
+    };
+
+    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Role', 'Type of user', 'Deactive', 'Created At',"Action"];
 
     return (
         <div className='page-body'>
@@ -104,16 +119,16 @@ function AllUserDetail() {
 
                             <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>
 
-                            {/* <td className='fw-bolder'>
+                            <td className='fw-bolder'>
                                 <div className="product-action">
-                                    <Link to={`/service/edit-category/${category._id}`}>
+                                    {/* <Link to={`/service/edit-category/${category._id}`}>
                                         <i class="ri-pencil-fill"></i>
-                                    </Link>
+                                    </Link> */}
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
                                         <use href="/assets/svg/icon-sprite.svg#trash1"></use>
                                     </svg>
                                 </div>
-                            </td> */}
+                            </td>
                         </tr>
                     ))}
                     productLength={users.length}

@@ -142,8 +142,8 @@ function AddVendor() {
 
 
         payload.append('RangeWhereYouWantService[0][location][type]', 'Point');
-        payload.append('RangeWhereYouWantService[0][location][coordinates][0]', longitude);
-        payload.append('RangeWhereYouWantService[0][location][coordinates][1]', latitude);
+        payload.append('RangeWhereYouWantService[0][location][coordinates][0]', longitude || 40.7128);
+        payload.append('RangeWhereYouWantService[0][location][coordinates][1]', latitude || 74.0060);
 
         try {
             const res = await axios.post('https://api.blueace.co.in/api/v1/register-vendor', payload, {

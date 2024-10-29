@@ -33,6 +33,7 @@ import EstimatedBudget from "./Pages/Dashboard/VendorData/EstimatedBudget"
 import SeeEstimatedBudget from "./Pages/Dashboard/VendorData/SeeEstimatedBudget"
 import GalleryPage from "./Pages/GalleryPage/GalleryPage"
 import OrderSuccessfully from "./Components/BookingOrderStatus/OrderSuccessfully"
+import SuccessfullyMember from "./Pages/MemberShipPlan/SuccessfullyMember"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -75,6 +76,7 @@ function App() {
           <Route path="/blog/:id" element={<BlogSinglePage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/successfully-booking" element={<OrderSuccessfully />} />
+          <Route path="/successfully-member" element={<SuccessfullyMember />} />
 
           
         </Routes>

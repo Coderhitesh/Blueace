@@ -74,7 +74,7 @@ function MemberShipPlan() {
 
             if(!order){
                 toast.success('Membership Plan Purchase successfully!')
-                // window.location.href = '/'
+                window.location.href = '/successfully-member'
             }
 
             // Razorpay options

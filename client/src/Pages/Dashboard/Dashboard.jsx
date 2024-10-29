@@ -33,15 +33,16 @@ function Dashboard() {
             behavior: 'smooth',
         });
     }, []);
-    const [userData,setUserData] = useState([])
+    const [userData, setUserData] = useState([])
     const userDataString = sessionStorage.getItem('user');
     const userDataMain = userDataString ? JSON.parse(userDataString) : null;
     const token = sessionStorage.getItem('token');
     const userId = userDataMain?._id;
+    // console.log("userDataMain", userDataMain)
 
     // console.log("userData",userData)
 
-    const findUser = async() => {
+    const findUser = async () => {
         try {
             const res = await axios.get(`https://api.blueace.co.in/api/v1/findUser/${userId}`)
             setUserData(res.data.data)
@@ -50,22 +51,39 @@ function Dashboard() {
         }
     }
 
-    const fetchOrderData = async () => {
+    const fetchOrderById = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
-            const orderData = res.data.data;
-            const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
-            setAllOrder(filterData);
-            const filterStatusData = filterData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
-            setActiveOrder(filterStatusData);
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-order-by-id?vendorAlloted=${userId}`, );
+            setAllOrder(res.data.data)
+            // console.log("order by id",res.data.data)
+            const allData = res.data.data
+            const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
+            setActiveOrder(activeData)
         } catch (error) {
-            toast.error(error.response?.data.message || 'Internal server error in fetching orderData');
+            console.log(error)
         }
-    };
+    }
+
+    // console.log("activeOrder",activeOrder)
+
+    // const fetchOrderData = async () => {
+    //     try {
+    //         const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+    //         const orderData = res.data.data;
+    //         const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
+    //         console.log("filterdata",filterData)
+    //         setAllOrder(filterData);
+    //         const filterStatusData = filterData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
+    //         setActiveOrder(filterStatusData);
+    //     } catch (error) {
+    //         toast.error(error.response?.data.message || 'Internal server error in fetching orderData');
+    //     }
+    // };
 
     useEffect(() => {
-        fetchOrderData();
+        // fetchOrderData();
         findUser();
+        fetchOrderById();
     }, []);
 
     useEffect(() => {
@@ -145,7 +163,7 @@ function Dashboard() {
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <div className="dashboard-head-author-clicl">
                                 <div className="dashboard-head-author-thumb">
-                                {userData ? (
+                                    {userData ? (
                                         <img
                                             src={
                                                 userData?.userImage?.url ||

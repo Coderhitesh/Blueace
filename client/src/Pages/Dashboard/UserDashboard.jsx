@@ -42,23 +42,37 @@ function UserDashboard() {
         }
     }
 
-    const fetchOrderData = async () => {
+    const fetchOrderById = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
-            const orderData = res.data.data;
-            const filterData = orderData.filter((item) => item?.userId?._id === userData?._id);
-            setAllOrder(filterData);
-            const filterStatusData = filterData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
-            setActiveOrder(filterStatusData);
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-order-by-user-id?userId=${userId}`, );
+            setAllOrder(res.data.data)
+            // console.log("order by id",res.data.data)
+            const allData = res.data.data
+            const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
+            setActiveOrder(activeData)
         } catch (error) {
-            console.log(error);
-            toast.error(error.response?.data.message || 'Internal server error in fetching orderData');
+            console.log(error)
         }
-    };
+    }
+
+    // const fetchOrderData = async () => {
+    //     try {
+    //         const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+    //         const orderData = res.data.data;
+    //         const filterData = orderData.filter((item) => item?.userId?._id === userData?._id);
+    //         setAllOrder(filterData);
+    //         const filterStatusData = filterData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
+    //         setActiveOrder(filterStatusData);
+    //     } catch (error) {
+    //         console.log(error);
+    //         toast.error(error.response?.data.message || 'Internal server error in fetching orderData');
+    //     }
+    // };
 
     useEffect(() => {
-        fetchOrderData();
+        // fetchOrderData();
         findUser();
+        fetchOrderById();
     }, []);
 
     const handleLogout = async () => {
