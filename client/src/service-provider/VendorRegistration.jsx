@@ -11,6 +11,7 @@ function VendorRegistration() {
     const [previewAdharImage, setAdharImage] = useState(null);
     const [previewGstImage, setGstImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
     const [formData, setFormData] = useState({
         companyName: '',
         yearOfRegistration: '',
@@ -34,6 +35,15 @@ function VendorRegistration() {
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+        // Password length validation
+        if (name === 'Password') {
+            if (value.length < 7) {
+                setPasswordError('Password must be at least 7 characters long');
+            } else {
+                setPasswordError('');
+            }
+        }
     };
 
     const getLocation = () => {
@@ -77,51 +87,11 @@ function VendorRegistration() {
     };
 
     const validateFields = () => {
-        const {
-            companyName, yearOfRegistration, registerAddress, Email, ownerName,
-            ContactNumber, panNo, gstNo, adharNo, Password, panImage, adharImage, gstImage
-        } = formData;
-
-        // Basic field validation
-        if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
-            !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
-            toast.error("All fields are required");
-            return false;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(Email)) {
-            toast.error("Invalid email format");
-            return false;
-        }
-
-        // PAN, GST, Aadhar, and other number validation
-        const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-        const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/;
-        const aadharRegex = /^\d{12}$/;
-        const phoneRegex = /^[6-9]{1}[0-9]{9}$/;
-
-        if (!panRegex.test(panNo)) {
-            toast.error("Invalid PAN format");
-            return false;
-        }
-        if (!gstRegex.test(gstNo)) {
-            toast.error("Invalid GST format");
-            return false;
-        }
-        if (!aadharRegex.test(adharNo)) {
-            toast.error("Invalid Aadhar number. It must be a 12-digit number.");
-            return false;
-        }
-        if (!phoneRegex.test(ContactNumber)) {
-            toast.error("Invalid phone number");
-            return false;
-        }
+        const { Password } = formData;
 
         // Password validation (length check)
-        if (Password.length < 8) {
-            toast.error("Password must be at least 8 characters long");
+        if (Password.length < 7) {
+            toast.error("Password must be at least 7 characters long");
             return false;
         }
 
@@ -160,6 +130,8 @@ function VendorRegistration() {
             });
             toast.success('Vendor Registration Successful!');
             const userId = res.data.user._id;
+            sessionStorage.setItem('token', res.data.token);
+            sessionStorage.setItem('user', JSON.stringify(res.data.user));
             window.location.href = `/add-vendor-member/${userId}`;
         } catch (error) {
             if (error.response) {
@@ -178,7 +150,6 @@ function VendorRegistration() {
 
     return (
         <>
-            {/* ======================= RegisterServiceProvider Detail ======================== */}
             <section className="gray">
                 <div className="container">
                     <div className="row align-items-start justify-content-center">
@@ -192,69 +163,88 @@ function VendorRegistration() {
                                     <form onSubmit={handleSubmit} className="submit-form">
                                         <div className="row">
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.companyName} name='companyName' onChange={handleChange} className="form-control rounded" placeholder="Name of Company*" required />
+                                                <label>Name of Company*</label>
+                                                <input type="text" value={formData.companyName} name='companyName' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="date" value={formData.yearOfRegistration} name='yearOfRegistration' onChange={handleChange} className="form-control rounded" placeholder="Year of Registration*" required />
+                                                <label>Year of Registration*</label>
+                                                <input type="date" value={formData.yearOfRegistration} name='yearOfRegistration' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                         </div>
                                         <div className='row'>
                                             <div className="form-group col-lg-6">
-                                                <input type="email" value={formData.Email} name='Email' onChange={handleChange} className="form-control rounded" placeholder="Registered Email*" />
+                                                <label>Registered Email*</label>
+                                                <input type="email" value={formData.Email} name='Email' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" placeholder="Name of Owner*" required />
+                                                <label>Name of Owner*</label>
+                                                <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Contact Number of Owner*" required />
+                                                <label>Contact Number of Owner*</label>
+                                                <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control text-uppercase rounded" placeholder="PAN Number*" required />
+                                                <label>PAN Number*</label>
+                                                <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control text-uppercase rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" placeholder="GST Number*" required />
+                                                <label>GST Number*</label>
+                                                <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" placeholder="Aadhar Number*" required />
+                                                <label>Aadhar Number*</label>
+                                                <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                         </div>
 
                                         <div className="row">
                                             <div className="form-group col-lg-12">
-                                                <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Address of Registration*" required />
+                                                <label>Address of Registration*</label>
+                                                <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-12">
-                                                <input type="password" value={formData.Password} name='Password' onChange={handleChange} className="form-control rounded" placeholder="Password*" required />
+
+                                                <label>Password*</label>
+                                                {passwordError && (
+                                                    <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
+                                                        {passwordError}
+                                                    </p>
+                                                )}
+                                                <input type="password" value={formData.Password} name='Password' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                         </div>
                                         <div className='row'>
                                             <h4 className='bg-primary text-white p-2 mb-5'>Documents Upload</h4>
                                             <div className="form-group col-lg-4">
-                                                <label htmlFor="" className=''>PAN Card Upload</label>
-                                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control mt-2" placeholder="Upload PAN*" required />
+                                                <label>PAN Card Upload</label>
+                                                <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control mt-2" required />
                                                 {previewPanImage && <img src={previewPanImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                             <div className="form-group col-lg-4">
-                                                <label htmlFor="" className=''>Aadhar Card Upload</label>
-                                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control mt-2" placeholder="Upload Aadhar*" required />
+                                                <label>Aadhar Card Upload</label>
+                                                <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control mt-2" required />
                                                 {previewAdharImage && <img src={previewAdharImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                             <div className="form-group col-lg-4">
-                                                <label htmlFor="" className=''>GST Card Upload</label>
-                                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control mt-2" placeholder="Upload GST*" required />
+                                                <label>GST Registration Upload</label>
+                                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control mt-2" required />
                                                 {previewGstImage && <img src={previewGstImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                         </div>
-                                        <div className="form-group text-center">
-                                            <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{loading ? 'Loading...' : 'Submit'}</button>
-                                            {/* <Link to="/" className="btn btn-danger mx-3">Cancel</Link> */}
+                                        <div className="form-group">
+                                            <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{`${loading ? "Registering..." : "Register"}`}</button>
                                         </div>
+                                        {/* <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
+                                            {loading ? 'Registering...' : 'Register'}
+                                        </button> */}
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                {/* <Toaster /> */}
             </section>
         </>
     );

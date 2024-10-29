@@ -29,21 +29,35 @@ function BlogPage() {
 
     return (
         <>
-            <div className="bg-dark py-3">
+            {/* <div className="bg-dark py-3">
                 <div className="container">
                     <div className="row">
                         <div className="col-xl-12 col-lg-12 col-md-12">
                             <nav aria-label="breadcrumb">
                                 <ol className="breadcrumb">
                                     <li className="breadcrumb-item"><a href="/" className="text-light">Home</a></li>
-                                    {/* <li className="breadcrumb-item"><a href="/pages" className="text-light">Pages</a></li> */}
                                     <li className="breadcrumb-item active theme-cl" aria-current="page">Blog Page</li>
                                 </ol>
                             </nav>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
+            <div style={{backgroundColor:'#00225F'}} class=" py-3">
+				<div class="container">
+					<div class="row">
+						<div class="colxl-12 col-lg-12 col-md-12">
+							<nav aria-label="breadcrumb">
+								<ol class="breadcrumb mb-0">
+									<li class="breadcrumb-item"><Link to={'/'} style={{color:'white'}}>Home</Link></li>
+									<li class="breadcrumb-item"  style={{color:'white'}}>/</li>
+									<li class="breadcrumb-item active" style={{color:'white'}} aria-current="page">Blogs</li>
+								</ol>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
             <section className="middle">
                 <div className="container">
 

@@ -101,10 +101,10 @@ function AllBlog() {
                             <td className='fw-bolder'>
                                 <div className="product-action">
                                     <Link to={`/home-layout/edit-blog/${blog._id}`}>
-                                        <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
+                                        <svg><use href="/assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(blog._id)} style={{ cursor: 'pointer' }}>
-                                        <use href="../assets/svg/icon-sprite.svg#trash1"></use>
+                                        <use href="/assets/svg/icon-sprite.svg#trash1"></use>
                                     </svg>
                                 </div>
                             </td>

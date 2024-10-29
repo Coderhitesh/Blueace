@@ -1,25 +1,49 @@
-import React from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
 function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    mobile: '',
+    message: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // You may switch to JSON payload if not uploading files
+      const res = await axios.post('https://api.blueace.co.in/api/v1/create-contact', formData, {
+        headers: {
+          'Content-Type': 'application/json' // Change if using FormData
+        },
+      });
+      toast.success('Form Submitted Successfully!');
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || 'Internal server error in sending');
+    }
+  };
+
   return (
     <>
       {/* ======================= Top Breadcrumbs ======================== */}
-      <div className="bg-dark py-3">
+      <div style={{ backgroundColor: '#00225F' }} className="py-3">
         <div className="container">
           <div className="row">
             <div className="col-xl-12 col-lg-12 col-md-12">
               <nav aria-label="breadcrumb">
-                <ol className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <Link to={'/'} className="text-light">Home</Link>
-                  </li>
-                  <li className="breadcrumb-item">
-                    {/* <a href="#" className="text-light">Pages</a> */}
-                  </li>
-                  <li className="breadcrumb-item active theme-cl" aria-current="page">
-                    Contact Us
-                  </li>
+                <ol className="breadcrumb mb-0">
+                  <li className="breadcrumb-item"><Link to={'/'} style={{ color: 'white' }}>Home</Link></li>
+                  <li className="breadcrumb-item" style={{ color: 'white' }}>/</li>
+                  <li className="breadcrumb-item active" style={{ color: 'white' }} aria-current="page">Contact Us</li>
                 </ol>
               </nav>
             </div>
@@ -27,7 +51,7 @@ function Contact() {
         </div>
       </div>
       {/* ======================= Top Breadcrumbs ======================== */}
-      
+
       {/* ======================= Contact Page Detail ======================== */}
       <section className="gray">
         <div className="container">
@@ -38,45 +62,45 @@ function Contact() {
               </div>
             </div>
           </div>
-          
+
           <div className="row align-items-start justify-content-center">
             <div className="col-xl-10 col-lg-11 col-md-12 col-sm-12">
-              <form className="row submit-form py-4 px-3 rounded bg-white mb-4">
+              <form onSubmit={handleSubmit} className="row submit-form py-4 px-3 rounded bg-white mb-4">
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="form-group">
                     <label className="small text-dark ft-medium">Your Name *</label>
-                    <input type="text" className="form-control" placeholder="Your Name" />
+                    <input type="text" name='name' onChange={handleChange} value={formData.name} className="form-control" placeholder="Your Name" />
                   </div>
                 </div>
-                
+
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="form-group">
                     <label className="small text-dark ft-medium">Your Email *</label>
-                    <input type="email" className="form-control" placeholder="Your Email" />
+                    <input type="email" name='email' onChange={handleChange} value={formData.email} className="form-control" placeholder="Your Email" />
                   </div>
                 </div>
-                
+
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="form-group">
                     <label className="small text-dark ft-medium">Mobile</label>
-                    <input type="tel" className="form-control" placeholder="+91 256 548 7542" />
+                    <input type="tel" name='mobile' onChange={handleChange} value={formData.mobile} className="form-control" placeholder="Phone No." />
                   </div>
                 </div>
-                
+
                 <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                   <div className="form-group">
                     <label className="small text-dark ft-medium">Subject</label>
-                    <input type="text" className="form-control" placeholder="Type Your Subject" />
+                    <input type="text" name='subject' onChange={handleChange} value={formData.subject} className="form-control" placeholder="Type Your Subject" />
                   </div>
                 </div>
-                
+
                 <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                   <div className="form-group">
                     <label className="small text-dark ft-medium">Message</label>
-                    <textarea className="form-control ht-80" placeholder="Your Message..."></textarea>
+                    <textarea name='message' onChange={handleChange} value={formData.message} className="form-control ht-80" placeholder="Your Message..."></textarea>
                   </div>
                 </div>
-                
+
                 <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                   <div className="form-group">
                     <button type="submit" className="btn theme-bg text-light">Send Message</button>
@@ -84,7 +108,7 @@ function Contact() {
                 </div>
               </form>
             </div>
-            
+
             <div className="col-xl-10 col-lg-11 col-md-12 col-sm-12">
               <div className="row">
                 <div className="col-xl-4 col-lg-4 col-md-12">

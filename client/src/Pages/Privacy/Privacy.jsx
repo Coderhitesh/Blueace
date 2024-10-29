@@ -5,15 +5,15 @@ function Privacy() {
   return (
     <>
       {/* <!-- ======================= Top Breadcrubms ======================== --> */}
-			<div class="gray py-3">
+	  <div style={{backgroundColor:'#00225F'}} class=" py-3">
 				<div class="container">
 					<div class="row">
 						<div class="colxl-12 col-lg-12 col-md-12">
 							<nav aria-label="breadcrumb">
-								<ol class="breadcrumb">
-									<li class="breadcrumb-item"><Link to={'/'}>Home</Link></li>
-									{/* <li class="breadcrumb-item"><Link to={'/'}>Pages</Link></li> */}
-									<li class="breadcrumb-item active" aria-current="page">Privacy</li>
+								<ol class="breadcrumb mb-0">
+									<li class="breadcrumb-item"><Link to={'/'} style={{color:'white'}}>Home</Link></li>
+									<li class="breadcrumb-item"  style={{color:'white'}}>/</li>
+									<li class="breadcrumb-item active" style={{color:'white'}} aria-current="page">Privacy</li>
 								</ol>
 							</nav>
 						</div>

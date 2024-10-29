@@ -4,7 +4,6 @@ import toast, { Toaster } from 'react-hot-toast';
 import axios from 'axios';
 
 function Registration() {
-  // State to store form inputs and location
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     FullName: '',
@@ -19,7 +18,7 @@ function Registration() {
     RangeWhereYouWantService: [{
       location: {
         type: 'Point',
-        coordinates: [] // Will be updated with [longitude, latitude]
+        coordinates: []
       }
     }]
   });
@@ -28,14 +27,23 @@ function Registration() {
     latitude: '',
     longitude: ''
   });
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState(''); // State for password error message
 
-  // Handle input changes
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+    
+    // Password length validation
+    if (name === 'Password') {
+        if (value.length < 7) {
+            setPasswordError('Password must be at least 7 characters long');
+        } else {
+            setPasswordError('');
+        }
+    }
+};
 
-  // Get user location (latitude and longitude)
   const getLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -45,7 +53,7 @@ function Registration() {
             longitude: position.coords.longitude
           });
         },
-        (error) => {
+        () => {
           toast.error('Unable to retrieve your location');
         }
       );
@@ -54,55 +62,40 @@ function Registration() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
     if (!formData.FullName || !formData.Email || !formData.ContactNumber || !formData.Password) {
       toast.error('Please fill all required fields');
+      setLoading(false);
       return;
     }
 
-    // Update formData with location coordinates before submitting
+    // Validate password length
+    if (formData.Password.length < 7) {
+      setPasswordError('Password must be at least 7 characters long');
+      setLoading(false);
+      return;
+    } else {
+      setPasswordError('');
+    }
+
     const updatedFormData = {
       ...formData,
       RangeWhereYouWantService: [{
         location: {
           type: 'Point',
-          coordinates: [location.longitude, location.latitude] // Coordinates as [longitude, latitude]
+          coordinates: [location.longitude, location.latitude]
         }
       }]
     };
 
     try {
-      // Send data to the backend
       const res = await axios.post('https://api.blueace.co.in/api/v1/Create-User', updatedFormData);
 
-
-      // console.log('register',res.data)
-      // Save token and other data (if necessary)
       sessionStorage.setItem('token', res.data.token);
-      // sessionStorage.setItem('user', JSON.stringify(res.data.user));
-
-      // Retrieve the user data
-      let userData = res.data.user;
-
-      // Check if the userData is a string and appears to be a JSON string
-      if (typeof userData === 'string' && userData.startsWith('{') && userData.endsWith('}')) {
-        try {
-          // Parse the stringified JSON
-          userData = JSON.parse(userData);
-        } catch (parseError) {
-          console.error('Error parsing user data:', parseError);
-          toast.error('Error parsing user data.');
-        }
-      }
-
-      // Store the user data in sessionStorage
-      sessionStorage.setItem('user', JSON.stringify(userData));
-
-      navigate('/')
+      sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
       if (res.data.success) {
         toast.success('User registered successfully');
@@ -123,26 +116,20 @@ function Registration() {
             }
           }]
         });
-
         setLocation({
           latitude: '',
           longitude: ''
         });
+        navigate('/');
       }
     } catch (err) {
-      console.log(err)
-      if (err.response) {
-        toast.error(err.response.data.msg || 'An error occurred');
-      } else {
-        // Fallback for unexpected errors
-        toast.error('Something went wrong. Please try again.');
-      }
+      console.log(err);
+      toast.error(err.response?.data.msg || 'An error occurred');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   };
 
-  // Fetch the location when the component mounts
   useEffect(() => {
     getLocation();
   }, []);
@@ -164,6 +151,7 @@ function Registration() {
                     <div className="row">
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -177,6 +165,7 @@ function Registration() {
                       </div>
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="Email" className='mb-1 fw-medium'>Email</label>
                           <input
                             type="email"
                             className="form-control rounded"
@@ -192,6 +181,7 @@ function Registration() {
                     <div className="row">
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="ContactNumber" className='mb-1 fw-medium'>Phone No.</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -205,6 +195,7 @@ function Registration() {
                       </div>
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="HouseNo" className='mb-1 fw-medium'>House No.</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -220,6 +211,7 @@ function Registration() {
                     <div className="row">
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="Street" className='mb-1 fw-medium'>Street</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -233,6 +225,7 @@ function Registration() {
                       </div>
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="NearByLandMark" className='mb-1 fw-medium'>Near By LandMark</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -248,6 +241,7 @@ function Registration() {
                     <div className="row">
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="City" className='mb-1 fw-medium'>City</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -261,6 +255,7 @@ function Registration() {
                       </div>
                       <div className="col-6">
                         <div className="form-group">
+                          <label htmlFor="PinCode" className='mb-1 fw-medium'>Pin Code</label>
                           <input
                             type="Number"
                             className="form-control rounded"
@@ -274,40 +269,32 @@ function Registration() {
                       </div>
                     </div>
                     <div className="row">
-                      <div className="col-12">
-                        <div className="form-group">
-                          <input
+                <div className="col-12">
+                    <div className="form-group">
+                        <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
+                        {passwordError && (
+                            <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
+                                {passwordError}
+                            </p>
+                        )}
+                        <input
                             type="password"
                             className="form-control rounded"
-                            placeholder="Password"
+                            placeholder="Password (min 6 characters)"
                             name="Password"
                             value={formData.Password}
                             onChange={handleInputChange}
                             required
-                          />
-                        </div>
-                      </div>
-                      {/* <div className="col-6">
-                        <div className="">
-                          <select
-                            className='form-select'
-                            name="UserType"
-                            value={formData.UserType}
-                            onChange={handleInputChange}
-                          >
-                            <option value="">--Select Your Type--</option>
-                            <option value="Normal">Normal</option>
-                            <option value="Corporate">Corporate</option>
-                          </select>
-                        </div>
-                      </div> */}
+                        />
                     </div>
+                </div>
+            </div>
                     <div className="form-group">
-                      <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium">{`${loading ? "lLoading..." : "Sign Up"}`}</button>
+                      <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium">{`${loading ? "Loading..." : "Sign Up"}`}</button>
                     </div>
 
                     <div className="form-group text-center mt-4 mb-0">
-                      <p className="mb-0">Already have an account? <Link to={'/sign-in'} className="ft-medium text-success">Sign In</Link></p>
+                      <p className="mb-0">Already have an account? <Link to={'/sign-in'} style={{ color: '#00225F' }} className="ft-medium">Sign In</Link></p>
                     </div>
                   </form>
                 </div>

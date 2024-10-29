@@ -311,6 +311,7 @@ exports.addVendorMember = async (req, res) => {
     try {
         // console.log('i am hit')
         const { vendorId } = req.params;
+        // console.log(req.params)
         const { members } = req.body;
 
         const memberAdharImages = req.files['memberAdharImage']; // Array of uploaded files
@@ -511,7 +512,11 @@ exports.getMembersByVendorId = async (req, res) => {
 
 exports.updateMember = async (req, res) => {
     try {
+        console.log("i am hite")
         const { vendorId, memberId } = req.params;
+        // console.log("vendorId",vendorId)
+        // console.log("memberId",memberId)
+    
         const { name } = req.body;
         const memberAdharImage = req.file;
 

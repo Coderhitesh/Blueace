@@ -51,6 +51,7 @@ import MemberShipPlan from '../VendorDetails/MemberShipPlan'
 import SuccessPayment from '../PaymentStatusPage/SuccessPayment'
 import PaymentFailed from '../PaymentStatusPage/PaymentFailed'
 import DashBoard from '../DashBoard/DashBoard'
+import AllEnquiry from '../Enquiry/AllEnquiry'
 
 const Home = () => {
     return (
@@ -147,6 +148,7 @@ const Home = () => {
                         <Route path='/successfull-payment' element={<SuccessPayment />} />
                         <Route path='/failed-payment' element={<PaymentFailed />} />
                         {/* <Route path='/' element={<Login />} /> */}
+                        <Route path='/all-enquiry' element={<AllEnquiry />} />
 
                     </Routes>
                 </div>

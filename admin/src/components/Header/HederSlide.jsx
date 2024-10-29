@@ -82,6 +82,18 @@ const HederSlide = () => {
                         <i className="fa-solid fa-thumbtack"></i>
                         <Link
                             className="sidebar-link"
+                            to="/all-enquiry"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All Enquiry</h6>
+                        </Link>
+                    </li>
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
                             to="/users/all-users"
                            >
                             <svg className="stroke-icon">

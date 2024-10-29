@@ -104,10 +104,10 @@ function AllHomeBanner() {
                             <td className='fw-bolder'>
                                 <div className="product-action">
                                     <Link to={`/home-layout/edit-banner/${category._id}`}>
-                                        <svg><use href="../assets/svg/icon-sprite.svg#edit-content"></use></svg>
+                                        <svg><use href="/assets/svg/icon-sprite.svg#edit-content"></use></svg>
                                     </Link>
                                     <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
-                                        <use href="../assets/svg/icon-sprite.svg#trash1"></use>
+                                        <use href="/assets/svg/icon-sprite.svg#trash1"></use>
                                     </svg>
                                 </div>
                             </td>

@@ -9,9 +9,10 @@ function VendorProfile({ userData }) {
             behavior: 'smooth',
         });
     }, []);
-    console.log('user',userData)
+    // console.log('user',userData)
 
     const userId = userData?._id; // Ensure userData is provided or fetched correctly.
+    // console.log('userId',userId)
 
     const [loading, setLoading] = useState(false);
     const [imagePreviews, setImagePreviews] = useState({

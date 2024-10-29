@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import AboutUs from '../../Components/AboutUs/AboutUs'
 import OurValue from '../../Components/Value/OurValue'
@@ -13,6 +13,12 @@ import AboutHero from './aboutus1.webp'
 
 
 function About() {
+  useEffect(()=>{
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  },[])
   return (
     <>
       {/* ======================= Top Breadcrumbs ======================== */}

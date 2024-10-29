@@ -3,6 +3,7 @@ const SendToken = require('../Utils/SendToken');
 const SendEmail = require('../Utils/SendEmail');
 const Vendor = require('../Model/vendor.Model');
 const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
+const fs = require("fs")
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -764,16 +765,11 @@ exports.updateUser = async (req, res) => {
             } catch (error) {
                 console.log('Error in deleting file from local', error)
             }
-        } else {
-            res.status(400).json({
-                success: false,
-                message: 'No image uploaded',
-            })
         }
-        console.log('mid', existingUser)
+        // console.log('mid', existingUser)
 
         const userupdated = await existingUser.save()
-        console.log('aftersve', userupdated)
+        // console.log('aftersve', userupdated)
 
         if (!userupdated) {
             await deleteImageFromCloudinary(existingUser.userImage.public_id)
@@ -823,6 +819,34 @@ exports.updateUserType = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal Server Error in updating user type',
+            error: error.message
+        })
+    }
+}
+
+
+exports.universelLogin = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const user = await User.findById(id)
+        if (!user) {
+            const vendor = await Vendor.findById(id)
+            return res.status(200).json({
+                success: true,
+                message: 'vendor is founded',
+                data: vendor
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: 'user is founded',
+            data: user
+        })
+    } catch (error) {
+        console.log('Internal server error in universel login', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in universel login',
             error: error.message
         })
     }

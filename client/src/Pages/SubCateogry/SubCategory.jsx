@@ -218,6 +218,7 @@ function SubCategory() {
         },
       });
       toast.success('Order placed successfully!');
+      window.location.href = '/successfully-booking'
     } catch (error) {
       toast.error('Error placing the order');
       console.log(error);

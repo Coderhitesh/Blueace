@@ -9,6 +9,8 @@ function AddVendorMember({ userData }) {
     const [members, setMembers] = useState([]); // State to hold members
     const [loading, setLoading] = useState(false)
 
+    console.log("userData",userData)
+
     // Function to handle input change for member details
     const handleInputChange = (index, event) => {
         const { name, value } = event.target;
@@ -62,7 +64,7 @@ function AddVendorMember({ userData }) {
             );
             toast.success(response.data.message); // Success message
             setMembers([]); // Clear form
-            window.location.href = `/membership-plan/${vendorId}`
+            // window.location.href = `/membership-plan/${vendorId}`
         } catch (error) {
             console.error('Error:', error);
             alert(error.response?.data?.message || 'Error occurred');

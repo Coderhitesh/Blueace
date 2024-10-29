@@ -42,6 +42,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('Before work image uploaded successfully');
+            
         } catch (error) {
             console.error(error);
             Swal.fire("Error", "Failed to upload before work image", "error");

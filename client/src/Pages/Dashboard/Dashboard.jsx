@@ -33,11 +33,22 @@ function Dashboard() {
             behavior: 'smooth',
         });
     }, []);
-
+    const [userData,setUserData] = useState([])
     const userDataString = sessionStorage.getItem('user');
-    const userData = userDataString ? JSON.parse(userDataString) : null;
+    const userDataMain = userDataString ? JSON.parse(userDataString) : null;
     const token = sessionStorage.getItem('token');
-    const userId = userData?._id;
+    const userId = userDataMain?._id;
+
+    // console.log("userData",userData)
+
+    const findUser = async() => {
+        try {
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/findUser/${userId}`)
+            setUserData(res.data.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const fetchOrderData = async () => {
         try {
@@ -54,6 +65,7 @@ function Dashboard() {
 
     useEffect(() => {
         fetchOrderData();
+        findUser();
     }, []);
 
     useEffect(() => {
@@ -133,7 +145,19 @@ function Dashboard() {
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                             <div className="dashboard-head-author-clicl">
                                 <div className="dashboard-head-author-thumb">
-                                    <img src={userData.vendorImage?.url} className="img-fluid" alt="" />
+                                {userData ? (
+                                        <img
+                                            src={
+                                                userData?.userImage?.url ||
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.companyName || 'User')}&background=random`
+                                            }
+                                            className="img-fluid"
+                                            onError={(e) =>
+                                                (e.target.src = 'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg')
+                                            }
+                                            alt={userData?.FullName || 'User Avatar'}
+                                        />
+                                    ) : null}
                                 </div>
                                 <div className="dashboard-head-author-caption">
                                     <div className="dashploio">
@@ -174,39 +198,39 @@ function Dashboard() {
                         <div className="goodup-dashboard-inner">
                             <ul data-submenu-title="Main Navigation">
                                 <li onClick={() => handleTabClick('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
-                                    <a href='#Dashboard'>
+                                    <a>
                                         <i className="lni lni-dashboard me-2"></i>Dashboard
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
-                                    <a href='#Active-Order'>
+                                    <a>
                                         <i className="lni lni-files me-2"></i>Active Order
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('All-Order')} className={`${activeTab === 'All-Order' ? 'active' : ''}`}>
-                                    <a href='#All-Order'>
+                                    <a>
                                         <i className="lni lni-add-files me-2"></i>All Orders
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('members')} className={`${activeTab === 'members' ? 'active' : ''}`}>
-                                    <a href='#members'>
+                                    <a>
                                         <i className="lni lni-bookmark me-2"></i>Member
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('add-members')} className={`${activeTab === 'add-members' ? 'active' : ''}`}>
-                                    <a href='#add-members'>
+                                    <a>
                                         <i className="lni lni-bookmark me-2"></i>Add Member
                                     </a>
                                 </li>
                             </ul>
                             <ul data-submenu-title="My Accounts">
                                 <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
-                                    <a href='#profile'>
+                                    <a>
                                         <i className="lni lni-user me-2"></i>My Profile
                                     </a>
                                 </li>
                                 <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
-                                    <a href='#changePassword'>
+                                    <a>
                                         <i className="lni lni-lock-alt me-2"></i>Change Password
                                     </a>
                                 </li>
@@ -229,7 +253,7 @@ function Dashboard() {
                 {activeTab === 'Active-Order' && <ActiveVendorOrder userData={userData} activeOrder={activeOrder} />}
                 {activeTab === 'All-Order' && <AllVendorOrder userData={userData} allOrder={allOrder} />}
                 {activeTab === 'members' && <VendorMember userData={userData} />}
-                {activeTab === 'add-members' && <AddVendorMember />}
+                {activeTab === 'add-members' && <AddVendorMember userData={userData} />}
                 {activeTab === 'profile' && <VendorProfile userData={userData} />}
                 {activeTab === 'changePassword' && <VendorChangePassword userData={userData} />}
             </div>

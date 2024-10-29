@@ -25,13 +25,22 @@ function UserDashboard() {
             behavior: 'smooth',
         });
     }, []);
-
+    const [userData, setUserData] = useState([])
     const [activeOrder, setActiveOrder] = useState([]);
     const [allOrder, setAllOrder] = useState([]);
     const userDataString = sessionStorage.getItem('user');
-    const userData = userDataString ? JSON.parse(userDataString) : null;
+    const userDataMain = userDataString ? JSON.parse(userDataString) : null;
     const token = sessionStorage.getItem('token');
-    const userId = userData?._id;
+    const userId = userDataMain?._id;
+
+    const findUser = async () => {
+        try {
+            const res = await axios.get(`https://api.blueace.co.in/api/v1/findUser/${userId}`)
+            setUserData(res.data.data)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const fetchOrderData = async () => {
         try {
@@ -49,6 +58,7 @@ function UserDashboard() {
 
     useEffect(() => {
         fetchOrderData();
+        findUser();
     }, []);
 
     const handleLogout = async () => {
@@ -108,20 +118,20 @@ function UserDashboard() {
         }
     };
 
-    if(!token){
-        return   <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
-        <div className="container">
-            <div className="row">
-                <div className="col text-center">
-                    <div className="alert alert-danger" role="alert">
-                        <h1 className="display-4">You are not logged in.</h1>
-                        <p className="lead">Please login to access your dashboard.</p>
-                        <a href="/sign-in" className="btn btn-primary btn-lg custom-btn">Login</a>
+    if (!token) {
+        return <div className="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+            <div className="container">
+                <div className="row">
+                    <div className="col text-center">
+                        <div className="alert alert-danger" role="alert">
+                            <h1 className="display-4">You are not logged in.</h1>
+                            <p className="lead">Please login to access your dashboard.</p>
+                            <a href="/sign-in" className="btn btn-primary btn-lg custom-btn">Login</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     }
     return (
         <>
@@ -137,16 +147,19 @@ function UserDashboard() {
                                 <div className="dashboard-head-author-thumb">
                                     {userData ? (
                                         <img
-                                            src={userData?.userImage?.url}
+                                            src={
+                                                userData?.userImage?.url ||
+                                                `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.FullName || 'User')}&background=random`
+                                            }
                                             className="img-fluid"
                                             onError={(e) =>
-                                                (e.target.src =
-                                                    'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg')
+                                                (e.target.src = 'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg')
                                             }
-                                            alt={userData.FullName}
+                                            alt={userData?.FullName || 'User Avatar'}
                                         />
                                     ) : null}
                                 </div>
+
                                 <div className="dashboard-head-author-caption">
                                     <div className="dashploio">
                                         <h4>{userData.FullName}</h4>

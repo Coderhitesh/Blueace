@@ -1,6 +1,6 @@
 const express = require('express')
 const { protect } = require('../Middleware/Protect')
-const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive } = require('../Controller/Usercontroller')
+const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive, universelLogin } = require('../Controller/Usercontroller')
 const router = express.Router()
 const upload = require('../Middleware/Multer')
 const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory, getServiceCategoryByName } = require('../Controller/serviceCategory.Controller')
@@ -19,6 +19,7 @@ const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
 const { createGalleryCategory, getAllImageCategory, singleGalleryCategory, deleteGalleryCategory, updateGalleryCategory } = require('../Controller/GalleryCategory.Controller')
 const { createGalleryImage, getSingleGalleryImage, getAllGalleryImage, deleteGalleryImage, updateGalleryImage } = require('../Controller/GalleryImage.controller')
+const { createContact, getSingleContact, getAllContact, deleteContact } = require('../Controller/Contact.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -30,6 +31,8 @@ router.post('/Password-Change', passwordChangeRequest)
 router.post('/Verify-Otp', verifyOtpAndChangePassword)
 router.post('/resend-otp', resendOtp)
 router.put('/update-user-deactive-status/:_id', updateUserDeactive)
+
+router.get('/findUser/:_id',universelLogin)
 
 
 router.post('/Add-Delivery-Address', protect, addDeliveryDetails)
@@ -207,6 +210,13 @@ router.get('/get-single-gallery-image/:_id',getSingleGalleryImage)
 router.get('/get-all-gallery-image',getAllGalleryImage)
 router.delete('/delete-gallery-image/:_id',deleteGalleryImage)
 router.put('/update-gallery-image/:_id',upload.single('image'),updateGalleryImage)
+
+// all contact route here 
+
+router.post('/create-contact', createContact)
+router.get('/get-single-contact/:_id', getSingleContact)
+router.get('/get-all-contact', getAllContact)
+router.delete('/delete-contact/:_id', deleteContact)
 
 
 module.exports = router;

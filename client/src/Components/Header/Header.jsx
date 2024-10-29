@@ -92,20 +92,20 @@ function Header() {
               </div>
             </div>
             <div className="col-lg-6">
-              <div className="topheader-marquee">
-                {/* <marquee>
-                  Blueace Limited mission has always been to provide top-notch{' '}
-                  <span style={{ color: '#47d2fc', fontWeight: '700' }}>Heating</span>,{' '}
-                  <span style={{ color: '#47d2fc', fontWeight: '700' }}>ventilation</span>, and{' '}
-                  <span style={{ color: '#47d2fc', fontWeight: '700' }}>Air Conditioning</span>{' '}
-                  solutions tailored to the unique needs of each customer.
-                </marquee> */}
-                {
-                  allMarquee && allMarquee.slice(0,1).map((item,index)=>(
-                    <marquee>{item.text}</marquee>
-                  ))
-                }
-              </div>
+            <div className="topheader-marquee">
+    {
+        allMarquee && allMarquee.slice(0, 1).map((item, index) => (
+            <marquee
+                key={index}
+                onMouseEnter={(e) => e.target.stop()} // Pause the marquee on hover
+                onMouseLeave={(e) => e.target.start()} // Resume the marquee when not hovered
+            >
+                {item.text}
+            </marquee>
+        ))
+    }
+</div>
+
             </div>
           </div>
         </div>

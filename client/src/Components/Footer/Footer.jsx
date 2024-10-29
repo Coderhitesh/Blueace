@@ -76,7 +76,7 @@ function Footer() {
                   <h4 className="widget_title">Main Navigation</h4>
                   <ul className="footer-menu">
                     <li><Link to={'/'}>- Home</Link></li>
-                    <li><Link to={'/about'}>- About</Link></li>
+                    <li><Link to={'/about-us'}>- About</Link></li>
                     <li><Link to={'/contact'}>- Contact</Link></li>
                     {/* <li><Link to={'/services'}>- Services</Link></li> */}
                     {/* <li><Link to={'/products'}>- Products</Link></li> */}
