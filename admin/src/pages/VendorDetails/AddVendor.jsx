@@ -38,6 +38,7 @@ function AddVendor() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        // console.log(`Selected ${name}: ${value}`);
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
@@ -151,11 +152,13 @@ function AddVendor() {
             });
             toast.success('Employ Registration Successful!');
             const vendorType = res.data.user.Role
+            // console.log("vendorType",vendorType)
             if (vendorType === "vendor") {
                 const userId = res.data.user._id;
                 window.location.href = `/add-vendor-member/${userId}`;
+            }else{
+                window.location.href = '/vendors/all-vendor'
             }
-            window.location.href = '/vendors/all-vendor'
         } catch (error) {
             console.log(error)
             if (error.response) {
