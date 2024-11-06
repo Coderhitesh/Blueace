@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-function DashboardContent({ userData }) {
+function DashboardContent({ userData, activeOrder, allOrder, completeOrderCount, cancelOrderCount }) {
 	const [dashboard, setDashboard] = useState({})
 	const token = sessionStorage.getItem('token');
 	useEffect(() => {
@@ -54,28 +54,32 @@ function DashboardContent({ userData }) {
 					<div className="row">
 						<div className="col-xl-3 col-lg-3 col-md-6 col-sm-6">
 							<div className="dsd-boxed-widget py-5 px-4 bg-danger rounded">
-								<h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.pendingsHave || 0}</h2>
+								{/* <h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.pendingsHave || 0}</h2> */}
+								<h2 className="ft-medium mb-1 fs-xl text-light count">{activeOrder.length || 0}</h2>
 								<p className="p-0 m-0 text-light fs-md">Active Order</p>
 								<i className="lni lni-empty-file"></i>
 							</div>
 						</div>
 						<div className="col-xl-3 col-lg-3 col-md-6 col-sm-6">
 							<div className="dsd-boxed-widget py-5 px-4 bg-success rounded">
-								<h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.allOrdersHave || 0}</h2>
+								{/* <h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.allOrdersHave || 0}</h2> */}
+								<h2 className="ft-medium mb-1 fs-xl text-light count">{allOrder.length || 0}</h2>
 								<p className="p-0 m-0 text-light fs-md">All Order</p>
 								<i className="lni lni-eye"></i>
 							</div>
 						</div>
 						<div className="col-xl-3 col-lg-3 col-md-6 col-sm-6">
 							<div className="dsd-boxed-widget py-5 px-4 bg-warning rounded">
-								<h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.Cancelled || 0}</h2>
+								{/* <h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.Cancelled || 0}</h2> */}
+								<h2 className="ft-medium mb-1 fs-xl text-light count">{cancelOrderCount || 0}</h2>
 								<p className="p-0 m-0 text-light fs-md">Cancelled Order</p>
 								<i className="lni lni-comments"></i>
 							</div>
 						</div>
 						<div className="col-xl-3 col-lg-3 col-md-6 col-sm-6">
 							<div className="dsd-boxed-widget py-5 px-4 bg-purple rounded">
-								<h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.count}</h2>
+								{/* <h2 className="ft-medium mb-1 fs-xl text-light count">{dashboard?.count}</h2> */}
+								<h2 className="ft-medium mb-1 fs-xl text-light count">{completeOrderCount}</h2>
 								<p className="p-0 m-0 text-light fs-md">Completed Order</p>
 								<i className="lni lni-wallet"></i>
 							</div>

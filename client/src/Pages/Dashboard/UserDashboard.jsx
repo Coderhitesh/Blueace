@@ -28,6 +28,8 @@ function UserDashboard() {
     const [userData, setUserData] = useState([])
     const [activeOrder, setActiveOrder] = useState([]);
     const [allOrder, setAllOrder] = useState([]);
+    const [completeOrderCount,setCompleteOrderCount] = useState(0)
+    const [cancelOrderCount,setCancelOrderCount] = useState(0)
     const userDataString = sessionStorage.getItem('user');
     const userDataMain = userDataString ? JSON.parse(userDataString) : null;
     const token = sessionStorage.getItem('token');
@@ -50,6 +52,10 @@ function UserDashboard() {
             const allData = res.data.data
             const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
             setActiveOrder(activeData)
+            const filterCompletOrder = allData.filter((item) => item.OrderStatus === 'Service Done');
+            setCompleteOrderCount(filterCompletOrder.length);
+            const filterCancelOrder = allData.filter((item) => item.OrderStatus === 'Cancelled');
+            setCancelOrderCount(filterCancelOrder.length);
         } catch (error) {
             console.log(error)
         }
@@ -247,7 +253,7 @@ function UserDashboard() {
                     </div>
                 </div>
 
-                {activeTab === 'Dashboard' && <DashboardContent userData={userData} />}
+                {activeTab === 'Dashboard' && <DashboardContent userData={userData} activeOrder={activeOrder} allOrder={allOrder} completeOrderCount={completeOrderCount} cancelOrderCount={cancelOrderCount}  />}
                 {activeTab === 'Active-Order' && <UserActiveOrder activeOrder={activeOrder} />}
                 {activeTab === 'User-All-Order' && <UserAllOrder allOrder={allOrder} />}
                 {activeTab === 'profile' && <Profile userData={userData} />}
