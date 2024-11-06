@@ -7,6 +7,7 @@ function Registration() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     FullName: '',
+    companyName: '',
     Email: '',
     ContactNumber: '',
     Password: '',
@@ -33,16 +34,16 @@ function Registration() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
-    
+
     // Password length validation
     if (name === 'Password') {
-        if (value.length < 7) {
-            setPasswordError('Password must be at least 7 characters long');
-        } else {
-            setPasswordError('');
-        }
+      if (value.length < 7) {
+        setPasswordError('Password must be at least 7 characters long');
+      } else {
+        setPasswordError('');
+      }
     }
-};
+  };
 
   const getLocation = () => {
     if (navigator.geolocation) {
@@ -101,6 +102,7 @@ function Registration() {
         toast.success('User registered successfully');
         setFormData({
           FullName: '',
+          companyName: '',
           Email: '',
           ContactNumber: '',
           Password: '',
@@ -148,7 +150,22 @@ function Registration() {
                   </div>
 
                   <form className="submit-form" onSubmit={handleSubmit}>
+
                     <div className="row">
+                      <div className="col-6">
+                        <div className="form-group">
+                          <label htmlFor="companyName" className='mb-1 fw-medium'>Company Name (Optional)</label>
+                          <input
+                            type="text"
+                            className="form-control rounded"
+                            placeholder="Enter Your Name"
+                            name="companyName"
+                            value={formData.companyName}
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                      </div>
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name</label>
@@ -177,8 +194,8 @@ function Registration() {
                           />
                         </div>
                       </div>
-                    </div>
-                    <div className="row">
+
+
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="ContactNumber" className='mb-1 fw-medium'>Phone No.</label>
@@ -207,8 +224,8 @@ function Registration() {
                           />
                         </div>
                       </div>
-                    </div>
-                    <div className="row">
+
+
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="Street" className='mb-1 fw-medium'>Street</label>
@@ -237,8 +254,8 @@ function Registration() {
                           />
                         </div>
                       </div>
-                    </div>
-                    <div className="row">
+
+
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="City" className='mb-1 fw-medium'>City</label>
@@ -267,17 +284,17 @@ function Registration() {
                           />
                         </div>
                       </div>
-                    </div>
-                    <div className="row">
-                <div className="col-12">
-                    <div className="form-group">
-                        <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
-                        {passwordError && (
+
+
+                      <div className="col-12">
+                        <div className="form-group">
+                          <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
+                          {passwordError && (
                             <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
-                                {passwordError}
+                              {passwordError}
                             </p>
-                        )}
-                        <input
+                          )}
+                          <input
                             type="password"
                             className="form-control rounded"
                             placeholder="Password (min 6 characters)"
@@ -285,10 +302,11 @@ function Registration() {
                             value={formData.Password}
                             onChange={handleInputChange}
                             required
-                        />
+                          />
+                        </div>
+                      </div>
                     </div>
-                </div>
-            </div>
+
                     <div className="form-group">
                       <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium">{`${loading ? "Loading..." : "Sign Up"}`}</button>
                     </div>

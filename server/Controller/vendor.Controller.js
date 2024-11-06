@@ -159,26 +159,6 @@ exports.registerVendor = async (req, res) => {
                 });
             }
 
-            // Upload GST Image
-            // if (gstImage && gstImage[0]) {
-            //     const imgUrl = await uploadImage(gstImage[0]?.path);
-            //     newVendor.gstImage = {
-            //         url: imgUrl.image,
-            //         public_id: imgUrl.public_id
-            //     };
-            //     uploadedImages.push(imgUrl.public_id);
-            //     if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
-            //         await fs.unlink(gstImage[0].path);
-            //         console.log("unlink gstImage")
-            //     } else {
-            //         console.warn("File not found, skipping unlink:", gstImage[0].path);
-            //     }
-            // } else {
-            //     return res.status(400).json({
-            //         success: false,
-            //         message: "Please upload GST Image"
-            //     });
-            // }
 
 
             if (gstImage && gstImage[0]) {

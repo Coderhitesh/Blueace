@@ -5,7 +5,7 @@ import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
 
-function AllVendors() {
+function AllEmploy() {
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -18,12 +18,12 @@ function AllVendors() {
             const res = await axios.get('https://api.blueace.co.in/api/v1/all-vendor');
             const datasave = res.data.data;
             // console.log("all data",datasave)
-            const filterData = datasave.filter((item) => item.Role === "vendor")
+            const filterData = datasave.filter((item) => item.Role === "employ")
             // console.log("all vendor",filterData)
             const r = filterData.reverse();
             setVendors(r);
         } catch (error) {
-            toast.error('An error occurred while fetching Vendor data.');
+            toast.error('An error occurred while fetching Employ data.');
             console.error('Fetch error:', error);
         } finally {
             setLoading(false);
@@ -45,10 +45,10 @@ function AllVendors() {
                 isDeactive: newDeactiveStatus
             })
             if (response.data.success) {
-                toast.success('Vendor status updated successfully.');
+                toast.success('Employ status updated successfully.');
                 await fetchVendorDetail();
             } else {
-                toast.error('Failed to update Vendor status.');
+                toast.error('Failed to update Employ status.');
             }
         } catch (error) {
             toast.error("An error occurred while updating the deactive status")
@@ -60,13 +60,13 @@ function AllVendors() {
         try {
             const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-vendor/${id}`);
             if (response.data.success) {
-                toast.success('Vendor deleted successfully!');
+                toast.success('Employ deleted successfully!');
                 await fetchVendorDetail(); // Fetch vendors again after deletion
             } else {
-                toast.error('Failed to delete Vendor');
+                toast.error('Failed to delete Employ');
             }
         } catch (error) {
-            toast.error('An error occurred while deleting the vendor.');
+            toast.error('An error occurred while deleting the Employ.');
         }
     };
 
@@ -75,11 +75,11 @@ function AllVendors() {
         setModalVisible(true); // Open the modal
     };
 
-    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
+    const headers = ['S.No', 'Company Name', 'Employ Name', 'Employ Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
-            <Breadcrumb heading={'Vendors'} subHeading={'Venodrs'} LastHeading={'All Vendors'} backLink={'/users/all-users'} />
+            <Breadcrumb heading={'Employs'} subHeading={'Employs'} LastHeading={'All Employs'} backLink={'/users/all-users'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -117,8 +117,8 @@ function AllVendors() {
                         productsPerPage={productsPerPage}
                         currentPage={currentPage}
                         paginate={setCurrentPage}
-                        href="/vendors/add-vendor"
-                        text="Add Vendor"
+                        href="/vendors/add-employ"
+                        text="Add Employ"
                         errorMsg=""
                         handleOpen={() => { }}
                     />
@@ -147,21 +147,21 @@ function AllVendors() {
                                                     <td>{selectedVendor.companyName || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ width: '28%' }}>Owner Name</td>
+                                                    <td style={{ width: '28%' }}>Employ Name</td>
                                                     <td>{selectedVendor.ownerName || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ width: '28%' }}>Owner Number</td>
+                                                    <td style={{ width: '28%' }}>Employ Number</td>
                                                     <td>{selectedVendor.ContactNumber || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Email</td>
                                                     <td>{selectedVendor.Email || "Not Available"}</td>
                                                 </tr>
-                                                <tr>
+                                                {/* <tr>
                                                     <td style={{ width: '28%' }}>Year of Registration</td>
                                                     <td>{selectedVendor.yearOfRegistration || "Not Available"}</td>
-                                                </tr>
+                                                </tr> */}
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Registered Address</td>
                                                     <td>{selectedVendor.registerAddress || "Not Available"}</td>
@@ -170,18 +170,18 @@ function AllVendors() {
                                                     <td style={{ width: '28%' }}>PAN No</td>
                                                     <td>{selectedVendor.panNo || "Not Available"}</td>
                                                 </tr>
-                                                <tr>
+                                                {/* <tr>
                                                     <td style={{ width: '28%' }}>GST No</td>
                                                     <td>{selectedVendor.gstNo || "Not Available"}</td>
-                                                </tr>
+                                                </tr> */}
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Aadhar No</td>
                                                     <td>{selectedVendor.adharNo || "Not Available"}</td>
                                                 </tr>
-                                                <tr>
+                                                {/* <tr>
                                                     <td style={{ width: '28%' }}>Membership Plan</td>
                                                     <td>{selectedVendor?.memberShipPlan?.name || "No Plan is activated"}</td>
-                                                </tr>
+                                                </tr> */}
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Type</td>
                                                     <td>{selectedVendor?.Role || "No Plan is activated"}</td>
@@ -189,8 +189,8 @@ function AllVendors() {
                                             </tbody>
 
                                         </table>
-                                        <h5 style={{ fontWeight: 600 }} className="mt-4">Members</h5>
-                                        <table className="table table-bordered mt-4">
+                                        {/* <h5 style={{ fontWeight: 600 }} className="mt-4">Members</h5> */}
+                                        {/* <table className="table table-bordered mt-4">
                                             <thead>
                                                 <tr>
                                                     <th>Member Name</th>
@@ -214,7 +214,7 @@ function AllVendors() {
                                                 }
                                             </tbody>
 
-                                        </table>
+                                        </table> */}
                                         <h5 style={{ fontWeight: 600 }} className="mt-4">Documents</h5>
                                         <div className="row mt-2">
                                             <div className="col-md-4 text-center">
@@ -227,7 +227,7 @@ function AllVendors() {
                                                     <p>No Image Available</p>
                                                 )}
                                             </div>
-                                            <div className="col-md-4 text-center">
+                                            {/* <div className="col-md-4 text-center">
                                                 <h6 style={{ fontWeight: '700' }} className=' mb-3'>GST Image</h6>
                                                 {selectedVendor.gstImage?.url ? (
                                                     <a href={selectedVendor.gstImage.url} target="_blank" rel="noopener noreferrer">
@@ -236,7 +236,7 @@ function AllVendors() {
                                                 ) : (
                                                     <p>No Image Available</p>
                                                 )}
-                                            </div>
+                                            </div> */}
                                             <div className="col-md-4 text-center">
                                                 <h6 style={{ fontWeight: '700' }} className=' mb-3'>Aadhar Image</h6>
                                                 {selectedVendor.adharImage?.url ? (
@@ -262,4 +262,4 @@ function AllVendors() {
     )
 }
 
-export default AllVendors;
+export default AllEmploy

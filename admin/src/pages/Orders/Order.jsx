@@ -251,6 +251,14 @@ function Order() {
                                                     <td style={{ width: '28%' }}>User Type</td>
                                                     <td>{selectedVendor.UserType || "Not Available"}</td>
                                                 </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Address</td>
+                                                    <td>{`${selectedVendor.HouseNo},${selectedVendor.Street},${selectedVendor.City} (${selectedVendor.PinCode})` || "Not Available"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Land Mark</td>
+                                                    <td>{`${selectedVendor.NearByLandMark}` || "Not Available"}</td>
+                                                </tr>
 
                                             </tbody>
 

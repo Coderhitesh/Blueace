@@ -5,7 +5,7 @@ import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
 
-function AllUserDetail() {
+function AllCorporateUser() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -16,9 +16,10 @@ function AllUserDetail() {
         try {
             const res = await axios.get('https://api.blueace.co.in/api/v1/AllUser');
             const datasave = res.data.data;
-            console.log("data",datasave)
-            const filterdata = datasave.filter((item) => item.UserType === "Normal")
+            const filterdata = datasave.filter((item) => item.UserType === "Corporate")
             const r = filterdata.reverse();
+            console.log("data",r)
+            // console.log(object)
             setUsers(r);
         } catch (error) {
             toast.error('An error occurred while fetching User data.');
@@ -81,11 +82,11 @@ function AllUserDetail() {
         }
     };
 
-    const headers = ['S.No', "Company Name", 'Name', 'Phone Number', 'Email', "User Type", 'Deactive', 'Created At',"Action"];
+    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Deactive', 'Created At',"Action"];
 
     return (
         <div className='page-body'>
-            <Breadcrumb heading={'Users'} subHeading={'Users'} LastHeading={'All Users'} backLink={'/users/all-users'} />
+            <Breadcrumb heading={'Corporate Users'} subHeading={'Corporate Users'} LastHeading={'All Corporate Users'} backLink={'/corporate-user/all-corporate-user'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -94,14 +95,14 @@ function AllUserDetail() {
                     elements={currentServices.map((category, index) => (
                         <tr key={category._id}>
                             <td>{index + 1}</td>
-                            <td className='fw-bolder'>{category.companyName || 'Unavailable'}</td>
+                            <td className='fw-bolder'>{category.companyName || 'Detail Not Provided'}</td>
                             <td className='fw-bolder'>{category.FullName}</td>
                             <td className='fw-bolder'>{category.ContactNumber || "Not-Available"}</td>
                             <td className='fw-bolder'>{category.Email || "Not-Available"}</td>
                             {/* <td className='fw-bolder'>{category.Role || "Not-Available"}</td> */}
 
                             {/* Dropdown for updating UserType */}
-                            <td>
+                            {/* <td>
 
                                 <select
                                     value={category.UserType || 'Normal'}
@@ -111,7 +112,7 @@ function AllUserDetail() {
                                     <option value="Normal">Normal</option>
                                     <option value="Corporate">Corporate</option>
                                 </select>
-                            </td>
+                            </td> */}
 
                             <td>
                                     <Toggle
@@ -138,8 +139,8 @@ function AllUserDetail() {
                     productsPerPage={productsPerPage}
                     currentPage={currentPage}
                     paginate={setCurrentPage}
-                    href=""
-                    text=""
+                    href="/corporate-user/add-corporate-user"
+                    text="Add Corporate User"
                     errorMsg=""
                     handleOpen={() => { }}
                 />
@@ -148,4 +149,4 @@ function AllUserDetail() {
     );
 }
 
-export default AllUserDetail;
+export default AllCorporateUser

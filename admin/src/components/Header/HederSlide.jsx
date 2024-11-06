@@ -107,6 +107,27 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="#"
+                            onClick={() => handleMenuClick('corporate-user')}>
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">Corporate User</h6>
+                            {/* <i class="fa-solid fa-arrow-right"></i> */}
+                        </Link>
+                        {activeMenu === 'corporate-user' && (
+                            <ul className="sidebar-submenu">
+                                <li><Link to="/corporate-user/all-corporate-user">All Corporate user</Link></li>
+                                <li><Link to="/corporate-order/add-corporate-order">Make Order</Link></li>
+                                {/* <li><Link to="/corporate-user/all-membership-plan">Membership Plan</Link></li> */}
+                                {/* <li><Link to="/corporate-user/add-vendor">Add Vendor</Link></li> */}
+                            </ul>
+                        )}
+                    </li>
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="#"
                             onClick={() => handleMenuClick('vendors')}>
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
@@ -121,6 +142,18 @@ const HederSlide = () => {
                                 <li><Link to="/vendors/all-vendor">All Vendor</Link></li>
                             </ul>
                         )}
+                    </li>
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="/vendors/all-employ"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All Employ</h6>
+                        </Link>
                     </li>
                     {/* <li className="sidebar-list">
                         <i className="fa-solid fa-thumbtack"></i>

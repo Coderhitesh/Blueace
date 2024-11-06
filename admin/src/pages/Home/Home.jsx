@@ -52,6 +52,11 @@ import SuccessPayment from '../PaymentStatusPage/SuccessPayment'
 import PaymentFailed from '../PaymentStatusPage/PaymentFailed'
 import DashBoard from '../DashBoard/DashBoard'
 import AllEnquiry from '../Enquiry/AllEnquiry'
+import AllEmploy from '../Employ/AllEmploy'
+import AddEmploy from '../Employ/AddEmploy'
+import AllCorporateUser from '../CorporateUser/AllCorporateUser'
+import AddCorporateUser from '../CorporateUser/AddCorporateUser'
+import AddCorporateOrder from '../CorporateUser/AddCorporateOrder'
 
 const Home = () => {
     return (
@@ -127,6 +132,17 @@ const Home = () => {
                         <Route path='/vendors/edit-membership-plan/:id' element={<EditMemberShipPlan />} />
                         <Route path='/Alloted/:id' element={<VendorForOrder />} />
                         <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
+
+                        {/* employ route  */}
+                        <Route path='/vendors/all-employ' element={<AllEmploy />} />
+                        <Route path='/vendors/add-employ' element={<AddEmploy />} />
+
+                        {/* corporate user route  */}
+                        <Route path='/corporate-user/all-corporate-user' element={<AllCorporateUser />} />
+                        <Route path='/corporate-user/add-corporate-user' element={<AddCorporateUser />} />
+
+                        {/* corporate user order route  */}
+                        <Route path='/corporate-order/add-corporate-order' element={<AddCorporateOrder />} />
 
                         {/* galley title route here  */}
                         <Route path="/home-layout/all-gallery-title" element={<AllGalleryName />} />

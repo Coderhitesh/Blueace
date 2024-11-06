@@ -43,15 +43,15 @@ const OrderSchema = new mongoose.Schema({
     },
     fullName: {
         type: String,
-        required: true
+        // required: true
     },
     email: {
         type: String,
-        required: true
+        // required: true
     },
     phoneNumber: {
         type: Number,
-        required: true
+        // required: true
     },
     serviceType: {
         type: String,
@@ -83,17 +83,17 @@ const OrderSchema = new mongoose.Schema({
 
     houseNo: {
         type: String,
-        required: true
+        // required: true
     },
 
     street: {
         type: String,
-        required: true
+        // required: true
     },
 
     nearByLandMark: {
         type: String,
-        required: true
+        // required: true
     },
 
     RangeWhereYouWantService: [
@@ -124,6 +124,9 @@ const OrderSchema = new mongoose.Schema({
     EstimatedBill:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'EstimatedBudget'
+    },
+    orderTime: {
+        type: Date
     }
 }, { timestamps: true })
 

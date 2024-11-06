@@ -15,6 +15,8 @@ function Profile({ userData }) {
 	const [loading, setLoading] = useState(false);
 	const [imagePreviews, setImagePreviews] = useState(null)
 	const [formData, setFormData] = useState({
+		UserType: '',
+		companyName: '',
 		FullName: '',
 		ContactNumber: '',
 		Email: '',
@@ -32,6 +34,7 @@ function Profile({ userData }) {
 			const existinguser = data.data;
 			setFormData({
 				FullName: existinguser.FullName,
+				companyName: existinguser?.companyName,
 				ContactNumber: existinguser.ContactNumber,
 				Email: existinguser.Email,
 				City: existinguser.City,
@@ -40,6 +43,7 @@ function Profile({ userData }) {
 				Street: existinguser.Street,
 				NearByLandMark: existinguser.NearByLandMark,
 				userImage: existinguser.userImage || null, // Set existing image if available
+				UserType: existinguser.UserType
 			});
 
 		} catch (error) {
@@ -77,10 +81,11 @@ function Profile({ userData }) {
 			return;
 		}
 
-		console.log("fullname",formData.FullName)
+		// console.log("fullname",formData.FullName)
 
 		const Payload = new FormData();
 		Payload.append('FullName', formData.FullName);
+		Payload.append('companyName', formData.companyName);
 		Payload.append('ContactNumber', formData.ContactNumber);
 		Payload.append('Email', formData.Email);
 		Payload.append('City', formData.City);
@@ -155,6 +160,18 @@ function Profile({ userData }) {
 
 									<div className="dashboard-list-wraps-body py-3 px-3">
 										<div className="row">
+											{
+												formData.UserType === 'Corporate' && (
+													<>
+														<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+															<div className="form-group">
+																<label className="mb-1">Company Name</label>
+																<input type="text" value={formData.companyName} name='companyName' onChange={handleChange} className="form-control rounded" placeholder="Company Name" />
+															</div>
+														</div>
+													</>
+												)
+											}
 											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
 												<div className="form-group">
 													<label className="mb-1">First Name</label>
@@ -167,6 +184,7 @@ function Profile({ userData }) {
 														<input type="text" className="form-control rounded" placeholder="Singh" />
 													</div>
 												</div> */}
+
 											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
 												<div className="form-group">
 													<label className="mb-1">Email ID</label>
@@ -176,7 +194,7 @@ function Profile({ userData }) {
 											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
 												<div className="form-group">
 													<label className="mb-1">Mobile</label>
-													<input type="text" value={formData.ContactNumber} onChange={handleChange} name='ContactNumber' className="form-control rounded" placeholder="91 256 584 7895" />
+													<input type="text" value={formData.ContactNumber} onChange={handleChange} name='ContactNumber' className="form-control rounded" placeholder="Phone Number" />
 												</div>
 											</div>
 											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">

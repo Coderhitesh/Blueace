@@ -5,7 +5,7 @@ import Input from '../../components/Forms/Input';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
-function AddVendor() {
+function AddEmploy() {
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
@@ -15,20 +15,20 @@ function AddVendor() {
     const [previewGstImage, setGstImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        companyName: '',
-        yearOfRegistration: '',
-        registerAddress: '',
+        companyName: 'Blueace India',
+        yearOfRegistration: '01/01/1999',
+        registerAddress: 'Phase-1, C-126, Indl. Area, Naraina, New Delhi, Delhi 110028',
         panImage: null,
         adharImage: null,
-        gstImage: null,
+        // gstImage: null,
         Email: '',
         ownerName: '',
         ContactNumber: '',
         panNo: '',
-        gstNo: '',
+        // gstNo: '',
         adharNo: '',
         Password: '',
-        Role: 'vendor',
+        Role: 'employ',
         RangeWhereYouWantService: [{
             location: { type: 'Point', coordinates: [] }
         }]
@@ -90,7 +90,7 @@ function AddVendor() {
         // const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
         // const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/;
         // const aadharRegex = /^\d{12}$/;
-        const phoneRegex = /^[6-9]{1}[0-9]{9}$/;
+        // const phoneRegex = /^[6-9]{1}[0-9]{9}$/;
 
         // if (!panRegex.test(panNo)) {
         //     toast.error("Invalid PAN format");
@@ -104,10 +104,10 @@ function AddVendor() {
         //     toast.error("Invalid Aadhar number. It must be a 12-digit number.");
         //     return false;
         // }
-        if (!phoneRegex.test(ContactNumber)) {
-            toast.error("Invalid phone number");
-            return false;
-        }
+        // if (!phoneRegex.test(ContactNumber)) {
+        //     toast.error("Invalid phone number");
+        //     return false;
+        // }
 
         // Password validation (length check)
         if (Password.length < 8) {
@@ -157,7 +157,7 @@ function AddVendor() {
                 const userId = res.data.user._id;
                 window.location.href = `/add-vendor-member/${userId}`;
             }else{
-                window.location.href = '/vendors/all-vendor'
+                window.location.href = '/vendors/all-employ'
             }
         } catch (error) {
             console.log(error)
@@ -173,31 +173,31 @@ function AddVendor() {
 
     return (
         <div>
-            <Breadcrumb heading={'Add Vendor'} subHeading={'All Vendors'} LastHeading={'Create Vendor'} backLink={'/vendors/all-vendor'} />
+            <Breadcrumb heading={'Add Employ'} subHeading={'All Employs'} LastHeading={'Create Employ'} backLink={'/vendors/all-vendor'} />
 
             <FormGroups onSubmit={handleSubmit} Elements={
                 <div className='row'>
-                    <div className="col-lg-6 mt-3">
+                    {/* <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.companyName} name='companyName' onChange={handleChange} className="form-control rounded" placeholder="Name of Company*" required />
-                    </div>
-                    <div className="col-lg-6 mt-3">
+                    </div> */}
+                    {/* <div className="col-lg-6 mt-3">
                         <input type="date" value={formData.yearOfRegistration} name='yearOfRegistration' onChange={handleChange} className="form-control rounded" placeholder="Year of Registration*" required />
+                    </div> */}
+                    <div className="col-lg-6 mt-3">
+                        <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" placeholder="Employ Name*" required />
                     </div>
                     <div className="col-lg-6 mt-3">
-                        <input type="email" value={formData.Email} name='Email' onChange={handleChange} className="form-control rounded" placeholder="Email*" />
+                        <input type="email" value={formData.Email} name='Email' onChange={handleChange} className="form-control rounded" placeholder="Employ Email*" />
                     </div>
                     <div className="col-lg-6 mt-3">
-                        <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" placeholder="Name*" required />
-                    </div>
-                    <div className="col-lg-6 mt-3">
-                        <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Contact Number*" required />
+                        <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Employ Number*" required />
                     </div>
                     <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control text-uppercase rounded" placeholder="PAN Number*" required />
                     </div>
-                    <div className="col-lg-6 mt-3">
+                    {/* <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" placeholder="GST Number*" required />
-                    </div>
+                    </div> */}
                     <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" placeholder="Aadhar Number*" required />
                     </div>
@@ -256,7 +256,7 @@ function AddVendor() {
                     <div className="col-lg-6 mt-3">
                         <input type="password" value={formData.Password} name='Password' onChange={handleChange} className="form-control rounded" placeholder="Password*" required />
                     </div>
-                    <div className="col-lg-6 mt-3">
+                    <div className="col-lg-12 mt-3">
                         <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Address*" required />
                     </div>
                     {formData.Role === '' && (
@@ -329,4 +329,4 @@ function AddVendor() {
     );
 }
 
-export default AddVendor;
+export default AddEmploy

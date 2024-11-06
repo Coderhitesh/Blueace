@@ -90,6 +90,9 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    companyName: {
+        type: String
+    }
 }, { timestamps: true });
 
 UserSchema.pre('save', async function (next) {

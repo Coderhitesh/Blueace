@@ -8,7 +8,7 @@ const fs = require("fs")
 exports.register = async (req, res) => {
     try {
         console.log("I am hit")
-        const { FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService } = req.body;
+        const {companyName, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
 
         const emptyField = [];
         if (!FullName) emptyField.push('FullName');
@@ -80,10 +80,12 @@ exports.register = async (req, res) => {
             ContactNumber,
             City,
             PinCode,
+            UserType,
             HouseNo,
             Street,
             NearByLandMark,
-            RangeWhereYouWantService
+            RangeWhereYouWantService,
+            companyName
         };
 
         // Create new user instance
@@ -163,8 +165,8 @@ exports.register = async (req, res) => {
         await SendToken(newUser, res, 201);
 
 
-    } catch (errerror) {
-        console.or('Error creating user:', error);
+    } catch (error) {
+        console.error('Error creating user:', error);
 
         // Handle duplicate key error
         if (error.code === 11000) {
@@ -732,7 +734,7 @@ exports.updateUser = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
+        const {companyName, FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
 
         const existingUser = await User.findById(id)
         if (!existingUser) {
@@ -750,6 +752,7 @@ exports.updateUser = async (req, res) => {
         existingUser.HouseNo = HouseNo;
         existingUser.Street = Street;
         existingUser.NearByLandMark = NearByLandMark;
+        existingUser.companyName = companyName;
 
         if (req.file) {
             if (existingUser.userImage.public_id) {

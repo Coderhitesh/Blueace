@@ -8,21 +8,21 @@ require("dotenv").config()
 exports.makeOrder = async (req, res) => {
     try {
         console.log('body', req.body);
-        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark, RangeWhereYouWantService } = req.body;
+        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
         // Check for missing required fields
         const emptyField = [];
         if (!userId) emptyField.push('User');
         if (!serviceId) emptyField.push('Service');
-        if (!fullName) emptyField.push('Full Name');
-        if (!email) emptyField.push('Email');
-        if (!phoneNumber) emptyField.push('Phone Number');
-        if (!serviceType) emptyField.push('Service Type');
-        if (!city) emptyField.push('City');
-        if (!pinCode) emptyField.push('Pin Code');
-        if (!houseNo) emptyField.push('House No');
-        if (!street) emptyField.push('Street');
-        if (!nearByLandMark) emptyField.push('NearByLandMark');
+        // if (!fullName) emptyField.push('Full Name');
+        // if (!email) emptyField.push('Email');
+        // if (!phoneNumber) emptyField.push('Phone Number');
+        // if (!serviceType) emptyField.push('Service Type');
+        // if (!city) emptyField.push('City');
+        // if (!pinCode) emptyField.push('Pin Code');
+        // if (!houseNo) emptyField.push('House No');
+        // if (!street) emptyField.push('Street');
+        // if (!nearByLandMark) emptyField.push('NearByLandMark');
 
         // If there are any empty fields, return an error response
         if (emptyField.length > 0) {
@@ -83,7 +83,8 @@ exports.makeOrder = async (req, res) => {
             houseNo,
             street,
             nearByLandMark,
-            RangeWhereYouWantService: parsedRangeWhereYouWantService // Use parsed JSON
+            RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
+            orderTime
         });
 
         // Save the order to the database
