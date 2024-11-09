@@ -70,12 +70,22 @@ const uploadVideo = async (file) => {
             folder: "artists",
             resource_type: "video"
         });
-        return result.secure_url;
+        // return result.secure_url;
+        return {video:result.secure_url, public_id:result.public_id}
     } catch (error) {
         console.error(error);
         throw new Error('Failed to upload video');
     }
 };
+
+const deleteVideoFromCloudinary = async (public_id) => {
+    try {
+        await cloudinary.uploader.destroy(public_id)
+    } catch (error) {
+        console.error("Error deleting Video from Cloudinary:",error)
+        throw new Error('Failed to delete video from Cloudinary');
+    }
+}
 
 const deleteImageFromCloudinary = async (public_id) => {
     try {
@@ -138,5 +148,5 @@ const deleteVoiceNoteFromCloudinary = async (public_id) => {
 // };
 
 module.exports = {
-    uploadImage, uploadVideo, uploadVoiceNote, deleteVoiceNoteFromCloudinary, deleteImageFromCloudinary, uploadPDF, deletePdfFromCloudinary, uploadPDFTwo
+    uploadImage, deleteVideoFromCloudinary, uploadVideo, uploadVoiceNote, deleteVoiceNoteFromCloudinary, deleteImageFromCloudinary, uploadPDF, deletePdfFromCloudinary, uploadPDFTwo
 };

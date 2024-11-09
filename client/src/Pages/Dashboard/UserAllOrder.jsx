@@ -90,7 +90,7 @@ function UserAllOrder({ userData, allOrder }) {
                                                             </button>
 
                                                         </td>
-                                                        <td>
+                                                        {/* <td>
                                                             {order?.beforeWorkImage?.url ? (
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
                                                             ) : (
@@ -102,6 +102,37 @@ function UserAllOrder({ userData, allOrder }) {
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.afterWorkImage?.url} alt={order?.serviceId?.name} />
                                                             ) : (
                                                                 <span>No image uploaded</span>
+                                                            )}
+                                                        </td> */}
+                                                        <td>
+                                                            {order?.beforeWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={order?.beforeWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
+                                                            )}
+                                                        </td>
+
+                                                        <td>
+                                                            {order?.afterWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={order?.afterWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
                                                             )}
                                                         </td>
                                                         {/* <td>{order.city}</td>

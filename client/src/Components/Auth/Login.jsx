@@ -35,7 +35,7 @@ function Login() {
         };
 
         try {
-            const res = await axios.post('https://api.blueace.co.in/api/v1/Login', Payload, {
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Login', Payload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -131,7 +131,7 @@ function Login() {
                                         </div>
                                         <div className="eltio_k2">
                                             <Link to={'/forgot-password'} className="theme-cl">
-                                                Lost Your Password?
+                                                Forget Password?
                                             </Link>
                                         </div>
                                     </div>
@@ -147,7 +147,7 @@ function Login() {
                                 </div>
 
                                 <div className="form-group text-center mt-4 mb-0">
-                                    <p className="mb-0">Don't Have An Account? <Link to={'/sign-up'} className="ft-medium text-success">Sign Up</Link></p>
+                                    <p className="mb-0">Don't Have An Account? <Link to={'/sign-up'} className="ft-medium text-success">Register</Link></p>
                                 </div>
 
                             </form>

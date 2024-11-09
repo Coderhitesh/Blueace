@@ -17,7 +17,7 @@ function GalleryPage() {
 
     const fetchGalleryName = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-gallery-category-name');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-gallery-category-name');
             setGalleryNames(res.data.data);
         } catch (error) {
             console.error("Error fetching gallery names:", error);
@@ -26,7 +26,7 @@ function GalleryPage() {
 
     const fetchImages = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-gallery-image');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-gallery-image');
             setImages(res.data.data);
         } catch (error) {
             console.error("Error fetching gallery images:", error);

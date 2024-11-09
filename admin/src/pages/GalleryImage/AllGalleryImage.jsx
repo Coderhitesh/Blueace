@@ -15,7 +15,7 @@ function AllGalleryImage() {
   const handleFetchData = async () => {
       setLoading(true);
       try {
-          const response = await axios.get('https://api.blueace.co.in/api/v1/get-all-gallery-image');
+          const response = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-gallery-image');
           if (response.data.success) {
               const datasave = response.data.data;
               const r = datasave.reverse();
@@ -38,7 +38,7 @@ function AllGalleryImage() {
   // Handle deleting a category
   const handleDelete = async (id) => {
       try {
-          const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-gallery-image/${id}`);
+          const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-gallery-image/${id}`);
           if (response.data.success) {
               toast.success('Gallery Image deleted successfully!');
               await handleFetchData(); // Fetch categories again after deletion

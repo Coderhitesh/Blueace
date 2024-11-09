@@ -72,42 +72,12 @@ function AddEmploy() {
             ContactNumber, panNo, gstNo, adharNo, Password, panImage, adharImage, gstImage
         } = formData;
 
-        // Basic field validation
-        // if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
-        //     !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
-        //     toast.error("All fields are required");
-        //     return false;
-        // }
-
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(Email)) {
             toast.error("Invalid email format");
             return false;
         }
-
-        // PAN, GST, Aadhar, and other number validation
-        // const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
-        // const gstRegex = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$/;
-        // const aadharRegex = /^\d{12}$/;
-        // const phoneRegex = /^[6-9]{1}[0-9]{9}$/;
-
-        // if (!panRegex.test(panNo)) {
-        //     toast.error("Invalid PAN format");
-        //     return false;
-        // }
-        // if (!gstRegex.test(gstNo)) {
-        //     toast.error("Invalid GST format");
-        //     return false;
-        // }
-        // if (!aadharRegex.test(adharNo)) {
-        //     toast.error("Invalid Aadhar number. It must be a 12-digit number.");
-        //     return false;
-        // }
-        // if (!phoneRegex.test(ContactNumber)) {
-        //     toast.error("Invalid phone number");
-        //     return false;
-        // }
 
         // Password validation (length check)
         if (Password.length < 8) {
@@ -147,7 +117,7 @@ function AddEmploy() {
         payload.append('RangeWhereYouWantService[0][location][coordinates][1]', latitude || 74.0060);
 
         try {
-            const res = await axios.post('https://api.blueace.co.in/api/v1/register-vendor', payload, {
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/register-vendor', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Employ Registration Successful!');

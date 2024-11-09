@@ -11,7 +11,7 @@ function DashboardContent({ userData, activeOrder, allOrder, completeOrderCount,
 	}, [])
 	const fetchDashboardData = async () => {
 		try {
-			const { data } = await axios.get('https://api.blueace.co.in/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
+			const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
 				headers: { Authorization: `Bearer ${token}` }
 			})
 

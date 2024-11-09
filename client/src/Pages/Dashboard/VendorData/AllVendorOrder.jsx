@@ -60,11 +60,8 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Watch Estimated</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Estimated Status</th>
-                                                <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
-                                                <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
-                                                {/* <th style={{whiteSpace:"nowrap"}}>City</th>
-                                               <th style={{whiteSpace:"nowrap"}}>Message</th> */}
-                                                {/* <th style={{whiteSpace:"nowrap"}}>Created At</th> */}
+                                                <th style={{ whiteSpace: "nowrap" }}>Before Work Video</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>After Work Video</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -105,7 +102,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                                           {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
                                                             {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                                         </td>
-                                                        <td>
+                                                        {/* <td>
                                                             {order?.beforeWorkImage?.url ? (
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
                                                             ) : (
@@ -117,6 +114,37 @@ function AllVendorOrder({ userData, allOrder }) {
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.afterWorkImage?.url} alt={order?.serviceId?.name} />
                                                             ) : (
                                                                 <span>No image uploaded</span>
+                                                            )}
+                                                        </td> */}
+                                                        <td>
+                                                            {order?.beforeWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={order?.beforeWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
+                                                            )}
+                                                        </td>
+
+                                                        <td>
+                                                            {order?.afterWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={order?.afterWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
                                                             )}
                                                         </td>
 

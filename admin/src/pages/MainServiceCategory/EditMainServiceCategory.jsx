@@ -18,7 +18,7 @@ function EditMainServiceCategory() {
 
     const handleFetchData = async () => {
         try {
-            const {data} = await axios.get(`https://api.blueace.co.in/api/v1/get-single-service-main-category/${id}`) 
+            const {data} = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-service-main-category/${id}`) 
             const category = data.data
             setFormData({
                 name: category.name,
@@ -50,7 +50,7 @@ function EditMainServiceCategory() {
         payload.append('metaTitle', formData.metaTitle);
         payload.append('metaDescription', formData.metaDescription);
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-service-main-category/${id}`,payload,{
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-service-main-category/${id}`,payload,{
                 headers: {
                     'Content-Type': 'application/json'
                     }

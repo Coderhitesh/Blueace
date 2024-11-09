@@ -7,10 +7,16 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
+    const [beforeLoading, setBeforeLoading] = useState({});
+    const [afterLoading, setAfterLoading] = useState({});
 
     // State to store selected images for each order
     const [beforeWorkImage, setBeforeWorkImage] = useState({});
     const [afterWorkImage, setAfterWorkImage] = useState({});
+
+    const [beforeWorkVideo, setBeforeWorkVideo] = useState({});
+    const [afterWorkVideo, setAfterWorkVideo] = useState({});
+
 
     // Calculate the current orders to display
     const indexOfLastOrder = currentPage * itemsPerPage;
@@ -23,7 +29,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
             toast.success('Order status updated successfully');
         } catch (error) {
             console.error(error);
@@ -38,11 +44,11 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         formData.append('beforeWorkImage', beforeWorkImage[orderId]);
 
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-befor-work-image/${orderId}`, formData, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-befor-work-image/${orderId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('Before work image uploaded successfully');
-            
+
         } catch (error) {
             console.error(error);
             Swal.fire("Error", "Failed to upload before work image", "error");
@@ -55,7 +61,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         formData.append('afterWorkImage', afterWorkImage[orderId]);
 
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-after-work-image/${orderId}`, formData, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-after-work-image/${orderId}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success('After work image uploaded successfully');
@@ -64,6 +70,47 @@ function ActiveVendorOrder({ userData, activeOrder }) {
             Swal.fire("Error", "Failed to upload after work image", "error");
         }
     };
+
+    // Handle Before Work Video Upload
+    const handleBeforeWorkVideoUpload = async (orderId) => {
+        const formData = new FormData();
+        formData.append('beforeWorkVideo', beforeWorkVideo[orderId]);
+    
+        try {
+            setBeforeLoading((prev) => ({ ...prev, [orderId]: true }));
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-before-work-video/${orderId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            toast.success('Before work video uploaded successfully');
+        } catch (error) {
+            console.error(error);
+            Swal.fire("Error", "Failed to upload before work video", "error");
+        } finally {
+            setBeforeLoading((prev) => ({ ...prev, [orderId]: false }));
+        }
+    };
+    
+
+    // Handle After Work Video Upload
+    const handleAfterWorkVideoUpload = async (orderId) => {
+        const formData = new FormData();
+        formData.append('afterWorkVideo', afterWorkVideo[orderId]);
+    
+        try {
+            setAfterLoading((prev) => ({ ...prev, [orderId]: true }));
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-after-work-video/${orderId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            });
+            toast.success('After work video uploaded successfully');
+        } catch (error) {
+            console.error(error);
+            Swal.fire("Error", "Failed to upload after work video", "error");
+        } finally {
+            setAfterLoading((prev) => ({ ...prev, [orderId]: false }));
+        }
+    };
+    
+
 
     return (
         <div className="goodup-dashboard-content">
@@ -115,8 +162,8 @@ function ActiveVendorOrder({ userData, activeOrder }) {
 
 
                                                 <th style={{ whiteSpace: 'nowrap' }}>Order Status</th>
-                                                <th style={{ whiteSpace: 'nowrap' }}>Before Work Image</th>
-                                                <th style={{ whiteSpace: 'nowrap' }}>After Work Image</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Before Work Video</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>After Work Video</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -158,7 +205,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             </button>
                                                         </td>
                                                         <td className={`text-center ${order.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
-                                                          {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
+                                                            {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
                                                             {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                                         </td>
 
@@ -172,21 +219,20 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                 <option value="Cancelled">Cancelled</option>
                                                             </select>
                                                         </td>
-                                                        <td>
+                                                        {/* <td>
                                                             <input
                                                                 type="file"
                                                                 id={`before-file-input-${order._id}`}
-                                                                style={{ display: 'none' }}  // Hide the actual file input
+                                                                style={{ display: 'none' }}  
                                                                 onChange={(e) => setBeforeWorkImage({ ...beforeWorkImage, [order._id]: e.target.files[0] })}
                                                             />
 
-                                                            {/* Small icon button to trigger file input */}
                                                             <button
                                                                 className='btn btn-sm p-1'
                                                                 onClick={() => document.getElementById(`before-file-input-${order._id}`).click()}
                                                                 style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
                                                             >
-                                                                <i className="fas fa-upload" aria-hidden="true"></i>  {/* FontAwesome upload icon */}
+                                                                <i className="fas fa-upload" aria-hidden="true"></i> 
                                                             </button>
 
                                                             <button
@@ -202,17 +248,16 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             <input
                                                                 type="file"
                                                                 id={`file-input-${order._id}`}
-                                                                style={{ display: 'none' }}  // Hide the actual file input
+                                                                style={{ display: 'none' }}  
                                                                 onChange={(e) => setAfterWorkImage({ ...afterWorkImage, [order._id]: e.target.files[0] })}
                                                             />
 
-                                                            {/* Small icon button to trigger file input */}
                                                             <button
                                                                 className='btn btn-sm p-1'
                                                                 onClick={() => document.getElementById(`file-input-${order._id}`).click()}
                                                                 style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
                                                             >
-                                                                <i className="fas fa-upload" aria-hidden="true"></i>  {/* FontAwesome upload icon */}
+                                                                <i className="fas fa-upload" aria-hidden="true"></i>  
                                                             </button>
 
                                                             <button
@@ -222,7 +267,59 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             >
                                                                 Upload
                                                             </button>
-                                                        </td>
+                                                        </td> */}
+
+<td>
+    <input
+        type="file"
+        accept="video/*"
+        id={`before-video-input-${order._id}`}
+        style={{ display: 'none' }}
+        onChange={(e) => setBeforeWorkVideo({ ...beforeWorkVideo, [order._id]: e.target.files[0] })}
+    />
+    <button
+        className='btn btn-sm p-1'
+        onClick={() => document.getElementById(`before-video-input-${order._id}`).click()}
+        style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
+    >
+        <i className="fas fa-upload" aria-hidden="true"></i>
+    </button>
+
+    <button
+        className='btn btn-sm theme-bg text-light rounded ft-medium'
+        onClick={() => handleBeforeWorkVideoUpload(order._id)}
+        style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
+        disabled={beforeLoading[order._id]}
+    >
+        {beforeLoading[order._id] ? 'Uploading...' : 'Upload Video'}
+    </button>
+</td>
+
+<td>
+    <input
+        type="file"
+        accept="video/*"
+        id={`after-video-input-${order._id}`}
+        style={{ display: 'none' }}
+        onChange={(e) => setAfterWorkVideo({ ...afterWorkVideo, [order._id]: e.target.files[0] })}
+    />
+    <button
+        className='btn btn-sm p-1'
+        onClick={() => document.getElementById(`after-video-input-${order._id}`).click()}
+        style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
+    >
+        <i className="fas fa-upload" aria-hidden="true"></i>
+    </button>
+
+    <button
+        className='btn btn-sm theme-bg text-light rounded ft-medium'
+        onClick={() => handleAfterWorkVideoUpload(order._id)}
+        style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
+        disabled={afterLoading[order._id]}
+    >
+        {afterLoading[order._id] ? 'Uploading...' : 'Upload Video'}
+    </button>
+</td>
 
                                                     </tr>
                                                 ))

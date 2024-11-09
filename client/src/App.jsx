@@ -34,6 +34,11 @@ import SeeEstimatedBudget from "./Pages/Dashboard/VendorData/SeeEstimatedBudget"
 import GalleryPage from "./Pages/GalleryPage/GalleryPage"
 import OrderSuccessfully from "./Components/BookingOrderStatus/OrderSuccessfully"
 import SuccessfullyMember from "./Pages/MemberShipPlan/SuccessfullyMember"
+import CorporateRegister from "./Components/Auth/CorporateRegister"
+import CorporateLogin from "./Components/Auth/CorporateLogin"
+import VendorLogin from "./Components/Auth/VendorLogin"
+import EmployLogin from "./Components/Auth/EmployLogin"
+import EmployRegistration from "./Components/Auth/EmployRegistration"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -55,6 +60,11 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/sign-up" element={<Registration />} />
+          <Route path="/corporate-sign-up" element={<CorporateRegister />} />
+          <Route path="/corporate-sign-in" element={<CorporateLogin />} />
+          <Route path="/employ-sign-in" element={<EmployLogin />} />
+          <Route path="/employ-sign-up" element={<EmployRegistration />} />
+          <Route path="/vendor-sign-in" element={<VendorLogin />} />
           <Route path="/sign-in" element={<Login />} />
           <Route path="/doctor-detail" element={<DoctorSinglePage />} />
           <Route path="/job-detail" element={<JobSingle />} />

@@ -118,8 +118,6 @@ const OrderSchema = new mongoose.Schema({
             type: String,
             // required: true
         },
-        
-       
     },
     EstimatedBill:{
         type:mongoose.Schema.Types.ObjectId,
@@ -127,7 +125,27 @@ const OrderSchema = new mongoose.Schema({
     },
     orderTime: {
         type: Date
-    }
+    },
+    beforeWorkVideo: {
+        url: {
+            type: String,
+            // required: true
+        },
+        public_id: {
+            type: String,
+            // required: true
+        },
+    },
+    afterWorkVideo: {
+        url: {
+            type: String,
+            // required: true
+        },
+        public_id: {
+            type: String,
+            // required: true
+        },
+    },
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

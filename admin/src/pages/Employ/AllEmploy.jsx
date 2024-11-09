@@ -15,7 +15,7 @@ function AllEmploy() {
 
     const fetchVendorDetail = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/all-vendor');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/all-vendor');
             const datasave = res.data.data;
             // console.log("all data",datasave)
             const filterData = datasave.filter((item) => item.Role === "employ")
@@ -41,7 +41,7 @@ function AllEmploy() {
     const handleToggle = async (id, currentDeactiveStatus) => {
         try {
             const newDeactiveStatus = !currentDeactiveStatus;
-            const response = await axios.put(`https://api.blueace.co.in/api/v1/update-deactive-status/${id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-deactive-status/${id}`, {
                 isDeactive: newDeactiveStatus
             })
             if (response.data.success) {
@@ -58,7 +58,7 @@ function AllEmploy() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-vendor/${id}`);
+            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${id}`);
             if (response.data.success) {
                 toast.success('Employ deleted successfully!');
                 await fetchVendorDetail(); // Fetch vendors again after deletion

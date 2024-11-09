@@ -22,7 +22,7 @@ function SubCategory() {
   // Fetch service data from the API
   const fetchServiceData = async () => {
     try {
-      const res = await axios.get(`https://api.blueace.co.in/api/v1/get-service-by-name/${newTitle}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-service-by-name/${newTitle}`);
       setAllService(res.data.data);
     } catch (error) {
       console.log('Internal server error in fetching services', error);
@@ -212,7 +212,7 @@ function SubCategory() {
     );
 
     try {
-      await axios.post('https://api.blueace.co.in/api/v1/make-order', updatedFormData, {
+      await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

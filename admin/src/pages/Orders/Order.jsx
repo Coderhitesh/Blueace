@@ -15,7 +15,7 @@ function Order() {
 
     const fetchAllOrders = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
             setAllOrders(res.data.data);
             setLoading(false);
         } catch (error) {
@@ -26,7 +26,7 @@ function Order() {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
 
             toast.success('Order status updated successfully');
             fetchAllOrders();
@@ -42,7 +42,7 @@ function Order() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-order/${id}`);
+            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-order/${id}`);
             if (response.data.success) {
                 toast.success('Order deleted successfully!');
                 await fetchAllOrders(); // Fetch vendors again after deletion

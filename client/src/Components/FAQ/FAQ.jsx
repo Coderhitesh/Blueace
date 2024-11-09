@@ -8,7 +8,7 @@ function FAQ() {
 
   const fetchFaqBanner = async () => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-faq-banner');
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-faq-banner');
       const data = res.data.data;
       const filterData = data.filter((item) => item.active === true);
       setFaqBanner(filterData);
@@ -19,7 +19,7 @@ function FAQ() {
 
   const fetchFaqContent = async () => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-faq-content');
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-faq-content');
       const data = res.data.data;
       setFaqContent(data);
     } catch (error) {

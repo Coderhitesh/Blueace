@@ -54,7 +54,14 @@
     display: block !important;
 }
 
+.fordisplayflex{
+  display: flex !important;
+}
+
 @media (max-width:500px) {
+  .fordisplayflex{
+    display: none !important;
+  }
     .activeInMob{
         display: block !important;
     }
@@ -62,3 +69,98 @@
         display: none !important;
     }
 }
+
+/* Custom dropdown styling */
+.custom-nav-item {
+    position: relative;
+  }
+  
+  .custom-dropdown {
+    list-style-type: none;
+  }
+  
+  .custom-nav-link {
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .custom-dropdown-menu {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 150px;
+    padding: 0;
+    z-index: 1000;
+  }
+  
+  .custom-nav-item:hover .custom-dropdown-menu {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0px;
+  }
+  
+  .custom-dropdown-item {
+    display: inline-block;
+    /* padding: 18px 16px; */
+    height: 28px;
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .custom-dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .custom-theme-cl {
+    color: #007bff; /* Adjust the color as needed */
+  }
+  
+  /* Base styling for the mobile dropdown */
+.custom-mobile-item {
+    position: relative;
+  }
+  
+  .custom-mobile-link {
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .custom-theme-cl {
+    color: #007bff; /* Customize color as needed */
+  }
+  
+  /* Dropdown Menu Styles */
+  .custom-mobile-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0;
+    margin-top: 8px;
+    list-style-type: none;
+  }
+  
+  /* Expand dropdown on 'open' class */
+  .custom-mobile-dropdown.open {
+    max-height: 300px; /* Set this to the max height you want */
+  }
+  
+  .custom-mobile-dropdown-item {
+    padding: 10px 16px;
+    color: #333;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .custom-mobile-dropdown-item:hover {
+    background-color: #f1f1f1;
+  }
+  

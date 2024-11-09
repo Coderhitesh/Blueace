@@ -12,7 +12,12 @@ function Header() {
   const userData = userDataString ? JSON.parse(userDataString) : null;
   const role = userData?.Role || null;
   const token = sessionStorage.getItem('token')
-  const [allMarquee,serAllMarquee] = useState([])
+  const [allMarquee, serAllMarquee] = useState([])
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
   // const handleLogOut = () => {
   //   sessionStorage.clear();
@@ -21,7 +26,7 @@ function Header() {
 
   const handleLogOut = async () => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/Logout', {
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/Logout', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -37,17 +42,17 @@ function Header() {
 
   const handleFetchMarquee = async () => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-marquee')
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-marquee')
       serAllMarquee(res.data.data)
     } catch (error) {
-      console.log("Internal server error in fetching marquee",error)
+      console.log("Internal server error in fetching marquee", error)
       toast.error('Internal server error in fetching marquee')
     }
   }
 
   const handleVendorLogOut = async () => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/vendor-logout', {
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -61,9 +66,9 @@ function Header() {
     }
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     handleFetchMarquee();
-  },[])
+  }, [])
 
   return (
     <>
@@ -92,19 +97,19 @@ function Header() {
               </div>
             </div>
             <div className="col-lg-6">
-            <div className="topheader-marquee">
-    {
-        allMarquee && allMarquee.slice(0, 1).map((item, index) => (
-            <marquee
-                key={index}
-                onMouseEnter={(e) => e.target.stop()} // Pause the marquee on hover
-                onMouseLeave={(e) => e.target.start()} // Resume the marquee when not hovered
-            >
-                {item.text}
-            </marquee>
-        ))
-    }
-</div>
+              <div className="topheader-marquee">
+                {
+                  allMarquee && allMarquee.slice(0, 1).map((item, index) => (
+                    <marquee
+                      key={index}
+                      onMouseEnter={(e) => e.target.stop()} // Pause the marquee on hover
+                      onMouseLeave={(e) => e.target.start()} // Resume the marquee when not hovered
+                    >
+                      {item.text}
+                    </marquee>
+                  ))
+                }
+              </div>
 
             </div>
           </div>
@@ -144,7 +149,28 @@ function Header() {
                     )}
 
                     {/* Check if the role is Vendor */}
-                    {role === 'vendor' && (
+                    {role === 'vendor' && role === 'employ' && (
+                      <>
+                        <li className='activeInDes'>
+                          <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
+                            <span className="embos_45">
+                              <i className="fas fa-plus me-2"></i>
+                              Vendor Dashboard
+                            </span>
+                          </Link>
+                        </li>
+                        <li className='activeInDes'>
+                          <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
+                            <span className="embos_45">
+                              <i className="lni lni-power-switch mr-1"></i>Logout
+                            </span>
+                          </Link>
+                        </li>
+                      </>
+                    )}
+
+                    {/* Check if the role is Vendor */}
+                    {role === 'employ' && (
                       <>
                         <li className='activeInDes'>
                           <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
@@ -165,12 +191,39 @@ function Header() {
                     )}
 
                     {/* For non-authenticated users or other roles */}
-                    {role !== 'Customer' && role !== 'vendor' && (
+                    {role !== 'Customer' && role !== 'vendor' && role !== 'employ' && (
                       <>
-                        <li className='activeInDes'>
+                        {/* <li className='activeInDes'>
                           <Link to={'/sign-in'} className="ft-bold">
                             <i className="fas fa-sign-in-alt me-1 theme-cl"></i>Sign in
                           </Link>
+                        </li> */}
+                        <li className="activeInDes custom-nav-item custom-dropdown">
+                          <Link
+                            to="#"
+                            className="custom-nav-link dropdown-toggle"
+                            id="customSignInDropdown"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                          >
+                            <i className="fas fa-sign-in-alt me-1 custom-theme-cl"></i>
+                            Sign in
+                          </Link>
+                          <ul className="custom-dropdown-menu" aria-labelledby="customSignInDropdown">
+                            <li style={{ width: "100%" }}>
+                              <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:"600" }} className="custom-dropdown-item">As a User</Link>
+                            </li>
+                            <li style={{ width: "100%" }}>
+                              <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:"600" }} className="custom-dropdown-item">As a Corporate User</Link>
+                            </li>
+                            <li style={{ width: "100%" }}>
+                              <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:"600" }} className="custom-dropdown-item">As a Employ</Link>
+                            </li>
+                          <li>
+                            <Link to="/vendor-sign-in" style={{width:"100%", display:'flex', alignItems:'center', justifyContent:'center', fontWeight:"600"}} className="custom-dropdown-item">As a Vendor</Link>
+                          </li>
+                          </ul>
                         </li>
                         <li className="add-listing theme-bg activeInDes">
                           <Link style={{ color: 'white' }} to={'/vendor-registration'}>
@@ -246,14 +299,77 @@ function Header() {
                   </>
                 )}
 
-                {/* For non-authenticated users or other roles */}
-                {role !== 'Customer' && role !== 'vendor' && (
+                {/* Check if the role is Vendor */}
+                {role === 'employ' && (
                   <>
                     <li className='activeInMob'>
-                      <Link to={'/sign-in'} className="ft-bold">
-                        <i className="fas fa-sign-in-alt me-1 theme-cl"></i>Sign in
+                      <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
+                        <span className="embos_45">
+                          <i className="fas fa-plus me-2"></i>
+                          Vendor Dashboard
+                        </span>
                       </Link>
                     </li>
+                    <li className='activeInMob'>
+                      <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
+                        <span className="embos_45">
+                          <i className="lni lni-power-switch mr-1"></i>Logout
+                        </span>
+                      </Link>
+                    </li>
+                  </>
+                )}
+
+                {/* For non-authenticated users or other roles */}
+                {role !== 'Customer' && role !== 'vendor' && role !== 'employ' && (
+                  <>
+                    {/* <li className='custom-mobile-item '> */}
+                    <li className="custom-mobile-item activeInMob">
+                      <Link
+                        to="#"
+                        className="custom-mobile-link ft-bold"
+                        onClick={toggleDropdown}
+                      >
+                        <i className="fas fa-sign-in-alt me-1 custom-theme-cl"></i>Sign in
+                      </Link>
+                      <ul className={`custom-mobile-dropdown ${isDropdownOpen ? 'open' : ''}`}>
+                        <li style={{ borderBottom: '1px solid #dddddd' }}>
+                          <Link to="/sign-in" className="custom-mobile-dropdown-item">As a User</Link>
+                        </li>
+                        <li style={{ borderBottom: '1px solid #dddddd' }}>
+                          <Link to="/corporate-sign-in" className="custom-mobile-dropdown-item">As a Corporate User</Link>
+                        </li>
+                        <li>
+                          <Link to="/employ-sign-in" className="custom-mobile-dropdown-item">As a Employ</Link>
+                        </li>
+                        <li>
+                          <Link to="/vendor-sign-in" className="custom-mobile-dropdown-item">As a Vendor</Link>
+                        </li>
+                      </ul>
+                    </li>
+                    {/* </li> */}
+                    {/* <li className="custom-mobile-item activeInMob">
+                      <Link
+                        to="#"
+                        className="custom-mobile-link ft-bold"
+                        onClick={toggleDropdown}
+                      >
+                        <i className="fas fa-sign-in-alt me-1 custom-theme-cl"></i>Sign in
+                      </Link>
+                      {isDropdownOpen && (
+                        <ul className="custom-mobile-dropdown">
+                          <li>
+                            <Link to="/user" className="custom-mobile-dropdown-item">User</Link>
+                          </li>
+                          <li>
+                            <Link to="/corporate-user" className="custom-mobile-dropdown-item">Corporate User</Link>
+                          </li>
+                          <li>
+                            <Link to="/employ" className="custom-mobile-dropdown-item">Employ</Link>
+                          </li>
+                        </ul>
+                      )}
+                    </li> */}
                     <li className="add-listing theme-bg activeInMob">
                       <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                         <i className="fas fa-plus me-2"></i>Vendor Registration
@@ -272,7 +388,7 @@ function Header() {
                   </>
                 )} */}
               </ul>
-              <ul className="nav-menu nav-menu-social align-to-right">
+              <ul className="nav-menu activeInDes fordisplayflex nav-menu-social align-to-right">
                 <>
                   {/* Check if the role is Customer */}
                   {role === 'Customer' && (
@@ -294,7 +410,6 @@ function Header() {
                       </li>
                     </>
                   )}
-
                   {/* Check if the role is Vendor */}
                   {role === 'vendor' && (
                     <>
@@ -315,16 +430,61 @@ function Header() {
                       </li>
                     </>
                   )}
-
-                  {/* For non-authenticated users or other roles */}
-                  {role !== 'Customer' && role !== 'vendor' && (
+                  {/* Check if the role is Vendor */}
+                  {role === 'employ' && (
                     <>
                       <li>
-                        <Link to={'/sign-in'} className="ft-bold">
-                          <i className="fas fa-sign-in-alt me-1 theme-cl"></i>Sign in
+                        <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
+                          <span className="embos_45">
+                            <i className="fas fa-plus me-2"></i>
+                            Vendor Dashboard
+                          </span>
                         </Link>
                       </li>
-                      <li className="add-listing theme-bg">
+                      <li>
+                        <Link onClick={handleVendorLogOut} className="crs_yuo12 w-auto text-dark gray">
+                          <span className="embos_45">
+                            <i className="lni lni-power-switch mr-1"></i>Logout
+                          </span>
+                        </Link>
+                      </li>
+                    </>
+                  )}
+
+                  {/* For non-authenticated users or other roles */}
+                  {role !== 'Customer' && role !== 'vendor' && role !== 'employ' && (
+                    <>
+
+                      <li className="nav-item dropdown activeInDes custom-nav-item custom-dropdown">
+                        <Link
+                          to="#"
+                          className="custom-nav-link dropdown-toggle"
+                          id="customSignInDropdown"
+                          role="button"
+                          data-bs-toggle="dropdown"
+                          aria-expanded="false"
+                        >
+                          <i className="fas fa-sign-in-alt me-1 custom-theme-cl"></i>
+                          Sign in
+                        </Link>
+                        <ul className="custom-dropdown-menu" aria-labelledby="customSignInDropdown">
+                          <li>
+                            <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a User</Link>
+                          </li>
+                          <li>
+                            <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Corporate User</Link>
+                          </li>
+                          <li>
+                            <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Employ</Link>
+                          </li>
+                          <li>
+                            <Link to="/vendor-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Vendor</Link>
+                          </li>
+                        </ul>
+                      </li>
+
+
+                      <li className="add-listing theme-bg activeInDes">
                         <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                           <i className="fas fa-plus me-2"></i>Vendor Registration
                         </Link>

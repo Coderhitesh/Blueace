@@ -1,6 +1,6 @@
 // const fs = require('fs');
 const Order = require('../Model/Order.Model');
-const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
+const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage, deleteVideoFromCloudinary, uploadVideo } = require('../Utils/Cloudnary');
 const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
 const User = require('../Model/UserModel')
@@ -386,7 +386,7 @@ exports.fetchVendorByLocation = async (req, res) => {
         }
 
         const userType = findOrder.userId?.UserType; // Optional chaining to avoid undefined errors
-        console.log("userType",userType)
+        console.log("userType", userType)
 
         if (userType === 'Corporate') {
             // console.log("Entered in corporate section");
@@ -515,7 +515,7 @@ exports.updateBeforWorkImage = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        console.log("id", id)
+        // console.log("id", id)
         const order = await Order.findById(id)
         if (!order) {
             return res.status(400).json({
@@ -612,6 +612,106 @@ exports.updateAfterWorkImage = async (req, res) => {
             message: "Internal server error in updating the before work image",
             error: error.message
 
+        })
+    }
+}
+
+exports.updateBeforeWorkVideo = async (req, res) => {
+    const uploadedVideo = [];
+    try {
+        const id = req.params._id
+        const order = await Order.findById(id)
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found',
+
+            })
+        }
+        if (req.file) {
+            if (order.beforeWorkVideo.public_id) {
+                await deleteVideoFromCloudinary(order.beforeWorkVideo.public_id)
+            }
+            const videoUrl = await uploadVideo(req.file.path)
+            const { video, public_id } = videoUrl;
+            order.beforeWorkVideo.url = video;
+            order.beforeWorkVideo.public_id = public_id;
+            uploadedVideo.push = order.beforeWorkVideo.public_id;
+            try {
+                fs.unlink(req.file.path)
+            } catch (error) {
+                console.log('Error in deleting video file from local:', error)
+            }
+        }else{
+            res.status(400).json({
+                success: false,
+                message: 'Please upload a video',
+            })
+        }
+        order.OrderStatus = "Service Done"
+        const updatedOrder = await order.save()
+
+        res.status(200).json({
+            success: true,
+            message: 'Before work video is uploaded',
+            data: updatedOrder
+        })
+    } catch (error) {
+        console.log('Internal server error in uploading before work video')
+        res.status(500).json({
+            success: false,
+            message: "Internal server error in uploading before work video",
+            error: error.message
+        })
+    }
+}
+
+exports.updateAfterWorkVideo = async (req, res) => {
+    const uploadedVideo = [];
+    try {
+        const id = req.params._id
+        const order = await Order.findById(id)
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found',
+
+            })
+        }
+        if (req.file) {
+            if (order.afterWorkVideo.public_id) {
+                await deleteVideoFromCloudinary(order.afterWorkVideo.public_id)
+            }
+            const videoUrl = await uploadVideo(req.file.path)
+            const { video, public_id } = videoUrl;
+            order.afterWorkVideo.url = video;
+            order.afterWorkVideo.public_id = public_id;
+            uploadedVideo.push = order.afterWorkVideo.public_id;
+            try {
+                fs.unlink(req.file.path)
+            } catch (error) {
+                console.log('Error in deleting video file from local:', error)
+            }
+        }else{
+            res.status(400).json({
+                success: false,
+                message: 'Please upload a video',
+            })
+        }
+        order.OrderStatus = "Service Done"
+        const updatedOrder = await order.save()
+
+        res.status(200).json({
+            success: true,
+            message: 'Before work video is uploaded',
+            data: updatedOrder
+        })
+    } catch (error) {
+        console.log('Internal server error in uploading before work video')
+        res.status(500).json({
+            success: false,
+            message: "Internal server error in uploading before work video",
+            error: error.message
         })
     }
 }

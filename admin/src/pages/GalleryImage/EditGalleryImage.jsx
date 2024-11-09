@@ -19,7 +19,7 @@ function EditGalleryImage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(`https://api.blueace.co.in/api/v1/get-single-gallery-image/${id}`);
+        const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-gallery-image/${id}`);
         const res = data.data;
         setImagePreviews(res.image?.url || null);
         setFormData(prevData => ({
@@ -36,7 +36,7 @@ function EditGalleryImage() {
 
   const handleFetchGalleryTitle = async () => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-gallery-category-name');
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-gallery-category-name');
       setGalleryTitle(res.data.data);
     } catch (error) {
       console.log("Error in fetching gallery title", error);
@@ -87,7 +87,7 @@ function EditGalleryImage() {
     }
 
     try {
-      await axios.put(`https://api.blueace.co.in/api/v1/update-gallery-image/${id}`, payload, {
+      await axios.put(`https://www.api.blueaceindia.com/api/v1/update-gallery-image/${id}`, payload, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

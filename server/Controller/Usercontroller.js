@@ -8,7 +8,7 @@ const fs = require("fs")
 exports.register = async (req, res) => {
     try {
         console.log("I am hit")
-        const {companyName, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
+        const { companyName, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
 
         const emptyField = [];
         if (!FullName) emptyField.push('FullName');
@@ -360,35 +360,37 @@ exports.passwordChangeRequest = async (req, res) => {
         // Find user by email
         const user = await User.findOne({ Email });
         if (!user) {
-            return res.status(404).json({
-                success: false,
-                msg: 'User not found'
-            });
-        }
+            const vendor = await Vendor.findOne({ Email })
+            if (!vendor) {
+                return res.status(400).json({
+                    success: false,
+                    msg: 'User not found'
+                })
+            }
 
-        // Generate OTP and expiry time
-        const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
-        const OTPExpires = new Date();
-        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
+            // Generate OTP and expiry time
+            const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+            const OTPExpires = new Date();
+            OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
 
-        // Update user document with OTP and expiry
-        await User.findOneAndUpdate(
-            { Email },
-            {
-                $set: {
-                    PasswordChangeOtp: OTP,
-                    OtpExpiredTime: OTPExpires,
-                    NewPassword: NewPassword
-                }
-            },
-            { new: true }
-        );
+            // Update user document with OTP and expiry
+            await Vendor.findOneAndUpdate(
+                { Email },
+                {
+                    $set: {
+                        PasswordChangeOtp: OTP,
+                        OtpExpiredTime: OTPExpires,
+                        NewPassword: NewPassword
+                    }
+                },
+                { new: true }
+            );
 
-        // Prepare email options
-        const emailOptions = {
-            email: Email,
-            subject: 'Password Reset OTP',
-            message: `
+            // Prepare email options
+            const emailOptions = {
+                email: Email,
+                subject: 'Password Reset OTP',
+                message: `
                 <html>
                 <head>
                 </head>
@@ -398,15 +400,104 @@ exports.passwordChangeRequest = async (req, res) => {
                 </body>
                 </html>
             `
-        };
+            };
+
+            // Send OTP via email
+            await SendEmail(emailOptions);
+
+            res.status(200).json({
+                success: true,
+                msg: 'OTP sent successfully. Check your email.'
+            });
+            // return res.status(404).json({
+            //     success: false,
+            //     msg: 'User not found'
+            // });
+        } else {
+            // Generate OTP and expiry time
+            const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+            const OTPExpires = new Date();
+            OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
+
+            // Update user document with OTP and expiry
+            await User.findOneAndUpdate(
+                { Email },
+                {
+                    $set: {
+                        PasswordChangeOtp: OTP,
+                        OtpExpiredTime: OTPExpires,
+                        NewPassword: NewPassword
+                    }
+                },
+                { new: true }
+            );
+
+            // Prepare email options
+            const emailOptions = {
+                email: Email,
+                subject: 'Password Reset OTP',
+                message: `
+                <html>
+                <head>
+                </head>
+                <body>
+                    <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
+                    <p>Please use this OTP within 10 minutes to reset your password.</p>
+                </body>
+                </html>
+            `
+            };
+
+            // Send OTP via email
+            await SendEmail(emailOptions);
+
+            res.status(200).json({
+                success: true,
+                msg: 'OTP sent successfully. Check your email.'
+            });
+        }
+
+        // Generate OTP and expiry time
+        // const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+        // const OTPExpires = new Date();
+        // OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
+
+        // Update user document with OTP and expiry
+        // await User.findOneAndUpdate(
+        //     { Email },
+        //     {
+        //         $set: {
+        //             PasswordChangeOtp: OTP,
+        //             OtpExpiredTime: OTPExpires,
+        //             NewPassword: NewPassword
+        //         }
+        //     },
+        //     { new: true }
+        // );
+
+        // Prepare email options
+        // const emailOptions = {
+        //     email: Email,
+        //     subject: 'Password Reset OTP',
+        //     message: `
+        //         <html>
+        //         <head>
+        //         </head>
+        //         <body>
+        //             <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
+        //             <p>Please use this OTP within 10 minutes to reset your password.</p>
+        //         </body>
+        //         </html>
+        //     `
+        // };
 
         // Send OTP via email
-        await SendEmail(emailOptions);
+        // await SendEmail(emailOptions);
 
-        res.status(200).json({
-            success: true,
-            msg: 'OTP sent successfully. Check your email.'
-        });
+        // res.status(200).json({
+        //     success: true,
+        //     msg: 'OTP sent successfully. Check your email.'
+        // });
     } catch (error) {
         console.error('Password change request error:', error);
         res.status(500).json({
@@ -734,7 +825,7 @@ exports.updateUser = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const {companyName, FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
+        const { companyName, FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
 
         const existingUser = await User.findById(id)
         if (!existingUser) {

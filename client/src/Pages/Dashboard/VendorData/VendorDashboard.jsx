@@ -17,7 +17,7 @@ function VendorDashboard({ userData }) {
     }, [])
     const fetchDashboardData = async () => {
         try {
-            const { data } = await axios.get('https://api.blueace.co.in/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
+            const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
@@ -36,7 +36,7 @@ function VendorDashboard({ userData }) {
 
     const fetchOrderData = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
             const orderData = res.data.data;
             const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
             setAllOrderCount(filterData.length);

@@ -39,12 +39,13 @@ function Dashboard() {
     const token = sessionStorage.getItem('token');
     const userId = userDataMain?._id;
     // console.log("userDataMain", userDataMain)
+    const role = userDataMain?.Role
 
     // console.log("userData",userData)
 
     const findUser = async () => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/findUser/${userId}`)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
             setUserData(res.data.data)
         } catch (error) {
             console.log(error)
@@ -53,7 +54,7 @@ function Dashboard() {
 
     const fetchOrderById = async () => {
         try {
-            const res = await axios.get(`https://api.blueace.co.in/api/v1/get-order-by-id?vendorAlloted=${userId}`, );
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
             setAllOrder(res.data.data)
             // console.log("order by id",res.data.data)
             const allData = res.data.data
@@ -68,7 +69,7 @@ function Dashboard() {
 
     // const fetchOrderData = async () => {
     //     try {
-    //         const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+    //         const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
     //         const orderData = res.data.data;
     //         const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
     //         console.log("filterdata",filterData)
@@ -96,7 +97,7 @@ function Dashboard() {
 
     const handleLogout = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/vendor-logout', {
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -121,7 +122,7 @@ function Dashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`https://api.blueace.co.in/api/v1/delete-vendor/${userId}`);
+                    await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${userId}`);
                     sessionStorage.clear()
                     toast.success("User Deleted Successfully");
                     window.location.href = '/'
@@ -213,24 +214,26 @@ function Dashboard() {
                 </a>
                 <div className="collapse" id="MobNav">
                     <div className="goodup-dashboard-nav">
-                        <div className="goodup-dashboard-inner">
-                            <ul data-submenu-title="Main Navigation">
-                                <li onClick={() => handleTabClick('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-dashboard me-2"></i>Dashboard
-                                    </a>
-                                </li>
-                                <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-files me-2"></i>Active Order
-                                    </a>
-                                </li>
-                                <li onClick={() => handleTabClick('All-Order')} className={`${activeTab === 'All-Order' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-add-files me-2"></i>All Orders
-                                    </a>
-                                </li>
-                                <li onClick={() => handleTabClick('members')} className={`${activeTab === 'members' ? 'active' : ''}`}>
+                        {
+                            role === 'employ' && (
+                                <div className="goodup-dashboard-inner">
+                                    <ul data-submenu-title="Main Navigation">
+                                        <li onClick={() => handleTabClick('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-dashboard me-2"></i>Dashboard
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-files me-2"></i>Active Order
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('All-Order')} className={`${activeTab === 'All-Order' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-add-files me-2"></i>All Orders
+                                            </a>
+                                        </li>
+                                        {/* <li onClick={() => handleTabClick('members')} className={`${activeTab === 'members' ? 'active' : ''}`}>
                                     <a>
                                         <i className="lni lni-bookmark me-2"></i>Member
                                     </a>
@@ -239,31 +242,89 @@ function Dashboard() {
                                     <a>
                                         <i className="lni lni-bookmark me-2"></i>Add Member
                                     </a>
-                                </li>
-                            </ul>
-                            <ul data-submenu-title="My Accounts">
-                                <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-user me-2"></i>My Profile
-                                    </a>
-                                </li>
-                                <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-lock-alt me-2"></i>Change Password
-                                    </a>
-                                </li>
-                                <li>
-                                    <a onClick={() => handleDelete(userId)}>
-                                        <i className="lni lni-trash-can me-2"></i>Delete Account
-                                    </a>
-                                </li>
-                                <li>
-                                    <a onClick={handleLogout}>
-                                        <i className="lni lni-power-switch me-2"></i>Log Out
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                                </li> */}
+                                    </ul>
+                                    <ul data-submenu-title="My Accounts">
+                                        <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-user me-2"></i>My Profile
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-lock-alt me-2"></i>Change Password
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a onClick={() => handleDelete(userId)}>
+                                                <i className="lni lni-trash-can me-2"></i>Delete Account
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a onClick={handleLogout}>
+                                                <i className="lni lni-power-switch me-2"></i>Log Out
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )
+                        }
+                        {
+                            role === 'vendor' && (
+                                <div className="goodup-dashboard-inner">
+                                    <ul data-submenu-title="Main Navigation">
+                                        <li onClick={() => handleTabClick('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-dashboard me-2"></i>Dashboard
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-files me-2"></i>Active Order
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('All-Order')} className={`${activeTab === 'All-Order' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-add-files me-2"></i>All Orders
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('members')} className={`${activeTab === 'members' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-bookmark me-2"></i>Member
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('add-members')} className={`${activeTab === 'add-members' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-bookmark me-2"></i>Add Member
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <ul data-submenu-title="My Accounts">
+                                        <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-user me-2"></i>My Profile
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-lock-alt me-2"></i>Change Password
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a onClick={() => handleDelete(userId)}>
+                                                <i className="lni lni-trash-can me-2"></i>Delete Account
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a onClick={handleLogout}>
+                                                <i className="lni lni-power-switch me-2"></i>Log Out
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )
+                        }
+
                     </div>
                 </div>
 

@@ -15,7 +15,7 @@ function AllPromotionalBanner() {
     const handleFetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://api.blueace.co.in/api/v1/get-all-promotional-banner');
+            const response = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-promotional-banner');
             if (response.data.success) {
                 const datasave = response.data.data;
                 const r = datasave.reverse();
@@ -38,7 +38,7 @@ function AllPromotionalBanner() {
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueace.co.in/api/v1/delete-promotional-banner/${id}`);
+            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-promotional-banner/${id}`);
             if (response.data.success) {
                 toast.success('Banner deleted successfully!');
                 await handleFetchData(); // Fetch categories again after deletion
@@ -53,7 +53,7 @@ function AllPromotionalBanner() {
     const handleToggle = async (id, currentActiveStatus) => {
         try {
             const newActiveStatus = !currentActiveStatus; 
-            const response = await axios.put(`https://api.blueace.co.in/api/v1/update-promotional-banner-active-status/${id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-promotional-banner-active-status/${id}`, {
                 active: newActiveStatus
             });
 

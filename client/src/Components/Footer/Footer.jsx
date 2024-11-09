@@ -7,7 +7,7 @@ function Footer() {
   const [allService,setService] = useState([])
   const fetchService = async() => {
     try {
-      const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service')
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service')
       setService(res.data.data)
     } catch (error) {
       console.log(error)

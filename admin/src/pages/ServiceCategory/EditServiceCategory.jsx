@@ -27,7 +27,7 @@ function EditServiceCategory() {
 
     const handleFetchCategory = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-service-main-category')
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-main-category')
             setCategories(res.data.data);
         } catch (error) {
             console.log(error)
@@ -42,7 +42,7 @@ function EditServiceCategory() {
         // Fetch the existing service category data based on the ID
         const fetchCategoryData = async () => {
             try {
-                const { data } = await axios.get(`https://api.blueace.co.in/api/v1/get-single-service-category/${id}`);
+                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-service-category/${id}`);
                 const category = data.data;
 
                 setFormData({
@@ -127,7 +127,7 @@ function EditServiceCategory() {
         }
 
         try {
-            await axios.put(`https://api.blueace.co.in/api/v1/update-service-category/${id}`, payload, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-service-category/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

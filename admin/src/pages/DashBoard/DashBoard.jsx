@@ -12,7 +12,7 @@ function DashBoard() {
 
     const fetchAllVendor = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/all-vendor');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/all-vendor');
             const data = res.data.data;
             setVendorCount(data.length);
             const employData = data.filter((item) => item.Role === 'employ');
@@ -24,7 +24,7 @@ function DashBoard() {
 
     const fetchAllUser = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/AllUser');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/AllUser');
             const data = res.data.data;
             const corporateMember = data.filter((item) => item.UserType === "Corporate");
             setCorporateCount(corporateMember.length);
@@ -36,7 +36,7 @@ function DashBoard() {
 
     const fetchAllOrder = async () => {
         try {
-            const res = await axios.get('https://api.blueace.co.in/api/v1/get-all-order');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
             const data = res.data.data;
             setOrderCount(data.length);
             const activeOrders = data.filter((item) => item.OrderStatus !== "Service Done" && item.OrderStatus !== "Cancelled");

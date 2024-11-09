@@ -70,7 +70,7 @@ const EstimatedBudget = () => {
         }
 
         try {
-            const response = await axios.post('https://api.blueace.co.in/api/v1/make-Estimated-bills', formData, {
+            const response = await axios.post('https://www.api.blueaceindia.com/api/v1/make-Estimated-bills', formData, {
                 headers: { 'Content-Type': 'application/json' }
             });
 

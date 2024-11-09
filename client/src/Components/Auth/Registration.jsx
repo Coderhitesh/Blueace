@@ -93,7 +93,7 @@ function Registration() {
     };
 
     try {
-      const res = await axios.post('https://api.blueace.co.in/api/v1/Create-User', updatedFormData);
+      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', updatedFormData);
 
       sessionStorage.setItem('token', res.data.token);
       sessionStorage.setItem('user', JSON.stringify(res.data.user));
@@ -152,7 +152,7 @@ function Registration() {
                   <form className="submit-form" onSubmit={handleSubmit}>
 
                     <div className="row">
-                      <div className="col-6">
+                      {/* <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="companyName" className='mb-1 fw-medium'>Company Name (Optional)</label>
                           <input
@@ -162,10 +162,9 @@ function Registration() {
                             name="companyName"
                             value={formData.companyName}
                             onChange={handleInputChange}
-                            required
                           />
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name</label>
@@ -297,7 +296,7 @@ function Registration() {
                           <input
                             type="password"
                             className="form-control rounded"
-                            placeholder="Password (min 6 characters)"
+                            placeholder="Password"
                             name="Password"
                             value={formData.Password}
                             onChange={handleInputChange}
