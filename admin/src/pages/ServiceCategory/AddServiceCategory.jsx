@@ -9,18 +9,22 @@ import toast from 'react-hot-toast';
 function AddServiceCategory() {
     const [formData, setFormData] = useState({
         icon: null,
+        image: null,
         name: '',
         description: '',
         sliderImage: [],
         mainCategoryId: '',
         metaTitle: '',
         metaDescription: '',
+        metaKeyword: '',
+        metafocus: '',
     });
     const editor = useRef(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [imagePreviews, setImagePreviews] = useState([]);
     const [iconPreview, setIconPreview] = useState(null); // For single icon preview
+    const [serviceImagePreview, setServiceImagePreview] = useState(null); // For single icon preview
     const [categories, setCategories] = useState([]);
 
     const handleFetchCategory = async () => {
@@ -60,6 +64,18 @@ function AddServiceCategory() {
         }
     };
 
+    // Handle icon upload and preview
+    const handleServiceImageUpload = (e) => {
+        const file = e.target.files[0]; // Single file for icon
+        if (file) {
+            setFormData(prevData => ({
+                ...prevData,
+                image: file
+            }));
+            setServiceImagePreview(URL.createObjectURL(file)); // Create preview for the icon
+        }
+    };
+
     // Handle slider image upload and preview
     const handleImageUpload = (e) => {
         const files = e.target.files; // Multiple files for slider
@@ -85,6 +101,8 @@ function AddServiceCategory() {
         payload.append('mainCategoryId', formData.mainCategoryId);
         payload.append('metaTitle', formData.metaTitle);
         payload.append('metaDescription', formData.metaDescription);
+        payload.append('metaKeyword', formData.metaKeyword);
+        payload.append('metafocus', formData.metafocus);
 
 
         // Append icon
@@ -92,6 +110,15 @@ function AddServiceCategory() {
             payload.append('icon', formData.icon);
         } else {
             setError('Icon is required');
+            setLoading(false); // Reset loading state if there is an error
+            return;
+        }
+
+        // Append image
+        if (formData.image) {
+            payload.append('image', formData.image);
+        } else {
+            setError('image is required');
             setLoading(false); // Reset loading state if there is an error
             return;
         }
@@ -118,7 +145,7 @@ function AddServiceCategory() {
             console.error('Error creating service category:', error);
             setError('Failed to create service category');
         } finally {
-            setLoading(false); // Ensure loading is set to false after request completion
+            setLoading(false); 
         }
     };
 
@@ -206,11 +233,42 @@ function AddServiceCategory() {
                                 style={{ display: 'none' }}
                                 onChange={handleIconUpload}
                                 name="icon"
-                                accept="image/*"
+                                accept="image/jpeg, image/jpg, image/png, image/webp"
                             />
 
                         </div>
                     </div>
+
+                    {/* Service Image Upload */}
+                    <div className="col-md-12 mt-4">
+                        <div className="mb-3">
+                            {serviceImagePreview && (
+                                <div className="mb-3">
+                                    <h5>Service Image Preview:</h5>
+                                    <img src={serviceImagePreview} alt="Icon Preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                                </div>
+                            )}
+                            <label className="form-label f-w-600 mb-2">Upload Service image (Single Image)</label>
+                            <div className="dropzone card" onClick={() => document.getElementById('imageInput').click()} style={{ cursor: 'pointer' }}>
+                                <div className="dz-message needsclick text-center p-4">
+                                    <i className="fa-solid fa-cloud-arrow-up mb-3"></i>
+                                    <h6>Drop files here or click to upload.</h6>
+                                    <span className="note needsclick">(Supported formats: JPG, PNG)</span>
+                                </div>
+                            </div>
+                            <input
+                                type="file"
+                                id="imageInput"
+                                className="form-control"
+                                style={{ display: 'none' }}
+                                onChange={handleServiceImageUpload}
+                                name="image"
+                                accept="image/jpeg, image/jpg, image/png, image/webp"
+                            />
+
+                        </div>
+                    </div>
+
 
                     {/* Image Previews */}
                     {imagePreviews.length > 0 && (
@@ -245,11 +303,11 @@ function AddServiceCategory() {
                                 className="form-control"
                                 style={{ display: 'none' }}
                                 onChange={handleImageUpload}
-                                accept="image/*"
+                                accept="image/jpeg, image/jpg, image/png, image/webp"
                             />
                         </div>
                     </div>
-                    
+
                     <div className="col-md-12 mt-3">
                         <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
                         <textarea
@@ -276,6 +334,34 @@ function AddServiceCategory() {
                             onChange={handleChange}
                             required={true}
                             id='metaDescription'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaKeyword" className='form-label'>Meta Keywords</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Keywords"
+                            name='metaKeyword'
+                            value={formData.metaKeyword}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaKeyword'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metafocus" className='form-label'>Meta Focus</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Focus"
+                            name='metafocus'
+                            value={formData.metafocus}
+                            onChange={handleChange}
+                            required={true}
+                            id='metafocus'
                         ></textarea>
                     </div>
 

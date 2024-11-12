@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function DashBoard() {
     const [vendorCount, setVendorCount] = useState(0);
@@ -57,58 +58,58 @@ function DashBoard() {
             <h1 className="text-center mb-5">Welcome to the Dashboard</h1>
             <div className="row">
                 <div className="col-md-4">
-                    <div className="card shadow-sm border-0 rounded vendor-card">
+                    <Link to={'/vendors/all-vendor'} className="card shadow-sm border-0 rounded vendor-card">
                         <div className="card-body text-center">
                             <h5 className="card-title">All Vendors</h5>
                             <h2 className="card-text">{vendorCount}</h2>
                             <p className="card-description">Manage all registered vendors</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
                 <div className="col-md-4">
-                    <div className="card shadow-sm border-0 rounded corporate-card">
+                    <Link to={'/corporate-user/all-corporate-user'} className="card shadow-sm border-0 rounded corporate-card">
                         <div className="card-body text-center">
                             <h5 className="card-title">Corporate Users</h5>
                             <h2 className="card-text">{corporateCount}</h2>
                             <p className="card-description">Total Corporate Users in the system</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
                 <div className="col-md-4">
-                    <div className="card shadow-sm border-0 rounded user-card">
+                    <Link to={'/users/all-users'} className="card shadow-sm border-0 rounded user-card">
                         <div className="card-body text-center">
                             <h5 className="card-title">All Users</h5>
                             <h2 className="card-text">{userCount}</h2>
                             <p className="card-description">Total users in the system</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
                 <div className="col-md-4">
-                    <div className="card shadow-sm border-0 rounded employ-card">
+                    <Link to={'/vendors/all-employ'} className="card shadow-sm border-0 rounded employ-card">
                         <div className="card-body text-center">
                             <h5 className="card-title">Blueace Members</h5>
                             <h2 className="card-text">{employCount}</h2>
                             <p className="card-description">Total Blueace Employees in the system</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
                 <div className="col-md-4">
-                    <div className="card shadow-sm border-0 rounded order-card">
+                    <Link to={'/Orders/all-order'} className="card shadow-sm border-0 rounded order-card">
                         <div className="card-body text-center">
                             <h5 className="card-title">All Orders</h5>
                             <h2 className="card-text">{orderCount}</h2>
                             <p className="card-description">Total orders processed this month</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
                 <div className="col-md-4">
-                    <div className="card shadow-sm border-0 rounded active-order-card">
+                    <Link to={'/Orders/all-order'} className="card shadow-sm border-0 rounded active-order-card">
                         <div className="card-body text-center">
                             <h5 className="card-title">Active Orders</h5>
                             <h2 className="card-text">{activeOrder}</h2>
                             <p className="card-description">Total active orders in the system</p>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </div>
         </div>

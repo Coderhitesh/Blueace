@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { Link } from 'react-router-dom';
 import './blog.css'
+import MetaTag from '../../Components/Meta/MetaTag';
 
 function BlogPage() {
     const [allBlog, setAllBlog] = useState([]);
@@ -43,6 +44,7 @@ function BlogPage() {
                     </div>
                 </div>
             </div> */}
+            <MetaTag title={'Blueace india blogs'} />
             <div style={{backgroundColor:'#00225F'}} class=" py-3">
 				<div class="container">
 					<div class="row">

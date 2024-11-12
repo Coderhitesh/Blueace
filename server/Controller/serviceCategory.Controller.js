@@ -5,8 +5,9 @@ const fs = require('fs').promises;
 exports.createServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
-        const { name, description, mainCategoryId, metaTitle, metaDescription } = req.body;
-        console.log(req.body)
+        // console.log("i am hit")
+        const { name, description, mainCategoryId, metaTitle, metaDescription, metaKeyword, metafocus } = req.body;
+        // console.log(req.body)
 
         // Check for missing fields
         let emptyField = [];
@@ -20,10 +21,10 @@ exports.createServiceCategory = async (req, res) => {
             });
         }
 
-        const newCategory = new Category({ name, description, mainCategoryId, metaTitle, metaDescription });
+        const newCategory = new Category({ name, description, mainCategoryId, metaTitle, metaDescription, metaKeyword, metafocus });
 
         if (req.files) {
-            const { sliderImage, icon } = req.files;
+            const { sliderImage, icon, image } = req.files;
             // console.log('sliderImage', sliderImage)
             // console.log('icon', icon)
 
@@ -36,7 +37,7 @@ exports.createServiceCategory = async (req, res) => {
                         url: imgUrl.image,
                         public_id: imgUrl.public_id
                     });
-                    console.log(imgUrl)
+                    // console.log(imgUrl)
                     uploadedImages.push(imgUrl.public_id); // Store the Cloudinary public_id for cleanup
                     await fs.unlink(img.path); // Delete local file
                 }
@@ -64,10 +65,28 @@ exports.createServiceCategory = async (req, res) => {
                     message: 'Please upload an icon'
                 });
             }
+
+            // Handle image upload
+            if (image && image[0]) {
+                console.log("image",image)
+                const imageUrl = await uploadImage(image[0]?.path); // Upload image
+                newCategory.image = {
+                    url: imageUrl.image,
+                    public_id: imageUrl.public_id
+                };
+                // console.log("imageUrl", imageUrl)
+                uploadedImages.push(imageUrl.public_id); // Store for cleanup if needed
+                await fs.unlink(image[0].path); // Delete local image file
+            } else {
+                return res.status(400).json({
+                    status: false,
+                    message: 'Please upload an image'
+                });
+            }
         } else {
             return res.status(400).json({
                 status: false,
-                message: 'Please upload images and icon'
+                message: 'Please upload images and image'
             });
         }
 
@@ -154,15 +173,20 @@ exports.getSingleServiceCategroy = async (req, res) => {
 exports.getServiceCategoryByName = async (req, res) => {
     try {
         const { name } = req.params;
-        const searchName = name.trim()
-        // console.log('name',searchName)
-        const serviceCategory = await Category.findOne({ name: searchName }).populate('mainCategoryId');
+        const searchName = name.trim().toLowerCase();  // Convert input to lowercase
+        
+        // Perform a case-insensitive search using regex
+        const serviceCategory = await Category.findOne({ 
+            name: { $regex: new RegExp(`^${searchName}$`, 'i') }
+        }).populate('mainCategoryId');
+        
         if (!serviceCategory) {
             return res.status(400).json({
                 success: false,
                 message: 'Category not found',
-            })
+            });
         }
+
         res.status(200).json({
             success: true,
             message: 'Category retrieved successfully',
@@ -170,14 +194,15 @@ exports.getServiceCategoryByName = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({
             success: false,
             message: 'Internal Server Error in finding single service category by name',
             error: error.message
-        })
+        });
     }
-}
+};
+
 
 exports.deleteServiceCategory = async (req, res) => {
     try {
@@ -229,7 +254,7 @@ exports.updateServiceCategory = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { name, description, mainCategoryId, metaTitle, metaDescription } = req.body;
+        const { name, description, mainCategoryId, metaTitle, metaDescription, metaKeyword, metafocus } = req.body;
 
         // Check for missing fields
         let emptyField = [];
@@ -258,9 +283,11 @@ exports.updateServiceCategory = async (req, res) => {
         existingCategory.mainCategoryId = mainCategoryId;
         existingCategory.metaTitle = metaTitle;
         existingCategory.metaDescription = metaDescription;
+        existingCategory.metaKeyword = metaKeyword;
+        existingCategory.metafocus = metafocus;
 
         if (req.files) {
-            const { sliderImage, icon } = req.files;
+            const { sliderImage, icon, image } = req.files;
 
             // Handle slider images update
             if (sliderImage && sliderImage.length > 0) {
@@ -298,6 +325,22 @@ exports.updateServiceCategory = async (req, res) => {
                 };
                 uploadedImages.push(iconUrl.public_id); // Store for cleanup if needed
                 await fs.unlink(icon[0].path); // Delete local icon file
+            }
+
+            // Handle image update
+            if (image && image[0]) {
+                // Delete old image from Cloudinary
+                if (existingCategory.image && existingCategory.image.public_id) {
+                    await deleteImageFromCloudinary(existingCategory.image.public_id);
+                }
+
+                const imageUrl = await uploadImage(image[0]?.path); // Upload image
+                existingCategory.image = {
+                    url: imageUrl.image,
+                    public_id: imageUrl.public_id
+                };
+                uploadedImages.push(imageUrl.public_id); // Store for cleanup if needed
+                await fs.unlink(image[0].path); // Delete local icon file
             }
         }
 

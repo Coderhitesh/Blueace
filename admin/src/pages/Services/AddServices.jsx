@@ -117,10 +117,6 @@ function AddServices() {
 
         if (formData.serviceBanner) {
             payload.append('serviceBanner', formData.serviceBanner);
-        } else {
-            setError('Service banner is required.');
-            setLoading(false);
-            return;
         }
 
         try {
@@ -192,7 +188,7 @@ function AddServices() {
 
                     {/* Service Name Input */}
                     <div className="col-md-6">
-                        <label htmlFor="name">Service Name</label>
+                        <label htmlFor="name" className='form-label mt-3'>Service Name</label>
                         <Input
                             type='text'
                             placeholder='Enter Service Name'
@@ -245,7 +241,7 @@ function AddServices() {
                     </div>
 
                     {/* Service Banner Upload */}
-                    <div className="col-md-12 mt-4">
+                    {/* <div className="col-md-12 mt-4">
                         <div className="mb-3 mt-4">
                             {serviceBannerPreview && (
                                 <div className="mb-3">
@@ -272,9 +268,9 @@ function AddServices() {
                                 accept="image/*"
                             />
                         </div>
-                    </div>
+                    </div> */}
 
-                    <div className="col-md-12 mt-3">
+                    {/* <div className="col-md-12 mt-3">
                         <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
                         <textarea
                             class="form-control"
@@ -287,8 +283,8 @@ function AddServices() {
                             required={true}
                             id='metaTitle'
                         ></textarea>
-                    </div>
-                    <div className="col-md-12 mt-3">
+                    </div> */}
+                    {/* <div className="col-md-12 mt-3">
                         <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
                         <textarea
                             class="form-control"
@@ -301,7 +297,7 @@ function AddServices() {
                             required={true}
                             id='metaDescription'
                         ></textarea>
-                    </div>
+                    </div> */}
 
                     {/* Submit Button */}
                     <div className='col-md-10 mx-auto mt-4'>

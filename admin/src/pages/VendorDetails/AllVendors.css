@@ -1,0 +1,4 @@
+/* Ensure that the calendar dropdown appears above the modal */
+.ant-picker-dropdown {
+    z-index: 9999 !important; /* Make sure it has a higher z-index than the modal */
+}

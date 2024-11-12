@@ -70,7 +70,7 @@ function UserAllOrder({ userData, allOrder }) {
                                                 currentOrders.map((order) => (
                                                     <tr key={order._id}>
                                                         {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
-                                                        <td>{order?.serviceId?.name}</td>
+                                                        <td>{order?.serviceId?.subCategoryId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.vendorAlloted?.companyName || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>

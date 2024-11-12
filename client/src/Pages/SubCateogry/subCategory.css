@@ -1,0 +1,11 @@
+.services-content ul{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.services-content ol{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}

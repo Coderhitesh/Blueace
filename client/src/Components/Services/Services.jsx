@@ -1,48 +1,34 @@
 import { Link } from 'react-router-dom';
-import ahuImage from './ahu-fcu-maintenance-services.webp'
-import Ductable from './ductable-ac.webp'
-import coldStore from './cold-storage.webp'
-import airCoold from './air-cooled-chiller.webp'
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import { Pagination } from 'swiper/modules';
+import axios from 'axios';
 
 function Services() {
-  const serviceBox = [
-    {
-      id: 1,
-      img: ahuImage,
-      title: "Service & Maintenance of AHU, FCU, Airwasher, Ventilation System, Grill Diffuser, iball Diffuser"
-    },
-    {
-      id: 2,
-      img: Ductable,
-      title: "Service & Maintenance of ⁠VRV and VRF, DX System, Ductable, Cassette AC, Mega Split AC"
-    },
-    {
-      id: 3,
-      img: coldStore,
-      title: "Service & Maintenance of Cold Storage and Cold Room"
-    },
-    {
-      id: 4,
-      img: airCoold,
-      title: "Service & Maintenance of Chiller Plant from 1 TR to 2000 TR"
-    },
 
-    {
-      id: 4,
-      img: airCoold,
-      title: "Service & Maintenance of Heat Pumps "
-    },
-    {
-      id: 4,
-      img: airCoold,
-      title: "Service & Maintenance of ⁠Refrigeration System Design for Agriculture"
-    }
-  ]
+  const [allService, setAllService] = useState([])
+
+	const fetchServiceData = async () => {
+		try {
+			const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
+			let data = res.data.data;
+
+			for (let i = data.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[data[i], data[j]] = [data[j], data[i]];
+			}
+
+			setAllService(data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchServiceData();
+	}, []);
 
 
   return (
@@ -95,14 +81,14 @@ function Services() {
               className="mySwiper"
             >
               {
-                serviceBox && serviceBox.map((item, index) => (
+                allService && allService.map((item, index) => (
                   <SwiperSlide className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6" key={index}>
                     <div className="cats-wrap text-center services-bg">
                       <Link to='/maintenance-ahu-fcu' className="">
-                        <img src={item.img} className='img-fluid' alt='AHU' />
+                        <img src={item.image?.url} style={{height:'250px'}} className='img-fluid' alt='AHU' />
                         <div className="Goodup-catg-caption">
                           <h4 className="services-box-title mb-1 mt-4 ft-medium m-catrio">
-                            {item.title}
+                            {item.name}
                           </h4>
                         </div>
                       </Link>

@@ -86,7 +86,7 @@ function Order() {
                         elements={currentallOrders.map((vendor, index) => (
                             <tr key={vendor._id}>
                                 <td>{index + 1}</td>
-                                <td className='fw-bolder'>{vendor?.serviceId?.name}</td>
+                                <td className='fw-bolder'>{vendor?.serviceId?.subCategoryId?.name}</td>
                                 <td className='fw-bolder'>{vendor?.serviceType}</td>
                                 <td className='fw-bolder'>{vendor?.userId?.FullName || "Not-Available"}</td>
                                 <td className='fw-bolder'>{vendor?.userId?.UserType || "Not-Available"}</td>

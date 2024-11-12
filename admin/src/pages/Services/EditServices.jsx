@@ -70,7 +70,7 @@ function EditServices() {
                 setServiceImagePreviews(category.serviceImage?.url || null);
                 setServiceBannerPreview(category.serviceBanner?.url || null);
 
-                console.log('existing serviceimage', category.serviceImage?.url)
+                // console.log('existing serviceimage', category.serviceImage?.url)
 
                 if (category.categoryId?._id) {
                     handleFetchSubCategory(category.categoryId._id);
@@ -169,15 +169,6 @@ function EditServices() {
         // Check if a new service banner has been uploaded
         if (formData.serviceBanner) {
             payload.append('serviceBanner', formData.serviceBanner);
-        } else {
-            // If no new banner is uploaded, use the existing one
-            if (serviceBannerPreview) {
-                payload.append('serviceBanner', serviceBannerPreview);
-            } else {
-                setError('Service banner is required.');
-                setLoading(false);
-                return;
-            }
         }
 
         try {
@@ -303,7 +294,7 @@ function EditServices() {
                     </div>
 
                     {/* Service Banner Upload */}
-                    <div className="col-md-12 mt-4">
+                    {/* <div className="col-md-12 mt-4">
                         <div className="mb-3 mt-4">
                             {serviceBannerPreview && (
                                 <div className="mb-3">
@@ -330,9 +321,9 @@ function EditServices() {
                                 accept="image/*"
                             />
                         </div>
-                    </div>
+                    </div> */}
 
-                    <div className="col-md-12 mt-3">
+                    {/* <div className="col-md-12 mt-3">
                         <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
                         <textarea
                             class="form-control"
@@ -345,8 +336,8 @@ function EditServices() {
                             required={true}
                             id='metaTitle'
                         ></textarea>
-                    </div>
-                    <div className="col-md-12 mt-3">
+                    </div> */}
+                    {/* <div className="col-md-12 mt-3">
                         <label htmlFor="metaDescription" className='form-label'>Meta Description</label>
                         <textarea
                             class="form-control"
@@ -359,7 +350,7 @@ function EditServices() {
                             required={true}
                             id='metaDescription'
                         ></textarea>
-                    </div>
+                    </div> */}
 
 
                     <div className='col-md-10 mx-auto mt-4'>

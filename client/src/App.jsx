@@ -39,6 +39,7 @@ import CorporateLogin from "./Components/Auth/CorporateLogin"
 import VendorLogin from "./Components/Auth/VendorLogin"
 import EmployLogin from "./Components/Auth/EmployLogin"
 import EmployRegistration from "./Components/Auth/EmployRegistration"
+// import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
@@ -56,7 +57,9 @@ function App() {
 
           
           <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/about-us" element={<About />} />
+          <Route path="/about-us" element={
+            <About />
+            } />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/sign-up" element={<Registration />} />

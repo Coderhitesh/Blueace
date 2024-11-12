@@ -1,18 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ahu from './ahu.webp';
-import fancoil from './fancoil-unit.webp';
-import chillerWaterCassets from './Chilled-Water-Cassette.webp';
-import highWallFancoil from './High-Wall-Fan-Coil-Unit.webp';
-import GrillDuffusser from './grill-difuser.webp';
-import chillerWaterp from './water-chiller-plant.webp';
-import ibrSteam from './ibr-steam-boiler.webp';
-import coolingHeating from './cooling-heating-coil.webp';
-import dxCooling from './dx-cooling-seystems.webp';
-import DuctableACHitachi from './Ductable-AC-Hitachi.webp';
-import vrfHitachi from './hitachi-vrv-vrf-system.webp';
-import hitachiMakeWallMount from './Hitachi-Make-Wall-Mounted-Split-AC.webp';
-import heatPump from './heat-pump.webp';
 
 
 // Import Swiper React components
@@ -30,7 +17,7 @@ function FeatureListHome() {
 
 	const fetchServiceData = async () => {
 		try {
-			const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
+			const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
 			let data = res.data.data;
 
 			for (let i = data.length - 1; i > 0; i--) {
@@ -101,7 +88,7 @@ function FeatureListHome() {
 										<div class="Goodup-grid-upper">
 
 											<div class="Goodup-grid-thumb">
-												<Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} class="d-block text-center m-auto"><img src={item.serviceImage?.url} class="img-fluid" alt={item.name} /></Link>
+												<Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} class="d-block text-center m-auto"><img src={item.image?.url} class="img-fluid" alt={item.name} /></Link>
 											</div>
 											{/* <div class="Goodup-rating overlay">
 												<div class="Goodup-pr-average high">4.8</div>

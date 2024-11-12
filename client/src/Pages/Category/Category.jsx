@@ -29,7 +29,6 @@ function Category() {
             setSubCategory(res.data.data);
             console.log('data',res.data)
         } catch (error) {
-
             console.log(error);
         }
     };

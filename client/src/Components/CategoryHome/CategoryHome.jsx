@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Link } from 'react-router-dom';
 
 function CategoryHome() {
-  const [allSubCategory,setSubCategory] = useState([])
+  const [allSubCategory, setSubCategory] = useState([])
 
   const fetchData = async () => {
     try {
@@ -13,14 +13,14 @@ function CategoryHome() {
       const filterData = data.filter((item) => item?.mainCategoryId?.name === 'AC')
       setSubCategory(filterData)
     } catch (error) {
-      console.log('Internal server error in fetching subcategory',error)
+      console.log('Internal server error in fetching subcategory', error)
     }
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchData();
-  },[])
-      
+  }, [])
+
   return (
     <>
       {/* <!-- ======================= Listing Categories ======================== --> */}
@@ -43,13 +43,13 @@ function CategoryHome() {
                 className="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-6"
               >
                 <div className="cats-wrap text-center">
-                  <Link to={`/sub-category/${category.name}`} className="Goodup-catg-wrap">
+                  <Link to={`/service/${category.name.replace(/\s+/g, '-').toLowerCase()}`} className="Goodup-catg-wrap">
                     <div className="Goodup-catg-icon">
                       {/* <i className={`fas ${category.icon}`}></i> */}
-                      <img style={{width:'70%', height:'70%', objectFit:'cover'}} src={category?.icon?.url} alt="" />
+                      <img style={{ width: '70%', height: '70%', objectFit: 'cover' }} src={category?.icon?.url} alt="" />
                     </div>
                     <div className="Goodup-catg-caption">
-                      <Link to={`/sub-category/${category.name}`} className="services-box-title mb-3 ft-medium m-catrio">
+                      <Link to={`/service/${category.name.replace(/\s+/g, '-').toLowerCase()}`} className="services-box-title mb-3 ft-medium m-catrio">
                         {category.name}
                       </Link>
                     </div>

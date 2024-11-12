@@ -59,10 +59,11 @@ router.delete('/delete-service-main-category/:_id', deleteServiceMainCategory)
 // Router for service category
 router.post('/create-service-category', upload.fields([
     { name: 'sliderImage', maxCount: 10 },
-    { name: 'icon', maxCount: 1 }
+    { name: 'icon', maxCount: 1 },
+    { name: 'image', maxCount: 1 }
 ]), createServiceCategory);
 
-router.put('/update-service-category/:_id', upload.fields([{ name: 'sliderImage', maxCount: 10 }, { name: 'icon' }]), updateServiceCategory);
+router.put('/update-service-category/:_id', upload.fields([{ name: 'sliderImage', maxCount: 10 }, { name: 'icon', maxCount: 1 }, { name: 'image', maxCount: 1 }]), updateServiceCategory);
 router.get('/get-all-service-category', getServiceCategory)
 router.get('/get-single-service-category/:_id', getSingleServiceCategroy)
 router.get('/get-service-category-by-name/:name', getServiceCategoryByName)

@@ -25,6 +25,16 @@ const serviceCategorySchema = new mongoose.Schema({
             }
         }
     ],
+    image: {
+        url: {
+            type: String,
+            required: true
+        },
+        public_id: {
+            type: String,
+            required: true
+        }
+    },
     mainCategoryId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MainCategory',
@@ -34,7 +44,13 @@ const serviceCategorySchema = new mongoose.Schema({
     },
     metaDescription: {
         type: String
-    }
+    },
+    metaKeyword: {
+        type: String
+    },
+    metafocus: {
+        type: String
+    },
 }, { timestamps: true });
 
 const ServiceCategory = mongoose.model('ServiceCategory', serviceCategorySchema);

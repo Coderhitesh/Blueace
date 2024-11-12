@@ -18,11 +18,11 @@ const serviceSchema = new mongoose.Schema({
     serviceBanner: {
         url: {
             type: String,
-            required: true
+            // required: true
         },
         public_id: {
             type: String,
-            required: true
+            // required: true
         }
     },
     description: {
@@ -36,7 +36,6 @@ const serviceSchema = new mongoose.Schema({
     active:{
         type:Boolean,
         default: true
-
     },
     metaTitle: {
         type: String

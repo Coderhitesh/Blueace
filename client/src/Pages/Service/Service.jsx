@@ -6,24 +6,24 @@ function Service() {
     const [allService, setAllService] = useState([]);
     const [allSubCategory, setAllSubCategory] = useState([]);
     const [selectedSubCategories, setSelectedSubCategories] = useState([]);
-    
+    const [searchTerm, setSearchTerm] = useState(''); // Search input state
+
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6; // Adjust items per page as needed
+    const itemsPerPage = 6;
 
     const fetchAllService = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
             setAllService(res.data.data);
         } catch (error) {
             console.log(error);
         }
     };
 
-
     const fetchSubCategory = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-main-category');
             setAllSubCategory(res.data.data);
         } catch (error) {
             console.log(error);
@@ -43,9 +43,16 @@ function Service() {
         }
     };
 
-    const filteredServices = selectedSubCategories.length > 0
-        ? allService.filter(service => selectedSubCategories.includes(service.subCategoryId._id))
-        : allService;
+    const handleSearchChange = (e) => {
+        setSearchTerm(e.target.value); // Update search term
+    };
+
+    // Filter services based on selected categories and search term
+    const filteredServices = allService.filter(service => {
+        const matchesSearchTerm = service.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSubCategory = selectedSubCategories.length === 0 || selectedSubCategories.includes(service.subCategoryId._id);
+        return matchesSearchTerm && matchesSubCategory;
+    });
 
     // Pagination Logic
     const indexOfLastService = currentPage * itemsPerPage;
@@ -68,7 +75,7 @@ function Service() {
                                 <div className="sidebar_header d-flex align-items-center justify-content-between px-4 py-3 br-bottom">
                                     <h4 className="ft-medium fs-lg mb-0">Search Filter</h4>
                                     <div className="ssh-header">
-                                        <a href="javascript:void(0);" onClick={()=>setSelectedSubCategories([])} className="clear_all ft-medium text-muted">Clear All</a>
+                                        <a href="javascript:void(0);" onClick={() => setSelectedSubCategories([])} className="clear_all ft-medium text-muted">Clear All</a>
                                         <a href="#search_open" data-bs-toggle="collapse" aria-expanded="false" role="button" className="collapsed _filter-ico ml-2">
                                             <i className="lni lni-text-align-right"></i>
                                         </a>
@@ -78,7 +85,18 @@ function Service() {
                                 <div className="sidebar-widgets collapse miz_show" id="search_open" data-bs-parent="#search_open">
                                     <div className="search-inner">
 
-                                        <div className="side-filter-box">
+                                        {/* Search Input */}
+                                        <div className=" p-2">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Search for a service"
+                                                value={searchTerm}
+                                                onChange={handleSearchChange}
+                                            />
+                                        </div>
+
+                                        <div className="side-filter-box pt-0">
                                             <div className="side-filter-box-body">
                                                 <div className="inner_widget_link">
                                                     <h6 className="ft-medium">Category</h6>
@@ -116,7 +134,7 @@ function Service() {
                                             <div className="Goodup-grid-upper">
                                                 <div className="Goodup-grid-thumb">
                                                     <Link to={`/service/${item.name}`} className="d-block text-center m-auto">
-                                                        <img src={item.serviceImage?.url} className="img-fluid" alt="" />
+                                                        <img src={item.image?.url} className="img-fluid" alt="" />
                                                     </Link>
                                                 </div>
                                             </div>
@@ -128,7 +146,7 @@ function Service() {
                                                         </Link>
                                                     </div>
                                                     <div className="Goodup-cates">
-                                                        <Link to={`/service/${item.name}`}>{item.subCategoryId?.name}</Link>
+                                                        <Link to={`/service/${item.name}`}>{item.mainCategoryId?.name}</Link>
                                                     </div>
                                                     <h4 className="mb-0 ft-medium medium">
                                                         <Link to={`/service/${item.name}`} className="text-dark fs-md">
@@ -148,8 +166,8 @@ function Service() {
                                     <ul className="pagination">
                                         {[...Array(totalPages)].map((_, index) => (
                                             <li key={index} className="page-item">
-                                                <a 
-                                                    className={`page-link ${index + 1 === currentPage ? 'active' : ''}`} 
+                                                <a
+                                                    className={`page-link ${index + 1 === currentPage ? 'active' : ''}`}
                                                     href="#"
                                                     onClick={() => paginate(index + 1)}
                                                 >

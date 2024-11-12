@@ -13,17 +13,21 @@ function EditServiceCategory() {
     const editorRef = useRef(null);
     const [formData, setFormData] = useState({
         icon: null,
+        image: null,
         name: '',
         description: '',
         sliderImage: [],
-        mainCategoryId:'',
+        mainCategoryId: '',
         metaTitle: '',
         metaDescription: '',
+        metaKeyword: '',
+        metafocus: '',
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [imagePreviews, setImagePreviews] = useState([]);
     const [iconPreview, setIconPreview] = useState(null); // For single icon preview
+    const [serviceImagePreview, setServiceImagePreview] = useState(null);
 
     const handleFetchCategory = async () => {
         try {
@@ -48,14 +52,17 @@ function EditServiceCategory() {
                 setFormData({
                     name: category.name,
                     description: category.description,
-                    icon: null, 
-                    sliderImage: [], 
+                    icon: null,
+                    sliderImage: [],
                     mainCategoryId: category.mainCategoryId?._id,
                     metaTitle: category.metaTitle,
                     metaDescription: category.metaDescription,
+                    metaKeyword: category.metaKeyword,
+                    metafocus: category.metafocus,
                 });
 
                 setIconPreview(category.icon?.url || null);
+                setServiceImagePreview(category.image?.url || null);
                 setImagePreviews(category.sliderImage.map(img => img.url)); // Set existing slider images
             } catch (error) {
                 setError('Failed to load category data');
@@ -89,6 +96,18 @@ function EditServiceCategory() {
         }
     };
 
+    // Handle icon upload and preview
+    const handleServiceImageUpload = (e) => {
+        const file = e.target.files[0]; // Single file for icon
+        if (file) {
+            setFormData(prevData => ({
+                ...prevData,
+                image: file
+            }));
+            setServiceImagePreview(URL.createObjectURL(file)); // Create preview for the icon
+        }
+    };
+
     // Handle slider image upload and preview
     const handleImageUpload = (e) => {
         const files = e.target.files; // Multiple files for slider
@@ -113,6 +132,8 @@ function EditServiceCategory() {
         payload.append('mainCategoryId', formData.mainCategoryId);
         payload.append('metaTitle', formData.metaTitle);
         payload.append('metaDescription', formData.metaDescription);
+        payload.append('metaKeyword', formData.metaKeyword);
+        payload.append('metafocus', formData.metafocus);
 
         // Append icon if updated
         if (formData.icon) {
@@ -124,6 +145,11 @@ function EditServiceCategory() {
             Array.from(formData.sliderImage).forEach((image) => {
                 payload.append('sliderImage', image);
             });
+        }
+        
+        // Append image
+        if (formData.image) {
+            payload.append('image', formData.image);
         }
 
         try {
@@ -230,8 +256,38 @@ function EditServiceCategory() {
                                 style={{ display: 'none' }}
                                 onChange={handleIconUpload}
                                 name="icon"
-                                accept="image/*"
+                                 accept="image/jpeg, image/jpg, image/png, image/webp"
                             />
+                        </div>
+                    </div>
+
+                    {/* Service Image Upload */}
+                    <div className="col-md-12 mt-4">
+                        <div className="mb-3">
+                            {serviceImagePreview && (
+                                <div className="mb-3">
+                                    <h5>Service Image Preview:</h5>
+                                    <img src={serviceImagePreview} alt="Icon Preview" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                                </div>
+                            )}
+                            <label className="form-label f-w-600 mb-2">Upload Service image (Single Image)</label>
+                            <div className="dropzone card" onClick={() => document.getElementById('imageInput').click()} style={{ cursor: 'pointer' }}>
+                                <div className="dz-message needsclick text-center p-4">
+                                    <i className="fa-solid fa-cloud-arrow-up mb-3"></i>
+                                    <h6>Drop files here or click to upload.</h6>
+                                    <span className="note needsclick">(Supported formats: JPG, PNG)</span>
+                                </div>
+                            </div>
+                            <input
+                                type="file"
+                                id="imageInput"
+                                className="form-control"
+                                style={{ display: 'none' }}
+                                onChange={handleServiceImageUpload}
+                                name="image"
+                                accept="image/jpeg, image/jpg, image/png, image/webp"
+                            />
+
                         </div>
                     </div>
 
@@ -268,12 +324,12 @@ function EditServiceCategory() {
                                 className="form-control"
                                 style={{ display: 'none' }}
                                 onChange={handleImageUpload}
-                                accept="image/*"
+                                 accept="image/jpeg, image/jpg, image/png, image/webp"
                             />
                         </div>
                     </div>
 
-                    
+
                     <div className="col-md-12 mt-3">
                         <label htmlFor="metaTitle" className='form-label'>Meta Title</label>
                         <textarea
@@ -300,6 +356,34 @@ function EditServiceCategory() {
                             onChange={handleChange}
                             required={true}
                             id='metaDescription'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metaKeyword" className='form-label'>Meta Keywords</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Keywords"
+                            name='metaKeyword'
+                            value={formData.metaKeyword}
+                            onChange={handleChange}
+                            required={true}
+                            id='metaKeyword'
+                        ></textarea>
+                    </div>
+                    <div className="col-md-12 mt-3">
+                        <label htmlFor="metafocus" className='form-label'>Meta Focus</label>
+                        <textarea
+                            class="form-control"
+                            rows="5"
+                            cols="5"
+                            placeholder="Enter Meta Focus"
+                            name='metafocus'
+                            value={formData.metafocus}
+                            onChange={handleChange}
+                            required={true}
+                            id='metafocus'
                         ></textarea>
                     </div>
 

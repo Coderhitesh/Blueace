@@ -29,3 +29,17 @@
     color: #fff; /* Change text color on hover */
     box-shadow: 0 4px 20px rgba(0, 86, 179, 0.3); /* Add shadow on hover */
 }
+
+.forserviceImage{
+    height: 230px;
+    object-fit: cover;
+}
+
+@media (max-width:650px) {
+
+    .forserviceImage{
+        height: 200px;
+        object-fit: cover;
+    }
+    
+}

@@ -10,6 +10,7 @@ import technitian from './technician.png'
 import quality from './quality.png'
 import user from './user.png'
 import AboutHero from './aboutus1.webp'
+import MetaTag from '../../Components/Meta/MetaTag'
 
 
 function About() {
@@ -44,6 +45,7 @@ function About() {
           </div>
         </div>
       </section> */}
+      <MetaTag title={'About Blueace india'} />
       <div className='container-fluid p-0'>
         <div className='row p-0'>
             <img src={AboutHero} alt='About us Hero'/>

@@ -7,7 +7,7 @@ function Footer() {
   const [allService,setService] = useState([])
   const fetchService = async() => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service')
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
       setService(res.data.data)
     } catch (error) {
       console.log(error)
@@ -94,7 +94,7 @@ function Footer() {
                   <ul className="footer-menu">
                     {
                       allService && allService.map((item,index)=>(
-                        <li key={index}><Link to={`/service/${item.name}`}>- {item.name}</Link></li>
+                        <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
                   </ul>
@@ -107,7 +107,7 @@ function Footer() {
                   <ul className="footer-menu">
                   {
                       allService && allService.map((item,index)=>(
-                        <li key={index}><Link to={`/service/${item.name}`}>- {item.name}</Link></li>
+                        <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
                   </ul>

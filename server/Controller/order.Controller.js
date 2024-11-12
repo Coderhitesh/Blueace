@@ -115,27 +115,39 @@ exports.makeOrder = async (req, res) => {
 
 exports.getAllOrder = async (req, res) => {
     try {
-        const orders = await Order.find().populate('userId EstimatedBill serviceId vendorAlloted').sort({ 'createdAt': -1 })
+        const orders = await Order.find()
+            .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
+            .populate({
+                path: 'serviceId',
+                populate: {
+                    path: 'subCategoryId',
+                    model: 'ServiceCategory', // The model name for subCategoryId
+                }
+            })
+            .sort({ createdAt: -1 });
+
         if (!orders) {
             return res.status(404).json({
                 success: false,
-                message: 'No orders found'
-            })
+                message: 'No orders found',
+            });
         }
+
         res.status(200).json({
             success: true,
             message: 'Orders retrieved successfully',
-            data: orders
-        })
+            data: orders,
+        });
     } catch (error) {
-        console.log("Internal server in geting all order")
+        console.error('Internal server error in getting all orders:', error.message);
         res.status(500).json({
             success: false,
-            message: "Internal server error in getting all order",
-            error: error.message
-        })
+            message: 'Internal server error in getting all orders',
+            error: error.message,
+        });
     }
-}
+};
+
 
 exports.findOrderById = async (req, res) => {
     try {
@@ -158,8 +170,15 @@ exports.findOrderById = async (req, res) => {
                 vendorAlloted: vendorAlloted
             }]
         })
-            .populate('userId EstimatedBill serviceId vendorAlloted')
-            .sort({ createdAt: -1 });
+        .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
+        .populate({
+          path: 'serviceId',
+          populate: {
+            path: 'subCategoryId',
+            model: 'ServiceCategory', // The model name for subCategoryId
+          }
+        })
+        .sort({ createdAt: -1 });
         // console.log(orders)
         if (!orders || orders.length === 0) {
             return res.status(404).json({
@@ -203,8 +222,15 @@ exports.findOrderByUserId = async (req, res) => {
                 userId: userId
             }]
         })
-            .populate('userId EstimatedBill serviceId vendorAlloted')
-            .sort({ createdAt: -1 });
+        .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
+        .populate({
+          path: 'serviceId',
+          populate: {
+            path: 'subCategoryId',
+            model: 'ServiceCategory', // The model name for subCategoryId
+          }
+        })
+        .sort({ createdAt: -1 });
         // console.log(orders)
         if (!orders || orders.length === 0) {
             return res.status(404).json({
@@ -642,7 +668,7 @@ exports.updateBeforeWorkVideo = async (req, res) => {
             } catch (error) {
                 console.log('Error in deleting video file from local:', error)
             }
-        }else{
+        } else {
             res.status(400).json({
                 success: false,
                 message: 'Please upload a video',
@@ -692,7 +718,7 @@ exports.updateAfterWorkVideo = async (req, res) => {
             } catch (error) {
                 console.log('Error in deleting video file from local:', error)
             }
-        }else{
+        } else {
             res.status(400).json({
                 success: false,
                 message: 'Please upload a video',

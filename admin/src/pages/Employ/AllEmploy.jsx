@@ -4,6 +4,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
+import moment from 'moment';
 
 function AllEmploy() {
     const [vendors, setVendors] = useState([]);
@@ -12,6 +13,14 @@ function AllEmploy() {
     const productsPerPage = 10;
     const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
     const [selectedVendor, setSelectedVendor] = useState(null); // State for selected vendor details
+
+    // States for filter inputs
+    const [filterEmail, setFilterEmail] = useState("");
+    const [filterPhoneNumber, setFilterPhoneNumber] = useState("");
+    const [filterCompanyName, setFilterCompanyName] = useState("");
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [showFilter, setShowFilter] = useState(false);
 
     const fetchVendorDetail = async () => {
         try {
@@ -36,7 +45,18 @@ function AllEmploy() {
 
     const indexOfLastVendor = currentPage * productsPerPage;
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
-    const currentVendors = vendors.slice(indexOfFirstVendor, indexOfLastVendor);
+    const filteredUsers = vendors.filter((user) => {
+        const emailMatch = user.Email && user.Email.toLowerCase().includes(filterEmail.toLowerCase());
+        const phoneNumberMatch = user.ContactNumber && user.ContactNumber.includes(filterPhoneNumber);
+        // const companyNameMatch = user.companyName && user.companyName.toLowerCase().includes(filterCompanyName);
+
+        const userDate = new Date(user.createdAt);
+        const startDateMatch = startDate ? userDate >= new Date(startDate) : true;
+        const endDateMatch = endDate ? userDate <= new Date(endDate) : true;
+
+        return emailMatch && phoneNumberMatch && startDateMatch && endDateMatch;
+    });
+    const currentVendors = filteredUsers.slice(indexOfFirstVendor, indexOfLastVendor);
 
     const handleToggle = async (id, currentDeactiveStatus) => {
         try {
@@ -84,6 +104,54 @@ function AllEmploy() {
                 <div>Loading...</div>
             ) : (
                 <>
+                    {/* Filter Section */}
+                    <div className="filter-section mb-4">
+                        <button className="btn btn-primary" onClick={() => setShowFilter(!showFilter)}>
+                            {showFilter ? "Hide Filter" : "Show Filter"}
+                        </button>
+                        {showFilter && (
+                            <div className="mt-2 row">
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Email</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        placeholder="Search by Email"
+                                        value={filterEmail}
+                                        onChange={(e) => setFilterEmail(e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Phone Number</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        placeholder="Search by Phone Number"
+                                        value={filterPhoneNumber}
+                                        onChange={(e) => setFilterPhoneNumber(e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Starting Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-control mb-2"
+                                        value={startDate ? moment(startDate).format("YYYY-MM-DD") : ""}
+                                        onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : null)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Ending Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-control mb-2"
+                                        value={endDate ? moment(endDate).format("YYYY-MM-DD") : ""}
+                                        onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : null)}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
                     <Table
                         headers={headers}
                         elements={currentVendors.map((vendor, index) => (

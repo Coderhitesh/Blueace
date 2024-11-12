@@ -56,8 +56,8 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
 
-                                                <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
-                                                <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Before Work Video</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>After Work Video</th>
 
                                                 {/* <th style={{whiteSpace:"nowrap"}}>City</th>
                                                 <th style={{whiteSpace:"nowrap"}}>Pin Code</th>
@@ -72,9 +72,9 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 currentOrders.map((order) => (
 
                                                     <tr key={order._id}>
-                                                        {/* {console.log(order)} */}
+                                                        {console.log("order",order)}
                                                         {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
-                                                        <td>{order?.serviceId?.name}</td>
+                                                        <td>{order?.serviceId?.subCategoryId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.vendorAlloted?.companyName || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
@@ -96,6 +96,38 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                         </td>
 
                                                         <td>
+                                                            {order?.beforeWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={order?.beforeWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
+                                                            )}
+                                                        </td>
+
+                                                        <td>
+                                                            {order?.afterWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={order?.afterWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
+                                                            )}
+                                                        </td>
+
+                                                        {/* <td>
                                                             {order?.beforeWorkImage?.url ? (
                                                                 <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
                                                             ) : (
@@ -108,7 +140,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                             ) : (
                                                                 <span>No image uploaded</span>
                                                             )}
-                                                        </td>
+                                                        </td> */}
                                                         {/* <td>{order.city}</td>
                                                         <td>{order.pinCode}</td>
                                                         <td>{`${order.houseNo}, ${order.street}, ${order.nearByLandMark}`}</td> */}

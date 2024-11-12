@@ -43,7 +43,7 @@ const storage = multer.diskStorage({
 // File filter to restrict uploads to images, videos, and voice notes
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
-    'image/jpeg', 'image/png', 'video/mp4', 'video/mpeg',
+    'image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/mpeg',
     ...voiceMimeTypes // Add voice MIME types
   ];
 

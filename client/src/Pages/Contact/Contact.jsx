@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
+import MetaTag from '../../Components/Meta/MetaTag';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ function Contact() {
 
   return (
     <>
+    <MetaTag title={'Blueace india Contact'} />
       {/* ======================= Top Breadcrumbs ======================== */}
       <div style={{ backgroundColor: '#00225F' }} className="py-3">
         <div className="container">

@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import qualityAssured from './quality-assured-logo.webp';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import './subCategory.css'
+import MetaTag from '../../Components/Meta/MetaTag';
 
 function SubCategory() {
   const { title } = useParams();
   const [allService, setAllService] = useState({});
+  const [service, setService] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Function to format the title
   const formatTitle = (title) => {
     return title
       .split('-')
@@ -18,16 +20,59 @@ function SubCategory() {
       .join(' ');
   };
   const newTitle = formatTitle(title);
+  console.log("title",newTitle)
 
-  // Fetch service data from the API
-  const fetchServiceData = async () => {
+  const openModal = (item) => {
+    const modalServiceImage = document.getElementById('modalServiceImage');
+    const modalServiceName = document.getElementById('modalServiceName');
+    const modalServiceDescription = document.getElementById('modalServiceDescription');
+
+    // Set service image
+    if (item.serviceImage?.url) {
+      modalServiceImage.src = item.serviceImage.url;
+    } else {
+      modalServiceImage.src = '';
+      modalServiceImage.alt = 'No Image Available';
+    }
+
+    // Set service name
+    modalServiceName.textContent = item.name;
+
+    // Set service description using dangerouslySetInnerHTML
+    modalServiceDescription.innerHTML = item?.description || 'No description available.';
+  };
+
+
+
+  const fetchdata = async () => {
     try {
-      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-service-by-name/${newTitle}`);
-      setAllService(res.data.data);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-service-category-by-name/${newTitle}`);
+      setService(res.data.data);
+      // console.log('data', res.data.data)
     } catch (error) {
-      console.log('Internal server error in fetching services', error);
+      console.log(error);
     }
   };
+
+  const fetchAllData = async () => {
+    try {
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
+      const allData = res.data.data;
+  
+      // Apply regex search directly in the frontend filtering
+      const searchName = newTitle; // Input search term
+      const regex = new RegExp(`^${searchName}$`, 'i'); // Regex for case-insensitive matching
+  
+      // Filtering data based on regex match
+      const filterData = allData.filter((item) => regex.test(item?.subCategoryId?.name));
+  
+      console.log("filterData", filterData);
+      setAllService(filterData);
+    } catch (error) {
+      console.log('Internal server error in fetching service');
+    }
+  };
+  
 
   const handleOpenModel = () => {
     // Check if fullName is not filled or email is not filled
@@ -39,14 +84,18 @@ function SubCategory() {
       setIsModalOpen(true);
     }
   };
-  
+
+  // console.log('filterdata', allService)
+
   const handleCloseModel = () => {
     setIsModalOpen(false);
   }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    fetchServiceData();
+    // fetchServiceData();
+    fetchAllData();
+    fetchdata();
   }, [title]);
 
   // Voice Recorder Logic
@@ -93,8 +142,6 @@ function SubCategory() {
     }
   };
 
-
-
   const [formData, setFormData] = useState({
     userId: '',
     serviceId: '',
@@ -122,14 +169,15 @@ function SubCategory() {
   const [location, setLocation] = useState({ latitude: '', longitude: '' });
 
   // Update formData once the serviceId is available
-  useEffect(() => {
-    if (allService._id) {
-      setFormData((prevData) => ({
-        ...prevData,
-        serviceId: allService._id
-      }));
-    }
-  }, [allService]);
+  // console.log('service id',allService)
+  // useEffect(() => {
+  //   if (allService._id) {
+  //     setFormData((prevData) => ({
+  //       ...prevData,
+  //       serviceId: allService._id
+  //     }));
+  //   }
+  // }, [allService]);
 
   // Get user location
   const getLocation = () => {
@@ -152,8 +200,23 @@ function SubCategory() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+
+    if (name === 'serviceType') {
+      // Find the selected service from allService array
+      const selectedService = allService.find((item) => item.name === value);
+
+      // Update both serviceType and serviceId
+      setFormData({
+        ...formData,
+        serviceType: value,
+        serviceId: selectedService ? selectedService._id : '', // Set the serviceId if found
+      });
+    } else {
+      // Update other fields
+      setFormData({ ...formData, [name]: value });
+    }
   };
+
 
 
   // Handle form submission
@@ -246,20 +309,83 @@ function SubCategory() {
 
   return (
     <>
+    <MetaTag title={service.metaTitle} description={service.metaDescription} keyword={service.metaKeyword} focus={service.metafocus} />
       {/* Main Form */}
       <div className='container mb-5'>
         <div className='row mt-5'>
-          <div className='col-lg-9 col-md-9'>
+          <div className='col-lg-9 col-md-9 mb-3'>
             <div className='hero-image mb-3'>
-              <img src={allService?.serviceBanner?.url} className='rounded w-100' alt='Service Image' />
+              {service && service?.sliderImage ? (
+                <img src={service.sliderImage[0].url} className='rounded w-100' alt='Service Image' />
+              ) : (
+                <p>Loading...</p>
+              )}
+
+              {/* <img src={service?.sliderImage[0]?.url} className='rounded w-100' alt='Service Image' /> */}
             </div>
             <div className='services-content'>
               <div className='services-title'>
-                <h2 className='fw-bold'>{allService.name}</h2>
+                <h2 className='fw-bold'>{service?.name}</h2>
               </div>
-              <div className='content-body mt-3' dangerouslySetInnerHTML={{ __html: allService.description || 'No description available.' }}>
+              <div className='content-body mt-3' dangerouslySetInnerHTML={{ __html: service?.description || 'No description available.' }}>
               </div>
             </div>
+            <div className='row'>
+              {Array.isArray(allService) &&
+                allService.map((item, index) => (
+                  <div
+                    className='col-lg-4'
+                    key={index}
+                    onClick={() => openModal(item)}
+                    data-bs-toggle="modal"
+                    data-bs-target="#serviceModal"
+                  >
+                    <div>
+                      <div style={{ backgroundColor: '#E5EAF3' }} className='card p-1 border-0'>
+                        {item.serviceImage?.url ? (
+                          <img src={item.serviceImage.url} className='forserviceImage' alt={item.name} />
+                        ) : (
+                          <div className="placeholder-image">No Image Available</div>
+                        )}
+                        <h6 className='fw-semibold mt-2 mb-2 text-center'>{item.name}</h6>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+
+            <div
+              className="modal fade"
+              id="serviceModal"
+              tabIndex="-1"
+              aria-labelledby="serviceModalLabel"
+              aria-hidden="true"
+            >
+              <div className="modal-dialog">
+                <div className="modal-content">
+                  <div className="modal-header">
+                    <h5 className="modal-title" id="serviceModalLabel">Service Details</h5>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      data-bs-dismiss="modal"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                  <div className="modal-body">
+                    <img src="" alt="Service" id="modalServiceImage" className="img-fluid mb-3" />
+                    <h4 id="modalServiceName"></h4>
+                    <div
+                      id="modalServiceDescription"
+                      className="content-body mt-3"
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
           </div>
 
           {/* Sidebar */}
@@ -304,13 +430,15 @@ function SubCategory() {
                         required
                       >
                         <option value=''>Select Service Type:</option>
-                        <option value='Service'>Service</option>
-                        <option value='AMC'>AMC</option>
-                        <option value='New Purchase'>New Purchase</option>
-                        <option value='Consultation'>Consultation</option>
+                        {Array.isArray(allService) &&
+                          allService.map((item, index) => (
+                            <option key={index} value={item.name}>
+                              {item.name}
+                            </option>
+                          ))}
                       </select>
-
                     </div>
+
 
                     <div className='col-lg-12'>
                       <div className='form-group fs-6 text-white mb-2 mt-2'>
@@ -344,7 +472,7 @@ function SubCategory() {
                       <textarea className='form-control messagearea' name='message' placeholder='Message' required onChange={handleChange} />
                     </div>
                     <div className='mb-3 col-lg-12 text-center'>
-                      <button type='button' onClick={handleOpenModel} className='btn btn-primary rounded'  data-bs-target='#exampleModal'>
+                      <button type='button' onClick={handleOpenModel} className='btn btn-primary rounded' data-bs-target='#exampleModal'>
                         Send Message
                       </button>
                     </div>
@@ -357,7 +485,7 @@ function SubCategory() {
       </div>
 
       {/* // Modal for Address Entry */}
-      <div className='modal '     style={{ display: `${isModalOpen ? 'block' : 'none'}` }} id='exampleModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+      <div className='modal ' style={{ display: `${isModalOpen ? 'block' : 'none'}` }} id='exampleModal' tabIndex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true'>
         <div className='modal-dialog'>
           <div className='modal-content'>
             <div className='modal-header'>

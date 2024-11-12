@@ -11,10 +11,12 @@ import Services from '../../Components/Services/Services'
 import Testimonial from '../../Components/Testimonial/Testimonial'
 import HomeBanner from '../../Components/HomeInnerBanner/HomeBanner'
 import OurValue from '../../Components/Value/OurValue'
+import MetaTag from '../../Components/Meta/MetaTag'
 
 function Home() {
   return (
     <div>
+      <MetaTag title={'Blueace india'} />
       <Hero />
       <CategoryHome />
       <FeatureListHome />   

@@ -3,6 +3,7 @@ import './GalleryPage.css';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal } from 'react-bootstrap';
+import MetaTag from '../../Components/Meta/MetaTag';
 
 function GalleryPage() {
     const [images, setImages] = useState([]);
@@ -50,6 +51,7 @@ function GalleryPage() {
 
     return (
         <>
+        <MetaTag title={'Blueace india gallery'} />
             <div className="gallery-section">
                 <div className="gallery-container container">
                     <ul className="nav nav-tabs forbg" id="galleryTab" role="tablist">

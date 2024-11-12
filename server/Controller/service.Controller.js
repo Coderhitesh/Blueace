@@ -6,6 +6,7 @@ exports.createService = async (req, res) => {
     const uploadedImages = [];
     try {
         const { name, description, subCategoryId, metaTitle, metaDescription, categoryId } = req.body;
+        console.log("i am hit")
         const emptyField = [];
         if (!name) emptyField.push('name');
         if (!description) emptyField.push('description');
@@ -53,11 +54,6 @@ exports.createService = async (req, res) => {
                 };
                 uploadedImages.push(imgUrl.public_id);
                 await fs.unlink(serviceBanner[0].path);
-            } else {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Please upload a service banner'
-                });
             }
         }
 
