@@ -154,6 +154,24 @@ const VendorSchema = new mongoose.Schema({
     },
     paymentMethod:{
         type:String
+    },
+    readyToWork: {
+        type: Boolean,
+        default: true
+    },
+    workingHour: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'WorkingHours',
+    },
+    averageRating: {
+        type: Number
+    },
+    VerifyOTP: {
+        type: Number
+    },
+    verifyed: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true })
 

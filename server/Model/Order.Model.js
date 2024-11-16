@@ -119,9 +119,9 @@ const OrderSchema = new mongoose.Schema({
             // required: true
         },
     },
-    EstimatedBill:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'EstimatedBudget'
+    EstimatedBill: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'EstimatedBudget'
     },
     orderTime: {
         type: Date
@@ -146,6 +146,9 @@ const OrderSchema = new mongoose.Schema({
             // required: true
         },
     },
+    AllowtedVendorMember: {
+        type: String
+    }
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

@@ -53,6 +53,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Company</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Email</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Number</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Allowted Member</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
 
@@ -79,6 +80,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                         <td>{order?.vendorAlloted?.companyName || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.ContactNumber || "Vendor is not allowted"}</td>
+                                                        <td>{order.AllowtedVendorMember || 'No Member Allowted'}</td>
                                                         <td>{order.OrderStatus}</td>
                                                         <td>
                                                             <button

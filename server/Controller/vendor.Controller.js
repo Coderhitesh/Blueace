@@ -168,12 +168,12 @@ exports.registerVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-        
+
                 // Unlink after successful upload
                 if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
                     await fs.unlink(gstImage[0].path);
                     console.log("File unlinked successfully");
-                } 
+                }
                 else {
                     console.warn("File not found, skipping unlink:", gstImage[0].path);
                 }
@@ -286,6 +286,38 @@ exports.registerVendor = async (req, res) => {
         });
     }
 };
+
+exports.updateReadyToWork = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const { readyToWork } = req.body;
+        const existingVendor = await Vendor.findById(id)
+
+        if (!existingVendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'Vendor is not founded'
+            })
+        }
+
+        existingVendor.readyToWork = readyToWork;
+        await existingVendor.save()
+
+        res.status(200).json({
+            success: true,
+            message: 'Vendor updated successfully',
+            data: existingVendor
+        })
+
+    } catch (error) {
+        console.log("Internal server error in updating ready to work", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in updating ready to work',
+            error: error.message
+        })
+    }
+}
 
 exports.addVendorMember = async (req, res) => {
     try {
@@ -496,7 +528,7 @@ exports.updateMember = async (req, res) => {
         const { vendorId, memberId } = req.params;
         // console.log("vendorId",vendorId)
         // console.log("memberId",memberId)
-    
+
         const { name } = req.body;
         const memberAdharImage = req.file;
 
@@ -607,7 +639,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
             // res.redirect('http://localhost:5174/successfull-payment')
             res.status(200).json({
                 success: true,
-                data:  vendor
+                data: vendor
             })
         }
 
@@ -744,7 +776,7 @@ exports.vendorLogin = async (req, res) => {
         const availablevendor = await Vendor.findOne({ Email })
 
         if (!availablevendor) {
-            return res.staus(400).json({
+            return res.status(400).json({
                 success: false,
                 message: 'Vendor not found'
             })
@@ -854,7 +886,7 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
 
         const existingVendor = await Vendor.findOne({ Email });
         if (!existingVendor) {
-            return res.staus(404).json({
+            return res.status(404).json({
                 success: false,
                 message: 'Vendor not found'
             })
@@ -916,8 +948,11 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
             OtpExpiredTime: { $gt: Date.now() }
         });
 
+        console.log("vendor",vendor)
+        console.log("Email",Email)
+
         if (!vendor) {
-            return res.staus(400).json({
+            return res.status(400).json({
                 success: false,
                 message: 'Invalid OTP or OTP has expired',
             })
@@ -948,7 +983,7 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
 
         await sendEmail(successEmailOptions)
 
-        res.staus(200).json({
+        res.status(200).json({
             success: true,
             message: 'Password changed successfully',
         })
@@ -1000,7 +1035,7 @@ exports.vendorResendOTP = async (req, res) => {
 
         await sendEmail(emailOptions);
 
-        res.staus(200).json({
+        res.status(200).json({
             success: true,
             message: 'New OTP sent successfully. Check your email.'
         })
@@ -1016,7 +1051,7 @@ exports.vendorResendOTP = async (req, res) => {
 
 exports.getAllVendor = async (req, res) => {
     try {
-        const allVendor = await Vendor.find().populate('memberShipPlan')
+        const allVendor = await Vendor.find().populate('memberShipPlan workingHour')
         if (!allVendor) {
             return res.status(404).json({
                 success: false,
@@ -1269,7 +1304,7 @@ exports.updateVendor = async (req, res) => {
 exports.getSingleVendor = async (req, res) => {
     try {
         const vendorId = req.params._id;
-        const vendor = await Vendor.findById(vendorId).populate('memberShipPlan');
+        const vendor = await Vendor.findById(vendorId).populate('memberShipPlan workingHour');
         if (!vendor) {
             return res.status(400).json({
                 success: false,
@@ -1289,5 +1324,220 @@ exports.getSingleVendor = async (req, res) => {
             error: error.message
         })
 
+    }
+}
+
+exports.sendOtpForVerification = async (req, res) => {
+    try {
+        console.log("i am hit")
+        const { Email } = req.body;
+        if (!Email) {
+            return res.status(400).json({
+                success: false,
+                message: "Email is required"
+            })
+        }
+
+        const vendor = await Vendor.findOne({ Email });
+        if (!vendor) {
+            return res.status(400).json({
+                success: false,
+                message: "Vendor not found"
+            })
+        }
+
+        const OTP = Math.floor(100000 + Math.random() * 900000);
+        const OTPExpires = new Date();
+        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
+
+        // await Vendor.findOneAndUpdate(
+        //     { Email },
+        //     {
+        //         $set: {
+        //             VerifyOTP: OTP,
+        //             OtpExpiredTime: OTPExpires
+        //         }
+        //     },
+        //     { new: true }
+        // )
+
+        vendor.VerifyOTP = OTP,
+            vendor.OtpExpiredTime = OTPExpires
+        await vendor.save()
+
+        const emailOptions = {
+            email: Email,
+            subject: 'Account Verification OTP',
+            message: `
+                <html>
+                <head>
+                </head>
+                <body>
+                    <p>Hello,</p>
+                    <p>Your OTP for verifying your account is: <strong>${OTP}</strong></p>
+                    <p>Please enter this OTP within 10 minutes to complete your account verification.</p>
+                    <p>If you did not request this, please disregard this email.</p>
+                    <br>
+                    <p>Best Regards,</p>
+                    <p>Team Blueace India</p>
+                </body>
+                </html>
+            `
+        };
+
+
+        await sendEmail(emailOptions)
+
+        res.status(200).json({
+            success: true,
+            message: "OTP sent successfully"
+        })
+
+    } catch (error) {
+        console.log("Internal server error in sending otp for verifing vendor", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        })
+    }
+}
+
+exports.verifyVendor = async (req, res) => {
+    try {
+        const { Email, VerifyOTP } = req.body;
+
+        // console.log("Email",Email)
+
+        // Check if the Email is provided
+        if (!Email) {
+            return res.status(400).json({
+                success: false,
+                message: 'Email is required',
+            });
+        }
+
+        // Find the vendor by email
+        const vendor = await Vendor.findOne({ Email });
+        if (!vendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'Vendor not found',
+            });
+        }
+
+        // Check if OTP has expired
+        const currentTime = new Date();
+        if (vendor.OtpExpiredTime && currentTime > vendor.OtpExpiredTime) {
+            return res.status(400).json({
+                success: false,
+                message: 'OTP has expired. Please request a new one.',
+            });
+        }
+
+        // Verify the OTP
+        // if (vendor.VerifyOTP !== VerifyOTP) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Invalid OTP',
+        //     });
+        // }
+
+        if (String(vendor.VerifyOTP) !== String(VerifyOTP)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid OTP',
+            });
+        }
+
+
+        vendor.verifyed = true;
+        vendor.VerifyOTP = '';
+        vendor.OtpExpiredTime = null;
+        await vendor.save();
+
+
+        // Generate token if OTP is correct
+        // const token = await generateToken(vendor._id);
+        res.status(200).json({
+            success: true,
+            message: 'Vendor verified successfully',
+            data: vendor,
+        });
+    } catch (error) {
+        console.error("Internal server error in verifying vendor", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};
+
+exports.resendVerifyOtp = async (req, res) => {
+    try {
+        const { Email } = req.body;
+        const vendor = await Vendor.findOne({ Email })
+
+        if (!vendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'Vendor not found',
+            })
+        }
+
+        const OTP = Math.floor(100000 + Math.random() * 900000);
+        const OTPExpires = new Date();
+        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
+
+        // await Vendor.findOneAndUpdate(
+        //     { Email },
+        //     {
+        //         $set: {
+        //             VerifyOTP: OTP,
+        //             OtpExpiredTime: OTPExpires
+        //         }
+        //     },
+        //     { new: true }
+        // )
+
+        vendor.VerifyOTP = OTP,
+            vendor.OtpExpiredTime = OTPExpires
+        await vendor.save()
+
+        const emailOptions = {
+            email: Email,
+            subject: 'Resend: Verify Your Account with OTP',
+            message: `
+                <html>
+                <head>
+                </head>
+                <body>
+                    <p>Dear User,</p>
+                    <p>We noticed that you requested to resend the OTP for verifying your account. Your new OTP is: <strong>${OTP}</strong></p>
+                    <p>Please use this OTP within the next 10 minutes to complete your account verification process.</p>
+                    <p>If you did not request this, please ignore this email.</p>
+                    <br>
+                    <p>Thank you,</p>
+                    <p>Team Blueace India</p>
+                </body>
+                </html>
+            `
+        };
+
+
+        await sendEmail(emailOptions)
+
+        res.status(200).json({
+            success: true,
+            message: "OTP Resent successfully"
+        })
+
+    } catch (error) {
+        console.log("Internal server error in resending otp", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in resending otp',
+        })
     }
 }

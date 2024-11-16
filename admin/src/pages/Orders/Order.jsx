@@ -72,7 +72,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = allOrders.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Image Upload", "After Image Upload", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -145,6 +145,8 @@ function Order() {
                                     )}
                                 </td>
 
+                                <td className='fw-bolder'>{vendor?.AllowtedVendorMember || 'Not Allowted'}</td>
+
                                 <td className='fw-bolder'>
                                     {vendor?.userId?.UserType === 'Corporate' ? (
                                         <select
@@ -182,7 +184,7 @@ function Order() {
                                     {vendor.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                 </td>
                                 
-                                <td className='fw-bolder'>
+                                {/* <td className='fw-bolder'>
                                     {vendor?.beforeWorkImage?.url ? (
                                         <img style={{ width: '100px', height: '80px' }} src={vendor?.beforeWorkImage?.url} alt={vendor?.serviceId?.name} />
                                     ) : (
@@ -195,7 +197,38 @@ function Order() {
                                     ) : (
                                         <span>No image uploaded</span>
                                     )}
-                                </td>
+                                </td> */}
+                                <td>
+                                                            {vendor?.beforeWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={vendor?.beforeWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
+                                                            )}
+                                                        </td>
+
+                                                        <td>
+                                                            {vendor?.afterWorkVideo?.url ? (
+                                                                <video
+                                                                    width="200"
+                                                                    height="120"
+                                                                    controls
+                                                                    style={{ borderRadius: '5px' }}
+                                                                >
+                                                                    <source src={vendor?.afterWorkVideo?.url} type="video/mp4" />
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            ) : (
+                                                                <span>No video uploaded</span>
+                                                            )}
+                                                        </td>
                                 <td>
                                     <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                         Delete

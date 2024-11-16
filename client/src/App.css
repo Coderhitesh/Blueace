@@ -43,3 +43,92 @@
     }
     
 }
+
+
+
+
+/* Basic styling for the modal */
+.modal-content-hitesh {
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #fff;
+    width: 100%;
+    position: relative; /* Ensure it can stack above backdrop */
+    z-index: 1050; /* Ensure modal content is above backdrop */
+    pointer-events: auto; /* Ensure the modal content can receive clicks */
+}
+
+/* Ensure modal backdrop has a lower z-index than modal content */
+.modal-backdrop {
+    z-index: 1040 !important; /* Ensure it's below the modal content */
+    pointer-events: none; /* Prevent backdrop from blocking clicks */
+}
+
+/* Close button (x) styling */
+.modal-content-hitesh .text-right.cross {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    z-index: 1060; /* Ensure it's clickable and above content */
+}
+
+/* Stars styling */
+.modal-content-hitesh .star {
+    font-size: 40px; /* Large stars */
+    color: #ddd; /* Default color */
+    cursor: pointer;
+    transition: color 0.3s ease;
+    margin: 0 5px;
+    pointer-events: auto; /* Allow clicks on stars */
+}
+
+.modal-content-hitesh .star.filled {
+    color: gold; /* Gold color when clicked */
+}
+
+.modal-content-hitesh .star.hover {
+    color: #f4c542; /* Highlight color on hover */
+}
+
+.modal-content-hitesh .comment-area {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.modal-content-hitesh .text-center {
+    text-align: center;
+}
+
+.modal-content-hitesh .modal-body {
+    padding: 20px;
+}
+
+/* Submit button styling */
+.modal-content-hitesh .send {
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-transform: uppercase;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    transition: background-color 0.3s ease;
+    pointer-events: auto; /* Ensure button is clickable */
+}
+
+.modal-content-hitesh .send:hover {
+    background-color: #218838;
+}
+
+/* Comment area */
+.modal-content-hitesh .comment-area textarea {
+    width: 100%;
+    height: 120px;
+    font-size: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    resize: none;
+}

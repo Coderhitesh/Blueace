@@ -14,17 +14,6 @@ exports.makeOrder = async (req, res) => {
         const emptyField = [];
         if (!userId) emptyField.push('User');
         if (!serviceId) emptyField.push('Service');
-        // if (!fullName) emptyField.push('Full Name');
-        // if (!email) emptyField.push('Email');
-        // if (!phoneNumber) emptyField.push('Phone Number');
-        // if (!serviceType) emptyField.push('Service Type');
-        // if (!city) emptyField.push('City');
-        // if (!pinCode) emptyField.push('Pin Code');
-        // if (!houseNo) emptyField.push('House No');
-        // if (!street) emptyField.push('Street');
-        // if (!nearByLandMark) emptyField.push('NearByLandMark');
-
-        // If there are any empty fields, return an error response
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -170,15 +159,15 @@ exports.findOrderById = async (req, res) => {
                 vendorAlloted: vendorAlloted
             }]
         })
-        .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
-        .populate({
-          path: 'serviceId',
-          populate: {
-            path: 'subCategoryId',
-            model: 'ServiceCategory', // The model name for subCategoryId
-          }
-        })
-        .sort({ createdAt: -1 });
+            .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
+            .populate({
+                path: 'serviceId',
+                populate: {
+                    path: 'subCategoryId',
+                    model: 'ServiceCategory', // The model name for subCategoryId
+                }
+            })
+            .sort({ createdAt: -1 });
         // console.log(orders)
         if (!orders || orders.length === 0) {
             return res.status(404).json({
@@ -222,15 +211,15 @@ exports.findOrderByUserId = async (req, res) => {
                 userId: userId
             }]
         })
-        .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
-        .populate({
-          path: 'serviceId',
-          populate: {
-            path: 'subCategoryId',
-            model: 'ServiceCategory', // The model name for subCategoryId
-          }
-        })
-        .sort({ createdAt: -1 });
+            .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
+            .populate({
+                path: 'serviceId',
+                populate: {
+                    path: 'subCategoryId',
+                    model: 'ServiceCategory', // The model name for subCategoryId
+                }
+            })
+            .sort({ createdAt: -1 });
         // console.log(orders)
         if (!orders || orders.length === 0) {
             return res.status(404).json({
@@ -412,7 +401,7 @@ exports.fetchVendorByLocation = async (req, res) => {
         }
 
         const userType = findOrder.userId?.UserType; // Optional chaining to avoid undefined errors
-        console.log("userType", userType)
+        // console.log("userType", userType)
 
         if (userType === 'Corporate') {
             // console.log("Entered in corporate section");
@@ -457,8 +446,9 @@ exports.fetchVendorByLocation = async (req, res) => {
             .limit(parseInt(limit))
             .skip(skip);
 
+            const filterWithActive = locationResults.filter((vendor) => vendor.readyToWork == true);
 
-        const totalPages = Math.ceil(locationResults.length / limit);
+        const totalPages = Math.ceil(filterWithActive.length / limit);
 
         res.status(201).json({
             success: true,
@@ -466,7 +456,7 @@ exports.fetchVendorByLocation = async (req, res) => {
             currentPage: parseInt(Page),
             limit: parseInt(limit),
             totalPages,
-            data: locationResults,
+            data: filterWithActive,
             message: 'Vendors fetched successfully',
         });
 
@@ -674,7 +664,7 @@ exports.updateBeforeWorkVideo = async (req, res) => {
                 message: 'Please upload a video',
             })
         }
-        order.OrderStatus = "Service Done"
+        // order.OrderStatus = "Service Done"
         const updatedOrder = await order.save()
 
         res.status(200).json({
@@ -737,6 +727,37 @@ exports.updateAfterWorkVideo = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Internal server error in uploading before work video",
+            error: error.message
+        })
+    }
+}
+
+exports.AllowtVendorMember = async (req, res) => {
+    try {
+        // console.log("i am hit")
+        const id = req.params._id;
+        const { AllowtedVendorMember } = req.body;
+        const order = await Order.findById(id)
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found'
+            })
+        }
+
+        order.AllowtedVendorMember = AllowtedVendorMember
+        await order.save()
+        res.status(200).json({
+            success: true,
+            message: 'Allowt Vendor Member is updated',
+            data: order
+        })
+
+    } catch (error) {
+        console.log('Internal server error in allowing vendor member', error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error in allowing vendor member",
             error: error.message
         })
     }

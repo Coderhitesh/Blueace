@@ -1,12 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import DashboardContent from './DashboardContent';
-import MyListing from './MyListing';
-import AddListing from './AddListing';
-import SaveListing from './SaveListing';
-import MyBooking from './MyBooking';
-import Wallet from './Wallet';
-// import Profile from './Profile';
-import ChangePassword from './ChangePassword';
 import VendorDashboard from './VendorData/VendorDashboard';
 import axios from 'axios'
 import AllVendorOrder from './VendorData/AllVendorOrder';
@@ -19,13 +11,25 @@ import VendorChangePassword from './VendorData/VendorChangePassword';
 import VendorMember from './VendorData/VendorMember';
 import AddVendorMember from './VendorData/AddVendorMember';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import AddTimingSlot from './VendorData/AddTimingSlot';
+import EditTimingSlot from './VendorData/EditTimingSlot';
+import VerifyAccount from './VendorData/VerifyAccount';
+import StarRating from '../../Components/StarRating/StarRating';
 
 function Dashboard() {
     const navigate = useNavigate();
     const [activeOrder, setActiveOrder] = useState([]);
     const [allOrder, setAllOrder] = useState([]);
+    const [allCompleteOrderCount, setCompleteOrderCount] = useState(0)
+    const [allCancelOrderCount, setCancelOrderCount] = useState(0)
     const [activeTab, setActiveTab] = useState('Dashboard');
     const url = window.location.hash.substring(1);
+
+    const [collapseState, setCollapseState] = useState(false);
+
+    const toggleCollapse = () => {
+        setCollapseState(prevState => !prevState);
+    };
 
     useEffect(() => {
         window.scrollTo({
@@ -40,8 +44,28 @@ function Dashboard() {
     const userId = userDataMain?._id;
     // console.log("userDataMain", userDataMain)
     const role = userDataMain?.Role
+    const isVerified = userData.verifyed
+    const slotAdded = userData?.workingHour
+    const [readyToWork, setReadyToWork] = useState(userData?.readyToWork || true);
 
-    // console.log("userData",userData)
+    useEffect(() => {
+        const fetchOrderById = async () => {
+            try {
+                const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
+                setAllOrder(res.data.data)
+                const allData = res.data.data
+                const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
+                setActiveOrder(activeData)
+                const completeData = allData.filter((item) => item.OrderStatus === 'Service Done')
+                setCompleteOrderCount(completeData.length)
+                const cancelOrderData = allData.filter((item) => item.OrderStatus === 'Cancelled')
+                setCancelOrderCount(cancelOrderData.length)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchOrderById()
+    }, [])
 
     const findUser = async () => {
         try {
@@ -52,39 +76,11 @@ function Dashboard() {
         }
     }
 
-    const fetchOrderById = async () => {
-        try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
-            setAllOrder(res.data.data)
-            // console.log("order by id",res.data.data)
-            const allData = res.data.data
-            const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
-            setActiveOrder(activeData)
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
-    // console.log("activeOrder",activeOrder)
-
-    // const fetchOrderData = async () => {
-    //     try {
-    //         const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
-    //         const orderData = res.data.data;
-    //         const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
-    //         console.log("filterdata",filterData)
-    //         setAllOrder(filterData);
-    //         const filterStatusData = filterData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
-    //         setActiveOrder(filterStatusData);
-    //     } catch (error) {
-    //         toast.error(error.response?.data.message || 'Internal server error in fetching orderData');
-    //     }
-    // };
 
     useEffect(() => {
-        // fetchOrderData();
         findUser();
-        fetchOrderById();
+        // fetchOrderById();
     }, []);
 
     useEffect(() => {
@@ -107,6 +103,23 @@ function Dashboard() {
             navigate('/sign-in');
         } catch (error) {
             toast.error(error?.response?.data?.msg || 'Internal server error during logout');
+        }
+    };
+
+    const handleChangeReadyToWork = async () => {
+        try {
+            // console.log('i am hit')
+            const updatedStatus = !readyToWork;
+            setReadyToWork(updatedStatus);
+
+            await axios.put(
+                `https://www.api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
+                { readyToWork: updatedStatus }
+            );
+            toast.success('Status successfully');
+        } catch (error) {
+            console.error("Error updating ready to work status:", error);
+            toast.error("Failed to update status");
         }
     };
 
@@ -167,7 +180,7 @@ function Dashboard() {
                                     {userData ? (
                                         <img
                                             src={
-                                                userData?.userImage?.url ||
+                                                userData?.vendorImage?.url ||
                                                 `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.companyName || 'User')}&background=random`
                                             }
                                             className="img-fluid"
@@ -188,11 +201,12 @@ function Dashboard() {
                                         </span>
                                     </div>
                                     <div className="listing-rating high">
+                                        {/* <i className="fas fa-star active"></i>
                                         <i className="fas fa-star active"></i>
                                         <i className="fas fa-star active"></i>
                                         <i className="fas fa-star active"></i>
-                                        <i className="fas fa-star active"></i>
-                                        <i className="fas fa-star active"></i>
+                                        <i className="fas fa-star active"></i> */}
+                                        <StarRating rating={userData.averageRating || 0} />
                                     </div>
                                 </div>
                             </div>
@@ -204,15 +218,12 @@ function Dashboard() {
             <div className="goodup-dashboard-wrap gray px-4 py-5">
                 <a
                     className="mobNavigation"
-                    data-bs-toggle="collapse"
-                    href="#MobNav"
                     role="button"
-                    aria-expanded="false"
-                    aria-controls="MobNav"
+                    onClick={toggleCollapse}
                 >
                     <i className="fas fa-bars me-2"></i>Dashboard Navigation
                 </a>
-                <div className="collapse" id="MobNav">
+                <div className={`collapse ${collapseState ? 'show' : ''}`} id="MobNav">
                     <div className="goodup-dashboard-nav">
                         {
                             role === 'employ' && (
@@ -233,16 +244,17 @@ function Dashboard() {
                                                 <i className="lni lni-add-files me-2"></i>All Orders
                                             </a>
                                         </li>
-                                        {/* <li onClick={() => handleTabClick('members')} className={`${activeTab === 'members' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-bookmark me-2"></i>Member
-                                    </a>
-                                </li>
-                                <li onClick={() => handleTabClick('add-members')} className={`${activeTab === 'add-members' ? 'active' : ''}`}>
-                                    <a>
-                                        <i className="lni lni-bookmark me-2"></i>Add Member
-                                    </a>
-                                </li> */}
+                                        {/* <li onClick={() => handleTabClick('add-slot-time')} className={`${activeTab === 'add-slot-time' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-bookmark me-2"></i>Add Slot Time
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('edit-slot-time')} className={`${activeTab === 'edit-slot-time' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-bookmark me-2"></i>Edit Slot Time
+                                            </a>
+                                        </li> */}
+
                                     </ul>
                                     <ul data-submenu-title="My Accounts">
                                         <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
@@ -298,6 +310,29 @@ function Dashboard() {
                                                 <i className="lni lni-bookmark me-2"></i>Add Member
                                             </a>
                                         </li>
+                                        {
+                                            !slotAdded && (
+                                                <li onClick={() => handleTabClick('add-slot-time')} className={`${activeTab === 'add-slot-time' ? 'active' : ''}`}>
+                                                    <a>
+                                                        <i className="lni lni-bookmark me-2"></i>Add Slot Time
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
+                                        <li onClick={() => handleTabClick('edit-slot-time')} className={`${activeTab === 'edit-slot-time' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-bookmark me-2"></i>Edit Slot Time
+                                            </a>
+                                        </li>
+                                        {
+                                            isVerified === false && (
+                                                <li onClick={() => handleTabClick('verify-account')} className={`${activeTab === 'verify-account' ? 'active' : ''}`}>
+                                                    <a>
+                                                        <i className="lni lni-bookmark me-2"></i>Verify Account
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
                                     </ul>
                                     <ul data-submenu-title="My Accounts">
                                         <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
@@ -324,17 +359,18 @@ function Dashboard() {
                                 </div>
                             )
                         }
-
                     </div>
                 </div>
-
-                {activeTab === 'Dashboard' && <VendorDashboard userData={userData} />}
+                {activeTab === 'Dashboard' && <VendorDashboard handleChangeReadyToWork={handleChangeReadyToWork} readyToWork={readyToWork} userData={userData} allOrder={allOrder} activeOrder={activeOrder} allCompleteOrderCount={allCompleteOrderCount} allCancelOrderCount={allCancelOrderCount} />}
                 {activeTab === 'Active-Order' && <ActiveVendorOrder userData={userData} activeOrder={activeOrder} />}
                 {activeTab === 'All-Order' && <AllVendorOrder userData={userData} allOrder={allOrder} />}
                 {activeTab === 'members' && <VendorMember userData={userData} />}
                 {activeTab === 'add-members' && <AddVendorMember userData={userData} />}
                 {activeTab === 'profile' && <VendorProfile userData={userData} />}
                 {activeTab === 'changePassword' && <VendorChangePassword userData={userData} />}
+                {activeTab === 'add-slot-time' && <AddTimingSlot userData={userData} />}
+                {activeTab === 'edit-slot-time' && <EditTimingSlot userData={userData} />}
+                {activeTab === 'verify-account' && <VerifyAccount userData={userData} />}
             </div>
         </>
     );

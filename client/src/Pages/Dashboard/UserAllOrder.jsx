@@ -1,16 +1,67 @@
+import axios from 'axios';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 function UserAllOrder({ userData, allOrder }) {
+
+    const [showModal, setShowModal] = useState(false);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState('');
+    // console.log("total order user",userData)
+
+    const openModal = () => {
+        setShowModal(true);
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
+    const handleRatingChange = (value) => {
+        setRating(value);
+    };
+
+    const handleCommentChange = (event) => {
+        setComment(event.target.value);
+    };
+
+    const handleSubmitReview = async (orderId, vendorId) => {
+        // console.log('user id' , userData)
+        // Prepare data to send in the request
+        const reviewData = {
+            rating,
+            review: comment,
+            vendorId,
+            userId: userData._id, // Assuming userData contains the logged-in user's ID
+        };
+
+        try {
+            // Send POST request to the backend to submit the review
+            const response = await axios.post('https://www.api.blueaceindia.com/api/v1/create-vendor-rating', reviewData);
+
+            if (response.data.success) {
+                toast.success('Rating submitted successfully!')
+                // alert('Rating submitted successfully!');
+                closeModal(); // Close the modal after successful submission
+            } else {
+                alert(`Error: ${response.data.message}`);
+            }
+        } catch (error) {
+            console.log('Error submitting rating:', error);
+            // alert('There was an error submitting your review.');
+            toast.error('There was an error submitting your review.')
+        }
+    };
+
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
 
-    // Calculate the current orders to display
     const indexOfLastOrder = currentPage * itemsPerPage;
     const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
     const currentOrders = allOrder.slice(indexOfFirstOrder, indexOfLastOrder);
 
-    // Handle page change
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
@@ -47,34 +98,34 @@ function UserAllOrder({ userData, allOrder }) {
                                     <table className="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                {/* <th style={{ whiteSpace: "nowrap" }}>Service Image</th> */}
+                                                <th style={{ whiteSpace: "nowrap" }}>Review</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Service Name</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Service Type</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Company</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Email</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Number</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Allowted Member</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
-                                                {/* <th style={{whiteSpace:"nowrap"}}>City</th>
-                                              <th style={{whiteSpace:"nowrap"}}>Pin Code</th>
-                                              <th style={{whiteSpace:"nowrap"}}>Address</th>
-                                              <th style={{whiteSpace:"nowrap"}}>Message</th> */}
-                                                {/* <th style={{whiteSpace:"nowrap"}}>Voice Note</th> */}
-                                                {/* <th style={{whiteSpace:"nowrap"}}>Created At</th> */}
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {currentOrders && currentOrders.length > 0 ? (
                                                 currentOrders.map((order) => (
                                                     <tr key={order._id}>
-                                                        {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
+                                                        <td style={{ whiteSpace: 'nowrap' }}>
+                                                            <button type="button" className="btn btn-danger" onClick={openModal}>
+                                                                Give Review
+                                                            </button>
+                                                        </td>
                                                         <td>{order?.serviceId?.subCategoryId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.vendorAlloted?.companyName || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.ContactNumber || "Vendor is not allowted"}</td>
+                                                        <td>{order.AllowtedVendorMember || 'No Member Allowted'}</td>
                                                         <td>{order.OrderStatus}</td>
                                                         <td>
                                                             <button
@@ -90,20 +141,6 @@ function UserAllOrder({ userData, allOrder }) {
                                                             </button>
 
                                                         </td>
-                                                        {/* <td>
-                                                            {order?.beforeWorkImage?.url ? (
-                                                                <img style={{ width: '100px', height: '80px' }} src={order?.beforeWorkImage?.url} alt={order?.serviceId?.name} />
-                                                            ) : (
-                                                                <span>No image uploaded</span>
-                                                            )}
-                                                        </td>
-                                                        <td>
-                                                            {order?.afterWorkImage?.url ? (
-                                                                <img style={{ width: '100px', height: '80px' }} src={order?.afterWorkImage?.url} alt={order?.serviceId?.name} />
-                                                            ) : (
-                                                                <span>No image uploaded</span>
-                                                            )}
-                                                        </td> */}
                                                         <td>
                                                             {order?.beforeWorkVideo?.url ? (
                                                                 <video
@@ -135,19 +172,57 @@ function UserAllOrder({ userData, allOrder }) {
                                                                 <span>No video uploaded</span>
                                                             )}
                                                         </td>
-                                                        {/* <td>{order.city}</td>
-                                                      <td>{order.pinCode}</td>
-                                                      <td>{`${order.houseNo}, ${order.street}, ${order.nearByLandMark}`}</td> */}
-                                                        {/* <td>{order.message}</td> */}
-                                                        {/* <td>
-                                                          {order.voiceNote && (
-                                                              <audio controls>
-                                                                  <source src={order.voiceNote.url} type="audio/webm" />
-                                                                  Your browser does not support the audio element.
-                                                              </audio>
-                                                          )}
-                                                      </td> */}
-                                                        {/* <td>{new Date(order.createdAt).toLocaleString()}</td> */}
+                                                        {/* Review Modal */}
+                                                        {showModal && (
+                                                            <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div className="modal-dialog modal-dialog-centered" role="document">
+                                                                    <div className="modal-content-hitesh">
+                                                                        <div className="text-right cross" onClick={closeModal} style={{ cursor: 'pointer' }}>
+                                                                            <i className="fa fa-times mr-2"></i>
+                                                                        </div>
+                                                                        <div className="card-body text-center">
+                                                                            <img src="https://i.imgur.com/d2dKtI7.png" height="100" width="100" alt="Review" className="mb-4" />
+                                                                            <h4 className="mb-4">Add a Comment and Rate</h4>
+
+                                                                            {/* Rating Section */}
+                                                                            <div className="rating mb-4">
+                                                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                                                    <span
+                                                                                        key={star}
+                                                                                        onClick={() => handleRatingChange(star)}
+                                                                                        onMouseEnter={(e) => e.target.classList.add('hover')}
+                                                                                        onMouseLeave={(e) => e.target.classList.remove('hover')}
+                                                                                        className={`star ${rating >= star ? 'filled' : ''}`}
+                                                                                    >
+                                                                                        ☆
+                                                                                    </span>
+                                                                                ))}
+                                                                            </div>
+
+                                                                            {/* Comment Section */}
+                                                                            <div className="comment-area mb-4">
+                                                                                <textarea
+                                                                                    className="form-control"
+                                                                                    placeholder="What is your view?"
+                                                                                    rows="4"
+                                                                                    value={comment}
+                                                                                    onChange={handleCommentChange}
+                                                                                ></textarea>
+                                                                            </div>
+
+                                                                            {/* Submit Button */}
+                                                                            <div className="text-center mt-4">
+                                                                                <button className="btn btn-success send px-5" onClick={() => handleSubmitReview(order._id, order.vendorAlloted._id)}>
+                                                                                    Send Review <i className="fa fa-long-arrow-right ml-1"></i>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+
                                                     </tr>
                                                 ))
                                             ) : (
@@ -157,7 +232,9 @@ function UserAllOrder({ userData, allOrder }) {
                                                     </td>
                                                 </tr>
                                             )}
+
                                         </tbody>
+
                                     </table>
 
                                     {/* Pagination */}

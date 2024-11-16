@@ -9,7 +9,7 @@ function AllVendorOrder({ userData, allOrder }) {
     const indexOfLastOrder = currentPage * itemsPerPage;
     const indexOfFirstOrder = indexOfLastOrder - itemsPerPage;
     const currentOrders = allOrder.slice(indexOfFirstOrder, indexOfLastOrder);
-
+    const vendorType = userData.Role
     // Handle page change
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -57,6 +57,11 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>User Address</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>LandMark</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Voice Note</th>
+                                                {
+                                                    vendorType === 'vendor' && (
+                                                        <th style={{ whiteSpace: 'nowrap' }}>Allowted Member</th>
+                                                    )
+                                                }
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Watch Estimated</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Estimated Status</th>
@@ -69,7 +74,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 currentOrders.map((order) => (
                                                     <tr key={order._id}>
                                                         {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
-                                                        <td>{order?.serviceId?.name}</td>
+                                                        <td>{order?.serviceId?.subCategoryId?.name}</td>
                                                         <td>{order.serviceType}</td>
                                                         <td>{order?.userId?.FullName || "User is not available"}</td>
                                                         <td>{order?.userId?.Email || "User is not available"}</td>
@@ -82,8 +87,14 @@ function AllVendorOrder({ userData, allOrder }) {
                                                                     <source src={order.voiceNote.url} type="audio/webm" />
                                                                     Your browser does not support the audio element.
                                                                 </audio>
-                                                            )}
+                                                            ) || 'Not Available'}
                                                         </td>
+                                                        {
+                                                            vendorType === 'vendor' && (
+                                                                <td>{order.AllowtedVendorMember || 'No Member Allowted'}</td>
+                                                            )
+                                                        }
+
                                                         <td>{order.OrderStatus}</td>
                                                         <td>
                                                             <button
@@ -99,7 +110,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                                             </button>
                                                         </td>
                                                         <td className={`text-center ${order.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
-                                                          {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
+                                                            {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
                                                             {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                                         </td>
                                                         {/* <td>

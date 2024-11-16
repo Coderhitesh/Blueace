@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import DashboardContent from './DashboardContent';
-import MyListing from './MyListing';
-import AddListing from './AddListing';
-import SaveListing from './SaveListing';
-import MyBooking from './MyBooking';
-import Wallet from './Wallet';
 import Profile from './Profile';
 import ChangePassword from './ChangePassword';
 import UserAllOrder from './UserAllOrder';
@@ -18,6 +13,7 @@ import 'bootstrap/js/dist/collapse'; // Ensure Bootstrap JavaScript for collapse
 function UserDashboard() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('Dashboard');
+    
 
     useEffect(() => {
         window.scrollTo({
@@ -35,14 +31,19 @@ function UserDashboard() {
     const token = sessionStorage.getItem('token');
     const userId = userDataMain?._id;
 
-    const findUser = async () => {
-        try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
-            setUserData(res.data.data)
-        } catch (error) {
-            console.log(error)
+    useEffect(()=>{
+        const findUser = async () => {
+            try {
+                const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
+                setUserData(res.data.data)
+            } catch (error) {
+                console.log(error)
+            }
         }
-    }
+        findUser()
+    },[])
+
+    // console.log("userdata",userData)
 
     const fetchOrderById = async () => {
         try {
@@ -77,7 +78,7 @@ function UserDashboard() {
 
     useEffect(() => {
         // fetchOrderData();
-        findUser();
+        // findUser();
         fetchOrderById();
     }, []);
 
@@ -163,7 +164,7 @@ function UserDashboard() {
                 <div className="container">
                     <div className="row">
                         <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                            <div className="dashboard-head-author-clicl">
+                            <div style={{zIndex:0}} className="dashboard-head-author-clicl">
                                 <div className="dashboard-head-author-thumb">
                                     {userData ? (
                                         <img
@@ -255,7 +256,7 @@ function UserDashboard() {
 
                 {activeTab === 'Dashboard' && <DashboardContent userData={userData} activeOrder={activeOrder} allOrder={allOrder} completeOrderCount={completeOrderCount} cancelOrderCount={cancelOrderCount}  />}
                 {activeTab === 'Active-Order' && <UserActiveOrder activeOrder={activeOrder} />}
-                {activeTab === 'User-All-Order' && <UserAllOrder allOrder={allOrder} />}
+                {activeTab === 'User-All-Order' && <UserAllOrder allOrder={allOrder} userData={userData} />}
                 {activeTab === 'profile' && <Profile userData={userData} />}
                 {activeTab === 'changePassword' && <ChangePassword userData={userData} />}
             </div>

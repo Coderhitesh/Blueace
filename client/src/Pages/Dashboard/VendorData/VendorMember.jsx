@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 
 const VendorMember = ({ userData }) => {
   const userId = userData?._id;
-  console.log("userid",userId)
+  console.log("userid", userId)
   const [members, setMembers] = useState([]); // State to hold members
   const [loading, setLoading] = useState(false);
 
@@ -126,24 +126,58 @@ const VendorMember = ({ userData }) => {
                         required
                       />
                     </div>
-                    <div className='col-6'>
+                    <div className="col-6">
                       <label>Aadhar Image:</label>
-                      {member.memberAdharImageUrl && (
-                        <div>
-                          <img
-                            src={member.memberAdharImageUrl}
-                            alt="Aadhar"
-                            style={{ width: '100px', height: '100px' }}
-                          />
-                        </div>
-                      )}
+                      
                       <input
-                        className='form-control'
+                        className="form-control"
                         type="file"
                         accept="image/*"
                         onChange={(e) => handleFileChange(index, e)}
                       />
+                      {member.memberAdharImageUrl && (
+                        <div className=' mt-2'>
+                          <img
+                            src={member.memberAdharImageUrl}
+                            alt="Aadhar"
+                            style={{ width: '100px', height: '100px', cursor: 'pointer' }}
+                            data-bs-toggle="modal"
+                            data-bs-target={`#aadharModal${index}`}
+                          />
+                        </div>
+                      )}
+
+                      {/* Bootstrap Modal */}
+                      <div
+                        className="modal fade"
+                        id={`aadharModal${index}`}
+                        tabIndex="-1"
+                        aria-labelledby={`aadharModalLabel${index}`}
+                        aria-hidden="true"
+                      >
+                        <div className="modal-dialog modal-dialog-centered">
+                          <div className="modal-content">
+                            <div className="modal-header">
+                              <h5 className="modal-title" id={`aadharModalLabel${index}`}>Aadhar Image</h5>
+                              <button
+                                type="button"
+                                className="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                              ></button>
+                            </div>
+                            <div className="modal-body text-center">
+                              <img
+                                src={member.memberAdharImageUrl}
+                                alt="Aadhar Full View"
+                                className="img-fluid"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
+
                   </div>
                 </div>
               </div>

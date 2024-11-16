@@ -57,6 +57,9 @@ import AddEmploy from '../Employ/AddEmploy'
 import AllCorporateUser from '../CorporateUser/AllCorporateUser'
 import AddCorporateUser from '../CorporateUser/AddCorporateUser'
 import AddCorporateOrder from '../CorporateUser/AddCorporateOrder'
+import AllTimeSlot from '../TimeSlot/AllTimeSlot'
+import AddTimeSlot from '../TimeSlot/AddTimeSlot'
+import EditTimeSlot from '../TimeSlot/EditTimeSlot'
 
 const Home = () => {
     return (
@@ -132,6 +135,12 @@ const Home = () => {
                         <Route path='/vendors/edit-membership-plan/:id' element={<EditMemberShipPlan />} />
                         <Route path='/Alloted/:id' element={<VendorForOrder />} />
                         <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
+
+                        {/* time slot route here  */}
+
+                        <Route path='/vendors/all-time-slot' element={<AllTimeSlot />} />
+                        <Route path='/vendors/add-time-slot' element={<AddTimeSlot />} />
+                        <Route path='/vendors/edit-time-slot/:id' element={<EditTimeSlot />} />
 
                         {/* employ route  */}
                         <Route path='/vendors/all-employ' element={<AllEmploy />} />

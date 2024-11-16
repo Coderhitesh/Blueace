@@ -116,7 +116,7 @@ function AllVendors() {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                <label htmlFor="" className='form-label'>Search by Address</label>
+                                    <label htmlFor="" className='form-label'>Search by Address</label>
                                     <input
                                         type="text"
                                         className="form-control mb-2"
@@ -126,7 +126,7 @@ function AllVendors() {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                <label htmlFor="" className='form-label'>Search by Starting Date</label>
+                                    <label htmlFor="" className='form-label'>Search by Starting Date</label>
                                     <input
                                         type="date"
                                         className="form-control mb-2"
@@ -135,7 +135,7 @@ function AllVendors() {
                                     />
                                 </div>
                                 <div className="col-md-3">
-                                <label htmlFor="" className='form-label'>Search by Ending Date</label>
+                                    <label htmlFor="" className='form-label'>Search by Ending Date</label>
                                     <input
                                         type="date"
                                         className="form-control mb-2"
@@ -182,6 +182,7 @@ function AllVendors() {
                     />
 
                     {/* Modal for Vendor Details */}
+                    {/* Modal for Vendor Details */}
                     {modalVisible && selectedVendor && (
                         <div className="modal fade show" style={{ display: 'block' }}>
                             <div className="modal-dialog modal-xl">
@@ -191,10 +192,96 @@ function AllVendors() {
                                         <button className="close" onClick={() => setModalVisible(false)}>&times;</button>
                                     </div>
                                     <div className="modal-body">
-                                        <p>Company Name: {selectedVendor.companyName}</p>
-                                        <p>Owner Name: {selectedVendor.ownerName}</p>
-                                        <p>Contact Number: {selectedVendor.ContactNumber}</p>
-                                        <p>Email: {selectedVendor.Email}</p>
+                                        <div className="row">
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Company Name:</h6>
+                                                <p>{selectedVendor.companyName}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Owner Name:</h6>
+                                                <p>{selectedVendor.ownerName || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Contact Number:</h6>
+                                                <p>{selectedVendor.ContactNumber || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Email:</h6>
+                                                <p>{selectedVendor.Email || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Year of Registration:</h6>
+                                                <p>{selectedVendor.yearOfRegistration || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Register Address:</h6>
+                                                <p>{selectedVendor.registerAddress || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>PAN Number:</h6>
+                                                <p>{selectedVendor.panNo || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>GST Number:</h6>
+                                                <p>{selectedVendor.gstNo || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Aadhar Number:</h6>
+                                                <p>{selectedVendor.adharNo || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Payment Status:</h6>
+                                                <p>{selectedVendor.PaymentStatus || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Average Rating:</h6>
+                                                <p>{selectedVendor.averageRating || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Verified:</h6>
+                                                <p>{selectedVendor.verifyed ? "Yes" : "No"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Ready to Work:</h6>
+                                                <p>{selectedVendor.readyToWork ? "Yes" : "No"}</p>
+                                            </div>
+
+                                            {/* Image Section */}
+                                            <div className="row">
+                                            <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
+                                                <h6>PAN Image:</h6>
+                                                {selectedVendor.panImage?.url ? (
+                                                    <img src={selectedVendor.panImage.url} className=' mt-2' alt="PAN" style={{ width: '50%', height: '150px'  }} />
+                                                ) : (
+                                                    <p>Not Available</p>
+                                                )}
+                                            </div>
+                                            <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
+                                                <h6>Aadhar Image:</h6>
+                                                {selectedVendor.adharImage?.url ? (
+                                                    <img src={selectedVendor.adharImage.url} className=' mt-2' alt="Aadhar" style={{ width: '50%', height: '150px'  }} />
+                                                ) : (
+                                                    <p>Not Available</p>
+                                                )}
+                                            </div>
+                                            <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
+                                                <h6>GST Image:</h6>
+                                                {selectedVendor.gstImage?.url ? (
+                                                    <img src={selectedVendor.gstImage.url} className=' mt-2' alt="GST" style={{ width: '50%', height: '150px'  }} />
+                                                ) : (
+                                                    <p>Not Available</p>
+                                                )}
+                                            </div>
+                                            <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
+                                                <h6>Vendor Image:</h6>
+                                                {selectedVendor.vendorImage?.url ? (
+                                                    <img src={selectedVendor.vendorImage.url} className=' mt-2' alt="Vendor" style={{ width: '50%', height: '150px'  }} />
+                                                ) : (
+                                                    <p>Not Available</p>
+                                                )}
+                                            </div>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="modal-footer">
                                         <button className="btn btn-secondary" onClick={() => setModalVisible(false)}>Close</button>
@@ -203,6 +290,7 @@ function AllVendors() {
                             </div>
                         </div>
                     )}
+
                 </>
             )}
         </div>

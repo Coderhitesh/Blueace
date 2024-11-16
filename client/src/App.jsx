@@ -39,6 +39,8 @@ import CorporateLogin from "./Components/Auth/CorporateLogin"
 import VendorLogin from "./Components/Auth/VendorLogin"
 import EmployLogin from "./Components/Auth/EmployLogin"
 import EmployRegistration from "./Components/Auth/EmployRegistration"
+import VerifyAccount from "./Pages/Dashboard/VendorData/VerifyAccount"
+import ForgetVendorPassword from "./service-provider/ForgetVendorPassword"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -79,6 +81,7 @@ function App() {
           <Route path="/maintenance-ahu-fcu" element={<MaintenanceofAHUandFCU />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<Forget />} />
+          <Route path="/forgot-vendor-password" element={<ForgetVendorPassword />} />
           <Route path="/add-vendor-member/:id" element={<AddMembersForm />} />
           <Route path="/membership-plan/:vendorId" element={<MemberShipPlan />} />
           <Route path="/successfull-payment" element={<SuccessPayment />} />
@@ -90,6 +93,7 @@ function App() {
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/successfully-booking" element={<OrderSuccessfully />} />
           <Route path="/successfully-member" element={<SuccessfullyMember />} />
+          {/* <Route path="/verify-account" element={<VerifyAccount />} /> */}
 
           
         </Routes>

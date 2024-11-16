@@ -11,15 +11,18 @@ const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, dele
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
-const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword } = require('../Controller/vendor.Controller')
+const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword, updateReadyToWork, sendOtpForVerification, verifyVendor, resendVerifyOtp } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
 const { createGalleryCategory, getAllImageCategory, singleGalleryCategory, deleteGalleryCategory, updateGalleryCategory } = require('../Controller/GalleryCategory.Controller')
 const { createGalleryImage, getSingleGalleryImage, getAllGalleryImage, deleteGalleryImage, updateGalleryImage } = require('../Controller/GalleryImage.controller')
 const { createContact, getSingleContact, getAllContact, deleteContact } = require('../Controller/Contact.Controller')
+const { createWorkingHours, updateWorkingHours, getWorkingHoursById, getAllWorkingHours, deleteWorkingHours } = require('../Controller/workingHours.Controller')
+const { createSlotTiming, getAllSlotTiming, updateSlotTiming, deleteSlotTiming, getSlotTimingById } = require('../Controller/slotTiming.Controller')
+const { createVendorRating, getAllVendorRatings, getVendorRatingById, updateVendorRating, deleteVendorRating } = require('../Controller/vendorRating.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -145,6 +148,7 @@ router.post('/vendor-resend-otp', vendorResendOTP)
 router.get('/all-vendor', getAllVendor)
 router.get('/single-vendor/:_id', getSingleVendor)
 router.put('/update-deactive-status/:_id', updateDeactive)
+router.put('/update-ready-to-work-status/:_id', updateReadyToWork)
 router.delete('/delete-vendor/:_id', deleteVendor)
 router.put('/update-vendor/:_id', upload.fields([
     { name: 'panImage', maxCount: 1 },
@@ -154,6 +158,27 @@ router.put('/update-vendor/:_id', upload.fields([
 ]), updateVendor)
 
 router.put('/update-vendor-old-password/:_id', ChangeOldVendorPassword)
+
+router.put('/verify-account-otp-send',sendOtpForVerification)
+router.post('/verify-account',verifyVendor)
+router.post('/resend-verify-vendor-otp',resendVerifyOtp)
+
+// routes for vendor working hours
+
+router.post('/create-working-hours/:vendorId', createWorkingHours)
+// router.put('/update-working-hours/:_id', updateWorkingHours)
+router.put('/update-working-hours/:vendorId', updateWorkingHours)
+router.get('/get-single-working-hours/:vendorId', getWorkingHoursById)
+router.get('/get-all-working-hours', getAllWorkingHours)
+router.delete('/delete-working-hours/:_id', deleteWorkingHours)
+
+// routes for working hours timing 
+
+router.post('/create-timing',createSlotTiming)
+router.get('/get-all-timing',getAllSlotTiming)
+router.get('/get-single-timing/:_id',getSlotTimingById)
+router.put('/update-timing/:_id',updateSlotTiming)
+router.delete('/delete-timing/:_id',deleteSlotTiming)
 
 // Routes for membership plan 
 
@@ -178,6 +203,7 @@ router.put('/update-befor-work-image/:_id', upload.single('beforeWorkImage'), up
 router.put('/update-after-work-image/:_id', upload.single('afterWorkImage'), updateAfterWorkImage)
 router.put('/update-before-work-video/:_id', upload.single('beforeWorkVideo'), updateBeforeWorkVideo);
 router.put('/update-after-work-video/:_id', upload.single('afterWorkVideo'), updateAfterWorkVideo);
+router.put('/update-allot-vendor-member/:_id',AllowtVendorMember)
 
 
 
@@ -223,6 +249,14 @@ router.post('/create-contact', createContact)
 router.get('/get-single-contact/:_id', getSingleContact)
 router.get('/get-all-contact', getAllContact)
 router.delete('/delete-contact/:_id', deleteContact)
+
+// vendor rating routes here 
+
+router.post('/create-vendor-rating',createVendorRating)
+router.get('/get-all-vendor-rating',getAllVendorRatings)
+router.get('/get-single-vendor-rating/:_id',getVendorRatingById)
+router.put('/update-vendor-rating/:_id',updateVendorRating)
+router.delete('/delete-vendor-rating/:_id',deleteVendorRating )
 
 
 module.exports = router;

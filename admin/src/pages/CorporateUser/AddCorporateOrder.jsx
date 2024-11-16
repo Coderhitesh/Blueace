@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import FormGroups from '../../components/Forms/FormGroups';
-import Input from '../../components/Forms/Input';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -22,8 +21,8 @@ function AddCorporateOrder() {
             location: { type: 'Point', coordinates: [] }
         }]
     });
-    const [latitude, setLatitude] = useState(''); // For manual entry of latitude
-    const [longitude, setLongitude] = useState(''); // For manual entry of longitude
+    const [latitude, setLatitude] = useState(''); 
+    const [longitude, setLongitude] = useState(''); 
 
     const handleChange = (e) => {
         const { name, value } = e.target;

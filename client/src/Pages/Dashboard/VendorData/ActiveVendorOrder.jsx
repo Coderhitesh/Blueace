@@ -16,7 +16,9 @@ function ActiveVendorOrder({ userData, activeOrder }) {
 
     const [beforeWorkVideo, setBeforeWorkVideo] = useState({});
     const [afterWorkVideo, setAfterWorkVideo] = useState({});
-
+    const vendorMember = userData.member
+    const vendorType = userData.Role
+    // console.log("vendor member",vendorMember.member)
 
     // Calculate the current orders to display
     const indexOfLastOrder = currentPage * itemsPerPage;
@@ -71,11 +73,22 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         }
     };
 
+    // Handle order status change
+    const handleAlloteVendorMember = async (orderId, newStatus) => {
+        try {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-allot-vendor-member/${orderId}`, { AllowtedVendorMember: newStatus });
+            toast.success('Member Allowted successfully');
+        } catch (error) {
+            console.log(error);
+            Swal.fire("Error", "Failed to update Member Allowted", error);
+        }
+    };
+
     // Handle Before Work Video Upload
     const handleBeforeWorkVideoUpload = async (orderId) => {
         const formData = new FormData();
         formData.append('beforeWorkVideo', beforeWorkVideo[orderId]);
-    
+
         try {
             setBeforeLoading((prev) => ({ ...prev, [orderId]: true }));
             await axios.put(`https://www.api.blueaceindia.com/api/v1/update-before-work-video/${orderId}`, formData, {
@@ -89,13 +102,13 @@ function ActiveVendorOrder({ userData, activeOrder }) {
             setBeforeLoading((prev) => ({ ...prev, [orderId]: false }));
         }
     };
-    
+
 
     // Handle After Work Video Upload
     const handleAfterWorkVideoUpload = async (orderId) => {
         const formData = new FormData();
         formData.append('afterWorkVideo', afterWorkVideo[orderId]);
-    
+
         try {
             setAfterLoading((prev) => ({ ...prev, [orderId]: true }));
             await axios.put(`https://www.api.blueaceindia.com/api/v1/update-after-work-video/${orderId}`, formData, {
@@ -109,7 +122,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
             setAfterLoading((prev) => ({ ...prev, [orderId]: false }));
         }
     };
-    
+
 
 
     return (
@@ -160,7 +173,11 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>Watch Estimated </th>
                                                 <th style={{ whiteSpace: 'nowrap' }}> Estimated Status</th>
 
-
+                                                {
+                                                    vendorType === 'vendor' && (
+                                                        <th style={{ whiteSpace: 'nowrap' }}>Allot Member</th>
+                                                    )
+                                                }
                                                 <th style={{ whiteSpace: 'nowrap' }}>Order Status</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>After Work Video</th>
@@ -184,7 +201,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                     <source src={order.voiceNote.url} type="audio/webm" />
                                                                     Your browser does not support the audio element.
                                                                 </audio>
-                                                            )}
+                                                            ) || 'Not Available'}
                                                         </td>
                                                         <td>
                                                             <button onClick={() => window.location.href = `/make-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
@@ -208,10 +225,30 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
                                                             {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                                         </td>
-
+                                                        {
+                                                            vendorType === 'vendor' && (
+                                                                <td>
+                                                                    <select
+                                                                        value={order.AllowtedVendorMember}
+                                                                        className='form-control'
+                                                                        style={{ width: "150px", fontSize: '16px', paddingLeft: '3px', paddingRight: '3px' }}
+                                                                        onChange={(e) => handleAlloteVendorMember(order._id, e.target.value)}
+                                                                    >
+                                                                        <option defaultValue={order.AllowtedVendorMember}>{order.AllowtedVendorMember || '--Select Vendor Member--'}</option>
+                                                                        {/* <option value="Service Done">Service Done</option>
+                                                                        <option value="Cancelled">Cancelled</option> */}
+                                                                        {vendorMember && vendorMember.map((item, index) => (
+                                                                            <option key={index} value={item.name}>{item.name}</option>
+                                                                        ))}
+                                                                    </select>
+                                                                </td>
+                                                            )
+                                                        }
                                                         <td>
                                                             <select
                                                                 value={order.OrderStatus}
+                                                                className='form-control'
+                                                                style={{ width: "150px", fontSize: '16px', paddingLeft: '3px', paddingRight: '3px' }}
                                                                 onChange={(e) => handleOrderStatusChange(order._id, e.target.value)}
                                                             >
                                                                 <option defaultValue={order.OrderStatus}>{order.OrderStatus}</option>
@@ -269,57 +306,57 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             </button>
                                                         </td> */}
 
-<td>
-    <input
-        type="file"
-        accept="video/*"
-        id={`before-video-input-${order._id}`}
-        style={{ display: 'none' }}
-        onChange={(e) => setBeforeWorkVideo({ ...beforeWorkVideo, [order._id]: e.target.files[0] })}
-    />
-    <button
-        className='btn btn-sm p-1'
-        onClick={() => document.getElementById(`before-video-input-${order._id}`).click()}
-        style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
-    >
-        <i className="fas fa-upload" aria-hidden="true"></i>
-    </button>
+                                                        <td>
+                                                            <input
+                                                                type="file"
+                                                                accept="video/*"
+                                                                id={`before-video-input-${order._id}`}
+                                                                style={{ display: 'none' }}
+                                                                onChange={(e) => setBeforeWorkVideo({ ...beforeWorkVideo, [order._id]: e.target.files[0] })}
+                                                            />
+                                                            <button
+                                                                className='btn btn-sm p-1'
+                                                                onClick={() => document.getElementById(`before-video-input-${order._id}`).click()}
+                                                                style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
+                                                            >
+                                                                <i className="fas fa-upload" aria-hidden="true"></i>
+                                                            </button>
 
-    <button
-        className='btn btn-sm theme-bg text-light rounded ft-medium'
-        onClick={() => handleBeforeWorkVideoUpload(order._id)}
-        style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
-        disabled={beforeLoading[order._id]}
-    >
-        {beforeLoading[order._id] ? 'Uploading...' : 'Upload Video'}
-    </button>
-</td>
+                                                            <button
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                onClick={() => handleBeforeWorkVideoUpload(order._id)}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
+                                                                disabled={beforeLoading[order._id]}
+                                                            >
+                                                                {beforeLoading[order._id] ? 'Uploading...' : 'Upload Video'}
+                                                            </button>
+                                                        </td>
 
-<td>
-    <input
-        type="file"
-        accept="video/*"
-        id={`after-video-input-${order._id}`}
-        style={{ display: 'none' }}
-        onChange={(e) => setAfterWorkVideo({ ...afterWorkVideo, [order._id]: e.target.files[0] })}
-    />
-    <button
-        className='btn btn-sm p-1'
-        onClick={() => document.getElementById(`after-video-input-${order._id}`).click()}
-        style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
-    >
-        <i className="fas fa-upload" aria-hidden="true"></i>
-    </button>
+                                                        <td>
+                                                            <input
+                                                                type="file"
+                                                                accept="video/*"
+                                                                id={`after-video-input-${order._id}`}
+                                                                style={{ display: 'none' }}
+                                                                onChange={(e) => setAfterWorkVideo({ ...afterWorkVideo, [order._id]: e.target.files[0] })}
+                                                            />
+                                                            <button
+                                                                className='btn btn-sm p-1'
+                                                                onClick={() => document.getElementById(`after-video-input-${order._id}`).click()}
+                                                                style={{ background: 'transparent', border: 'none', fontSize: '1rem' }}
+                                                            >
+                                                                <i className="fas fa-upload" aria-hidden="true"></i>
+                                                            </button>
 
-    <button
-        className='btn btn-sm theme-bg text-light rounded ft-medium'
-        onClick={() => handleAfterWorkVideoUpload(order._id)}
-        style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
-        disabled={afterLoading[order._id]}
-    >
-        {afterLoading[order._id] ? 'Uploading...' : 'Upload Video'}
-    </button>
-</td>
+                                                            <button
+                                                                className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                onClick={() => handleAfterWorkVideoUpload(order._id)}
+                                                                style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem' }}
+                                                                disabled={afterLoading[order._id]}
+                                                            >
+                                                                {afterLoading[order._id] ? 'Uploading...' : 'Upload Video'}
+                                                            </button>
+                                                        </td>
 
                                                     </tr>
                                                 ))

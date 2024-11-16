@@ -130,7 +130,7 @@ function EmployLogin() {
                                             </label>
                                         </div>
                                         <div className="eltio_k2">
-                                            <Link to={'/forgot-password'} className="theme-cl">
+                                            <Link to={'/forgot-vendor-password'} className="theme-cl">
                                                 Forget Password?
                                             </Link>
                                         </div>

@@ -8,6 +8,7 @@ import MetaTag from '../../Components/Meta/MetaTag';
 
 function SubCategory() {
   const { title } = useParams();
+  const userData = JSON.parse(sessionStorage.getItem('user'));
   const [allService, setAllService] = useState({});
   const [service, setService] = useState([])
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +21,8 @@ function SubCategory() {
       .join(' ');
   };
   const newTitle = formatTitle(title);
-  console.log("title",newTitle)
+  const role = userData?.Role
+  // console.log("userData", role)
 
   const openModal = (item) => {
     const modalServiceImage = document.getElementById('modalServiceImage');
@@ -58,21 +60,21 @@ function SubCategory() {
     try {
       const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
       const allData = res.data.data;
-  
+
       // Apply regex search directly in the frontend filtering
       const searchName = newTitle; // Input search term
       const regex = new RegExp(`^${searchName}$`, 'i'); // Regex for case-insensitive matching
-  
+
       // Filtering data based on regex match
       const filterData = allData.filter((item) => regex.test(item?.subCategoryId?.name));
-  
-      console.log("filterData", filterData);
+
+      // console.log("filterData", filterData);
       setAllService(filterData);
     } catch (error) {
       console.log('Internal server error in fetching service');
     }
   };
-  
+
 
   const handleOpenModel = () => {
     // Check if fullName is not filled or email is not filled
@@ -217,6 +219,11 @@ function SubCategory() {
     }
   };
 
+  const handleAlert = () => {
+    toast.error('You are a vendor or employee; you cannot avail of the services.');
+  }
+
+
 
 
   // Handle form submission
@@ -274,6 +281,7 @@ function SubCategory() {
       ])
     );
 
+
     try {
       await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData, {
         headers: {
@@ -309,7 +317,7 @@ function SubCategory() {
 
   return (
     <>
-    <MetaTag title={service.metaTitle} description={service.metaDescription} keyword={service.metaKeyword} focus={service.metafocus} />
+      <MetaTag title={service.metaTitle} description={service.metaDescription} keyword={service.metaKeyword} focus={service.metafocus} />
       {/* Main Form */}
       <div className='container mb-5'>
         <div className='row mt-5'>
@@ -471,11 +479,22 @@ function SubCategory() {
                     <div className='mb-3 col-lg-12'>
                       <textarea className='form-control messagearea' name='message' placeholder='Message' required onChange={handleChange} />
                     </div>
-                    <div className='mb-3 col-lg-12 text-center'>
-                      <button type='button' onClick={handleOpenModel} className='btn btn-primary rounded' data-bs-target='#exampleModal'>
-                        Send Message
-                      </button>
-                    </div>
+                    {
+                      role === 'employ' || role === 'vendor' ? (
+                        <div className='mb-3 col-lg-12 text-center'>
+                          <button type='button' onClick={handleAlert} className='btn btn-primary rounded'>
+                            Send Message
+                          </button>
+                        </div>
+                      ) : (
+                        <div className='mb-3 col-lg-12 text-center'>
+                          <button type='button' onClick={handleOpenModel} className='btn btn-primary rounded' data-bs-target='#exampleModal'>
+                            Send Message
+                          </button>
+                        </div>
+                      )
+                    }
+
                   </div>
                 </form>
               </div>

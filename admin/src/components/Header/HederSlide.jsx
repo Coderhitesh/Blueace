@@ -117,7 +117,7 @@ const HederSlide = () => {
                         {activeMenu === 'corporate-user' && (
                             <ul className="sidebar-submenu">
                                 <li><Link to="/corporate-user/all-corporate-user">All Corporate user</Link></li>
-                                <li><Link to="/corporate-order/add-corporate-order">Make Order</Link></li>
+                                {/* <li><Link to="/corporate-order/add-corporate-order">Make Order</Link></li> */}
                                 {/* <li><Link to="/corporate-user/all-membership-plan">Membership Plan</Link></li> */}
                                 {/* <li><Link to="/corporate-user/add-vendor">Add Vendor</Link></li> */}
                             </ul>
@@ -138,8 +138,8 @@ const HederSlide = () => {
                         {activeMenu === 'vendors' && (
                             <ul className="sidebar-submenu">
                                 <li><Link to="/vendors/all-membership-plan">Membership Plan</Link></li>
-                                {/* <li><Link to="/vendors/add-vendor">Add Vendor</Link></li> */}
                                 <li><Link to="/vendors/all-vendor">All Vendor</Link></li>
+                                <li><Link to="/vendors/all-time-slot">Time Slot</Link></li>
                             </ul>
                         )}
                     </li>

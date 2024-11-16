@@ -348,6 +348,7 @@ exports.logout = async (req, res) => {
 exports.passwordChangeRequest = async (req, res) => {
     try {
         const { Email, NewPassword } = req.body;
+        // console.log("Email",Email)
 
         // Check password length
         if (NewPassword.length <= 6) {
@@ -359,103 +360,55 @@ exports.passwordChangeRequest = async (req, res) => {
 
         // Find user by email
         const user = await User.findOne({ Email });
+        // console.log("user",user)
         if (!user) {
-            const vendor = await Vendor.findOne({ Email })
-            if (!vendor) {
-                return res.status(400).json({
-                    success: false,
-                    msg: 'User not found'
-                })
-            }
-
-            // Generate OTP and expiry time
-            const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
-            const OTPExpires = new Date();
-            OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
-
-            // Update user document with OTP and expiry
-            await Vendor.findOneAndUpdate(
-                { Email },
-                {
-                    $set: {
-                        PasswordChangeOtp: OTP,
-                        OtpExpiredTime: OTPExpires,
-                        NewPassword: NewPassword
-                    }
-                },
-                { new: true }
-            );
-
-            // Prepare email options
-            const emailOptions = {
-                email: Email,
-                subject: 'Password Reset OTP',
-                message: `
-                <html>
-                <head>
-                </head>
-                <body>
-                    <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
-                    <p>Please use this OTP within 10 minutes to reset your password.</p>
-                </body>
-                </html>
-            `
-            };
-
-            // Send OTP via email
-            await SendEmail(emailOptions);
-
-            res.status(200).json({
-                success: true,
-                msg: 'OTP sent successfully. Check your email.'
-            });
-            // return res.status(404).json({
-            //     success: false,
-            //     msg: 'User not found'
-            // });
-        } else {
-            // Generate OTP and expiry time
-            const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
-            const OTPExpires = new Date();
-            OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
-
-            // Update user document with OTP and expiry
-            await User.findOneAndUpdate(
-                { Email },
-                {
-                    $set: {
-                        PasswordChangeOtp: OTP,
-                        OtpExpiredTime: OTPExpires,
-                        NewPassword: NewPassword
-                    }
-                },
-                { new: true }
-            );
-
-            // Prepare email options
-            const emailOptions = {
-                email: Email,
-                subject: 'Password Reset OTP',
-                message: `
-                <html>
-                <head>
-                </head>
-                <body>
-                    <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
-                    <p>Please use this OTP within 10 minutes to reset your password.</p>
-                </body>
-                </html>
-            `
-            };
-
-            // Send OTP via email
-            await SendEmail(emailOptions);
-
-            res.status(200).json({
-                success: true,
-                msg: 'OTP sent successfully. Check your email.'
+            return res.status(404).json({
+                success: false,
+                msg: 'User not found'
             });
         }
+        // Generate OTP and expiry time
+        const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+        const OTPExpires = new Date();
+        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
+
+        // Update user document with OTP and expiry
+        await User.findOneAndUpdate(
+            { Email },
+            {
+                $set: {
+                    PasswordChangeOtp: OTP,
+                    OtpExpiredTime: OTPExpires,
+                    NewPassword: NewPassword
+                }
+            },
+            { new: true }
+        );
+
+        // Prepare email options
+        const emailOptions = {
+            email: Email,
+            subject: 'Password Reset OTP',
+            message: `
+                <html>
+                <head>
+                </head>
+                <body>
+                    <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
+                    <p>Please use this OTP within 10 minutes to reset your password.</p>
+                </body>
+                </html>
+            `
+        };
+
+        // Send OTP via email
+        await SendEmail(emailOptions);
+
+        res.status(200).json({
+            success: true,
+            msg: 'OTP sent successfully. Check your email.'
+        });
+
 
         // Generate OTP and expiry time
         // const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
