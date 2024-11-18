@@ -148,6 +148,12 @@ const OrderSchema = new mongoose.Schema({
     },
     AllowtedVendorMember: {
         type: String
+    },
+    workingDay: {
+        type: String
+    },
+    workingTime: {
+        type: String
     }
 }, { timestamps: true })
 

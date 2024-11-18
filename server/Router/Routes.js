@@ -11,7 +11,7 @@ const { createFAQBanner, getFAQBanner, getSingleFAQBanner, updateFAQBanner, dele
 const { createFaqContent, getFaqContent, getSingleFaqContent, deleteFaqContent, updateFaqContent } = require('../Controller/faqContent.Controller')
 const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainCategory, getSingleServiceMainCategory, deleteServiceMainCategory } = require('../Controller/mainServiceCategory.Controller')
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
-const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword, updateReadyToWork, sendOtpForVerification, verifyVendor, resendVerifyOtp } = require('../Controller/vendor.Controller')
+const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword, updateReadyToWork, sendOtpForVerification, verifyVendor, resendVerifyOtp, deleteVendorMember } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
 const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
@@ -23,6 +23,7 @@ const { createContact, getSingleContact, getAllContact, deleteContact } = requir
 const { createWorkingHours, updateWorkingHours, getWorkingHoursById, getAllWorkingHours, deleteWorkingHours } = require('../Controller/workingHours.Controller')
 const { createSlotTiming, getAllSlotTiming, updateSlotTiming, deleteSlotTiming, getSlotTimingById } = require('../Controller/slotTiming.Controller')
 const { createVendorRating, getAllVendorRatings, getVendorRatingById, updateVendorRating, deleteVendorRating } = require('../Controller/vendorRating.Controller')
+const { createScript, getSingleScript, updateScript, getAllScript, deleteScript } = require('../Controller/script.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -156,6 +157,7 @@ router.put('/update-vendor/:_id', upload.fields([
     { name: 'gstImage', maxCount: 1 },
     { name: 'vendorImage', maxCount: 1 }
 ]), updateVendor)
+router.delete('/delete-vendor-member/:userId/:memberId', deleteVendorMember);
 
 router.put('/update-vendor-old-password/:_id', ChangeOldVendorPassword)
 
@@ -209,7 +211,7 @@ router.put('/update-allot-vendor-member/:_id',AllowtVendorMember)
 
 //for fetching vendor for order
 router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
-router.post('/assign-Vendor/:orderId/:Vendorid/:type', AssignVendor)
+router.post('/assign-Vendor/:orderId/:Vendorid/:type/:workingDay/:workingTime', AssignVendor)
 
 // for blog routes 
 
@@ -257,6 +259,14 @@ router.get('/get-all-vendor-rating',getAllVendorRatings)
 router.get('/get-single-vendor-rating/:_id',getVendorRatingById)
 router.put('/update-vendor-rating/:_id',updateVendorRating)
 router.delete('/delete-vendor-rating/:_id',deleteVendorRating )
+
+// script router here 
+
+router.post('/create-script',createScript)
+router.get('/get-single-script/:_id',getSingleScript)
+router.get('/get-all-script',getAllScript)
+router.put('/update-script/:_id',updateScript)
+router.delete('/delete-script/:_id',deleteScript)
 
 
 module.exports = router;

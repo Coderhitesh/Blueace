@@ -12,6 +12,17 @@ const memberSchema = new mongoose.Schema({
         public_id: {
             type: String,
         }
+    },
+    memberQualification: {
+        type: String
+    },
+    memberQualificationImage: {
+        url: {
+            type: String
+        },
+        public_id: {
+            type: String
+        },
     }
 })
 

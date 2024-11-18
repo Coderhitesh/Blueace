@@ -411,6 +411,41 @@ exports.addVendorMember = async (req, res) => {
     }
 };
 
+exports.deleteVendorMember = async (req, res) => {
+    const { userId, memberId } = req.params;
+
+    try {
+        // Find the vendor by userId
+        const vendor = await Vendor.findOne({ _id: userId });
+        if (!vendor) {
+            return res.status(404).json({ success: false, message: 'Vendor not found' });
+        }
+
+        // Find the member in the vendor's member array
+        const member = vendor.member.find(m => m._id.toString() === memberId);
+        if (!member) {
+            return res.status(404).json({ success: false, message: 'Member not found' });
+        }
+
+        // Check if the member has an Aadhar image to delete
+        if (member.memberAdharImage && member.memberAdharImage.public_id) {
+            // Delete the image from Cloudinary
+            await deleteImageFromCloudinary(member.memberAdharImage.public_id);
+        }
+
+        // Filter out the member to delete
+        vendor.member = vendor.member.filter(m => m._id.toString() !== memberId);
+
+        // Save the updated vendor document
+        await vendor.save();
+
+        res.status(200).json({ success: true, message: 'Vendor member deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting vendor member:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete vendor member' });
+    }
+};
+
 exports.addNewVendorMember = async (req, res) => {
     try {
         const { vendorId } = req.params;
@@ -524,10 +559,7 @@ exports.getMembersByVendorId = async (req, res) => {
 
 exports.updateMember = async (req, res) => {
     try {
-        console.log("i am hite")
         const { vendorId, memberId } = req.params;
-        // console.log("vendorId",vendorId)
-        // console.log("memberId",memberId)
 
         const { name } = req.body;
         const memberAdharImage = req.file;
@@ -948,8 +980,8 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
             OtpExpiredTime: { $gt: Date.now() }
         });
 
-        console.log("vendor",vendor)
-        console.log("Email",Email)
+        console.log("vendor", vendor)
+        console.log("Email", Email)
 
         if (!vendor) {
             return res.status(400).json({

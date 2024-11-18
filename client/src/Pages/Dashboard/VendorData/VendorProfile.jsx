@@ -209,7 +209,7 @@ function VendorProfile({ userData }) {
                                             </div>
                                         )
                                     }
-                                    <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                                         <div className="form-group">
                                             <label className="mb-1">Address</label>
                                             <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Year of Registration*" required />

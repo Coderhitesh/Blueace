@@ -5,6 +5,7 @@ const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
 const User = require('../Model/UserModel')
 require("dotenv").config()
+
 exports.makeOrder = async (req, res) => {
     try {
         console.log('body', req.body);
@@ -101,7 +102,6 @@ exports.makeOrder = async (req, res) => {
     }
 };
 
-
 exports.getAllOrder = async (req, res) => {
     try {
         const orders = await Order.find()
@@ -136,7 +136,6 @@ exports.getAllOrder = async (req, res) => {
         });
     }
 };
-
 
 exports.findOrderById = async (req, res) => {
     try {
@@ -379,7 +378,6 @@ exports.deleteOrder = async (req, res) => {
     }
 };
 
-
 exports.fetchVendorByLocation = async (req, res) => {
     try {
         const { orderId, limit = 10, Page = 1 } = req.query;
@@ -444,9 +442,10 @@ exports.fetchVendorByLocation = async (req, res) => {
             }
         })
             .limit(parseInt(limit))
-            .skip(skip);
+            .skip(skip)
+            .populate('workingHour');
 
-            const filterWithActive = locationResults.filter((vendor) => vendor.readyToWork == true);
+        const filterWithActive = locationResults.filter((vendor) => vendor.readyToWork == true);
 
         const totalPages = Math.ceil(filterWithActive.length / limit);
 
@@ -455,6 +454,8 @@ exports.fetchVendorByLocation = async (req, res) => {
             AlreadyAllottedVendor: venorWhichAllotedPast || "No-Vendor In Past",
             currentPage: parseInt(Page),
             limit: parseInt(limit),
+            preSelectedDay: findOrder.workingDay,
+            preSelectedTime: findOrder.workingTime,
             totalPages,
             data: filterWithActive,
             message: 'Vendors fetched successfully',
@@ -470,16 +471,18 @@ exports.fetchVendorByLocation = async (req, res) => {
 
 exports.AssignVendor = async (req, res) => {
     try {
-        const { orderId, Vendorid, type } = req.params;
+        const { orderId, Vendorid, type, workingDay, workingTime } = req.params;
 
+        // Validate required parameters
         if (!orderId || !Vendorid) {
             return res.status(404).json({
                 success: false,
-                message: "Order and Vendor ID are required"
+                message: "Order ID and Vendor ID are required"
             });
         }
 
-        const order = await Order.findOne({ _id: orderId });
+        // Fetch the specific order by orderId
+        const order = await Order.findById(orderId);
 
         if (!order) {
             return res.status(404).json({
@@ -488,6 +491,7 @@ exports.AssignVendor = async (req, res) => {
             });
         }
 
+        // Check if vendor is already allotted for a new assignment
         if (type === "new-vendor" && order.VendorAllotedStatus) {
             return res.status(404).json({
                 success: false,
@@ -495,6 +499,25 @@ exports.AssignVendor = async (req, res) => {
             });
         }
 
+        // Fetch only active orders for the vendor
+        const activeOrders = await Order.find({
+            vendorAlloted: Vendorid,
+            OrderStatus: { $nin: ['Service Done', 'Cancelled'] }
+        });
+
+        // Check if the vendor is busy on the given workingDay and workingTime
+        const isVendorBusy = activeOrders.some(
+            (activeOrder) => activeOrder.workingDay === workingDay && activeOrder.workingTime === workingTime
+        );
+
+        if (isVendorBusy) {
+            return res.status(404).json({
+                success: false,
+                message: "Vendor already working on this day and time"
+            });
+        }
+
+        // Get the current IST time
         const currentISTTime = new Date().toLocaleString('en-US', {
             timeZone: 'Asia/Kolkata',
             hour: '2-digit',
@@ -503,15 +526,18 @@ exports.AssignVendor = async (req, res) => {
             hour12: true
         });
 
-        console.log(currentISTTime);
-
+        // Update the order details
         order.vendorAlloted = Vendorid;
         order.OrderStatus = "Vendor Assigned";
         order.VendorAllotedTime = currentISTTime;
         order.VendorAllotedStatus = true;
+        order.workingDay = workingDay;
+        order.workingTime = workingTime;
 
+        // Save the updated order
         await order.save();
 
+        // Send success response
         res.status(201).json({
             success: true,
             data: order,
@@ -520,9 +546,9 @@ exports.AssignVendor = async (req, res) => {
 
     } catch (error) {
         res.status(501).json({
-
             success: false,
-            message: error.message
+            message: "Internal Server Error",
+            error: error.message
         });
     }
 };

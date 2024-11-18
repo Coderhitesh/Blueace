@@ -115,7 +115,6 @@ function EditTimingSlot({ userData }) {
                                                 name="morningSlot"
                                                 value={schedule.morningSlot}
                                                 onChange={(e) => handleChange(e, index)}
-                                                required
                                             >
                                                 <option value={''}>--Morning Slot--</option>
                                                 {allTimeSlot.map((item, idx) => (
@@ -130,7 +129,6 @@ function EditTimingSlot({ userData }) {
                                                 name="afternoonSlot"
                                                 value={schedule.afternoonSlot}
                                                 onChange={(e) => handleChange(e, index)}
-                                                required
                                             >
                                                 <option value={''}>--Afternoon Slot--</option>
                                                 {allTimeSlot.map((item, idx) => (
@@ -145,7 +143,6 @@ function EditTimingSlot({ userData }) {
                                                 name="eveningSlot"
                                                 value={schedule.eveningSlot}
                                                 onChange={(e) => handleChange(e, index)}
-                                                required
                                             >
                                                 <option value={''}>--Evening Slot--</option>
                                                 {allTimeSlot.map((item, idx) => (

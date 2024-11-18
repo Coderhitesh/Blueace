@@ -72,7 +72,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = allOrders.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -145,6 +145,8 @@ function Order() {
                                     )}
                                 </td>
 
+                                <td className='fw-bolder'>{vendor?.workingDay || 'Not Allowted'}</td>
+                                <td className='fw-bolder'>{vendor?.workingTime || 'Not Allowted'}</td>
                                 <td className='fw-bolder'>{vendor?.AllowtedVendorMember || 'Not Allowted'}</td>
 
                                 <td className='fw-bolder'>

@@ -60,6 +60,9 @@ import AddCorporateOrder from '../CorporateUser/AddCorporateOrder'
 import AllTimeSlot from '../TimeSlot/AllTimeSlot'
 import AddTimeSlot from '../TimeSlot/AddTimeSlot'
 import EditTimeSlot from '../TimeSlot/EditTimeSlot'
+import AllScript from '../Script/AllScript'
+import AddScript from '../Script/AddScript'
+import EditScript from '../Script/EditScript'
 
 const Home = () => {
     return (
@@ -174,6 +177,12 @@ const Home = () => {
                         <Route path='/failed-payment' element={<PaymentFailed />} />
                         {/* <Route path='/' element={<Login />} /> */}
                         <Route path='/all-enquiry' element={<AllEnquiry />} />
+
+                        {/* sript route here  */}
+
+                        <Route path='/all-script' element={<AllScript />} />
+                        <Route path='/add-script' element={<AddScript />} />
+                        <Route path='/edit-script/:id' element={<EditScript />} />
 
                     </Routes>
                 </div>

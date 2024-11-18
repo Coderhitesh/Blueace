@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 
 const VendorMember = ({ userData }) => {
   const userId = userData?._id;
-  console.log("userid", userId)
   const [members, setMembers] = useState([]); // State to hold members
   const [loading, setLoading] = useState(false);
 
@@ -12,16 +11,16 @@ const VendorMember = ({ userData }) => {
   const handleInputChange = (index, event) => {
     const { name, value } = event.target;
     const updatedMembers = [...members];
-    updatedMembers[index][name] = value; // Update member's name
+    updatedMembers[index][name] = value;
     setMembers(updatedMembers);
   };
 
   // Function to handle file upload for member Aadhar image
   const handleFileChange = (index, event) => {
     const updatedMembers = [...members];
-    const file = event.target.files[0]; // Get the selected file
-    updatedMembers[index].memberAdharImage = file; // Store the selected file
-    updatedMembers[index].memberAdharImageUrl = URL.createObjectURL(file); // Create a local URL for preview
+    const file = event.target.files[0];
+    updatedMembers[index].memberAdharImage = file;
+    updatedMembers[index].memberAdharImageUrl = URL.createObjectURL(file);
     setMembers(updatedMembers);
   };
 
@@ -31,11 +30,11 @@ const VendorMember = ({ userData }) => {
       const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-vendor-member/${userId}`);
       const existingMembers = res.data.data.map((member) => ({
         name: member.name || '',
-        memberAdharImageUrl: member.memberAdharImage?.url || '', // For displaying the image URL
-        memberAdharImage: null, // Keep the file input empty initially
-        _id: member._id // Store the member ID to update later
+        memberAdharImageUrl: member.memberAdharImage?.url || '',
+        memberAdharImage: null,
+        _id: member._id
       }));
-      setMembers(existingMembers); // Set the existing members in state
+      setMembers(existingMembers);
     } catch (error) {
       console.log(error);
       toast.error('Failed to fetch existing members.');
@@ -58,14 +57,12 @@ const VendorMember = ({ userData }) => {
 
         formData.append('name', member.name);
 
-        // Only append the new file if it's been changed
         if (member.memberAdharImage) {
-          formData.append('memberAdharImage', member.memberAdharImage); // Append updated file
+          formData.append('memberAdharImage', member.memberAdharImage);
         }
 
-        // Update the member
         await axios.put(
-          `https://www.api.blueaceindia.com/api/v1/update-vendor-member/${userId}/${member._id}`, // Ensure userId and memberId are passed correctly
+          `https://www.api.blueaceindia.com/api/v1/update-vendor-member/${userId}/${member._id}`,
           formData,
           {
             headers: {
@@ -81,6 +78,27 @@ const VendorMember = ({ userData }) => {
       toast.error('Failed to update members.');
     }
     setLoading(false);
+  };
+
+  // Function to remove a member
+  const handleRemoveMember = async (index, memberId) => {
+    const confirmDelete = window.confirm('Are you sure you want to remove this member?');
+    if (!confirmDelete) return;
+
+    try {
+      // Optional: Send delete request to the backend
+      if (memberId) {
+        await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor-member/${userId}/${memberId}`);
+        toast.success('Member removed successfully!');
+      }
+
+      // Remove member from the state
+      const updatedMembers = members.filter((_, i) => i !== index);
+      setMembers(updatedMembers);
+    } catch (error) {
+      console.error('Error removing member:', error);
+      toast.error('Failed to remove member.');
+    }
   };
 
   return (
@@ -105,20 +123,27 @@ const VendorMember = ({ userData }) => {
             {members.map((member, index) => (
               <div className="dashboard-list-wraps bg-white rounded mb-4" key={index}>
                 <div className="dashboard-list-wraps-head br-bottom py-3 px-3">
-                  <div className="dashboard-list-wraps-flx">
+                  <div className="dashboard-list-wraps-flx d-flex justify-content-between align-items-center">
                     <h4 className="mb-0 ft-medium fs-md">
                       <i className="fa fa-user-check me-2 theme-cl fs-sm"></i>
                       {`Member ${index + 1}`}
                     </h4>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm"
+                      onClick={() => handleRemoveMember(index, member._id)}
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
 
                 <div className="dashboard-list-wraps-body py-3 px-3">
-                  <div className='row mt-2'>
-                    <div className='col-6'>
+                  <div className="row mt-2">
+                    <div className="col-6">
                       <label>Name:</label>
                       <input
-                        className='form-control rounded'
+                        className="form-control rounded"
                         type="text"
                         name="name"
                         value={member.name}
@@ -128,7 +153,6 @@ const VendorMember = ({ userData }) => {
                     </div>
                     <div className="col-6">
                       <label>Aadhar Image:</label>
-                      
                       <input
                         className="form-control"
                         type="file"
@@ -136,7 +160,7 @@ const VendorMember = ({ userData }) => {
                         onChange={(e) => handleFileChange(index, e)}
                       />
                       {member.memberAdharImageUrl && (
-                        <div className=' mt-2'>
+                        <div className="mt-2">
                           <img
                             src={member.memberAdharImageUrl}
                             alt="Aadhar"
@@ -146,38 +170,7 @@ const VendorMember = ({ userData }) => {
                           />
                         </div>
                       )}
-
-                      {/* Bootstrap Modal */}
-                      <div
-                        className="modal fade"
-                        id={`aadharModal${index}`}
-                        tabIndex="-1"
-                        aria-labelledby={`aadharModalLabel${index}`}
-                        aria-hidden="true"
-                      >
-                        <div className="modal-dialog modal-dialog-centered">
-                          <div className="modal-content">
-                            <div className="modal-header">
-                              <h5 className="modal-title" id={`aadharModalLabel${index}`}>Aadhar Image</h5>
-                              <button
-                                type="button"
-                                className="btn-close"
-                                data-bs-dismiss="modal"
-                                aria-label="Close"
-                              ></button>
-                            </div>
-                            <div className="modal-body text-center">
-                              <img
-                                src={member.memberAdharImageUrl}
-                                alt="Aadhar Full View"
-                                className="img-fluid"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
-
                   </div>
                 </div>
               </div>

@@ -167,6 +167,8 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Number</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Address</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>LandMark</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Voice Note</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Make Estimated </th>
 
@@ -195,6 +197,8 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                         <td>{order?.userId?.ContactNumber || "User is not available"}</td>
                                                         <td>{`${order?.userId?.HouseNo}, ${order?.userId?.Street}, ${order?.userId?.City}, ${order?.userId?.PinCode}` || "User is not available"}</td>
                                                         <td>{order?.userId?.NearByLandMark || "User is not available"}</td>
+                                                        <td>{order?.workingDay || "User is not available"}</td>
+                                                        <td>{order?.workingTime || "User is not available"}</td>
                                                         <td>
                                                             {order.voiceNote && (
                                                                 <audio controls>

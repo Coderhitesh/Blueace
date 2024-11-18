@@ -300,9 +300,9 @@ function SubCategory() {
   const handleModalSubmit = () => {
     if (formData.serviceType && formData.houseNo && formData.street && formData.city && formData.pinCode && formData.nearByLandMark) {
       const modal = document.getElementById('exampleModal');
-      const modalInstance = bootstrap.Modal.getInstance(modal);
+      // const modalInstance = bootstrap.Modal.getInstance(modal);
       handleSubmit();
-      modalInstance.hide();
+      // modalInstance.hide();
     } else {
       toast.error('Please fill all fields in the address form and select a service type.');
     }

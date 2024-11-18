@@ -14,6 +14,8 @@ function UserAllOrder({ userData, allOrder }) {
     };
 
     const closeModal = () => {
+        setRating("")
+        setComment('')
         setShowModal(false);
     };
 
@@ -42,6 +44,8 @@ function UserAllOrder({ userData, allOrder }) {
             if (response.data.success) {
                 toast.success('Rating submitted successfully!')
                 // alert('Rating submitted successfully!');
+                setRating("")
+                setComment('')
                 closeModal(); // Close the modal after successful submission
             } else {
                 alert(`Error: ${response.data.message}`);
@@ -105,6 +109,8 @@ function UserAllOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Email</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Number</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Allowted Member</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
@@ -126,6 +132,8 @@ function UserAllOrder({ userData, allOrder }) {
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.ContactNumber || "Vendor is not allowted"}</td>
                                                         <td>{order.AllowtedVendorMember || 'No Member Allowted'}</td>
+                                                        <td>{order.workingDay || 'Vendor is not Allowted'}</td>
+                                                        <td>{order.workingTime || 'Vendor is not Allowted'}</td>
                                                         <td>{order.OrderStatus}</td>
                                                         <td>
                                                             <button
@@ -174,18 +182,35 @@ function UserAllOrder({ userData, allOrder }) {
                                                         </td>
                                                         {/* Review Modal */}
                                                         {showModal && (
-                                                            <div className="modal fade show" style={{ display: 'block' }} role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                                <div className="modal-dialog modal-dialog-centered" role="document">
-                                                                    <div className="modal-content-hitesh">
-                                                                        <div className="text-right cross" onClick={closeModal} style={{ cursor: 'pointer' }}>
-                                                                            <i className="fa fa-times mr-2"></i>
+                                                            <div
+                                                                className="custom-modal-overlay"
+                                                                style={{ display: 'block' }}
+                                                                role="dialog"
+                                                                aria-labelledby="customModalLabel"
+                                                                aria-hidden="true"
+                                                            >
+                                                                <div className="custom-modal-container">
+                                                                    <div className="custom-modal-content">
+                                                                        {/* Close Button */}
+                                                                        <div className="custom-modal-header">
+                                                                            <span className="custom-close-btn" onClick={closeModal}>
+                                                                                <i className="fa fa-times"></i>
+                                                                            </span>
                                                                         </div>
-                                                                        <div className="card-body text-center">
-                                                                            <img src="https://i.imgur.com/d2dKtI7.png" height="100" width="100" alt="Review" className="mb-4" />
-                                                                            <h4 className="mb-4">Add a Comment and Rate</h4>
+
+                                                                        {/* Modal Body */}
+                                                                        <div className="custom-modal-body text-center">
+                                                                            <img
+                                                                                src="https://i.imgur.com/d2dKtI7.png"
+                                                                                height="80"
+                                                                                width="80"
+                                                                                alt="Review"
+                                                                                className="mb-3"
+                                                                            />
+                                                                            <h4 className="mb-3">Add a Comment and Rate</h4>
 
                                                                             {/* Rating Section */}
-                                                                            <div className="rating mb-4">
+                                                                            <div className="rating mb-3">
                                                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                                                     <span
                                                                                         key={star}
@@ -200,27 +225,29 @@ function UserAllOrder({ userData, allOrder }) {
                                                                             </div>
 
                                                                             {/* Comment Section */}
-                                                                            <div className="comment-area mb-4">
+                                                                            <div className="comment-area mb-3">
                                                                                 <textarea
                                                                                     className="form-control"
                                                                                     placeholder="What is your view?"
-                                                                                    rows="4"
+                                                                                    rows="3"
                                                                                     value={comment}
                                                                                     onChange={handleCommentChange}
                                                                                 ></textarea>
                                                                             </div>
 
                                                                             {/* Submit Button */}
-                                                                            <div className="text-center mt-4">
-                                                                                <button className="btn btn-success send px-5" onClick={() => handleSubmitReview(order._id, order.vendorAlloted._id)}>
-                                                                                    Send Review <i className="fa fa-long-arrow-right ml-1"></i>
-                                                                                </button>
-                                                                            </div>
+                                                                            <button
+                                                                                className="btn btn-primary send-review-btn"
+                                                                                onClick={() => handleSubmitReview(order._id, order.vendorAlloted._id)}
+                                                                            >
+                                                                                Send Review <i className="fa fa-long-arrow-right ml-1"></i>
+                                                                            </button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         )}
+
 
 
                                                     </tr>
