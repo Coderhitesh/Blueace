@@ -21,9 +21,10 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
             behavior: 'smooth'
         })
     }, [])
+    // console.log("readyToWork 2",readyToWork)
     const fetchDashboardData = async () => {
         try {
-            const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
+            const { data } = await axios.get('https://api.blueaceindia.com/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
@@ -43,7 +44,7 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
     //         setReadyToWork(updatedStatus);
 
     //         await axios.put(
-    //             `https://www.api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
+    //             `https://api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
     //             { readyToWork: updatedStatus }
     //         );
     //         toast.success('Status successfully');
@@ -55,7 +56,7 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
 
     const fetchOrderData = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-order');
             const orderData = res.data.data;
             const filterData = orderData.filter((item) => item?.vendorAlloted?._id === userData?._id);
             setAllOrderCount(filterData.length);
@@ -94,8 +95,8 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
                                 </ol>
                             </nav>
                         </div>
-                        {
-                            role === 'vendor' && (
+                        {/* {
+                            role === 'vendor' && ( */}
                                 <div className="col-xl-3 col-lg-3 col-md-12">
                                     <div className="row">
                                         <div className="col-xl-12 d-flex justify-content-center mb-2 col-lg-12 col-md-12">
@@ -117,8 +118,8 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
                                         </div>
                                     </div>
                                 </div>
-                            )
-                        }
+                            {/* )
+                        }  */}
 
 
                     </div>

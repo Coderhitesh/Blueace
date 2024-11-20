@@ -17,7 +17,7 @@ function EditTimeSlot() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-timing/${id}`)
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-timing/${id}`)
                 const faq = data.data;
                 // console.log('single data',faq)
                 setFormData({
@@ -48,7 +48,7 @@ function EditTimeSlot() {
         payload.append('time', formData.time)
 
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-timing/${id}`, payload, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-timing/${id}`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

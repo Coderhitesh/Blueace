@@ -29,7 +29,7 @@ function AddTimingSlot({ userData }) {
 
     const handleFetchTimeSlot = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-timing')
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-timing')
             // console.log("time", res.data.data)
             setAllTimeSlot(res.data.data)
         } catch (error) {
@@ -42,7 +42,7 @@ function AddTimingSlot({ userData }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/create-working-hours/${vendorId}`, { schedule: formData }, {
+            const res = await axios.post(`https://api.blueaceindia.com/api/v1/create-working-hours/${vendorId}`, { schedule: formData }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

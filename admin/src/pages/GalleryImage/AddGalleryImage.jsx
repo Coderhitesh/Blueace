@@ -27,7 +27,7 @@ function AddGalleryImage() {
 
   const handleFetchGalleryTitle = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-gallery-category-name')
+      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-gallery-category-name')
       setGalleryTitle(res.data.data)
     } catch (error) {
       console.log("Eror in fetching  gallery title", error);
@@ -62,7 +62,7 @@ function AddGalleryImage() {
     }
 
     try {
-      await axios.post('https://www.api.blueaceindia.com/api/v1/create-gallery-image', payload, {
+      await axios.post('https://api.blueaceindia.com/api/v1/create-gallery-image', payload, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

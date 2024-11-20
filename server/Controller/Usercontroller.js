@@ -4,20 +4,22 @@ const SendEmail = require('../Utils/SendEmail');
 const Vendor = require('../Model/vendor.Model');
 const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
 const fs = require("fs")
+const mongoose = require('mongoose')
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
-        console.log("I am hit")
-        const { companyName, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
+        // console.log("I am hit")
+        const { companyName, address, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
 
         const emptyField = [];
         if (!FullName) emptyField.push('FullName');
         if (!Email) emptyField.push('Email');
         if (!ContactNumber) emptyField.push('ContactNumber');
-        if (!City) emptyField.push('City');
+        // if (!City) emptyField.push('City');
         if (!PinCode) emptyField.push('PinCode');
         if (!HouseNo) emptyField.push('HouseNo');
-        if (!Street) emptyField.push('Street');
+        // if (!Street) emptyField.push('Street');
+        if (!address) emptyField.push('address');
         if (!NearByLandMark) emptyField.push('NearByLandMark');
         if (emptyField.length > 0) {
             return res.status(400).json({
@@ -78,11 +80,12 @@ exports.register = async (req, res) => {
             Password,
             Email,
             ContactNumber,
-            City,
+            // City,
             PinCode,
             UserType,
             HouseNo,
-            Street,
+            // Street,
+            address,
             NearByLandMark,
             RangeWhereYouWantService,
             companyName
@@ -752,27 +755,39 @@ exports.getAllUsers = async (req, res) => {
 exports.getSingleUserById = async (req, res) => {
     try {
         const id = req.params._id;
-        const user = await User.findById(id)
+
+        // Check if the ID is a valid ObjectId
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                msg: 'Invalid ID format'
+            });
+        }
+
+        // Query the database for the user by ID
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({
                 success: false,
                 msg: 'User not found'
-            })
+            });
         }
+
         res.status(200).json({
             success: true,
             msg: 'User found',
             data: user
-        })
+        });
     } catch (error) {
-        console.log("Internal server error", error)
+        console.error("Internal server error", error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error in fetchin single user by id',
+            msg: 'Internal Server Error in fetching single user by ID',
             message: error.message
-        })
+        });
     }
-}
+};
+
 
 exports.updateUser = async (req, res) => {
     const uploadedImages = [];

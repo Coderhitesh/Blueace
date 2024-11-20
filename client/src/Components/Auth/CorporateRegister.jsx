@@ -94,7 +94,7 @@ function CorporateRegister() {
       };
   
       try {
-        const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', updatedFormData);
+        const res = await axios.post('https://api.blueaceindia.com/api/v1/Create-User', updatedFormData);
   
         sessionStorage.setItem('token', res.data.token);
         sessionStorage.setItem('user', JSON.stringify(res.data.user));

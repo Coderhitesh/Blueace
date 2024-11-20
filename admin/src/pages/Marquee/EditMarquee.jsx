@@ -17,7 +17,7 @@ function EditMarquee() {
     useEffect(() => {
         const fetchSingleData = async () => {
             try {
-                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-marquee/${id}`)
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-marquee/${id}`)
                 const res = data.data;
                 setFormData({
                     text: res.text
@@ -44,7 +44,7 @@ function EditMarquee() {
         const payload = new FormData();
         payload.append('text', formData.text);
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-marquee/${id}`, payload, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-marquee/${id}`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

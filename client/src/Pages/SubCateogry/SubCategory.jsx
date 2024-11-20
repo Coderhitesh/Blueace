@@ -48,7 +48,7 @@ function SubCategory() {
 
   const fetchdata = async () => {
     try {
-      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-service-category-by-name/${newTitle}`);
+      const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-service-category-by-name/${newTitle}`);
       setService(res.data.data);
       // console.log('data', res.data.data)
     } catch (error) {
@@ -58,7 +58,7 @@ function SubCategory() {
 
   const fetchAllData = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
+      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service');
       const allData = res.data.data;
 
       // Apply regex search directly in the frontend filtering
@@ -283,7 +283,7 @@ function SubCategory() {
 
 
     try {
-      await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData, {
+      await axios.post('https://api.blueaceindia.com/api/v1/make-order', updatedFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

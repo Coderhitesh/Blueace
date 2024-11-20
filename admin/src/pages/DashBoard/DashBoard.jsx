@@ -13,9 +13,10 @@ function DashBoard() {
 
     const fetchAllVendor = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/all-vendor');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/all-vendor');
             const data = res.data.data;
-            setVendorCount(data.length);
+            const  vendor = data.filter((item)=> item.Role === 'vendor')
+            setVendorCount(vendor.length);
             const employData = data.filter((item) => item.Role === 'employ');
             setEmployCount(employData.length);
         } catch (error) {
@@ -25,11 +26,12 @@ function DashBoard() {
 
     const fetchAllUser = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/AllUser');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/AllUser');
             const data = res.data.data;
             const corporateMember = data.filter((item) => item.UserType === "Corporate");
             setCorporateCount(corporateMember.length);
-            setUserCount(data.length);
+            const user = data.filter((item) => item.UserType === 'Normal')
+            setUserCount(user.length);
         } catch (error) {
             console.log('Internal server error', error);
         }
@@ -37,7 +39,7 @@ function DashBoard() {
 
     const fetchAllOrder = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-order');
             const data = res.data.data;
             setOrderCount(data.length);
             const activeOrders = data.filter((item) => item.OrderStatus !== "Service Done" && item.OrderStatus !== "Cancelled");

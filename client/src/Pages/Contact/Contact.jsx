@@ -21,7 +21,7 @@ function Contact() {
     e.preventDefault();
     try {
       // You may switch to JSON payload if not uploading files
-      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/create-contact', formData, {
+      const res = await axios.post('https://api.blueaceindia.com/api/v1/create-contact', formData, {
         headers: {
           'Content-Type': 'application/json' // Change if using FormData
         },

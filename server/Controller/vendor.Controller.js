@@ -290,8 +290,10 @@ exports.registerVendor = async (req, res) => {
 exports.updateReadyToWork = async (req, res) => {
     try {
         const id = req.params._id;
+        console.log("i am hit")
         const { readyToWork } = req.body;
         const existingVendor = await Vendor.findById(id)
+        console.log("existingVendor",existingVendor)
 
         if (!existingVendor) {
             return res.status(400).json({

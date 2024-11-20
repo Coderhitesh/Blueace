@@ -92,6 +92,9 @@ const UserSchema = new mongoose.Schema({
     },
     companyName: {
         type: String
+    },
+    address: {
+        type: String
     }
 }, { timestamps: true });
 

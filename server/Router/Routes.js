@@ -24,6 +24,7 @@ const { createWorkingHours, updateWorkingHours, getWorkingHoursById, getAllWorki
 const { createSlotTiming, getAllSlotTiming, updateSlotTiming, deleteSlotTiming, getSlotTimingById } = require('../Controller/slotTiming.Controller')
 const { createVendorRating, getAllVendorRatings, getVendorRatingById, updateVendorRating, deleteVendorRating } = require('../Controller/vendorRating.Controller')
 const { createScript, getSingleScript, updateScript, getAllScript, deleteScript } = require('../Controller/script.Controller')
+const { getCurrentLocationByLatLng, getLatLngByAddress, AutoCompleteAddress } = require('../Controller/Location.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -267,6 +268,12 @@ router.get('/get-single-script/:_id',getSingleScript)
 router.get('/get-all-script',getAllScript)
 router.put('/update-script/:_id',updateScript)
 router.delete('/delete-script/:_id',deleteScript)
+
+// location router here 
+
+router.post('/Fetch-Current-Location',getCurrentLocationByLatLng)
+router.get('/geocode',getLatLngByAddress)
+router.get('/autocomplete',AutoCompleteAddress)
 
 
 module.exports = router;

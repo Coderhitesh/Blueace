@@ -112,7 +112,7 @@ function AddCorporateUser() {
         setLoading(true);
 
         try {
-            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', formData);
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/Create-User', formData);
             toast.success('Corporate Registration Successful!');
             // Uncomment this line if you want to redirect after success
             // window.location.href = '/corporate-user/all-corporate-user';

@@ -13,6 +13,21 @@ const SeeEstimatedBudget = () => {
     const [estimatedBill, setEstimatedBill] = useState(null);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const user = JSON.parse(sessionStorage.getItem('user'));
+    const Role = user.Role
+
+    // const handleFetchUser = async () => {
+    //     try {
+    //         const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-user/${vendorId}`)
+    //         console.log(res.data.data.Role)
+    //     } catch (error) {
+    //         console.log("Internal server error",error)
+    //     }
+    // }
+
+    // useEffect(()=>{
+    //     handleFetchUser();
+    // })
 
     useEffect(() => {
         // Parse the estimate parameter if it exists
@@ -29,7 +44,7 @@ const SeeEstimatedBudget = () => {
 
     const handleApprove = async () => {
         try {
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
+            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
                 status: true
             });
             if (response.status === 200) {
@@ -44,7 +59,7 @@ const SeeEstimatedBudget = () => {
 
     const handleDecline = async () => {
         try {
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
+            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
                 status: false
             });
             if (response.status === 200) {
@@ -91,14 +106,18 @@ const SeeEstimatedBudget = () => {
             </ul>
             <h5 className="text-end">Total Estimated Price (including GST): <span className="text-success">Rs {estimatedBill.EstimatedTotalPrice.toFixed(2)}</span></h5>
 
-            <div className="d-flex justify-content-center mt-4">
-                <button onClick={handleApprove} className='btn btn-success me-2 w-50'>
-                    Approve Bill
-                </button>
-                <button onClick={handleDecline} className='btn btn-danger w-50'>
-                    Decline Bill
-                </button>
-            </div>
+            {
+                Role === 'Customer' ? (
+                    <div className="d-flex justify-content-center mt-4">
+                        <button onClick={handleApprove} className='btn btn-success me-2 w-50'>
+                            Approve Bill
+                        </button>
+                        <button onClick={handleDecline} className='btn btn-danger w-50'>
+                            Decline Bill
+                        </button>
+                    </div>
+                ) : (<></>)
+            }
         </div>
     );
 };

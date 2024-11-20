@@ -46,12 +46,15 @@ function Dashboard() {
     const role = userDataMain?.Role
     const isVerified = userData.verifyed
     const slotAdded = userData?.workingHour
-    const [readyToWork, setReadyToWork] = useState(userData?.readyToWork || true);
+    const [readyToWork, setReadyToWork] = useState();
+    // useEffect(()=>{
+    //     setReadyToWork(userData.readyToWork)
+    // },[])
 
     useEffect(() => {
         const fetchOrderById = async () => {
             try {
-                const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
+                const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
                 setAllOrder(res.data.data)
                 const allData = res.data.data
                 const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
@@ -69,8 +72,9 @@ function Dashboard() {
 
     const findUser = async () => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/findUser/${userId}`)
             setUserData(res.data.data)
+            setReadyToWork(res.data.data.readyToWork)
         } catch (error) {
             console.log(error)
         }
@@ -93,7 +97,7 @@ function Dashboard() {
 
     const handleLogout = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/vendor-logout', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -106,14 +110,16 @@ function Dashboard() {
         }
     };
 
+    // console.log('readyToWork',readyToWork)
     const handleChangeReadyToWork = async () => {
         try {
             // console.log('i am hit')
             const updatedStatus = !readyToWork;
+            // console.log("updatedStatus",updatedStatus)
             setReadyToWork(updatedStatus);
 
             await axios.put(
-                `https://www.api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
+                `https://api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
                 { readyToWork: updatedStatus }
             );
             toast.success('Status successfully');
@@ -135,7 +141,7 @@ function Dashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${userId}`);
+                    await axios.delete(`https://api.blueaceindia.com/api/v1/delete-vendor/${userId}`);
                     sessionStorage.clear()
                     toast.success("User Deleted Successfully");
                     window.location.href = '/'
@@ -244,6 +250,33 @@ function Dashboard() {
                                                 <i className="lni lni-add-files me-2"></i>All Orders
                                             </a>
                                         </li>
+                                        {
+                                            !slotAdded && (
+                                                <li onClick={() => handleTabClick('add-slot-time')} className={`${activeTab === 'add-slot-time' ? 'active' : ''}`}>
+                                                    <a>
+                                                        <i className="lni lni-bookmark me-2"></i>Add Slot Time
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
+                                        {
+                                            slotAdded && (
+                                                <li onClick={() => handleTabClick('edit-slot-time')} className={`${activeTab === 'edit-slot-time' ? 'active' : ''}`}>
+                                                    <a>
+                                                        <i className="lni lni-bookmark me-2"></i>Edit Slot Time
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
+                                        {
+                                            isVerified === false && (
+                                                <li onClick={() => handleTabClick('verify-account')} className={`${activeTab === 'verify-account' ? 'active' : ''}`}>
+                                                    <a>
+                                                        <i className="lni lni-bookmark me-2"></i>Verify Account
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
                                         {/* <li onClick={() => handleTabClick('add-slot-time')} className={`${activeTab === 'add-slot-time' ? 'active' : ''}`}>
                                             <a>
                                                 <i className="lni lni-bookmark me-2"></i>Add Slot Time
@@ -319,11 +352,15 @@ function Dashboard() {
                                                 </li>
                                             )
                                         }
-                                        <li onClick={() => handleTabClick('edit-slot-time')} className={`${activeTab === 'edit-slot-time' ? 'active' : ''}`}>
-                                            <a>
-                                                <i className="lni lni-bookmark me-2"></i>Edit Slot Time
-                                            </a>
-                                        </li>
+                                        {
+                                            slotAdded && (
+                                                <li onClick={() => handleTabClick('edit-slot-time')} className={`${activeTab === 'edit-slot-time' ? 'active' : ''}`}>
+                                                    <a>
+                                                        <i className="lni lni-bookmark me-2"></i>Edit Slot Time
+                                                    </a>
+                                                </li>
+                                            )
+                                        }
                                         {
                                             isVerified === false && (
                                                 <li onClick={() => handleTabClick('verify-account')} className={`${activeTab === 'verify-account' ? 'active' : ''}`}>

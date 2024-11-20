@@ -23,7 +23,7 @@ const VendorForOrder = () => {
 
     const fetchData = async (page) => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/fetch-Vendor-By-Location`, {
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/fetch-Vendor-By-Location`, {
                 params: {
                     orderId: id,
                     Page: page,
@@ -35,13 +35,14 @@ const VendorForOrder = () => {
             setData(res.data.data);
             setCurrentPage(res.data.currentPage);
             setTotalPages(res.data.totalPages);
-
+            console.log("res.data.preSelectedDay", res.data.preSelectedDay)
             // Set pre-selected working day and time
             if (res.data.AlreadyAllottedVendor && res.data.preSelectedDay && res.data.preSelectedTime) {
                 setPreSelectedDay(res.data.preSelectedDay); // Pre-selected working day from backend
                 setPreSelectedTime(res.data.preSelectedTime); // Pre-selected working time from backend
                 setSelectedDay(res.data.preSelectedDay);
                 setSelectedTime(res.data.preSelectedTime);
+                
             }
         } catch (error) {
             console.error('Error fetching vendors', error);
@@ -55,7 +56,7 @@ const VendorForOrder = () => {
 
     const handleAssignOrder = async (vendorId) => {
         try {
-            const url = `https://www.api.blueaceindia.com/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}/${selectedDay}/${selectedTime}`;
+            const url = `https://api.blueaceindia.com/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}/${selectedDay}/${selectedTime}`;
             // const res = await axios.post(url, {
             //     workingDay: selectedDay,
             //     workingTime: selectedTime,
@@ -118,6 +119,7 @@ const VendorForOrder = () => {
                                     <strong>GST No:</strong> {vendor.gstNo} <br />
                                     <strong>PAN No:</strong> {vendor.panNo} <br />
                                 </p>
+                                {/* {console.log("vendor",vendor)} */}
 
                                 {/* Day Selection with Pre-selected Day */}
                                 <div className="mb-3">

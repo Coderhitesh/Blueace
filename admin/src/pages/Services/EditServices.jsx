@@ -30,7 +30,7 @@ function EditServices() {
 
     const handleFetchMainCategory = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-main-category');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-main-category');
             setMainCategories(res.data.data);
         } catch (error) {
             console.error(error);
@@ -39,7 +39,7 @@ function EditServices() {
 
     const handleFetchSubCategory = async (categoryId) => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-all-service-category?mainCategoryId=${categoryId}`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-all-service-category?mainCategoryId=${categoryId}`);
             setSubCategories(res.data.data);
         } catch (error) {
             console.error(error);
@@ -53,7 +53,7 @@ function EditServices() {
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
-                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-service/${id}`);
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-service/${id}`);
                 const category = data.data;
 
                 setFormData({
@@ -172,7 +172,7 @@ function EditServices() {
         }
 
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-service/${id}`, payload, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-service/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
