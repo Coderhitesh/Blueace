@@ -317,6 +317,7 @@ function SubCategory() {
 
   return (
     <>
+    {/* {console.log("description",service.metafocus)} */}
       <MetaTag title={service.metaTitle} description={service.metaDescription} keyword={service.metaKeyword} focus={service.metafocus} />
       {/* Main Form */}
       <div className='container mb-5'>

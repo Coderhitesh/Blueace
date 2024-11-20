@@ -53,7 +53,7 @@ function Registration() {
   const fetchAddressSuggestions = async (query) => {
     try {
       // console.log("query",query)
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${query}`);
+      const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
       console.log(res.data)
       setAddressSuggestions(res.data || []);
     } catch (err) {
@@ -64,7 +64,8 @@ function Registration() {
   // Fetch latitude and longitude based on selected address
   const fetchGeocode = async (selectedAddress) => {
     try {
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${selectedAddress}`);
+      const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      // console.log("geo",res.data)
       const { latitude, longitude } = res.data;
       setLocation({ latitude, longitude });
       setFormData((prevData) => ({
@@ -244,7 +245,7 @@ function Registration() {
                                     key={index}
                                     style={{ fontSize: 16 }}
                                     className="p-1 hover:bg-light cursor-pointer"
-                                    onClick={() => fetchGeocode(suggestion)}
+                                    onClick={() => fetchGeocode(suggestion.description)}
                                   >
                                     {suggestion.description}
                                   </li>
