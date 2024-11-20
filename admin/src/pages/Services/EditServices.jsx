@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom'; // To get the category ID from URL
 import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
+import { useMemo } from 'react';
 
 function EditServices() {
     const { id } = useParams();
@@ -189,10 +190,18 @@ function EditServices() {
     };
 
     // Editor Configuration
-    const editorConfig = {
-        readonly: false,
-        height: 400,
-    };
+    // const editorConfig = {
+    //     readonly: false,
+    //     height: 400,
+    // };
+
+    const editorConfig = useMemo(
+		() => ({
+			readonly: false,
+            height: 400,
+		}),
+		[]
+	);
 
     const handleEditorChange = useCallback((newContent, field) => {
         setFormData((prevFormData) => ({

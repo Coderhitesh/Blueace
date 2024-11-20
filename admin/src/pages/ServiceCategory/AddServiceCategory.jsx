@@ -5,6 +5,7 @@ import Input from '../../components/Forms/Input';
 import axios from 'axios';
 import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
+import { useMemo } from 'react';
 
 function AddServiceCategory() {
     const [formData, setFormData] = useState({
@@ -149,10 +150,13 @@ function AddServiceCategory() {
         }
     };
 
-    const editorConfig = {
-        readonly: false,
-        height: 400
-    };
+    const editorConfig = useMemo(
+		() => ({
+			readonly: false,
+            height: 400,
+		}),
+		[]
+	);
 
     const handleEditorChange = useCallback((newContent, field) => {
         setFormData(prevFormData => ({ ...prevFormData, [field]: newContent }));
