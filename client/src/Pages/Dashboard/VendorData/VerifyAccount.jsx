@@ -49,7 +49,7 @@ function VerifyAccount({ userData }) {
     
             // console.log('Sending OTP request with email:', sendOtpFormData.Email); // Debugging log
     
-            await axios.put('https://api.blueaceindia.com/api/v1/verify-account-otp-send', payload);
+            await axios.put('https://www.api.blueaceindia.com/api/v1/verify-account-otp-send', payload);
             toast.success('OTP sent successfully!');
             setGetOtp(true);
         } catch (error) {
@@ -70,7 +70,7 @@ function VerifyAccount({ userData }) {
                 Email: sendOtpFormData.Email,
                 VerifyOTP: sendOtpFormData.VerifyOTP,
             };
-            await axios.post('https://api.blueaceindia.com/api/v1/verify-account', payload);
+            await axios.post('https://www.api.blueaceindia.com/api/v1/verify-account', payload);
             toast.success('Account Verified!');
             window.location.href = '/vendor-dashboard';
         } catch (error) {
@@ -89,7 +89,7 @@ function VerifyAccount({ userData }) {
             const payload = {
                 Email: sendOtpFormData.Email,
             };
-            await axios.post('https://api.blueaceindia.com/api/v1/resend-verify-vendor-otp', payload);
+            await axios.post('https://www.api.blueaceindia.com/api/v1/resend-verify-vendor-otp', payload);
             toast.success('OTP resent successfully!');
         } catch (error) {
             console.log('Internal server error', error);

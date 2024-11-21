@@ -25,7 +25,7 @@ function Category() {
 
     const fetchdata = async () => {
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-service-category-by-name/${name}`);
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-service-category-by-name/${name}`);
             setSubCategory(res.data.data);
             console.log('data',res.data)
         } catch (error) {
@@ -35,7 +35,7 @@ function Category() {
 
     const fetchServiceData = async () => {
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service')
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service')
             const data = res.data.data
             const filterData = data.filter((item) => item?.subCategoryId?.name === newName)
             setService(filterData)

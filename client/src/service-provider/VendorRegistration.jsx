@@ -15,7 +15,7 @@ function VendorRegistration() {
     const [formData, setFormData] = useState({
         companyName: '',
         yearOfRegistration: '',
-        registerAddress: '',
+        address: '',
         panImage: null,
         adharImage: null,
         gstImage: null,
@@ -26,11 +26,14 @@ function VendorRegistration() {
         gstNo: '',
         adharNo: '',
         Password: '',
+        HouseNo: '',
+        PinCode: '',
         RangeWhereYouWantService: [{
             location: { type: 'Point', coordinates: [] }
         }]
     });
     const [location, setLocation] = useState({ latitude: '', longitude: '' });
+    const [addressSuggestions, setAddressSuggestions] = useState([]); // Suggestions state
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -44,23 +47,61 @@ function VendorRegistration() {
                 setPasswordError('');
             }
         }
-    };
-
-    const getLocation = () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setLocation({
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    });
-                },
-                () => toast.error('Unable to retrieve your location')
-            );
-        } else {
-            toast.error('Geolocation is not supported by this system');
+        if (name === 'address' && value.length > 2) {
+            fetchAddressSuggestions(value);
         }
     };
+
+    // Fetch address suggestions
+    const fetchAddressSuggestions = async (query) => {
+        try {
+            // console.log("query",query)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            // console.log(res.data)
+            setAddressSuggestions(res.data || []);
+        } catch (err) {
+            console.error('Error fetching address suggestions:', err);
+        }
+    };
+
+    // Fetch latitude and longitude based on selected address
+    const fetchGeocode = async (selectedAddress) => {
+        try {
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            // console.log("geo", res.data)
+            const { latitude, longitude } = res.data;
+            setLocation({ latitude, longitude });
+            setFormData((prevData) => ({
+                ...prevData,
+                address: selectedAddress,
+                RangeWhereYouWantService: [{
+                    location: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude]
+                    }
+                }]
+            }));
+            setAddressSuggestions([]);
+        } catch (err) {
+            console.error('Error fetching geocode:', err);
+        }
+    };
+
+    // const getLocation = () => {
+    //     if (navigator.geolocation) {
+    //         navigator.geolocation.getCurrentPosition(
+    //             (position) => {
+    //                 setLocation({
+    //                     latitude: position.coords.latitude,
+    //                     longitude: position.coords.longitude
+    //                 });
+    //             },
+    //             () => toast.error('Unable to retrieve your location')
+    //         );
+    //     } else {
+    //         toast.error('Geolocation is not supported by this system');
+    //     }
+    // };
 
     const handlePanImageUpload = (e) => {
         const file = e.target.files[0];
@@ -107,7 +148,7 @@ function VendorRegistration() {
         const payload = new FormData();
         payload.append('companyName', formData.companyName);
         payload.append('yearOfRegistration', formData.yearOfRegistration);
-        payload.append('registerAddress', formData.registerAddress);
+        payload.append('address', formData.address);
         payload.append('Email', formData.Email);
         payload.append('ownerName', formData.ownerName);
         payload.append('ContactNumber', formData.ContactNumber);
@@ -115,6 +156,8 @@ function VendorRegistration() {
         payload.append('adharNo', formData.adharNo);
         payload.append('gstNo', formData.gstNo);
         payload.append('Password', formData.Password);
+        payload.append('HouseNo', formData.HouseNo);
+        payload.append('PinCode', formData.PinCode);
 
         if (formData.panImage) payload.append('panImage', formData.panImage);
         if (formData.adharImage) payload.append('adharImage', formData.adharImage);
@@ -125,7 +168,7 @@ function VendorRegistration() {
         payload.append('RangeWhereYouWantService[0][location][coordinates][1]', location.latitude);
 
         try {
-            const res = await axios.post('https://api.blueaceindia.com/api/v1/register-vendor', payload, {
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/register-vendor', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Vendor Registration Successful!');
@@ -144,9 +187,9 @@ function VendorRegistration() {
         }
     };
 
-    useEffect(() => {
-        getLocation();
-    }, []);
+    // useEffect(() => {
+    //     getLocation();
+    // }, []);
 
     return (
         <>
@@ -163,49 +206,87 @@ function VendorRegistration() {
                                     <form onSubmit={handleSubmit} className="submit-form">
                                         <div className="row">
                                             <div className="form-group col-lg-6">
-                                                <label>Name of Company*</label>
+                                                <label className=' fw-medium'>Name of Company*</label>
                                                 <input type="text" value={formData.companyName} name='companyName' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label>Year of Registration*</label>
+                                                <label className=' fw-medium'>Year of Registration*</label>
                                                 <input type="date" value={formData.yearOfRegistration} name='yearOfRegistration' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                         </div>
                                         <div className='row'>
                                             <div className="form-group col-lg-6">
-                                                <label>Registered Email*</label>
+                                                <label className=' fw-medium'>Registered Email*</label>
                                                 <input type="email" value={formData.Email} name='Email' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label>Name of Owner*</label>
+                                                <label className=' fw-medium'>Name of Owner*</label>
                                                 <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label>Contact Number of Owner*</label>
+                                                <label className=' fw-medium'>Contact Number of Owner*</label>
                                                 <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label>PAN Number*</label>
+                                                <label className=' fw-medium'>PAN Number*</label>
                                                 <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control text-uppercase rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label>GST Number*</label>
+                                                <label className=' fw-medium'>GST Number*</label>
                                                 <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label>Aadhar Number*</label>
+                                                <label className=' fw-medium'>Aadhar Number*</label>
                                                 <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                         </div>
 
                                         <div className="row">
-                                            <div className="form-group col-lg-12">
-                                                <label>Address of Registration*</label>
-                                                <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" required />
-                                            </div>
-                                            <div className="form-group col-lg-12">
+                                            <div className="position-relative col-6">
+                                                <div className="form-group">
+                                                    <label htmlFor="address" className='mb-1 fw-medium'>Address*</label>
+                                                    <input
+                                                        type="text"
+                                                        name="address"
+                                                        value={formData.address}
+                                                        placeholder="Start typing address..."
+                                                        onChange={handleChange}
+                                                        className="form-control rounded"
+                                                    />
 
-                                                <label>Password*</label>
+                                                    {addressSuggestions.length > 0 && (
+                                                        <div
+                                                            className="position-absolute top-100 start-0 mt-2 w-100 bg-white border border-secondary rounded shadow-lg overflow-auto"
+                                                            style={{ maxHeight: "200px" }}
+                                                        >
+                                                            <ul className="list-unstyled mb-0">
+                                                                {addressSuggestions.map((suggestion, index) => (
+                                                                    <li
+                                                                        key={index}
+                                                                        style={{ fontSize: 16 }}
+                                                                        className="p-1 hover:bg-light cursor-pointer"
+                                                                        onClick={() => fetchGeocode(suggestion.description)}
+                                                                    >
+                                                                        {suggestion.description}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                            </div>
+                                            <div className="form-group col-lg-6">
+                                                <label className=' fw-medium'>House No*</label>
+                                                <input type="text" value={formData.HouseNo} name='HouseNo' onChange={handleChange} className="form-control rounded" required />
+                                            </div>
+                                            <div className="form-group col-lg-6">
+                                                <label className=' fw-medium'>Pin code*</label>
+                                                <input type="text" value={formData.PinCode} name='PinCode' onChange={handleChange} className="form-control rounded" required />
+                                            </div>
+                                            <div className="form-group col-lg-6">
+
+                                                <label className=' fw-medium'>Password*</label>
                                                 {passwordError && (
                                                     <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
                                                         {passwordError}
@@ -217,17 +298,17 @@ function VendorRegistration() {
                                         <div className='row'>
                                             <h4 className='bg-primary text-white p-2 mb-5'>Documents Upload</h4>
                                             <div className="form-group col-lg-4">
-                                                <label>PAN Card Upload</label>
+                                                <label className=' fw-medium'>PAN Card Upload</label>
                                                 <input type="file" accept="image/*" onChange={handlePanImageUpload} className="form-control mt-2" required />
                                                 {previewPanImage && <img src={previewPanImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                             <div className="form-group col-lg-4">
-                                                <label>Aadhar Card Upload</label>
+                                                <label className=' fw-medium'>Aadhar Card Upload</label>
                                                 <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control mt-2" required />
                                                 {previewAdharImage && <img src={previewAdharImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
                                             <div className="form-group col-lg-4">
-                                                <label>GST Registration Upload</label>
+                                                <label className=' fw-medium'>GST Registration Upload</label>
                                                 <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control mt-2" required />
                                                 {previewGstImage && <img src={previewGstImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>

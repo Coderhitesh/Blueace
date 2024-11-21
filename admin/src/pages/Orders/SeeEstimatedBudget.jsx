@@ -29,7 +29,7 @@ const SeeEstimatedBudget = () => {
 
     const handleApprove = async () => {
         try {
-            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-order-status/${estimatedBill._id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-order-status/${estimatedBill._id}`, {
                 status: true
             });
             if (response.status === 200) {
@@ -44,7 +44,7 @@ const SeeEstimatedBudget = () => {
 
     const handleDecline = async () => {
         try {
-            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-order-status/${estimatedBill._id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-order-status/${estimatedBill._id}`, {
                 status: false
             });
             if (response.status === 200) {

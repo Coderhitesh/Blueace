@@ -7,7 +7,7 @@ function CategoryHome() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category')
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
       const data = res.data.data
       console.log(data)
       const filterData = data.filter((item) => item?.mainCategoryId?.name === 'AC')

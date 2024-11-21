@@ -24,7 +24,7 @@ exports.registerVendor = async (req, res) => {
         const {
             companyName,
             yearOfRegistration,
-            registerAddress,
+            address,
             Email,
             ownerName,
             ContactNumber,
@@ -33,13 +33,17 @@ exports.registerVendor = async (req, res) => {
             adharNo,
             Password,
             RangeWhereYouWantService,
-            Role
+            Role,
+            HouseNo,
+            PinCode
         } = req.body;
 
         const emptyField = [];
         if (!companyName) emptyField.push('Company Name');
         if (!yearOfRegistration) emptyField.push('Year Of Registration');
-        if (!registerAddress) emptyField.push('Register Address');
+        if (!address) emptyField.push('Register Address');
+        if (!HouseNo) emptyField.push('House no');
+        if (!PinCode) emptyField.push('Pincode');
         if (!Email) emptyField.push('Email');  // Updated field name to 'Email'
         if (!ownerName) emptyField.push('Owner Name');
         if (!ContactNumber) emptyField.push('Contact Number');
@@ -101,7 +105,7 @@ exports.registerVendor = async (req, res) => {
         const newVendor = new Vendor({
             companyName,
             yearOfRegistration,
-            registerAddress,
+            address,
             Email,
             ownerName,
             ContactNumber,
@@ -110,7 +114,9 @@ exports.registerVendor = async (req, res) => {
             adharNo,
             Password,
             RangeWhereYouWantService,
-            Role
+            Role,
+            HouseNo,
+            PinCode
         });
 
         // Handle main vendor images
@@ -1164,10 +1170,13 @@ exports.updateVendor = async (req, res) => {
     const uploadedImages = [];
     try {
         const vendorId = req.params._id;
+   
         const {
             companyName,
             yearOfRegistration,
-            registerAddress,
+            address,
+            HouseNo,
+            PinCode,
             Email,
             ownerName,
             ContactNumber,
@@ -1177,7 +1186,6 @@ exports.updateVendor = async (req, res) => {
             RangeWhereYouWantService
         } = req.body;
 
-        // Find the vendor to update
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({
@@ -1186,7 +1194,6 @@ exports.updateVendor = async (req, res) => {
             });
         }
 
-        // Check for duplicate email or contact number
         if (Email && Email !== vendor.Email) {
             const existingVendorEmail = await Vendor.findOne({ Email });
             if (existingVendorEmail) {
@@ -1207,19 +1214,61 @@ exports.updateVendor = async (req, res) => {
             }
         }
 
-        // Update the vendor fields
         vendor.companyName = companyName || vendor.companyName;
         vendor.yearOfRegistration = yearOfRegistration || vendor.yearOfRegistration;
-        vendor.registerAddress = registerAddress || vendor.registerAddress;
+        vendor.address = address || vendor.address;
+        vendor.HouseNo = HouseNo || vendor.HouseNo;
+        vendor.PinCode = PinCode || vendor.PinCode;
         vendor.Email = Email || vendor.Email;
         vendor.ownerName = ownerName || vendor.ownerName;
         vendor.ContactNumber = ContactNumber || vendor.ContactNumber;
         vendor.panNo = panNo || vendor.panNo;
         vendor.gstNo = gstNo || vendor.gstNo;
         vendor.adharNo = adharNo || vendor.adharNo;
-        vendor.RangeWhereYouWantService = RangeWhereYouWantService || vendor.RangeWhereYouWantService;
+        if (RangeWhereYouWantService) {
+            console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
+        
+            // Validate the new RangeWhereYouWantService
+            const isValidRange = RangeWhereYouWantService.every((service, index) => {
+                console.log(`Checking service at index ${index}:`, service);
+        
+                const location = service?.location;
+                console.log(`Location:`, location);
+        
+                const type = location?.type;
+                console.log(`Type:`, type);
+        
+                const coordinates = location?.coordinates;
+                console.log(`Coordinates:`, coordinates);
+        
+                const isTypeValid = type === "Point";
+                const areCoordinatesArray = Array.isArray(coordinates);
+                const hasTwoCoordinates = areCoordinatesArray && coordinates.length === 2;
+                const areCoordinatesValid = hasTwoCoordinates && coordinates.every(coord => coord !== "" && coord !== null && coord !== undefined);
+        
+                // console.log(`isTypeValid:`, isTypeValid);
+                // console.log(`areCoordinatesArray:`, areCoordinatesArray);
+                // console.log(`hasTwoCoordinates:`, hasTwoCoordinates);
+                // console.log(`areCoordinatesValid:`, areCoordinatesValid);
+        
+                return isTypeValid && areCoordinatesArray && hasTwoCoordinates && areCoordinatesValid;
+            });
+        
+            if (isValidRange) {
+                const isDifferent = JSON.stringify(RangeWhereYouWantService) !== JSON.stringify(vendor.RangeWhereYouWantService);
+        
+                if (isDifferent) {
+                    vendor.RangeWhereYouWantService = RangeWhereYouWantService;
+                    console.log("RangeWhereYouWantService updated.");
+                } else {
+                    console.log("No change detected in RangeWhereYouWantService.");
+                }
+            } else {
+                console.warn("Invalid RangeWhereYouWantService format provided. Skipping update.");
+            }
+        }
+        
 
-        // Handle main vendor images if updated
         if (req.files) {
             const { panImage, adharImage, gstImage, vendorImage } = req.files;
 
@@ -1291,7 +1340,6 @@ exports.updateVendor = async (req, res) => {
                     public_id: imgUrl.public_id
                 };
                 uploadedImages.push(imgUrl.public_id);
-                // await fs.unlink(vendorImage[0].path);
                 if (await fs.access(vendorImage[0].path).then(() => true).catch(() => false)) {
                     await fs.unlink(vendorImage[0].path);
                 } else {
@@ -1300,7 +1348,6 @@ exports.updateVendor = async (req, res) => {
             }
         }
 
-        // Save the updated vendor
         const updatedVendor = await vendor.save();
 
         res.status(200).json({

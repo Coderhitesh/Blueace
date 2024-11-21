@@ -17,7 +17,7 @@ function EditGalleryName() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-gallery-category-name/${id}`)
+                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-gallery-category-name/${id}`)
                 const faq = data.data;
                 setFormData({
                     name: faq.name,
@@ -47,7 +47,7 @@ function EditGalleryName() {
         payload.append('name', formData.name)
 
         try {
-            await axios.put(`https://api.blueaceindia.com/api/v1/update-gallery-category-name/${id}`, payload, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-gallery-category-name/${id}`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

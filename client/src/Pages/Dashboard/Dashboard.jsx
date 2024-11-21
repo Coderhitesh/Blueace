@@ -54,7 +54,7 @@ function Dashboard() {
     useEffect(() => {
         const fetchOrderById = async () => {
             try {
-                const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
+                const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
                 setAllOrder(res.data.data)
                 const allData = res.data.data
                 const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
@@ -72,7 +72,7 @@ function Dashboard() {
 
     const findUser = async () => {
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/findUser/${userId}`)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
             setUserData(res.data.data)
             setReadyToWork(res.data.data.readyToWork)
         } catch (error) {
@@ -97,7 +97,7 @@ function Dashboard() {
 
     const handleLogout = async () => {
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/vendor-logout', {
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -119,7 +119,7 @@ function Dashboard() {
             setReadyToWork(updatedStatus);
 
             await axios.put(
-                `https://api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
+                `https://www.api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
                 { readyToWork: updatedStatus }
             );
             toast.success('Status successfully');
@@ -141,7 +141,7 @@ function Dashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`https://api.blueaceindia.com/api/v1/delete-vendor/${userId}`);
+                    await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${userId}`);
                     sessionStorage.clear()
                     toast.success("User Deleted Successfully");
                     window.location.href = '/'
@@ -203,15 +203,10 @@ function Dashboard() {
                                     </div>
                                     <div className="dashploio">
                                         <span className="agd-location">
-                                            <i className="lni lni-map-marker me-1"></i>{`${userData.registerAddress}`}
+                                            <i className="lni lni-map-marker me-1"></i>{`${userData.HouseNo}, ${userData.address} (${userData.PinCode}`}
                                         </span>
                                     </div>
                                     <div className="listing-rating high">
-                                        {/* <i className="fas fa-star active"></i>
-                                        <i className="fas fa-star active"></i>
-                                        <i className="fas fa-star active"></i>
-                                        <i className="fas fa-star active"></i>
-                                        <i className="fas fa-star active"></i> */}
                                         <StarRating rating={userData.averageRating || 0} />
                                     </div>
                                 </div>

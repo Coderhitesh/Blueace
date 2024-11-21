@@ -22,7 +22,7 @@ function AllVendors() {
 
     const fetchVendorDetail = async () => {
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/all-vendor');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/all-vendor');
             const vendorsData = res.data.data.filter((item) => item.Role === "vendor").reverse();
             setVendors(vendorsData);
         } catch (error) {
@@ -39,12 +39,12 @@ function AllVendors() {
     // Filtering logic
     const filteredVendors = vendors.filter((vendor) => {
         const companyNameMatch = vendor.companyName.toLowerCase().includes(filterText.toLowerCase());
-        const registerAddressMatch = vendor.registerAddress.toLowerCase().includes(registerAddress.toLowerCase());
+        // const registerAddressMatch = vendor.address.toLowerCase().includes(registerAddress.toLowerCase());
         const vendorDate = moment(vendor.createdAt);
         const startDateMatch = startDate ? vendorDate.isSameOrAfter(moment(startDate).startOf('day')) : true;
         const endDateMatch = endDate ? vendorDate.isSameOrBefore(moment(endDate).endOf('day')) : true;
 
-        return companyNameMatch && registerAddressMatch && startDateMatch && endDateMatch;
+        return companyNameMatch  && startDateMatch && endDateMatch;
     });
 
     // Pagination logic
@@ -55,7 +55,7 @@ function AllVendors() {
     // Toggle vendor active/deactive status
     const handleToggle = async (id, currentDeactiveStatus) => {
         try {
-            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-deactive-status/${id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-deactive-status/${id}`, {
                 isDeactive: !currentDeactiveStatus
             });
             if (response.data.success) {
@@ -72,7 +72,7 @@ function AllVendors() {
     // Delete vendor
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-vendor/${id}`);
+            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${id}`);
             if (response.data.success) {
                 toast.success('Vendor deleted successfully.');
                 fetchVendorDetail();

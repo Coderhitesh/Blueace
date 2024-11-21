@@ -53,7 +53,7 @@ function Registration() {
   const fetchAddressSuggestions = async (query) => {
     try {
       // console.log("query",query)
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
       console.log(res.data)
       setAddressSuggestions(res.data || []);
     } catch (err) {
@@ -64,8 +64,8 @@ function Registration() {
   // Fetch latitude and longitude based on selected address
   const fetchGeocode = async (selectedAddress) => {
     try {
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
-      // console.log("geo",res.data)
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      // console.log("geo", res.data)
       const { latitude, longitude } = res.data;
       setLocation({ latitude, longitude });
       setFormData((prevData) => ({
@@ -101,7 +101,7 @@ function Registration() {
     }
 
     try {
-      const res = await axios.post('https://api.blueaceindia.com/api/v1/Create-User', formData);
+      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', formData);
       sessionStorage.setItem('token', res.data.token);
       sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
@@ -151,19 +151,6 @@ function Registration() {
                   <form className="submit-form" onSubmit={handleSubmit}>
 
                     <div className="row">
-                      {/* <div className="col-6">
-                        <div className="form-group">
-                          <label htmlFor="companyName" className='mb-1 fw-medium'>Company Name (Optional)</label>
-                          <input
-                            type="text"
-                            className="form-control rounded"
-                            placeholder="Enter Your Name"
-                            name="companyName"
-                            value={formData.companyName}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                      </div> */}
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name</label>
@@ -224,14 +211,16 @@ function Registration() {
                       </div>
 
 
-                      <div className="position-relative">
+                      <div className="position-relative col-6">
+                        <div className="form-group">
+                          <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
                           <input
                             type="text"
                             name="address"
                             value={formData.address}
                             placeholder="Start typing address..."
                             onChange={handleInputChange}
-                            className="form-control py-3"
+                            className="form-control rounded"
                           />
 
                           {addressSuggestions.length > 0 && (
@@ -254,6 +243,8 @@ function Registration() {
                             </div>
                           )}
                         </div>
+
+                      </div>
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="NearByLandMark" className='mb-1 fw-medium'>Near By LandMark</label>
@@ -300,7 +291,7 @@ function Registration() {
                       </div>
 
 
-                      <div className="col-12">
+                      <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
                           {passwordError && (

@@ -6,7 +6,7 @@ function HomeBanner(){
     const [offerBanner,setOfferBanner] = useState([])
     const fetchBannerData = async () => {
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-promotional-banner')
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-promotional-banner')
             const data = res.data.data
             const filterData = data.filter((item)=> item.active === true)
             setOfferBanner(filterData)

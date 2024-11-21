@@ -54,9 +54,9 @@ const UserSchema = new mongoose.Schema({
         enum: ['Normal', 'Corporate'],
         default: 'Normal'
     },
-    City: {
-        type: String,
-    },
+    // City: {
+    //     type: String,
+    // },
     PinCode: {
         type: String,
         match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
@@ -65,10 +65,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    Street: {
-        type: String,
-        required: true
-    },
+    // Street: {
+    //     type: String,
+    //     required: true
+    // },
     NearByLandMark: {
         type: String,
         required: true

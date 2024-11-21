@@ -49,7 +49,7 @@ const VendorSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    registerAddress: {
+    address: {
         type: String,
         required: true
     },
@@ -183,6 +183,12 @@ const VendorSchema = new mongoose.Schema({
     verifyed: {
         type: Boolean,
         default: false
+    },
+    HouseNo: {
+        type: String
+    },
+    PinCode: {
+        type: Number
     }
 }, { timestamps: true })
 

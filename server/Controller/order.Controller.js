@@ -8,8 +8,8 @@ require("dotenv").config()
 
 exports.makeOrder = async (req, res) => {
     try {
-        console.log('body', req.body);
-        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
+        // console.log('body', req.body);
+        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
         // Check for missing required fields
         const emptyField = [];
@@ -68,10 +68,11 @@ exports.makeOrder = async (req, res) => {
             phoneNumber,
             serviceType,
             message,
-            city,
+            // city,
+            address,
             pinCode,
             houseNo,
-            street,
+            // street,
             nearByLandMark,
             RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
             orderTime

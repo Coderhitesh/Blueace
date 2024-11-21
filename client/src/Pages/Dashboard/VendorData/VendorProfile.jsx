@@ -15,6 +15,11 @@ function VendorProfile({ userData }) {
     // console.log('userId',userId)
     const role = userData?.Role; // Ensure userData is provided or fetched correctly.
     const [loading, setLoading] = useState(false);
+    const [addressSuggestions, setAddressSuggestions] = useState([]); // Suggestions state
+    const [location, setLocation] = useState({
+        latitude: '',
+        longitude: ''
+    });
     const [imagePreviews, setImagePreviews] = useState({
         vendorImage: null,
         panImage: null,
@@ -28,7 +33,9 @@ function VendorProfile({ userData }) {
         Email: '',
         ContactNumber: '',
         yearOfRegistration: '',
-        registerAddress: '',
+        address: '',
+        PinCode: '',
+        HouseNo: '',
         panNo: '',
         gstNo: '',
         vendorImage: null,
@@ -36,11 +43,17 @@ function VendorProfile({ userData }) {
         adharImage: null,
         gstImage: null,
         adharNo: '',
+        RangeWhereYouWantService: [{
+            location: {
+                type: 'Point',
+                coordinates: []
+            }
+        }]
     });
 
     const fetchExistingUser = async () => {
         try {
-            const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/single-vendor/${userId}`);
+            const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/single-vendor/${userId}`);
             const existinguser = data.data;
 
             setFormData({
@@ -49,7 +62,7 @@ function VendorProfile({ userData }) {
                 Email: existinguser.Email,
                 ContactNumber: existinguser.ContactNumber,
                 yearOfRegistration: existinguser.yearOfRegistration,
-                registerAddress: existinguser.registerAddress,
+                address: existinguser.address,
                 panNo: existinguser.panNo,
                 gstNo: existinguser.gstNo,
                 vendorImage: existinguser.vendorImage || null,
@@ -57,6 +70,10 @@ function VendorProfile({ userData }) {
                 adharImage: existinguser.adharImage || null,
                 gstImage: existinguser.gstImage || null,
                 adharNo: existinguser.adharNo,
+                PinCode: existinguser.PinCode,
+                HouseNo: existinguser.HouseNo,
+                RangeWhereYouWantService: existinguser.RangeWhereYouWantService
+
             });
 
             // Set image previews with actual URLs
@@ -74,7 +91,47 @@ function VendorProfile({ userData }) {
 
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [name]: value }));
+
+        if (name === 'address' && value.length > 2) {
+            fetchAddressSuggestions(value);
+        }
+    };
+
+    // Fetch address suggestions
+    const fetchAddressSuggestions = async (query) => {
+        try {
+            // console.log("query",query)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            console.log(res.data)
+            setAddressSuggestions(res.data || []);
+        } catch (err) {
+            console.error('Error fetching address suggestions:', err);
+        }
+    };
+
+    // Fetch latitude and longitude based on selected address
+    const fetchGeocode = async (selectedAddress) => {
+        try {
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            console.log("geo", res.data)
+            const { latitude, longitude } = res.data;
+            setLocation({ latitude, longitude });
+            setFormData((prevData) => ({
+                ...prevData,
+                address: selectedAddress,
+                RangeWhereYouWantService: [{
+                    location: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude]
+                    }
+                }]
+            }));
+            setAddressSuggestions([]);
+        } catch (err) {
+            console.error('Error fetching geocode:', err);
+        }
     };
 
     const handleImageUpload = (e, imageField) => {
@@ -102,10 +159,18 @@ function VendorProfile({ userData }) {
         Payload.append('Email', formData.Email);
         Payload.append('ContactNumber', formData.ContactNumber);
         Payload.append('yearOfRegistration', formData.yearOfRegistration);
-        Payload.append('registerAddress', formData.registerAddress);
+        Payload.append('address', formData.address);
         Payload.append('panNo', formData.panNo);
         Payload.append('gstNo', formData.gstNo);
         Payload.append('adharNo', formData.adharNo);
+        Payload.append('PinCode', formData.PinCode);
+        Payload.append('HouseNo', formData.HouseNo);
+        if (formData.RangeWhereYouWantService) {
+
+            Payload.append('RangeWhereYouWantService[0][location][type]', 'Point');
+            Payload.append('RangeWhereYouWantService[0][location][coordinates][0]', location.longitude);
+            Payload.append('RangeWhereYouWantService[0][location][coordinates][1]', location.latitude);
+        }
 
         // Append files only if they are selected
         if (formData.vendorImage) Payload.append('vendorImage', formData.vendorImage);
@@ -114,7 +179,7 @@ function VendorProfile({ userData }) {
         if (formData.gstImage) Payload.append('gstImage', formData.gstImage);
 
         try {
-            const res = await axios.put(`https://api.blueaceindia.com/api/v1/update-vendor/${userId}`, Payload, {
+            const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-vendor/${userId}`, Payload, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success(res.data.message);
@@ -209,10 +274,51 @@ function VendorProfile({ userData }) {
                                             </div>
                                         )
                                     }
-                                    <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                                    <div className="col-xl-6 col-lg-6 col-md-12 position-relative col-sm-12">
                                         <div className="form-group">
-                                            <label className="mb-1">Address</label>
-                                            <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Year of Registration*" required />
+                                            <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+                                            <input
+                                                type="text"
+                                                name="address"
+                                                value={formData.address}
+                                                placeholder="Start typing address..."
+                                                onChange={handleChange}
+                                                className="form-control rounded"
+                                            />
+
+                                            {addressSuggestions.length > 0 && (
+                                                <div
+                                                    className="position-absolute top-100 start-0 mt-2 w-100 bg-white border border-secondary rounded shadow-lg overflow-auto"
+                                                    style={{ maxHeight: "200px" }}
+                                                >
+                                                    <ul className="list-unstyled mb-0">
+                                                        {addressSuggestions.map((suggestion, index) => (
+                                                            <li
+                                                                key={index}
+                                                                style={{ fontSize: 16 }}
+                                                                className="p-1 hover:bg-light cursor-pointer"
+                                                                onClick={() => fetchGeocode(suggestion.description)}
+                                                            >
+                                                                {suggestion.description}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                        <div className="form-group">
+                                            <label className="mb-1">House No.</label>
+                                            <input type="text" value={formData.HouseNo} onChange={handleChange} name='HouseNo' className="form-control rounded" placeholder="91 256 584 7895" />
+                                        </div>
+                                    </div>
+
+                                    <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                        <div className="form-group">
+                                            <label className="mb-1">PinCode</label>
+                                            <input type="text" value={formData.PinCode} onChange={handleChange} name='PinCode' className="form-control rounded" placeholder="91 256 584 7895" />
                                         </div>
                                     </div>
 

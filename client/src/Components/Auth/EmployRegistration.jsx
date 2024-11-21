@@ -15,13 +15,15 @@ function EmployRegistration() {
     const [formData, setFormData] = useState({
         companyName: 'Blueace India',
         yearOfRegistration: '01/01/1999',
-        registerAddress: 'Phase-1, C-126, Indl. Area, Naraina, New Delhi, Delhi 110028',
+        address: '',
         panImage: null,
         adharImage: null,
         Email: '',
         ownerName: '',
         ContactNumber: '',
         panNo: '',
+        HouseNo: '',
+        PinCode: '',
         // gstNo: '',
         adharNo: '',
         Password: '',
@@ -32,7 +34,9 @@ function EmployRegistration() {
     });
     const [latitude, setLatitude] = useState(''); // For manual entry of latitude
     const [longitude, setLongitude] = useState(''); // For manual entry of longitude
+    const [location, setLocation] = useState({ latitude: '', longitude: '' });
     const [passwordError, setPasswordError] = useState('');
+    const [addressSuggestions, setAddressSuggestions] = useState([]); // Suggestions state
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,6 +49,44 @@ function EmployRegistration() {
             } else {
                 setPasswordError('');
             }
+        }
+        if (name === 'address' && value.length > 2) {
+            fetchAddressSuggestions(value);
+        }
+    };
+
+    // Fetch address suggestions
+    const fetchAddressSuggestions = async (query) => {
+        try {
+            // console.log("query",query)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            // console.log(res.data)
+            setAddressSuggestions(res.data || []);
+        } catch (err) {
+            console.error('Error fetching address suggestions:', err);
+        }
+    };
+
+    // Fetch latitude and longitude based on selected address
+    const fetchGeocode = async (selectedAddress) => {
+        try {
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            // console.log("geo", res.data)
+            const { latitude, longitude } = res.data;
+            setLocation({ latitude, longitude });
+            setFormData((prevData) => ({
+                ...prevData,
+                address: selectedAddress,
+                RangeWhereYouWantService: [{
+                    location: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude]
+                    }
+                }]
+            }));
+            setAddressSuggestions([]);
+        } catch (err) {
+            console.error('Error fetching geocode:', err);
         }
     };
 
@@ -74,12 +116,12 @@ function EmployRegistration() {
 
     const validateFields = () => {
         const {
-            companyName, yearOfRegistration, registerAddress, Email, ownerName,
+            companyName, yearOfRegistration, address, Email, ownerName,
             ContactNumber, panNo, gstNo, adharNo, Password, panImage, adharImage, gstImage
         } = formData;
 
         // Basic field validation
-        // if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
+        // if (!companyName || !yearOfRegistration || !address || !Email || !ownerName ||
         //     !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
         //     toast.error("All fields are required");
         //     return false;
@@ -136,7 +178,7 @@ function EmployRegistration() {
         const payload = new FormData();
         payload.append('companyName', formData.companyName);
         payload.append('yearOfRegistration', formData.yearOfRegistration);
-        payload.append('registerAddress', formData.registerAddress);
+        payload.append('address', formData.address);
         payload.append('Email', formData.Email);
         payload.append('ownerName', formData.ownerName);
         payload.append('ContactNumber', formData.ContactNumber);
@@ -145,6 +187,8 @@ function EmployRegistration() {
         payload.append('gstNo', formData.gstNo);
         payload.append('Password', formData.Password);
         payload.append('Role', formData.Role);
+        payload.append('HouseNo', formData.HouseNo);
+        payload.append('PinCode', formData.PinCode);
 
         if (formData.panImage) payload.append('panImage', formData.panImage);
         if (formData.adharImage) payload.append('adharImage', formData.adharImage);
@@ -160,11 +204,11 @@ function EmployRegistration() {
         }
 
         payload.append('RangeWhereYouWantService[0][location][type]', 'Point');
-        payload.append('RangeWhereYouWantService[0][location][coordinates][0]', longitude || 40.7128);
-        payload.append('RangeWhereYouWantService[0][location][coordinates][1]', latitude || 74.0060);
+        payload.append('RangeWhereYouWantService[0][location][coordinates][0]', location.longitude);
+        payload.append('RangeWhereYouWantService[0][location][coordinates][1]', location.latitude);
 
         try {
-            const res = await axios.post('https://api.blueaceindia.com/api/v1/register-vendor', payload, {
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/register-vendor', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Employ Registration Successful!');
@@ -277,7 +321,69 @@ function EmployRegistration() {
                                                     />
                                                 </div>
                                             </div>
+                                            <div className="position-relative col-6">
+                                                <div className="form-group">
+                                                    <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+                                                    <input
+                                                        type="text"
+                                                        name="address"
+                                                        value={formData.address}
+                                                        placeholder="Start typing address..."
+                                                        onChange={handleChange}
+                                                        className="form-control rounded"
+                                                    />
+
+                                                    {addressSuggestions.length > 0 && (
+                                                        <div
+                                                            className="position-absolute top-100 start-0 mt-2 w-100 bg-white border border-secondary rounded shadow-lg overflow-auto"
+                                                            style={{ maxHeight: "200px" }}
+                                                        >
+                                                            <ul className="list-unstyled mb-0">
+                                                                {addressSuggestions.map((suggestion, index) => (
+                                                                    <li
+                                                                        key={index}
+                                                                        style={{ fontSize: 16 }}
+                                                                        className="p-1 hover:bg-light cursor-pointer"
+                                                                        onClick={() => fetchGeocode(suggestion.description)}
+                                                                    >
+                                                                        {suggestion.description}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                            </div>
                                             <div className="col-6">
+                                                <div className="form-group">
+                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>House No</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control rounded"
+                                                        placeholder="Enter Your Name"
+                                                        name="HouseNo"
+                                                        value={formData.HouseNo}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-6">
+                                                <div className="form-group">
+                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>Pin code</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control rounded"
+                                                        placeholder="Enter Your Name"
+                                                        name="PinCode"
+                                                        value={formData.PinCode}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="col-12">
                                                 <div className="form-group">
                                                     <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
                                                     {passwordError && (

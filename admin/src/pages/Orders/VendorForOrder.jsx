@@ -23,7 +23,7 @@ const VendorForOrder = () => {
 
     const fetchData = async (page) => {
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/fetch-Vendor-By-Location`, {
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/fetch-Vendor-By-Location`, {
                 params: {
                     orderId: id,
                     Page: page,
@@ -56,7 +56,7 @@ const VendorForOrder = () => {
 
     const handleAssignOrder = async (vendorId) => {
         try {
-            const url = `https://api.blueaceindia.com/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}/${selectedDay}/${selectedTime}`;
+            const url = `https://www.api.blueaceindia.com/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}/${selectedDay}/${selectedTime}`;
             // const res = await axios.post(url, {
             //     workingDay: selectedDay,
             //     workingTime: selectedTime,

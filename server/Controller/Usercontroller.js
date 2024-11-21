@@ -9,7 +9,7 @@ const mongoose = require('mongoose')
 exports.register = async (req, res) => {
     try {
         // console.log("I am hit")
-        const { companyName, address, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
+        const { companyName, address, FullName, Email, ContactNumber, Password, PinCode, HouseNo, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
 
         const emptyField = [];
         if (!FullName) emptyField.push('FullName');
@@ -793,7 +793,9 @@ exports.updateUser = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { companyName, FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
+        const { companyName, FullName, RangeWhereYouWantService, ContactNumber, Email, address, PinCode, HouseNo, NearByLandMark } = req.body;
+
+        console.log("body", req.body)
 
         const existingUser = await User.findById(id)
         if (!existingUser) {
@@ -806,12 +808,55 @@ exports.updateUser = async (req, res) => {
         existingUser.FullName = FullName;
         existingUser.ContactNumber = ContactNumber;
         existingUser.Email = Email;
-        existingUser.City = City;
+        existingUser.address = address;
         existingUser.PinCode = PinCode;
         existingUser.HouseNo = HouseNo;
-        existingUser.Street = Street;
+        // existingUser.Street = Street;
         existingUser.NearByLandMark = NearByLandMark;
         existingUser.companyName = companyName;
+        // existingUser.RangeWhereYouWantService = RangeWhereYouWantService;
+        if (RangeWhereYouWantService) {
+            console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
+
+            // Validate the new RangeWhereYouWantService
+            const isValidRange = RangeWhereYouWantService.every((service, index) => {
+                // console.log(`Checking service at index ${index}:`, service);
+
+                const location = service?.location;
+                // console.log(`Location:`, location);
+
+                const type = location?.type;
+                // console.log(`Type:`, type);
+
+                const coordinates = location?.coordinates;
+                // console.log(`Coordinates:`, coordinates);
+
+                const isTypeValid = type === "Point";
+                const areCoordinatesArray = Array.isArray(coordinates);
+                const hasTwoCoordinates = areCoordinatesArray && coordinates.length === 2;
+                const areCoordinatesValid = hasTwoCoordinates && coordinates.every(coord => coord !== "" && coord !== null && coord !== undefined);
+
+                // console.log(`isTypeValid:`, isTypeValid);
+                // console.log(`areCoordinatesArray:`, areCoordinatesArray);
+                // console.log(`hasTwoCoordinates:`, hasTwoCoordinates);
+                // console.log(`areCoordinatesValid:`, areCoordinatesValid);
+
+                return isTypeValid && areCoordinatesArray && hasTwoCoordinates && areCoordinatesValid;
+            });
+
+            if (isValidRange) {
+                const isDifferent = JSON.stringify(RangeWhereYouWantService) !== JSON.stringify(existingUser.RangeWhereYouWantService);
+
+                if (isDifferent) {
+                    existingUser.RangeWhereYouWantService = RangeWhereYouWantService;
+                    // console.log("RangeWhereYouWantService updated.");
+                } else {
+                    console.log("No change detected in RangeWhereYouWantService.");
+                }
+            } else {
+                console.warn("Invalid RangeWhereYouWantService format provided. Skipping update.");
+            }
+        }
 
         if (req.file) {
             if (existingUser.userImage.public_id) {
