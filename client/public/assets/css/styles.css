@@ -8445,5 +8445,6 @@ footer.skin-dark-footer ul.footer-bottom-social li a:hover, footer.skin-dark-foo
     .nav-toggle{
         right: 0%;
         left: auto;
+        display: block;
     }
  }

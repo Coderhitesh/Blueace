@@ -187,7 +187,7 @@ function UserDashboard() {
                                     </div>
                                     <div className="dashploio">
                                         <span className="agd-location">
-                                            <i className="lni lni-map-marker me-1"></i>{`${userData.HouseNo}, ${userData.Street}, ${userData.City} (${userData.PinCode})`}
+                                            <i className="lni lni-map-marker me-1"></i>{`${userData.HouseNo}, ${userData.address} (${userData.PinCode})`}
                                         </span>
                                     </div>
                                 </div>

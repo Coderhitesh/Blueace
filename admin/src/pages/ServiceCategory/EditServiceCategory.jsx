@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom'; // To get the category ID from URL
 import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
+import { useMemo } from 'react';
 
 function EditServiceCategory() {
     const { id } = useParams(); // Get category ID from URL parameters
@@ -170,10 +171,17 @@ function EditServiceCategory() {
     };
 
     // Editor Configuration
-    const editorConfig = {
-        readonly: false,
-        height: 400,
-    };
+    // const editorConfig = {
+    //     readonly: false,
+    //     height: 400,
+    // };
+    const editorConfig = useMemo(
+		() => ({
+			readonly: false,
+            height: 400,
+		}),
+		[]
+	);
 
     // Handle Editor Change for Multiple Fields
     const handleEditorChange = useCallback((newContent, field) => {
@@ -229,6 +237,7 @@ function EditServiceCategory() {
                             config={editorConfig}
                             tabIndex={1}
                             onBlur={(newContent) => handleEditorChange(newContent, 'description')} // Pass 'courseDescription'
+                            onChange={(newContent) => {}}
                         />
                     </div>
 

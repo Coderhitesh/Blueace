@@ -153,10 +153,11 @@ function SubCategory() {
     message: '',
     voiceNote: '',
     serviceType: '',
-    city: '',
+    // city: '',
+    address: '',
     pinCode: '',
     houseNo: '',
-    street: '',
+    // street: '',
     nearByLandMark: '',
     RangeWhereYouWantService: [
       {
@@ -169,36 +170,27 @@ function SubCategory() {
   });
 
   const [location, setLocation] = useState({ latitude: '', longitude: '' });
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
 
-  // Update formData once the serviceId is available
-  // console.log('service id',allService)
-  // useEffect(() => {
-  //   if (allService._id) {
-  //     setFormData((prevData) => ({
-  //       ...prevData,
-  //       serviceId: allService._id
-  //     }));
-  //   }
-  // }, [allService]);
 
   // Get user location
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-        },
-        (error) => {
-          toast.error('Unable to retrieve your location');
-        }
-      );
-    } else {
-      toast.error('Geolocation is not supported by this system');
-    }
-  };
+  // const getLocation = () => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setLocation({
+  //           latitude: position.coords.latitude,
+  //           longitude: position.coords.longitude
+  //         });
+  //       },
+  //       (error) => {
+  //         toast.error('Unable to retrieve your location');
+  //       }
+  //     );
+  //   } else {
+  //     toast.error('Geolocation is not supported by this system');
+  //   }
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -217,14 +209,51 @@ function SubCategory() {
       // Update other fields
       setFormData({ ...formData, [name]: value });
     }
+    if (name === 'address' && value.length > 2) {
+      fetchAddressSuggestions(value);
+    }
   };
+
+  // Fetch address suggestions
+  const fetchAddressSuggestions = async (query) => {
+    try {
+      // console.log("query",query)
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+      console.log(res.data)
+      setAddressSuggestions(res.data || []);
+    } catch (err) {
+      console.error('Error fetching address suggestions:', err);
+    }
+  };
+
+  // Fetch latitude and longitude based on selected address
+  const fetchGeocode = async (selectedAddress) => {
+    try {
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      // console.log("geo", res.data)
+      const { latitude, longitude } = res.data;
+      setLocation({ latitude, longitude });
+      setFormData((prevData) => ({
+        ...prevData,
+        address: selectedAddress,
+        RangeWhereYouWantService: [{
+          location: {
+            type: 'Point',
+            coordinates: [longitude, latitude]
+          }
+        }]
+      }));
+      setAddressSuggestions([]);
+    } catch (err) {
+      console.error('Error fetching geocode:', err);
+    }
+  };
+
+
 
   const handleAlert = () => {
     toast.error('You are a vendor or employee; you cannot avail of the services.');
   }
-
-
-
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -257,10 +286,11 @@ function SubCategory() {
     updatedFormData.append('phoneNumber', formData.phoneNumber);
     updatedFormData.append('message', formData.message);
     updatedFormData.append('serviceType', formData.serviceType);
-    updatedFormData.append('city', formData.city);
+    // updatedFormData.append('city', formData.city);
+    updatedFormData.append('address', formData.address);
     updatedFormData.append('pinCode', formData.pinCode);
     updatedFormData.append('houseNo', formData.houseNo);
-    updatedFormData.append('street', formData.street);
+    // updatedFormData.append('street', formData.street);
     updatedFormData.append('nearByLandMark', formData.nearByLandMark);
 
     // Append voice note file if available
@@ -281,7 +311,6 @@ function SubCategory() {
       ])
     );
 
-
     try {
       await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData, {
         headers: {
@@ -298,7 +327,7 @@ function SubCategory() {
 
 
   const handleModalSubmit = () => {
-    if (formData.serviceType && formData.houseNo && formData.street && formData.city && formData.pinCode && formData.nearByLandMark) {
+    if (formData.serviceType && formData.houseNo && formData.address && formData.pinCode && formData.nearByLandMark) {
       const modal = document.getElementById('exampleModal');
       // const modalInstance = bootstrap.Modal.getInstance(modal);
       handleSubmit();
@@ -311,12 +340,13 @@ function SubCategory() {
 
 
 
-  useEffect(() => {
-    getLocation();
-  }, []);
+  // useEffect(() => {
+  //   getLocation();
+  // }, []);
 
   return (
     <>
+      {/* {console.log("description",service.metafocus)} */}
       <MetaTag title={service.metaTitle} description={service.metaDescription} keyword={service.metaKeyword} focus={service.metafocus} />
       {/* Main Form */}
       <div className='container mb-5'>
@@ -515,23 +545,49 @@ function SubCategory() {
               <form onSubmit={handleModalSubmit}>
                 <div className='row'>
                   <div className='col-md-6 mb-2'>
-                    <label htmlFor='houseNo' className='col-form-label'>House No:</label>
+                    <label htmlFor='houseNo' className='col-form-label fw-medium'>House No:</label>
                     <input type='text' name='houseNo' className='form-control' id='houseNo' onChange={handleChange} required />
                   </div>
-                  <div className='col-md-6 mb-2'>
-                    <label htmlFor='street' className='col-form-label'>Street:</label>
-                    <input type='text' name='street' className='form-control' id='street' onChange={handleChange} required />
+                  <div className="position-relative col-6">
+                    <div className="form-group">
+                      <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+                      <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        placeholder="Start typing address..."
+                        onChange={handleChange}
+                        className="form-control rounded"
+                      />
+
+                      {addressSuggestions.length > 0 && (
+                        <div
+                          className="position-absolute top-100 start-0 mt-2 w-100 bg-white border border-secondary rounded shadow-lg overflow-auto"
+                          style={{ maxHeight: "200px" }}
+                        >
+                          <ul className="list-unstyled mb-0">
+                            {addressSuggestions.map((suggestion, index) => (
+                              <li
+                                key={index}
+                                style={{ fontSize: 16 }}
+                                className="p-1 hover:bg-light cursor-pointer"
+                                onClick={() => fetchGeocode(suggestion.description)}
+                              >
+                                {suggestion.description}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
                   </div>
                   <div className='col-md-6 mb-2'>
-                    <label htmlFor='city' className='col-form-label'>City:</label>
-                    <input type='text' name='city' className='form-control' id='city' onChange={handleChange} required />
-                  </div>
-                  <div className='col-md-6 mb-2'>
-                    <label htmlFor='pinCode' className='col-form-label'>Pin Code:</label>
+                    <label htmlFor='pinCode' className='col-form-label fw-medium'>Pin Code:</label>
                     <input type='text' name='pinCode' className='form-control' id='pinCode' onChange={handleChange} required />
                   </div>
-                  <div className='col-md-12 mb-2'>
-                    <label htmlFor='nearByLandMark' className='col-form-label'>Nearby Landmark:</label>
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='nearByLandMark' className='col-form-label fw-medium'>Nearby Landmark:</label>
                     <input type='text' name='nearByLandMark' className='form-control' id='nearByLandMark' onChange={handleChange} required />
                   </div>
                 </div>

@@ -1,166 +1,187 @@
-.for-li-align{
-    height: 100%;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+.for-li-align {
+  height: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
 }
-.header-logo{
-    width: 80px;
+
+.header-logo {
+  width: 80px;
 }
-.nav-menus-wrapper{
-    margin-top: 1.6%;
+
+.nav-menus-wrapper {
+  margin-top: 1.6%;
 }
-.nav-menu>li>a{
-    font-size: 17px;
+
+.nav-menu>li>a {
+  font-size: 17px;
 }
-.nav-menu>.active>a, .nav-menu>.focus>a, .nav-menu>li:hover>a {
-    color: #02a2d2 !important;
+
+.nav-menu>.active>a,
+.nav-menu>.focus>a,
+.nav-menu>li:hover>a {
+  color: #02a2d2 !important;
 }
+
 .theme-cl {
-    color: #02a2d2 !important;
+  color: #02a2d2 !important;
 }
-.nav-menu.nav-menu-social>li.add-listing, .theme-bg {
-    background: #00225f !important;
+
+.nav-menu.nav-menu-social>li.add-listing,
+.theme-bg {
+  background: #00225f !important;
 }
-.nav-menu.nav-menu-social>li.add-listing:hover{
-    background: #02a2d2 !important;
+
+.nav-menu.nav-menu-social>li.add-listing:hover {
+  background: #02a2d2 !important;
 }
-.nav-menu.nav-menu-social>li.add-listing i, .mobile_nav .embos_45 i {
-    background: rgb(2 162 210 / 79%);
+
+.nav-menu.nav-menu-social>li.add-listing i,
+.mobile_nav .embos_45 i {
+  background: rgb(2 162 210 / 79%);
 }
 
 .nav-toggle:before {
-    background-color: #00225f;
-    box-shadow: 0 .5em 0 0 #02a2d2, 0 1em 0 0 #00225f;
-}
-.top-header{
-    background-color: #00225f;
-    height: 33px;
-    padding: 6px;
+  background-color: #00225f;
+  box-shadow: 0 .5em 0 0 #02a2d2, 0 1em 0 0 #00225f;
 }
 
-
-@media(max-width:768px){
-    .header-logo {
-        width: 50px;
-    }
+.top-header {
+  background-color: #00225f;
+  height: 33px;
+  padding: 6px;
 }
 
-.activeInMob{
-    display: none !important;
+
+@media(max-width:768px) {
+  .header-logo {
+    width: 50px;
+  }
 }
 
-.activeInDes{
-    display: block !important;
+.activeInMob {
+  display: none !important;
 }
 
-.fordisplayflex{
+.activeInDes {
+  display: block !important;
+}
+
+.fordisplayflex {
   display: flex !important;
 }
 
 @media (max-width:500px) {
-  .fordisplayflex{
+  .fordisplayflex {
     display: none !important;
   }
-    .activeInMob{
-        display: block !important;
-    }
-    .activeInDes{
-        display: none !important;
-    }
+
+  .activeInMob {
+    display: block !important;
+  }
+
+  .activeInDes {
+    display: none !important;
+  }
+
+  /* .nav-menus-wrapper{
+    display: none;
+  } */
 }
 
 /* Custom dropdown styling */
 .custom-nav-item {
-    position: relative;
-  }
-  
-  .custom-dropdown {
-    list-style-type: none;
-  }
-  
-  .custom-nav-link {
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .custom-dropdown-menu {
-    display: none !important;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-width: 150px;
-    padding: 0;
-    z-index: 1000;
-  }
-  
-  .custom-nav-item:hover .custom-dropdown-menu {
-    display: flex !important;
-    flex-direction: column;
-    gap: 0px;
-  }
-  
-  .custom-dropdown-item {
-    display: inline-block;
-    /* padding: 18px 16px; */
-    height: 28px;
-    color: #333;
-    text-decoration: none;
-  }
-  
-  .custom-dropdown-item:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .custom-theme-cl {
-    color: #007bff; /* Adjust the color as needed */
-  }
-  
-  /* Base styling for the mobile dropdown */
+  position: relative;
+}
+
+.custom-dropdown {
+  list-style-type: none;
+}
+
+.custom-nav-link {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.custom-dropdown-menu {
+  display: none !important;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 150px;
+  padding: 0;
+  z-index: 1000;
+}
+
+.custom-nav-item:hover .custom-dropdown-menu {
+  display: flex !important;
+  flex-direction: column;
+  gap: 0px;
+}
+
+.custom-dropdown-item {
+  display: inline-block;
+  /* padding: 18px 16px; */
+  height: 28px;
+  color: #333;
+  text-decoration: none;
+}
+
+.custom-dropdown-item:hover {
+  background-color: #f1f1f1;
+}
+
+.custom-theme-cl {
+  color: #007bff;
+  /* Adjust the color as needed */
+}
+
+/* Base styling for the mobile dropdown */
 .custom-mobile-item {
-    position: relative;
-  }
-  
-  .custom-mobile-link {
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .custom-theme-cl {
-    color: #007bff; /* Customize color as needed */
-  }
-  
-  /* Dropdown Menu Styles */
-  .custom-mobile-dropdown {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease;
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 0;
-    margin-top: 8px;
-    list-style-type: none;
-  }
-  
-  /* Expand dropdown on 'open' class */
-  .custom-mobile-dropdown.open {
-    max-height: 300px; /* Set this to the max height you want */
-  }
-  
-  .custom-mobile-dropdown-item {
-    padding: 10px 16px;
-    color: #333;
-    text-decoration: none;
-    display: block;
-  }
-  
-  .custom-mobile-dropdown-item:hover {
-    background-color: #f1f1f1;
-  }
-  
+  position: relative;
+}
+
+.custom-mobile-link {
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.custom-theme-cl {
+  color: #007bff;
+  /* Customize color as needed */
+}
+
+/* Dropdown Menu Styles */
+.custom-mobile-dropdown {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 0;
+  margin-top: 8px;
+  list-style-type: none;
+}
+
+/* Expand dropdown on 'open' class */
+.custom-mobile-dropdown.open {
+  max-height: 300px;
+  /* Set this to the max height you want */
+}
+
+.custom-mobile-dropdown-item {
+  padding: 10px 16px;
+  color: #333;
+  text-decoration: none;
+  display: block;
+}
+
+.custom-mobile-dropdown-item:hover {
+  background-color: #f1f1f1;
+}

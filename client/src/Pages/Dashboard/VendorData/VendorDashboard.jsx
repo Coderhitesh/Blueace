@@ -21,6 +21,7 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
             behavior: 'smooth'
         })
     }, [])
+    // console.log("readyToWork 2",readyToWork)
     const fetchDashboardData = async () => {
         try {
             const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/getAnylaticalData?OrderStatus=Service Done&secondStatus=Pending', {
@@ -94,8 +95,8 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
                                 </ol>
                             </nav>
                         </div>
-                        {
-                            role === 'vendor' && (
+                        {/* {
+                            role === 'vendor' && ( */}
                                 <div className="col-xl-3 col-lg-3 col-md-12">
                                     <div className="row">
                                         <div className="col-xl-12 d-flex justify-content-center mb-2 col-lg-12 col-md-12">
@@ -117,8 +118,8 @@ function VendorDashboard({ userData, readyToWork, handleChangeReadyToWork, allCo
                                         </div>
                                     </div>
                                 </div>
-                            )
-                        }
+                            {/* )
+                        }  */}
 
 
                     </div>

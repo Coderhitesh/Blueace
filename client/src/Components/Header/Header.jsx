@@ -193,11 +193,6 @@ function Header() {
                     {/* For non-authenticated users or other roles */}
                     {role !== 'Customer' && role !== 'vendor' && role !== 'employ' && (
                       <>
-                        {/* <li className='activeInDes'>
-                          <Link to={'/sign-in'} className="ft-bold">
-                            <i className="fas fa-sign-in-alt me-1 theme-cl"></i>Sign in
-                          </Link>
-                        </li> */}
                         <li className="activeInDes custom-nav-item custom-dropdown">
                           <Link
                             to="#"
@@ -212,17 +207,17 @@ function Header() {
                           </Link>
                           <ul className="custom-dropdown-menu" aria-labelledby="customSignInDropdown">
                             <li style={{ width: "100%" }}>
-                              <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:"600" }} className="custom-dropdown-item">As a User</Link>
+                              <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a User</Link>
                             </li>
                             <li style={{ width: "100%" }}>
-                              <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:"600" }} className="custom-dropdown-item">As a Corporate User</Link>
+                              <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Corporate User</Link>
                             </li>
                             <li style={{ width: "100%" }}>
-                              <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight:"600" }} className="custom-dropdown-item">As a Employ</Link>
+                              <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Employ</Link>
                             </li>
-                          <li>
-                            <Link to="/vendor-sign-in" style={{width:"100%", display:'flex', alignItems:'center', justifyContent:'center', fontWeight:"600"}} className="custom-dropdown-item">As a Vendor</Link>
-                          </li>
+                            <li>
+                              <Link to="/vendor-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Vendor</Link>
+                            </li>
                           </ul>
                         </li>
                         <li className="add-listing theme-bg activeInDes">
@@ -264,7 +259,7 @@ function Header() {
                       <Link to={'/user-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                         <span className="embos_45">
                           <i className="fas fa-plus me-2"></i>
-                          Dashboard
+                          User Dashboard
                         </span>
                       </Link>
                     </li>
@@ -306,7 +301,7 @@ function Header() {
                       <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                         <span className="embos_45">
                           <i className="fas fa-plus me-2"></i>
-                          Vendor Dashboard
+                          Employ Dashboard
                         </span>
                       </Link>
                     </li>
@@ -347,29 +342,6 @@ function Header() {
                         </li>
                       </ul>
                     </li>
-                    {/* </li> */}
-                    {/* <li className="custom-mobile-item activeInMob">
-                      <Link
-                        to="#"
-                        className="custom-mobile-link ft-bold"
-                        onClick={toggleDropdown}
-                      >
-                        <i className="fas fa-sign-in-alt me-1 custom-theme-cl"></i>Sign in
-                      </Link>
-                      {isDropdownOpen && (
-                        <ul className="custom-mobile-dropdown">
-                          <li>
-                            <Link to="/user" className="custom-mobile-dropdown-item">User</Link>
-                          </li>
-                          <li>
-                            <Link to="/corporate-user" className="custom-mobile-dropdown-item">Corporate User</Link>
-                          </li>
-                          <li>
-                            <Link to="/employ" className="custom-mobile-dropdown-item">Employ</Link>
-                          </li>
-                        </ul>
-                      )}
-                    </li> */}
                     <li className="add-listing theme-bg activeInMob">
                       <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                         <i className="fas fa-plus me-2"></i>Vendor Registration
@@ -377,16 +349,6 @@ function Header() {
                     </li>
                   </>
                 )}
-                {/* {role === 'Customer' && (
-                  <>
-                    <li>
-                      <Link to={'/contact'}>Contact Us</Link>
-                    </li>
-                    <li>
-                      <Link to={'/contact'}>Contact Us</Link>
-                    </li>
-                  </>
-                )} */}
               </ul>
               <ul className="nav-menu activeInDes fordisplayflex nav-menu-social align-to-right">
                 <>
@@ -397,7 +359,7 @@ function Header() {
                         <Link to={'/user-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                           <span className="embos_45">
                             <i className="fas fa-plus me-2"></i>
-                            Dashboard
+                            User Dashboard
                           </span>
                         </Link>
                       </li>
@@ -437,7 +399,7 @@ function Header() {
                         <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                           <span className="embos_45">
                             <i className="fas fa-plus me-2"></i>
-                            Vendor Dashboard
+                            Employee Dashboard
                           </span>
                         </Link>
                       </li>

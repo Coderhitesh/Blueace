@@ -39,12 +39,12 @@ function AllVendors() {
     // Filtering logic
     const filteredVendors = vendors.filter((vendor) => {
         const companyNameMatch = vendor.companyName.toLowerCase().includes(filterText.toLowerCase());
-        const registerAddressMatch = vendor.registerAddress.toLowerCase().includes(registerAddress.toLowerCase());
+        // const registerAddressMatch = vendor.address.toLowerCase().includes(registerAddress.toLowerCase());
         const vendorDate = moment(vendor.createdAt);
         const startDateMatch = startDate ? vendorDate.isSameOrAfter(moment(startDate).startOf('day')) : true;
         const endDateMatch = endDate ? vendorDate.isSameOrBefore(moment(endDate).endOf('day')) : true;
 
-        return companyNameMatch && registerAddressMatch && startDateMatch && endDateMatch;
+        return companyNameMatch  && startDateMatch && endDateMatch;
     });
 
     // Pagination logic

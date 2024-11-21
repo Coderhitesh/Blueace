@@ -4,20 +4,22 @@ const SendEmail = require('../Utils/SendEmail');
 const Vendor = require('../Model/vendor.Model');
 const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
 const fs = require("fs")
+const mongoose = require('mongoose')
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
-        console.log("I am hit")
-        const { companyName, FullName, Email, ContactNumber, Password, City, PinCode, HouseNo, Street, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
+        // console.log("I am hit")
+        const { companyName, address, FullName, Email, ContactNumber, Password, PinCode, HouseNo, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
 
         const emptyField = [];
         if (!FullName) emptyField.push('FullName');
         if (!Email) emptyField.push('Email');
         if (!ContactNumber) emptyField.push('ContactNumber');
-        if (!City) emptyField.push('City');
+        // if (!City) emptyField.push('City');
         if (!PinCode) emptyField.push('PinCode');
         if (!HouseNo) emptyField.push('HouseNo');
-        if (!Street) emptyField.push('Street');
+        // if (!Street) emptyField.push('Street');
+        if (!address) emptyField.push('address');
         if (!NearByLandMark) emptyField.push('NearByLandMark');
         if (emptyField.length > 0) {
             return res.status(400).json({
@@ -78,11 +80,12 @@ exports.register = async (req, res) => {
             Password,
             Email,
             ContactNumber,
-            City,
+            // City,
             PinCode,
             UserType,
             HouseNo,
-            Street,
+            // Street,
+            address,
             NearByLandMark,
             RangeWhereYouWantService,
             companyName
@@ -752,33 +755,47 @@ exports.getAllUsers = async (req, res) => {
 exports.getSingleUserById = async (req, res) => {
     try {
         const id = req.params._id;
-        const user = await User.findById(id)
+
+        // Check if the ID is a valid ObjectId
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(400).json({
+                success: false,
+                msg: 'Invalid ID format'
+            });
+        }
+
+        // Query the database for the user by ID
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({
                 success: false,
                 msg: 'User not found'
-            })
+            });
         }
+
         res.status(200).json({
             success: true,
             msg: 'User found',
             data: user
-        })
+        });
     } catch (error) {
-        console.log("Internal server error", error)
+        console.error("Internal server error", error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error in fetchin single user by id',
+            msg: 'Internal Server Error in fetching single user by ID',
             message: error.message
-        })
+        });
     }
-}
+};
+
 
 exports.updateUser = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { companyName, FullName, ContactNumber, Email, City, PinCode, HouseNo, Street, NearByLandMark } = req.body;
+        const { companyName, FullName, RangeWhereYouWantService, ContactNumber, Email, address, PinCode, HouseNo, NearByLandMark } = req.body;
+
+        console.log("body", req.body)
 
         const existingUser = await User.findById(id)
         if (!existingUser) {
@@ -791,12 +808,55 @@ exports.updateUser = async (req, res) => {
         existingUser.FullName = FullName;
         existingUser.ContactNumber = ContactNumber;
         existingUser.Email = Email;
-        existingUser.City = City;
+        existingUser.address = address;
         existingUser.PinCode = PinCode;
         existingUser.HouseNo = HouseNo;
-        existingUser.Street = Street;
+        // existingUser.Street = Street;
         existingUser.NearByLandMark = NearByLandMark;
         existingUser.companyName = companyName;
+        // existingUser.RangeWhereYouWantService = RangeWhereYouWantService;
+        if (RangeWhereYouWantService) {
+            console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
+
+            // Validate the new RangeWhereYouWantService
+            const isValidRange = RangeWhereYouWantService.every((service, index) => {
+                // console.log(`Checking service at index ${index}:`, service);
+
+                const location = service?.location;
+                // console.log(`Location:`, location);
+
+                const type = location?.type;
+                // console.log(`Type:`, type);
+
+                const coordinates = location?.coordinates;
+                // console.log(`Coordinates:`, coordinates);
+
+                const isTypeValid = type === "Point";
+                const areCoordinatesArray = Array.isArray(coordinates);
+                const hasTwoCoordinates = areCoordinatesArray && coordinates.length === 2;
+                const areCoordinatesValid = hasTwoCoordinates && coordinates.every(coord => coord !== "" && coord !== null && coord !== undefined);
+
+                // console.log(`isTypeValid:`, isTypeValid);
+                // console.log(`areCoordinatesArray:`, areCoordinatesArray);
+                // console.log(`hasTwoCoordinates:`, hasTwoCoordinates);
+                // console.log(`areCoordinatesValid:`, areCoordinatesValid);
+
+                return isTypeValid && areCoordinatesArray && hasTwoCoordinates && areCoordinatesValid;
+            });
+
+            if (isValidRange) {
+                const isDifferent = JSON.stringify(RangeWhereYouWantService) !== JSON.stringify(existingUser.RangeWhereYouWantService);
+
+                if (isDifferent) {
+                    existingUser.RangeWhereYouWantService = RangeWhereYouWantService;
+                    // console.log("RangeWhereYouWantService updated.");
+                } else {
+                    console.log("No change detected in RangeWhereYouWantService.");
+                }
+            } else {
+                console.warn("Invalid RangeWhereYouWantService format provided. Skipping update.");
+            }
+        }
 
         if (req.file) {
             if (existingUser.userImage.public_id) {

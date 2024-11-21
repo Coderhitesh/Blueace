@@ -72,9 +72,9 @@ const OrderSchema = new mongoose.Schema({
         }
     },
 
-    city: {
-        type: String,
-    },
+    // city: {
+    //     type: String,
+    // },
 
     pinCode: {
         type: String,
@@ -86,14 +86,17 @@ const OrderSchema = new mongoose.Schema({
         // required: true
     },
 
-    street: {
+    // street: {
+    //     type: String,
+    //     required: true
+    // },
+    address: {
         type: String,
-        // required: true
+        required: true
     },
 
     nearByLandMark: {
         type: String,
-        // required: true
     },
 
     RangeWhereYouWantService: [

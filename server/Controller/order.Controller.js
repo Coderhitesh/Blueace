@@ -8,8 +8,8 @@ require("dotenv").config()
 
 exports.makeOrder = async (req, res) => {
     try {
-        console.log('body', req.body);
-        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, city, pinCode, houseNo, street, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
+        // console.log('body', req.body);
+        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
         // Check for missing required fields
         const emptyField = [];
@@ -68,10 +68,11 @@ exports.makeOrder = async (req, res) => {
             phoneNumber,
             serviceType,
             message,
-            city,
+            // city,
+            address,
             pinCode,
             houseNo,
-            street,
+            // street,
             nearByLandMark,
             RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
             orderTime
@@ -411,10 +412,25 @@ exports.fetchVendorByLocation = async (req, res) => {
             const page = parseInt(req.query.page) || 1; // default to first page
             const skip = (page - 1) * limit;
 
+            const locationResults = await Vendor.find({
+                'RangeWhereYouWantService.location': {
+                    $near: {
+                        $geometry: OrderServiceLocation,
+                        $maxDistance: 5000
+                    }
+                }
+            })
+                .limit(parseInt(limit))
+                .skip(skip)
+                .populate('workingHour');
+
             // Fetch only vendors with role 'employ'
-            const employVendors = await Vendor.find({ Role: 'employ' }).skip(skip).limit(limit);
+            // const employVendors = await Vendor.find({ Role: 'employ' }).skip(skip).limit(limit).populate('workingHour');
+            const employVendors = locationResults.filter((item) => item.Role === 'employ')
             const totalEmployVendors = await Vendor.countDocuments({ Role: 'employ' });
             const totalPages = Math.ceil(totalEmployVendors / limit);
+
+            const filterWithActive = employVendors.filter((vendor) => vendor.readyToWork === true);
 
             return res.status(200).json({
                 success: true,
@@ -422,7 +438,9 @@ exports.fetchVendorByLocation = async (req, res) => {
                 currentPage: page,
                 limit,
                 totalPages,
-                data: employVendors,
+                preSelectedDay: findOrder.workingDay,
+                preSelectedTime: findOrder.workingTime,
+                data: filterWithActive,
                 message: 'Vendors fetched successfully',
             });
         }
@@ -446,8 +464,9 @@ exports.fetchVendorByLocation = async (req, res) => {
             .populate('workingHour');
 
         const filterWithActive = locationResults.filter((vendor) => vendor.readyToWork == true);
+        const filterVendorForUser = filterWithActive.filter((item) => item.Role === 'vendor')
 
-        const totalPages = Math.ceil(filterWithActive.length / limit);
+        const totalPages = Math.ceil(filterVendorForUser.length / limit);
 
         res.status(201).json({
             success: true,
@@ -457,7 +476,7 @@ exports.fetchVendorByLocation = async (req, res) => {
             preSelectedDay: findOrder.workingDay,
             preSelectedTime: findOrder.workingTime,
             totalPages,
-            data: filterWithActive,
+            data: filterVendorForUser,
             message: 'Vendors fetched successfully',
         });
 

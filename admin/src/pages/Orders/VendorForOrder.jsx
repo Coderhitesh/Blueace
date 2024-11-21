@@ -35,13 +35,14 @@ const VendorForOrder = () => {
             setData(res.data.data);
             setCurrentPage(res.data.currentPage);
             setTotalPages(res.data.totalPages);
-
+            console.log("res.data.preSelectedDay", res.data.preSelectedDay)
             // Set pre-selected working day and time
             if (res.data.AlreadyAllottedVendor && res.data.preSelectedDay && res.data.preSelectedTime) {
                 setPreSelectedDay(res.data.preSelectedDay); // Pre-selected working day from backend
                 setPreSelectedTime(res.data.preSelectedTime); // Pre-selected working time from backend
                 setSelectedDay(res.data.preSelectedDay);
                 setSelectedTime(res.data.preSelectedTime);
+                
             }
         } catch (error) {
             console.error('Error fetching vendors', error);
@@ -118,6 +119,7 @@ const VendorForOrder = () => {
                                     <strong>GST No:</strong> {vendor.gstNo} <br />
                                     <strong>PAN No:</strong> {vendor.panNo} <br />
                                 </p>
+                                {/* {console.log("vendor",vendor)} */}
 
                                 {/* Day Selection with Pre-selected Day */}
                                 <div className="mb-3">

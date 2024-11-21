@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import axios from 'axios';
 
 function Registration() {
@@ -11,10 +11,9 @@ function Registration() {
     Email: '',
     ContactNumber: '',
     Password: '',
-    City: '',
+    address: '',
     PinCode: '',
     HouseNo: '',
-    Street: '',
     NearByLandMark: '',
     RangeWhereYouWantService: [{
       location: {
@@ -28,14 +27,15 @@ function Registration() {
     latitude: '',
     longitude: ''
   });
+
+  const [addressSuggestions, setAddressSuggestions] = useState([]); // Suggestions state
   const [loading, setLoading] = useState(false);
-  const [passwordError, setPasswordError] = useState(''); // State for password error message
+  const [passwordError, setPasswordError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
 
-    // Password length validation
     if (name === 'Password') {
       if (value.length < 7) {
         setPasswordError('Password must be at least 7 characters long');
@@ -43,23 +43,44 @@ function Registration() {
         setPasswordError('');
       }
     }
+
+    if (name === 'address' && value.length > 2) {
+      fetchAddressSuggestions(value);
+    }
   };
 
-  const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          });
-        },
-        () => {
-          toast.error('Unable to retrieve your location');
-        }
-      );
-    } else {
-      toast.error('Geolocation is not supported by this system');
+  // Fetch address suggestions
+  const fetchAddressSuggestions = async (query) => {
+    try {
+      // console.log("query",query)
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+      console.log(res.data)
+      setAddressSuggestions(res.data || []);
+    } catch (err) {
+      console.error('Error fetching address suggestions:', err);
+    }
+  };
+
+  // Fetch latitude and longitude based on selected address
+  const fetchGeocode = async (selectedAddress) => {
+    try {
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      // console.log("geo", res.data)
+      const { latitude, longitude } = res.data;
+      setLocation({ latitude, longitude });
+      setFormData((prevData) => ({
+        ...prevData,
+        address: selectedAddress,
+        RangeWhereYouWantService: [{
+          location: {
+            type: 'Point',
+            coordinates: [longitude, latitude]
+          }
+        }]
+      }));
+      setAddressSuggestions([]);
+    } catch (err) {
+      console.error('Error fetching geocode:', err);
     }
   };
 
@@ -73,28 +94,14 @@ function Registration() {
       return;
     }
 
-    // Validate password length
     if (formData.Password.length < 7) {
       setPasswordError('Password must be at least 7 characters long');
       setLoading(false);
       return;
-    } else {
-      setPasswordError('');
     }
 
-    const updatedFormData = {
-      ...formData,
-      RangeWhereYouWantService: [{
-        location: {
-          type: 'Point',
-          coordinates: [location.longitude, location.latitude]
-        }
-      }]
-    };
-
     try {
-      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', updatedFormData);
-
+      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', formData);
       sessionStorage.setItem('token', res.data.token);
       sessionStorage.setItem('user', JSON.stringify(res.data.user));
 
@@ -106,10 +113,9 @@ function Registration() {
           Email: '',
           ContactNumber: '',
           Password: '',
-          City: '',
+          address: '',
           PinCode: '',
           HouseNo: '',
-          Street: '',
           NearByLandMark: '',
           RangeWhereYouWantService: [{
             location: {
@@ -118,23 +124,16 @@ function Registration() {
             }
           }]
         });
-        setLocation({
-          latitude: '',
-          longitude: ''
-        });
+        setLocation({ latitude: '', longitude: '' });
         navigate('/');
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast.error(err.response?.data.msg || 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getLocation();
-  }, []);
 
   return (
     <>
@@ -152,19 +151,6 @@ function Registration() {
                   <form className="submit-form" onSubmit={handleSubmit}>
 
                     <div className="row">
-                      {/* <div className="col-6">
-                        <div className="form-group">
-                          <label htmlFor="companyName" className='mb-1 fw-medium'>Company Name (Optional)</label>
-                          <input
-                            type="text"
-                            className="form-control rounded"
-                            placeholder="Enter Your Name"
-                            name="companyName"
-                            value={formData.companyName}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                      </div> */}
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name</label>
@@ -225,19 +211,39 @@ function Registration() {
                       </div>
 
 
-                      <div className="col-6">
+                      <div className="position-relative col-6">
                         <div className="form-group">
-                          <label htmlFor="Street" className='mb-1 fw-medium'>Street</label>
+                          <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
                           <input
                             type="text"
-                            className="form-control rounded"
-                            placeholder="Street"
-                            name="Street"
-                            value={formData.Street}
+                            name="address"
+                            value={formData.address}
+                            placeholder="Start typing address..."
                             onChange={handleInputChange}
-                            required
+                            className="form-control rounded"
                           />
+
+                          {addressSuggestions.length > 0 && (
+                            <div
+                              className="position-absolute top-100 start-0 mt-2 w-100 bg-white border border-secondary rounded shadow-lg overflow-auto"
+                              style={{ maxHeight: "200px" }}
+                            >
+                              <ul className="list-unstyled mb-0">
+                                {addressSuggestions.map((suggestion, index) => (
+                                  <li
+                                    key={index}
+                                    style={{ fontSize: 16 }}
+                                    className="p-1 hover:bg-light cursor-pointer"
+                                    onClick={() => fetchGeocode(suggestion.description)}
+                                  >
+                                    {suggestion.description}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
+
                       </div>
                       <div className="col-6">
                         <div className="form-group">
@@ -255,7 +261,7 @@ function Registration() {
                       </div>
 
 
-                      <div className="col-6">
+                      {/* <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="City" className='mb-1 fw-medium'>City</label>
                           <input
@@ -268,7 +274,7 @@ function Registration() {
                             required
                           />
                         </div>
-                      </div>
+                      </div> */}
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="PinCode" className='mb-1 fw-medium'>Pin Code</label>
@@ -285,7 +291,7 @@ function Registration() {
                       </div>
 
 
-                      <div className="col-12">
+                      <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
                           {passwordError && (
