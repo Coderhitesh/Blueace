@@ -407,7 +407,7 @@ exports.fetchVendorByLocation = async (req, res) => {
 
             const vendorWhichAllotedPast = findOrder.vendorAlloted || "No Vendor In Past";
             // console.log('vendorWhichAllotedPast',vendorWhichAllotedPast)
-
+            const OrderServiceLocation = findOrder.RangeWhereYouWantService[0].location;
             const limit = parseInt(req.query.limit) || 10; // default limit
             const page = parseInt(req.query.page) || 1; // default to first page
             const skip = (page - 1) * limit;

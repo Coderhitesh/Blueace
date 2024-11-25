@@ -39,6 +39,10 @@ const serviceCategorySchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MainCategory',
     },
+    isPopular: {
+        type: Boolean,
+        default: false
+    },
     metaTitle: {
         type: String
     },

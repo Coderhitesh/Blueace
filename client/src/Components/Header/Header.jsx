@@ -24,6 +24,21 @@ function Header() {
   //   navigate('/sign-in');
   // };
 
+  const [allService,setService] = useState([])
+  const fetchService = async() => {
+    try {
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
+      const data = res.data.data
+      const reverseData = data.reverse();
+      setService(reverseData)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(()=>{
+    fetchService();
+  },[])
+
   const handleLogOut = async () => {
     try {
       const res = await axios.get('https://www.api.blueaceindia.com/api/v1/Logout', {
@@ -207,16 +222,16 @@ function Header() {
                           </Link>
                           <ul className="custom-dropdown-menu" aria-labelledby="customSignInDropdown">
                             <li style={{ width: "100%" }}>
-                              <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a User</Link>
+                              <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For User</Link>
                             </li>
                             <li style={{ width: "100%" }}>
-                              <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Corporate User</Link>
+                              <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For Corporate User</Link>
                             </li>
                             <li style={{ width: "100%" }}>
-                              <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Employ</Link>
+                              <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For Employ</Link>
                             </li>
                             <li>
-                              <Link to="/vendor-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Vendor</Link>
+                              <Link to="/vendor-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For Vendor</Link>
                             </li>
                           </ul>
                         </li>
@@ -241,7 +256,15 @@ function Header() {
                   <Link to={'/about-us'}>About Us</Link>
                 </li>
                 <li>
-                  <Link to={'/services'}>Services</Link>
+                  <a href="javascript:void(0);">Services</a>
+                  <ul class="nav-dropdown nav-submenu">
+                    {
+                      allService && allService.map((item,index) => (
+
+                        <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>{item.name}</Link></li>
+                      ))
+                    }
+                  </ul>
                 </li>
                 <li>
                   <Link to={'/products'}>Products</Link>
@@ -301,7 +324,7 @@ function Header() {
                       <Link to={'/vendor-dashboard'} className="crs_yuo12 w-auto text-white theme-bg">
                         <span className="embos_45">
                           <i className="fas fa-plus me-2"></i>
-                          Employ Dashboard
+                          Employee Dashboard
                         </span>
                       </Link>
                     </li>
@@ -329,16 +352,16 @@ function Header() {
                       </Link>
                       <ul className={`custom-mobile-dropdown ${isDropdownOpen ? 'open' : ''}`}>
                         <li style={{ borderBottom: '1px solid #dddddd' }}>
-                          <Link to="/sign-in" className="custom-mobile-dropdown-item">As a User</Link>
+                          <Link to="/sign-in" className="custom-mobile-dropdown-item">For User</Link>
                         </li>
                         <li style={{ borderBottom: '1px solid #dddddd' }}>
-                          <Link to="/corporate-sign-in" className="custom-mobile-dropdown-item">As a Corporate User</Link>
+                          <Link to="/corporate-sign-in" className="custom-mobile-dropdown-item">For Corporate User</Link>
                         </li>
                         <li>
-                          <Link to="/employ-sign-in" className="custom-mobile-dropdown-item">As a Employ</Link>
+                          <Link to="/employ-sign-in" className="custom-mobile-dropdown-item">For Employee</Link>
                         </li>
                         <li>
-                          <Link to="/vendor-sign-in" className="custom-mobile-dropdown-item">As a Vendor</Link>
+                          <Link to="/vendor-sign-in" className="custom-mobile-dropdown-item">For Vendor</Link>
                         </li>
                       </ul>
                     </li>
@@ -431,16 +454,16 @@ function Header() {
                         </Link>
                         <ul className="custom-dropdown-menu" aria-labelledby="customSignInDropdown">
                           <li>
-                            <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a User</Link>
+                            <Link to="/sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For User</Link>
                           </li>
                           <li>
-                            <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Corporate User</Link>
+                            <Link to="/corporate-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For Corporate User</Link>
                           </li>
                           <li>
-                            <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Employ</Link>
+                            <Link to="/employ-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For Employee</Link>
                           </li>
                           <li>
-                            <Link to="/vendor-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">As a Vendor</Link>
+                            <Link to="/vendor-sign-in" style={{ width: "100%", display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: "600" }} className="custom-dropdown-item">For Vendor</Link>
                           </li>
                         </ul>
                       </li>

@@ -39,12 +39,12 @@ function AllVendors() {
     // Filtering logic
     const filteredVendors = vendors.filter((vendor) => {
         const companyNameMatch = vendor.companyName.toLowerCase().includes(filterText.toLowerCase());
-        // const registerAddressMatch = vendor.address.toLowerCase().includes(registerAddress.toLowerCase());
+        const registerAddressMatch = vendor.address.toLowerCase().includes(registerAddress.toLowerCase());
         const vendorDate = moment(vendor.createdAt);
         const startDateMatch = startDate ? vendorDate.isSameOrAfter(moment(startDate).startOf('day')) : true;
         const endDateMatch = endDate ? vendorDate.isSameOrBefore(moment(endDate).endOf('day')) : true;
 
-        return companyNameMatch  && startDateMatch && endDateMatch;
+        return companyNameMatch  && registerAddressMatch && startDateMatch && endDateMatch;
     });
 
     // Pagination logic
@@ -89,7 +89,7 @@ function AllVendors() {
         setModalVisible(true);
     };
 
-    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
+    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', "Type", 'View', "Address", 'Deactive', 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -161,6 +161,7 @@ function AllVendors() {
                                 <td>
                                     <button className="btn btn-info" onClick={() => handleView(vendor)}>View</button>
                                 </td>
+                                <td>{`${vendor.HouseNo}, ${vendor.address}, ${vendor.PinCode}` || "Not-Available"}</td>
                                 <td>
                                     <Toggle
                                         isActive={vendor.isDeactive}
@@ -215,7 +216,7 @@ function AllVendors() {
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Register Address:</h6>
-                                                <p>{selectedVendor.registerAddress || "Not Available"}</p>
+                                                <p>{`${selectedVendor.HouseNo}, ${selectedVendor.address}, ${selectedVendor.PinCode}` || "Not-Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>PAN Number:</h6>

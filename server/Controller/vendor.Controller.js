@@ -1226,7 +1226,7 @@ exports.updateVendor = async (req, res) => {
         vendor.gstNo = gstNo || vendor.gstNo;
         vendor.adharNo = adharNo || vendor.adharNo;
         if (RangeWhereYouWantService) {
-            console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
+            // console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
         
             // Validate the new RangeWhereYouWantService
             const isValidRange = RangeWhereYouWantService.every((service, index) => {

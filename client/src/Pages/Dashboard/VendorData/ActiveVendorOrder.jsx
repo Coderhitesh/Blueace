@@ -192,11 +192,12 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                         {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
                                                         <td>{order?.serviceId?.subCategoryId?.name}</td>
                                                         <td>{order.serviceType}</td>
-                                                        <td>{order?.userId?.FullName || "User is not available"}</td>
-                                                        <td>{order?.userId?.Email || "User is not available"}</td>
-                                                        <td>{order?.userId?.ContactNumber || "User is not available"}</td>
-                                                        <td>{`${order?.userId?.HouseNo}, ${order?.userId?.Street}, ${order?.userId?.City}, ${order?.userId?.PinCode}` || "User is not available"}</td>
-                                                        <td>{order?.userId?.NearByLandMark || "User is not available"}</td>
+                                                        {/* <td>{order?.userId?.FullName || "User is not available"}</td> */}
+                                                        <td>{order?.fullName || order?.userId?.fullName || "User is not available"}</td>
+                                                        <td>{order?.email || order?.userId?.Email || "User is not available"}</td>
+                                                        <td>{order?.phoneNumber || order?.userId?.ContactNumber || "User is not available"}</td>
+                                                        <td>{`${order?.houseNo}, ${order?.address}, ${order?.pinCode}` || "User is not available"}</td>
+                                                        <td>{order?.nearByLandMark || "User is not available"}</td>
                                                         <td>{order?.workingDay || "User is not available"}</td>
                                                         <td>{order?.workingTime || "User is not available"}</td>
                                                         <td>

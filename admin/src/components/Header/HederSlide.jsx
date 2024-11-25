@@ -152,7 +152,7 @@ const HederSlide = () => {
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
-                            <h6 className="lan-2">All Employ</h6>
+                            <h6 className="lan-2">All Employee</h6>
                         </Link>
                     </li>
                     {/* <li className="sidebar-list">

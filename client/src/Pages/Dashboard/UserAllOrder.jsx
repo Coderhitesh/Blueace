@@ -4,56 +4,66 @@ import toast from 'react-hot-toast';
 
 function UserAllOrder({ userData, allOrder }) {
 
-    const [showModal, setShowModal] = useState(false);
-    const [rating, setRating] = useState(0);
-    const [comment, setComment] = useState('');
-    // console.log("total order user",userData)
+    const [showModalFor, setShowModalFor] = useState(null); // Store the ID of the order for which the modal is open
+    const [reviews, setReviews] = useState({}); // Store rating and comment for each order
 
-    const openModal = () => {
-        setShowModal(true);
+    const openModal = (orderId) => {
+        setShowModalFor(orderId);
     };
 
     const closeModal = () => {
-        setRating("")
-        setComment('')
-        setShowModal(false);
+        setShowModalFor(null);
     };
 
-    const handleRatingChange = (value) => {
-        setRating(value);
+    const handleRatingChange = (orderId, value) => {
+        setReviews((prev) => ({
+            ...prev,
+            [orderId]: {
+                ...prev[orderId],
+                rating: value,
+            },
+        }));
     };
 
-    const handleCommentChange = (event) => {
-        setComment(event.target.value);
+    const handleCommentChange = (orderId, event) => {
+        const { value } = event.target;
+        setReviews((prev) => ({
+            ...prev,
+            [orderId]: {
+                ...prev[orderId],
+                comment: value,
+            },
+        }));
     };
 
     const handleSubmitReview = async (orderId, vendorId) => {
-        // console.log('user id' , userData)
-        // Prepare data to send in the request
+        const { rating, comment } = reviews[orderId] || {};
+
+        if (!rating || !comment) {
+            toast.error('Please provide a rating and comment.');
+            return;
+        }
+
         const reviewData = {
             rating,
             review: comment,
             vendorId,
-            userId: userData._id, // Assuming userData contains the logged-in user's ID
+            userId: userData._id,
         };
 
         try {
-            // Send POST request to the backend to submit the review
             const response = await axios.post('https://www.api.blueaceindia.com/api/v1/create-vendor-rating', reviewData);
 
             if (response.data.success) {
-                toast.success('Rating submitted successfully!')
-                // alert('Rating submitted successfully!');
-                setRating("")
-                setComment('')
-                closeModal(); // Close the modal after successful submission
+                toast.success('Rating submitted successfully!');
+                setReviews((prev) => ({ ...prev, [orderId]: {} }));
+                closeModal();
             } else {
-                alert(`Error: ${response.data.message}`);
+                toast.error(`Error: ${response.data.message}`);
             }
         } catch (error) {
-            console.log('Error submitting rating:', error);
-            // alert('There was an error submitting your review.');
-            toast.error('There was an error submitting your review.')
+            console.error('Error submitting rating:', error);
+            toast.error('There was an error submitting your review.');
         }
     };
 
@@ -122,7 +132,7 @@ function UserAllOrder({ userData, allOrder }) {
                                                 currentOrders.map((order) => (
                                                     <tr key={order._id}>
                                                         <td style={{ whiteSpace: 'nowrap' }}>
-                                                            <button type="button" className="btn btn-danger" onClick={openModal}>
+                                                            <button type="button" className="btn btn-danger" onClick={() => openModal(order._id)}>
                                                                 Give Review
                                                             </button>
                                                         </td>
@@ -180,67 +190,42 @@ function UserAllOrder({ userData, allOrder }) {
                                                                 <span>No video uploaded</span>
                                                             )}
                                                         </td>
+                                                        {/* {console.log("order",order)} */}
                                                         {/* Review Modal */}
-                                                        {showModal && (
-                                                            <div
-                                                                className="custom-modal-overlay"
-                                                                style={{ display: 'block' }}
-                                                                role="dialog"
-                                                                aria-labelledby="customModalLabel"
-                                                                aria-hidden="true"
-                                                            >
+                                                        {showModalFor === order._id && (
+                                                            <div className="custom-modal-overlay" style={{ display: 'block' }}>
                                                                 <div className="custom-modal-container">
                                                                     <div className="custom-modal-content">
-                                                                        {/* Close Button */}
                                                                         <div className="custom-modal-header">
                                                                             <span className="custom-close-btn" onClick={closeModal}>
                                                                                 <i className="fa fa-times"></i>
                                                                             </span>
                                                                         </div>
-
-                                                                        {/* Modal Body */}
                                                                         <div className="custom-modal-body text-center">
-                                                                            <img
-                                                                                src="https://i.imgur.com/d2dKtI7.png"
-                                                                                height="80"
-                                                                                width="80"
-                                                                                alt="Review"
-                                                                                className="mb-3"
-                                                                            />
-                                                                            <h4 className="mb-3">Add a Comment and Rate</h4>
-
-                                                                            {/* Rating Section */}
-                                                                            <div className="rating mb-3">
+                                                                            <h4>Add a Comment and Rate</h4>
+                                                                            <div className="rating">
                                                                                 {[1, 2, 3, 4, 5].map((star) => (
                                                                                     <span
                                                                                         key={star}
-                                                                                        onClick={() => handleRatingChange(star)}
-                                                                                        onMouseEnter={(e) => e.target.classList.add('hover')}
-                                                                                        onMouseLeave={(e) => e.target.classList.remove('hover')}
-                                                                                        className={`star ${rating >= star ? 'filled' : ''}`}
+                                                                                        onClick={() => handleRatingChange(order._id, star)}
+                                                                                        className={`star ${reviews[order._id]?.rating >= star ? 'filled' : ''}`}
                                                                                     >
                                                                                         ☆
                                                                                     </span>
                                                                                 ))}
                                                                             </div>
-
-                                                                            {/* Comment Section */}
-                                                                            <div className="comment-area mb-3">
-                                                                                <textarea
-                                                                                    className="form-control"
-                                                                                    placeholder="What is your view?"
-                                                                                    rows="3"
-                                                                                    value={comment}
-                                                                                    onChange={handleCommentChange}
-                                                                                ></textarea>
-                                                                            </div>
-
-                                                                            {/* Submit Button */}
+                                                                            <textarea
+                                                                                className="form-control mb-3"
+                                                                                placeholder="What is your view?"
+                                                                                rows="3"
+                                                                                value={reviews[order._id]?.comment || ''}
+                                                                                onChange={(e) => handleCommentChange(order._id, e)}
+                                                                            ></textarea>
                                                                             <button
                                                                                 className="btn btn-primary send-review-btn"
-                                                                                onClick={() => handleSubmitReview(order._id, order.vendorAlloted._id)}
+                                                                                onClick={() => handleSubmitReview(order._id, order?.vendorAlloted?._id)}
                                                                             >
-                                                                                Send Review <i className="fa fa-long-arrow-right ml-1"></i>
+                                                                                Send Review
                                                                             </button>
                                                                         </div>
                                                                     </div>

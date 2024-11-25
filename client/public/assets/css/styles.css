@@ -1789,7 +1789,7 @@ nav a:hover {
 .nav-menu>.active>a .submenu-indicator-chevron,
 .nav-menu>.focus>a .submenu-indicator-chevron,
 .nav-menu>li:hover>a .submenu-indicator-chevron {
-    border-color: transparent #F41b3b #F41b3b transparent
+    border-color: transparent #02A2D2 #02A2D2 transparent
 }
 .light-menu .nav-menu>.active>a .submenu-indicator-chevron,
 .light-menu .nav-menu>.focus>a .submenu-indicator-chevron,
@@ -2066,7 +2066,7 @@ nav a:hover {
 }
 .nav-dropdown>li>a:hover, .nav-dropdown>li>a:focus {
     padding-left: 20px;
-	color:#F41b3b;
+	color:#02A2D2;
 }
 .social-icon a i,
 .social-icons a i {
@@ -2078,7 +2078,7 @@ nav a:hover {
 
 .nav-dropdown>.focus>a,
 .nav-dropdown>li:hover>a {
-    color:#F41b3b;
+    color:#02A2D2;
 }
 
 .nav-dropdown.nav-dropdown-left {
@@ -7639,7 +7639,7 @@ a.btn_aps {
 
 /*---------- Small footer -------------------*/
 footer{
-	z-index:99;
+	/* z-index:99; */
 	font-size:14px;
 	color:#565656;
 	position:relative;

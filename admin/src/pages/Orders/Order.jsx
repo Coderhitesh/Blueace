@@ -4,6 +4,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
+import moment from 'moment';
 
 function Order() {
     const [allOrders, setAllOrders] = useState([]);
@@ -12,6 +13,10 @@ function Order() {
     const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
     const [selectedVendor, setSelectedVendor] = useState(null); // 
     const productsPerPage = 10;
+    const [registerAddress, setRegisterAddress] = useState("");
+    const [showFilter, setShowFilter] = useState(false);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
 
     const fetchAllOrders = async () => {
         try {
@@ -68,11 +73,22 @@ function Order() {
         setModalVisible(true); // Open the modal
     };
 
+    // Filtering logic
+    const filteredVendors = allOrders.filter((vendor) => {
+        // const companyNameMatch = vendor.companyName.toLowerCase().includes(filterText.toLowerCase());
+        const registerAddressMatch = vendor.address.toLowerCase().includes(registerAddress.toLowerCase());
+        const vendorDate = moment(vendor.createdAt);
+        const startDateMatch = startDate ? vendorDate.isSameOrAfter(moment(startDate).startOf('day')) : true;
+        const endDateMatch = endDate ? vendorDate.isSameOrBefore(moment(endDate).endOf('day')) : true;
+
+        return registerAddressMatch && startDateMatch && endDateMatch;
+    });
+
     const indexOfLastVendor = currentPage * productsPerPage;
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
-    const currentallOrders = allOrders.slice(indexOfFirstVendor, indexOfLastVendor);
+    const currentallOrders = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'User Detail', 'Voice Note', 'Select Vendor', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Select Vendor', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -81,6 +97,56 @@ function Order() {
                 <div>Loading...</div>
             ) : (
                 <>
+
+                    {/* Filter Section */}
+                    <div className="filter-section mb-4">
+                        <button className="btn btn-primary" onClick={() => setShowFilter(!showFilter)}>
+                            {showFilter ? "Hide Filter" : "Show Filter"}
+                        </button>
+                        {showFilter && (
+                            <div className="mt-2 row">
+                                {/* <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Company Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        placeholder="Search by Company Name"
+                                        value={filterText}
+                                        onChange={(e) => setFilterText(e.target.value)}
+                                    />
+                                </div> */}
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Address</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        placeholder="Search by Order Address"
+                                        value={registerAddress}
+                                        onChange={(e) => setRegisterAddress(e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Starting Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-control mb-2"
+                                        value={startDate ? moment(startDate).format("YYYY-MM-DD") : ""}
+                                        onChange={(e) => setStartDate(e.target.value ? new Date(e.target.value) : null)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Ending Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-control mb-2"
+                                        value={endDate ? moment(endDate).format("YYYY-MM-DD") : ""}
+                                        onChange={(e) => setEndDate(e.target.value ? new Date(e.target.value) : null)}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <Table
                         headers={headers}
                         elements={currentallOrders.map((vendor, index) => (
@@ -90,6 +156,7 @@ function Order() {
                                 <td className='fw-bolder'>{vendor?.serviceType}</td>
                                 <td className='fw-bolder'>{vendor?.userId?.FullName || "Not-Available"}</td>
                                 <td className='fw-bolder'>{vendor?.userId?.UserType || "Not-Available"}</td>
+                                <td className='fw-bolder'>{vendor?.address || "Not-Available"}</td>
                                 {/* User Detail Button to Open Modal */}
                                 <td className='fw-bolder'>
                                     <button className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" type="button" onClick={() => handleView(vendor?.userId)}>
@@ -127,7 +194,7 @@ function Order() {
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                                 Change Member
                                             </a>
-                                        ):(
+                                        ) : (
                                             <a href={`/Alloted/${vendor._id}`} className="btn btn-primary btn-activity-primary rounded-pill px-4 py-2 shadow-sm">
                                                 Send Your Member
                                             </a>
@@ -185,7 +252,7 @@ function Order() {
                                     {/* { console.log(vendor.EstimatedBill?._id?.statusOfBill)} */}
                                     {vendor.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                 </td>
-                                
+
                                 {/* <td className='fw-bolder'>
                                     {vendor?.beforeWorkImage?.url ? (
                                         <img style={{ width: '100px', height: '80px' }} src={vendor?.beforeWorkImage?.url} alt={vendor?.serviceId?.name} />
@@ -201,36 +268,36 @@ function Order() {
                                     )}
                                 </td> */}
                                 <td>
-                                                            {vendor?.beforeWorkVideo?.url ? (
-                                                                <video
-                                                                    width="200"
-                                                                    height="120"
-                                                                    controls
-                                                                    style={{ borderRadius: '5px' }}
-                                                                >
-                                                                    <source src={vendor?.beforeWorkVideo?.url} type="video/mp4" />
-                                                                    Your browser does not support the video tag.
-                                                                </video>
-                                                            ) : (
-                                                                <span>No video uploaded</span>
-                                                            )}
-                                                        </td>
+                                    {vendor?.beforeWorkVideo?.url ? (
+                                        <video
+                                            width="200"
+                                            height="120"
+                                            controls
+                                            style={{ borderRadius: '5px' }}
+                                        >
+                                            <source src={vendor?.beforeWorkVideo?.url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    ) : (
+                                        <span>No video uploaded</span>
+                                    )}
+                                </td>
 
-                                                        <td>
-                                                            {vendor?.afterWorkVideo?.url ? (
-                                                                <video
-                                                                    width="200"
-                                                                    height="120"
-                                                                    controls
-                                                                    style={{ borderRadius: '5px' }}
-                                                                >
-                                                                    <source src={vendor?.afterWorkVideo?.url} type="video/mp4" />
-                                                                    Your browser does not support the video tag.
-                                                                </video>
-                                                            ) : (
-                                                                <span>No video uploaded</span>
-                                                            )}
-                                                        </td>
+                                <td>
+                                    {vendor?.afterWorkVideo?.url ? (
+                                        <video
+                                            width="200"
+                                            height="120"
+                                            controls
+                                            style={{ borderRadius: '5px' }}
+                                        >
+                                            <source src={vendor?.afterWorkVideo?.url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    ) : (
+                                        <span>No video uploaded</span>
+                                    )}
+                                </td>
                                 <td>
                                     <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                         Delete
@@ -240,7 +307,7 @@ function Order() {
                                 <td>{new Date(vendor.createdAt).toLocaleString() || "Not-Available"}</td>
                             </tr>
                         ))}
-                        productLength={allOrders.length}
+                        productLength={filteredVendors.length}
                         productsPerPage={productsPerPage}
                         currentPage={currentPage}
                         paginate={setCurrentPage}
@@ -288,7 +355,7 @@ function Order() {
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Address</td>
-                                                    <td>{`${selectedVendor.HouseNo},${selectedVendor.Street},${selectedVendor.City} (${selectedVendor.PinCode})` || "Not Available"}</td>
+                                                    <td>{`${selectedVendor.HouseNo},${selectedVendor.address} (${selectedVendor.PinCode})` || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Land Mark</td>
@@ -298,65 +365,7 @@ function Order() {
                                             </tbody>
 
                                         </table>
-                                        {/* <h5 style={{ fontWeight: 600 }} className="mt-4">Members</h5>
-                                        <table className="table table-bordered mt-4">
-                                            <thead>
-                                                <tr>
-                                                    <th>Member Name</th>
-                                                    <th>Aadhar Image</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {
-                                                    selectedVendor.member && selectedVendor.member.map((item, index) => (
-                                                        <tr key={index}>
-                                                            <td style={{ width: '28%' }}>{item.name}</td>
-                                                            <td>{selectedVendor.panImage?.url ? (
-                                                                <a href={item.memberAdharImage?.url} target="_blank" rel="noopener noreferrer">
-                                                                    <img style={{ width: "100px", height: "auto", borderRadius: "8px", boxShadow: "0 0 5px rgba(0, 0, 0, 0.2)" }} src={item.memberAdharImage?.url} alt={item.name} />
-                                                                </a>
-                                                            ) : (
-                                                                <p>No Image Available</p>
-                                                            )}</td>
-                                                        </tr>
-                                                    ))
-                                                }
-                                            </tbody>
 
-                                        </table>
-                                        <h5 style={{ fontWeight: 600 }} className="mt-4">Documents</h5>
-                                        <div className="row mt-2">
-                                            <div className="col-md-4 text-center">
-                                                <h6 style={{ fontWeight: '700' }} className=' mb-3'>PAN Image</h6>
-                                                {selectedVendor.panImage?.url ? (
-                                                    <a href={selectedVendor.panImage.url} target="_blank" rel="noopener noreferrer">
-                                                        <img style={{ width: "100px", height: "auto", borderRadius: "8px", boxShadow: "0 0 5px rgba(0, 0, 0, 0.2)" }} src={selectedVendor.panImage.url} alt="PAN" />
-                                                    </a>
-                                                ) : (
-                                                    <p>No Image Available</p>
-                                                )}
-                                            </div>
-                                            <div className="col-md-4 text-center">
-                                                <h6 style={{ fontWeight: '700' }} className=' mb-3'>GST Image</h6>
-                                                {selectedVendor.gstImage?.url ? (
-                                                    <a href={selectedVendor.gstImage.url} target="_blank" rel="noopener noreferrer">
-                                                        <img style={{ width: "100px", height: "auto", borderRadius: "8px", boxShadow: "0 0 5px rgba(0, 0, 0, 0.2)" }} src={selectedVendor.gstImage.url} alt="GST" />
-                                                    </a>
-                                                ) : (
-                                                    <p>No Image Available</p>
-                                                )}
-                                            </div>
-                                            <div className="col-md-4 text-center">
-                                                <h6 style={{ fontWeight: '700' }} className=' mb-3'>Aadhar Image</h6>
-                                                {selectedVendor.adharImage?.url ? (
-                                                    <a href={selectedVendor.adharImage.url} target="_blank" rel="noopener noreferrer">
-                                                        <img style={{ width: "100px", height: "auto", borderRadius: "8px", boxShadow: "0 0 5px rgba(0, 0, 0, 0.2)" }} src={selectedVendor.adharImage.url} alt="Aadhar" />
-                                                    </a>
-                                                ) : (
-                                                    <p>No Image Available</p>
-                                                )}
-                                            </div>
-                                        </div> */}
                                     </div>
                                     <div className="modal-footer">
                                         <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>Close</button>

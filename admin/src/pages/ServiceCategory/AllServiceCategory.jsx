@@ -38,6 +38,27 @@ function AllServiceCategory() {
         fetchVouchers();
     }, []);
 
+    const handleToggle = async (id, currentActiveStatus) => {
+        try {
+            // console.log('currentActiveStatus', currentActiveStatus)
+            const newActiveStatus = !currentActiveStatus; // Toggle the status
+            // console.log('newActiveStatus', newActiveStatus)
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-ispopular/${id}`, {
+                isPopular: newActiveStatus
+            });
+
+            if (response.data.success) {
+                toast.success('Service isPopular status updated successfully!');
+                await fetchVouchers();
+            } else {
+                toast.error('Failed to update service isPopular status.');
+            }
+        } catch (error) {
+            toast.error('An error occurred while updating the isPopular status.');
+            console.error('Toggle error:', error);
+        }
+    };
+
 
     // Handle deleting a category
     const handleDelete = async (id) => {
@@ -60,7 +81,7 @@ function AllServiceCategory() {
     const currentServices = category.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
     // Define headers for the Table component
-    const headers = ['S.No', 'Icon', 'Service Image', 'Category', 'Sub Category', 'Discription', 'Slider Image', 'Meta Title', 'Meta Description', 'Meta KeyWords', 'Meta Focus', 'Created At', 'Action'];
+    const headers = ['S.No', 'Icon', 'Service Image', 'Category', 'Sub Category', 'Discription', 'Slider Image', 'Is Popular', 'Meta Title', 'Meta Description', 'Meta KeyWords', 'Meta Focus', 'Created At', 'Action'];
 
 
     return (
@@ -93,7 +114,14 @@ function AllServiceCategory() {
                                     <img src={category?.sliderImage?.url} width={50} alt="Single Slider" />
                                 )
                             }
-                            
+
+                            <td>
+                                <Toggle
+                                    isActive={category.isPopular}
+                                    onToggle={() => handleToggle(category._id, category.isPopular)} // Pass service id and current active status
+                                />
+                            </td>
+
                             <td className=' fw-bolder'>{category.metaTitle ? category.metaTitle.substring(0, 14) + '....' : "Not-Available"}</td>
                             <td className=' fw-bolder'>{category.metaDescription ? category.metaDescription.substring(0, 14) + '....' : "Not-Available"}</td>
                             <td className=' fw-bolder'>{category.metaKeyword ? category.metaKeyword.substring(0, 14) + '....' : "Not-Available"}</td>

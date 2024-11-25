@@ -14,6 +14,7 @@ function AllUserDetail() {
     // States for filter inputs
     const [filterEmail, setFilterEmail] = useState("");
     const [filterPhoneNumber, setFilterPhoneNumber] = useState("");
+    const [filterAddress, setFilterAddress] = useState(""); // Add address filter state
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [showFilter, setShowFilter] = useState(false);
@@ -41,16 +42,17 @@ function AllUserDetail() {
     const indexOfLastVoucher = currentPage * productsPerPage;
     const indexOfFirstVoucher = indexOfLastVoucher - productsPerPage;
 
-    // Filter users based on Email, Phone Number, and Date Range
+    // Filter users based on Email, Phone Number, Address, and Date Range
     const filteredUsers = users.filter((user) => {
         const emailMatch = user.Email.toLowerCase().includes(filterEmail.toLowerCase());
         const phoneNumberMatch = user.ContactNumber.includes(filterPhoneNumber);
+        const addressMatch = user.address.toLowerCase().includes(filterAddress.toLowerCase()); // Address filter logic
 
         const userDate = new Date(user.createdAt);
         const startDateMatch = startDate ? userDate >= new Date(startDate) : true;
         const endDateMatch = endDate ? userDate <= new Date(endDate) : true;
 
-        return emailMatch && phoneNumberMatch && startDateMatch && endDateMatch;
+        return emailMatch && phoneNumberMatch && addressMatch && startDateMatch && endDateMatch;
     });
 
     const currentServices = filteredUsers.slice(indexOfFirstVoucher, indexOfLastVoucher);
@@ -99,7 +101,7 @@ function AllUserDetail() {
         }
     };
 
-    const headers = ['S.No', 'Name', 'Phone Number', 'Email', "User Type", 'Deactive', 'Created At', "Action"];
+    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Address', "User Type", 'Deactive', 'Created At', "Action"];
 
     return (
         <div className='page-body'>
@@ -136,6 +138,16 @@ function AllUserDetail() {
                                     />
                                 </div>
                                 <div className="col-md-3">
+                                    <label htmlFor="addressFilter">Search by Address</label>
+                                    <input
+                                        id="addressFilter"
+                                        type="text"
+                                        className="form-control mb-2"
+                                        value={filterAddress}
+                                        onChange={(e) => setFilterAddress(e.target.value)} 
+                                    />
+                                </div>
+                                <div className="col-md-3">
                                     <label htmlFor="startDate">Start Date</label>
                                     <input
                                         id="startDate"
@@ -166,6 +178,7 @@ function AllUserDetail() {
                                 <td className='fw-bolder'>{category.FullName}</td>
                                 <td className='fw-bolder'>{category.ContactNumber || "Not-Available"}</td>
                                 <td className='fw-bolder'>{category.Email || "Not-Available"}</td>
+                                <td className='fw-bolder'>{`${category.HouseNo}, ${category.address}, ${category.PinCode}` || "Not-Available"}</td>
 
                                 {/* Dropdown for updating UserType */}
                                 <td>
@@ -201,6 +214,10 @@ function AllUserDetail() {
                         productsPerPage={productsPerPage}
                         currentPage={currentPage}
                         paginate={setCurrentPage}
+                        href="/users/add-user"
+                        text="Add User"
+                        errorMsg=""
+                        handleOpen={() => { }}
                     />
                 </>
             )}

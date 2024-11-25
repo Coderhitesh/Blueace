@@ -17,7 +17,7 @@ function AddVendor() {
     const [formData, setFormData] = useState({
         companyName: '',
         yearOfRegistration: '',
-        registerAddress: '',
+        address: '',
         panImage: null,
         adharImage: null,
         gstImage: null,
@@ -28,18 +28,67 @@ function AddVendor() {
         gstNo: '',
         adharNo: '',
         Password: '',
+        HouseNo: '',
+        PinCode: '',
         Role: 'vendor',
         RangeWhereYouWantService: [{
             location: { type: 'Point', coordinates: [] }
         }]
     });
-    const [latitude, setLatitude] = useState(''); // For manual entry of latitude
-    const [longitude, setLongitude] = useState(''); // For manual entry of longitude
+    const [location, setLocation] = useState({ latitude: '', longitude: '' });
+    const [passwordError, setPasswordError] = useState('');
+    const [addressSuggestions, setAddressSuggestions] = useState([]); // Suggestions state
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         // console.log(`Selected ${name}: ${value}`);
         setFormData((prevData) => ({ ...prevData, [name]: value }));
+        // Password length validation
+        if (name === 'Password') {
+            if (value.length < 7) {
+                setPasswordError('Password must be at least 7 characters long');
+            } else {
+                setPasswordError('');
+            }
+        }
+        if (name === 'address' && value.length > 2) {
+            fetchAddressSuggestions(value);
+        }
+    };
+
+    // Fetch address suggestions
+    const fetchAddressSuggestions = async (query) => {
+        try {
+            // console.log("query",query)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            // console.log(res.data)
+            setAddressSuggestions(res.data || []);
+        } catch (err) {
+            console.error('Error fetching address suggestions:', err);
+        }
+    };
+
+    // Fetch latitude and longitude based on selected address
+    const fetchGeocode = async (selectedAddress) => {
+        try {
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            // console.log("geo", res.data)
+            const { latitude, longitude } = res.data;
+            setLocation({ latitude, longitude });
+            setFormData((prevData) => ({
+                ...prevData,
+                address: selectedAddress,
+                RangeWhereYouWantService: [{
+                    location: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude]
+                    }
+                }]
+            }));
+            setAddressSuggestions([]);
+        } catch (err) {
+            console.error('Error fetching geocode:', err);
+        }
     };
 
     const handlePanImageUpload = (e) => {
@@ -68,12 +117,12 @@ function AddVendor() {
 
     const validateFields = () => {
         const {
-            companyName, yearOfRegistration, registerAddress, Email, ownerName,
+            companyName, yearOfRegistration, address, Email, ownerName,
             ContactNumber, panNo, gstNo, adharNo, Password, panImage, adharImage, gstImage
         } = formData;
 
         // Basic field validation
-        // if (!companyName || !yearOfRegistration || !registerAddress || !Email || !ownerName ||
+        // if (!companyName || !yearOfRegistration || !address || !Email || !ownerName ||
         //     !ContactNumber || !panNo || !gstNo || !adharNo || !Password || !panImage || !adharImage || !gstImage) {
         //     toast.error("All fields are required");
         //     return false;
@@ -127,7 +176,7 @@ function AddVendor() {
         const payload = new FormData();
         payload.append('companyName', formData.companyName);
         payload.append('yearOfRegistration', formData.yearOfRegistration);
-        payload.append('registerAddress', formData.registerAddress);
+        payload.append('address', formData.address);
         payload.append('Email', formData.Email);
         payload.append('ownerName', formData.ownerName);
         payload.append('ContactNumber', formData.ContactNumber);
@@ -136,6 +185,8 @@ function AddVendor() {
         payload.append('gstNo', formData.gstNo);
         payload.append('Password', formData.Password);
         payload.append('Role', formData.Role);
+        payload.append('HouseNo', formData.HouseNo);
+        payload.append('PinCode', formData.PinCode);
 
         if (formData.panImage) payload.append('panImage', formData.panImage);
         if (formData.adharImage) payload.append('adharImage', formData.adharImage);
@@ -143,20 +194,20 @@ function AddVendor() {
 
 
         payload.append('RangeWhereYouWantService[0][location][type]', 'Point');
-        payload.append('RangeWhereYouWantService[0][location][coordinates][0]', longitude || 40.7128);
-        payload.append('RangeWhereYouWantService[0][location][coordinates][1]', latitude || 74.0060);
+        payload.append('RangeWhereYouWantService[0][location][coordinates][0]', location.longitude);
+        payload.append('RangeWhereYouWantService[0][location][coordinates][1]', location.latitude);
 
         try {
             const res = await axios.post('https://www.api.blueaceindia.com/api/v1/register-vendor', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            toast.success('Employ Registration Successful!');
+            toast.success('Employee Registration Successful!');
             const vendorType = res.data.user.Role
             // console.log("vendorType",vendorType)
             if (vendorType === "vendor") {
                 const userId = res.data.user._id;
                 window.location.href = `/add-vendor-member/${userId}`;
-            }else{
+            } else {
                 window.location.href = '/vendors/all-vendor'
             }
         } catch (error) {
@@ -201,63 +252,49 @@ function AddVendor() {
                     <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" placeholder="Aadhar Number*" required />
                     </div>
-                    {/* <div className="col-md-6 mt-3">
-                        <select
-                            className="form-select"
-                            name='Role'
-                            id="Role"
-                            value={formData.Role}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select Role</option>
-                            <option value='vendor'>Vendor</option>
-                            <option value='employ'>Employ</option>
-                        </select>
-                    </div> */}
-                    {formData.Role === '' && (
-                        <>
-                            <div className="col-lg-6 mt-3">
-                                <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
-                            </div>
-                            <div className="col-lg-6 mt-3">
-                                <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
-                            </div>
-                        </>
-                    )}
-                    {formData.Role === 'vendor' && (
-                        <>
-                            <div className="col-lg-6 mt-3">
-                                <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
-                            </div>
-                            <div className="col-lg-6 mt-3">
-                                <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
-                            </div>
-                        </>
-                    )}
-                    {/* <div className="col-lg-6 mt-3">
-                        <input type="text" value={latitude} onChange={(e) => setLatitude(e.target.value)} className="form-control rounded" placeholder="Enter Latitude" required />
-                    </div>
                     <div className="col-lg-6 mt-3">
-                        <input type="text" value={longitude} onChange={(e) => setLongitude(e.target.value)} className="form-control rounded" placeholder="Enter Longitude" required />
-                    </div> */}
-                    {/* <div className="col-md-6 mt-3">
-                        <select
-                            className="form-select"
-                            name='Role'
-                            id="Role"
-                            value={formData.Role}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select Role</option>
-                            <option value='vendor'>Vendor</option>
-                            <option value='employ'>Employ</option>
-                        </select>
-                    </div> */}
-                    <div className="col-lg-6 mt-3">
+                        {passwordError && (
+                            <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
+                                {passwordError}
+                            </p>
+                        )}
                         <input type="password" value={formData.Password} name='Password' onChange={handleChange} className="form-control rounded" placeholder="Password*" required />
                     </div>
+                    <div className="position-relative col-lg-6 mt-3">
+                        <input
+                            type="text"
+                            name="address"
+                            value={formData.address}
+                            placeholder="Start typing address..."
+                            onChange={handleChange}
+                            className="form-control rounded"
+                        />
+
+                        {addressSuggestions.length > 0 && (
+                            <div
+                                className="position-absolute top-100 start-0 mt-2 w-100 bg-white border border-secondary rounded shadow-lg overflow-auto"
+                                style={{ maxHeight: "200px" }}
+                            >
+                                <ul className="list-unstyled mb-0">
+                                    {addressSuggestions.map((suggestion, index) => (
+                                        <li
+                                            key={index}
+                                            style={{ fontSize: 16 }}
+                                            className="p-1 hover:bg-light cursor-pointer"
+                                            onClick={() => fetchGeocode(suggestion.description)}
+                                        >
+                                            {suggestion.description}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
                     <div className="col-lg-6 mt-3">
-                        <input type="text" value={formData.registerAddress} name='registerAddress' onChange={handleChange} className="form-control rounded" placeholder="Address*" required />
+                        <input type="text" value={formData.HouseNo} name='HouseNo' onChange={handleChange} className="form-control rounded" placeholder="House No*" required />
+                    </div>
+                    <div className="col-lg-6 mt-3">
+                        <input type="text" value={formData.PinCode} name='PinCode' onChange={handleChange} className="form-control rounded" placeholder="PinCode*" required />
                     </div>
                     {formData.Role === '' && (
                         <>
@@ -309,11 +346,6 @@ function AddVendor() {
                                 <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control" />
                                 {previewAdharImage && <img src={previewAdharImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
                             </div>
-                            {/* <div className="col-lg-4 mt-3">
-                                <label className='form-label' htmlFor="">Gst Image</label>
-                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control" />
-                                {previewGstImage && <img src={previewGstImage} alt="Preview" className=' mt-2' style={{ width: '100px', height: '100px' }} />}
-                            </div> */}
                         </>
                     )}
 

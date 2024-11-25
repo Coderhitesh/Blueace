@@ -63,6 +63,7 @@ import EditTimeSlot from '../TimeSlot/EditTimeSlot'
 import AllScript from '../Script/AllScript'
 import AddScript from '../Script/AddScript'
 import EditScript from '../Script/EditScript'
+import AddUser from '../UserDetail/AddUser'
 
 const Home = () => {
     return (
@@ -125,6 +126,7 @@ const Home = () => {
 
                         {/* user route here  */}
                         <Route path='/users/all-users' element={<AllUserDetail />} />
+                        <Route path='/users/add-user' element={<AddUser />} />
 
                         {/* Vendor route here  */}
                         <Route path='/vendors/all-vendor' element={<AllVendors />} />

@@ -41,6 +41,9 @@ import EmployLogin from "./Components/Auth/EmployLogin"
 import EmployRegistration from "./Components/Auth/EmployRegistration"
 import VerifyAccount from "./Pages/Dashboard/VendorData/VerifyAccount"
 import ForgetVendorPassword from "./service-provider/ForgetVendorPassword"
+import VoltasCentralAC from "./Pages/VoltasCentralAC/VoltasCentralAC"
+import HVAC from "./Pages/HVAC/HVAC"
+import Term from "./Pages/Term/Term"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -94,7 +97,10 @@ function App() {
           <Route path="/successfully-booking" element={<OrderSuccessfully />} />
           <Route path="/successfully-member" element={<SuccessfullyMember />} />
           {/* <Route path="/verify-account" element={<VerifyAccount />} /> */}
+          <Route path="/term-and-conditions" element={<Term />} />
 
+          <Route path="/voltas-central-ac" element={<VoltasCentralAC />} />
+          <Route path="/hvac" element={<HVAC />} />
           
         </Routes>
         {/* <NewsLetter /> */}

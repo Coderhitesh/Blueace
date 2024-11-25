@@ -8,7 +8,9 @@ function Footer() {
   const fetchService = async() => {
     try {
       const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
-      setService(res.data.data)
+      const data = res.data.data
+      const reverseData = data.reverse();
+      setService(reverseData)
     } catch (error) {
       console.log(error)
     }
@@ -82,6 +84,7 @@ function Footer() {
                     {/* <li><Link to={'/products'}>- Products</Link></li> */}
                     <li><Link to={'/blog'}>- Blog</Link></li>
                     <li><Link to={'/privacy'}>- Privacy</Link></li>
+                    <li><Link to={'/term-and-conditions'}>- Terms & Conditions</Link></li>
                     <li><Link to={'/gallery'}>- Gallery</Link></li>
                     {/* <li><Link to={'/'}>Dashboard</Link></li> */}
                   </ul>
@@ -106,10 +109,12 @@ function Footer() {
                   <h4 className="widget_title">Services</h4>
                   <ul className="footer-menu">
                   {
-                      allService && allService.map((item,index)=>(
+                      allService && allService.slice(0,7).map((item,index)=>(
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
+                    <li><Link to={`/voltas-central-ac`}>- Voltas Central Ac</Link></li>
+                    <li><Link to={`/hvac`}>- HVAC</Link></li>
                   </ul>
                 </div>
               </div>

@@ -53,7 +53,7 @@ function AddCorporateOrder() {
             const res = await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            toast.success('Employ Registration Successful!');
+            toast.success('Employee Registration Successful!');
 
         } catch (error) {
             console.log(error)

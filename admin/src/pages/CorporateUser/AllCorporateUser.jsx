@@ -15,6 +15,7 @@ function AllCorporateUser() {
     const [filterEmail, setFilterEmail] = useState("");
     const [filterPhoneNumber, setFilterPhoneNumber] = useState("");
     const [filterCompanyName, setFilterCompanyName] = useState("");
+    const [filterAddress, setFilterAddress] = useState("");  // New state for address filter
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [showFilter, setShowFilter] = useState(false);
@@ -24,10 +25,8 @@ function AllCorporateUser() {
         try {
             const res = await axios.get('https://www.api.blueaceindia.com/api/v1/AllUser');
             const datasave = res.data.data;
-            const filterdata = datasave.filter((item) => item.UserType === "Corporate")
+            const filterdata = datasave.filter((item) => item.UserType === "Corporate");
             const r = filterdata.reverse();
-            // console.log("data",r)
-            // console.log(object)
             setUsers(r);
         } catch (error) {
             toast.error('An error occurred while fetching User data.');
@@ -44,19 +43,19 @@ function AllCorporateUser() {
     const indexOfLastVoucher = currentPage * productsPerPage;
     const indexOfFirstVoucher = indexOfLastVoucher - productsPerPage;
 
-    // Filter users based on Email, Phone Number, and Date Range
+    // Filter users based on Email, Phone Number, Address, and Date Range
     const filteredUsers = users.filter((user) => {
         const emailMatch = user.Email && user.Email.toLowerCase().includes(filterEmail.toLowerCase());
         const phoneNumberMatch = user.ContactNumber && user.ContactNumber.includes(filterPhoneNumber);
         const companyNameMatch = user.companyName && user.companyName.toLowerCase().includes(filterCompanyName);
-    
+        const addressMatch = user.address && user.address.toLowerCase().includes(filterAddress.toLowerCase()); // Address filter logic
+
         const userDate = new Date(user.createdAt);
         const startDateMatch = startDate ? userDate >= new Date(startDate) : true;
         const endDateMatch = endDate ? userDate <= new Date(endDate) : true;
-    
-        return emailMatch && phoneNumberMatch && startDateMatch && endDateMatch && companyNameMatch;
+
+        return emailMatch && phoneNumberMatch && companyNameMatch && addressMatch && startDateMatch && endDateMatch;
     });
-    
 
     const currentServices = filteredUsers.slice(indexOfFirstVoucher, indexOfLastVoucher);
 
@@ -105,7 +104,7 @@ function AllCorporateUser() {
         }
     };
 
-    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Deactive', 'Created At', "Action"];
+    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Address', 'Deactive', 'Created At', "Action"];
 
     return (
         <div className='page-body'>
@@ -155,6 +154,17 @@ function AllCorporateUser() {
                                     />
                                 </div>
                                 <div className="col-md-3">
+                                    <label htmlFor="addressFilter" className='form-label'>Search by Address</label>
+                                    <input
+                                        id="addressFilter"
+                                        placeholder='Search by Address'
+                                        type="text"
+                                        className="form-control mb-2"
+                                        value={filterAddress}
+                                        onChange={(e) => setFilterAddress(e.target.value)}
+                                    />
+                                </div>
+                                <div className="col-md-3">
                                     <label htmlFor="startDate" className='form-label'>Start Date</label>
                                     <input
                                         id="startDate"
@@ -186,35 +196,23 @@ function AllCorporateUser() {
                                 <td className='fw-bolder'>{category.FullName}</td>
                                 <td className='fw-bolder'>{category.ContactNumber || "Not-Available"}</td>
                                 <td className='fw-bolder'>{category.Email || "Not-Available"}</td>
-                                {/* <td className='fw-bolder'>{category.Role || "Not-Available"}</td> */}
-
-                                {/* Dropdown for updating UserType */}
-                                {/* <td>
-
-                                <select
-                                    value={category.UserType || 'Normal'}
-                                    onChange={(e) => handleUserTypeChange(category._id, e.target.value)}
-                                    className="form-select"
-                                >
-                                    <option value="Normal">Normal</option>
-                                    <option value="Corporate">Corporate</option>
-                                </select>
-                            </td> */}
-
+                                <td className='fw-bolder'>{`${category.HouseNo}, ${category.address}, ${category.PinCode}` || "Not-Available"}</td>
                                 <td>
                                     <Toggle
                                         isActive={category.isDeactive}
                                         onToggle={() => handleToggle(category._id, category.isDeactive)} // Pass vendor id and current active status
                                     />
                                 </td>
-
                                 <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>
-
+                                {/* <td className='fw-bolder'>
+                                    <div className="product-action">
+                                        <svg onClick={() => handleUserTypeChange(category._id, "Admin")} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="bi bi-person-check" width="20" height="20">
+                                            <path d="M14 7c.553 0 1-.447 1-1V4a1 1 0 0 0-1-1h-1V2a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v1H3V2a1 1 0 0 0-1-1H0a1 1 0 0 0-1 1v1H0a1 1 0 0 0-1 1v2c0 .553.447 1 1 1h1v2c0 .553.447 1 1 1h2v2c0 .553.447 1 1 1h2v2c0 .553.447 1 1 1h2v2c0 .553.447 1 1 1h1c.553 0 1-.447 1-1v-2c0-.553-.447-1-1-1h-1v-2h-2v-2h2zM7 10H6v1H7z"/>
+                                        </svg>
+                                    </div>
+                                </td> */}
                                 <td className='fw-bolder'>
                                     <div className="product-action">
-                                        {/* <Link to={`/service/edit-category/${category._id}`}>
-                                        <i class="ri-pencil-fill"></i>
-                                    </Link> */}
                                         <svg onClick={() => handleDelete(category._id)} style={{ cursor: 'pointer' }}>
                                             <use href="/assets/svg/icon-sprite.svg#trash1"></use>
                                         </svg>
@@ -227,9 +225,10 @@ function AllCorporateUser() {
                         currentPage={currentPage}
                         paginate={setCurrentPage}
                         href="/corporate-user/add-corporate-user"
-                        text="Add Corporate User"
+                        text="Add Corporate"
                         errorMsg=""
                         handleOpen={() => { }}
+                        
                     />
                 </>
             )}
@@ -237,4 +236,4 @@ function AllCorporateUser() {
     );
 }
 
-export default AllCorporateUser
+export default AllCorporateUser;

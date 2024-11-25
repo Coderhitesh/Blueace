@@ -4,6 +4,7 @@ import axios from 'axios';
 import './VendorForOrder.css';
 import toast from 'react-hot-toast';
 import StarRating from '../../components/StarRating/StarRating';
+import verify from './verified.png'
 
 const VendorForOrder = () => {
     const [data, setData] = useState([]);
@@ -115,10 +116,16 @@ const VendorForOrder = () => {
                                     <strong>Owner:</strong> {vendor.ownerName} <br />
                                     <strong>Contact:</strong> {vendor.ContactNumber} <br />
                                     <strong>Email:</strong> {vendor.Email} <br />
-                                    <strong>Address:</strong> {vendor.registerAddress} <br />
-                                    <strong>GST No:</strong> {vendor.gstNo} <br />
+                                    <strong>Address:</strong> {`${vendor.HouseNo}, ${vendor.address}, ${vendor.PinCode}`} <br />
+                                    <strong>GST No:</strong> {vendor.gstNo || 'Not Available'} <br />
                                     <strong>PAN No:</strong> {vendor.panNo} <br />
+
                                 </p>
+                                {
+                                    vendor.verifyed === true && (
+                                        <img className=' position-absolute top-0 left' src={verify} width={60} alt="Verified Vendor" />
+                                    )
+                                }
                                 {/* {console.log("vendor",vendor)} */}
 
                                 {/* Day Selection with Pre-selected Day */}

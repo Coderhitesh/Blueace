@@ -1,0 +1,33 @@
+.voltas-central-ac-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.voltas-central-ac-container .voltas-central-ac-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border-radius: 20px;
+}
+
+.voltas-central-ac-container h2,
+.voltas-central-ac-container h3 {
+    color: black;
+    margin-top: 20px;
+}
+
+.voltas-central-ac-container p,
+.voltas-central-ac-container ul {
+    margin: 10px 0;
+}
+
+.voltas-central-ac-container ul {
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.voltas-central-ac-container ul li {
+    margin-bottom: 5px;
+}

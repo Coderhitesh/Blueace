@@ -29,8 +29,8 @@ function CategoryHome() {
           <div className="row justify-content-center">
             <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
               <div className="sec_title position-relative text-center mb-5">
-                <h6 className="mb-0 theme-cl">Categories</h6>
-                <h2 className="ft-bold">Products  Categories</h2>
+                {/* <h6 className="mb-0 theme-cl">Categories</h6> */}
+                <h2 className="ft-bold">Our Services</h2>
               </div>
             </div>
           </div>

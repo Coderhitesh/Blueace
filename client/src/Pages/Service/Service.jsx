@@ -133,7 +133,7 @@ function Service() {
                                         <div className="Goodup-grid-wrap">
                                             <div className="Goodup-grid-upper">
                                                 <div className="Goodup-grid-thumb">
-                                                    <Link to={`/service/${item.name}`} className="d-block text-center m-auto">
+                                                    <Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} className="d-block text-center m-auto">
                                                         <img src={item.image?.url} className="img-fluid" alt="" />
                                                     </Link>
                                                 </div>
@@ -141,15 +141,15 @@ function Service() {
                                             <div className="Goodup-grid-fl-wrap">
                                                 <div className="Goodup-caption px-3 py-2">
                                                     <div className="Goodup-author">
-                                                        <Link to={`/service/${item.name}`}>
+                                                        <Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>
                                                             <img src="assets/img/t-1.png" className="img-fluid circle" alt="" />
                                                         </Link>
                                                     </div>
                                                     <div className="Goodup-cates">
-                                                        <Link to={`/service/${item.name}`}>{item.mainCategoryId?.name}</Link>
+                                                        <Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>{item.mainCategoryId?.name}</Link>
                                                     </div>
                                                     <h4 className="mb-0 ft-medium medium">
-                                                        <Link to={`/service/${item.name}`} className="text-dark fs-md">
+                                                        <Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`} className="text-dark fs-md">
                                                             {item.name}
                                                             <span className="verified-badge"><i className="fas fa-check-circle"></i></span>
                                                         </Link>
@@ -165,7 +165,7 @@ function Service() {
                                 <div className="col-lg-12 col-md-12 col-sm-12">
                                     <ul className="pagination">
                                         {[...Array(totalPages)].map((_, index) => (
-                                            <li key={index} className="page-item">
+                                            <li key={index} className="page-item ">
                                                 <a
                                                     className={`page-link ${index + 1 === currentPage ? 'active' : ''}`}
                                                     href="#"

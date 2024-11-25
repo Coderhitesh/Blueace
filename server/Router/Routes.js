@@ -3,7 +3,7 @@ const { protect } = require('../Middleware/Protect')
 const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive, universelLogin } = require('../Controller/Usercontroller')
 const router = express.Router()
 const upload = require('../Middleware/Multer')
-const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory, getServiceCategoryByName } = require('../Controller/serviceCategory.Controller')
+const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory, getServiceCategoryByName, updateIsPopular } = require('../Controller/serviceCategory.Controller')
 const { createService, getService, getSingleService, updateService, deleteService, updateServiceActiveStatus, getServiceByName } = require('../Controller/service.Controller')
 const { createMarqueeText, getMarqueeText, getSingleMarquee, updateMarqueeText, deleteMarqueeText } = require('../Controller/marqueeText.Controller')
 const { createPromotionalBanner, getPromotionalBanner, getSinglePromotionalBanner, updatePromotionalBanner, deletePromotionalBanner, updatePromotionalActiveStatus } = require('../Controller/promotionalBanner.Controller')
@@ -73,6 +73,7 @@ router.get('/get-all-service-category', getServiceCategory)
 router.get('/get-single-service-category/:_id', getSingleServiceCategroy)
 router.get('/get-service-category-by-name/:name', getServiceCategoryByName)
 router.delete('/delete-service-category/:_id', deleteServiceCategory)
+router.put('/update-ispopular/:_id',updateIsPopular)
 
 // Router for services
 

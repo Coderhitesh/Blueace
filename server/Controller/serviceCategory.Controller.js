@@ -68,7 +68,7 @@ exports.createServiceCategory = async (req, res) => {
 
             // Handle image upload
             if (image && image[0]) {
-                console.log("image",image)
+                console.log("image", image)
                 const imageUrl = await uploadImage(image[0]?.path); // Upload image
                 newCategory.image = {
                     url: imageUrl.image,
@@ -174,12 +174,12 @@ exports.getServiceCategoryByName = async (req, res) => {
     try {
         const { name } = req.params;
         const searchName = name.trim().toLowerCase();  // Convert input to lowercase
-        
+
         // Perform a case-insensitive search using regex
-        const serviceCategory = await Category.findOne({ 
+        const serviceCategory = await Category.findOne({
             name: { $regex: new RegExp(`^${searchName}$`, 'i') }
         }).populate('mainCategoryId');
-        
+
         if (!serviceCategory) {
             return res.status(400).json({
                 success: false,
@@ -367,3 +367,32 @@ exports.updateServiceCategory = async (req, res) => {
         });
     }
 };
+
+exports.updateIsPopular = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const isPopular = req.body.isPopular;
+        const category = await Category.findById(id);
+        if (!category) {
+            return res.status(404).json({
+                success: false,
+                message: 'Category not found',
+                error: 'Category not found'
+            });
+        }
+        category.isPopular = isPopular;
+        await category.save();
+        res.status(200).json({
+            success: true,
+            message: 'Category updated successfully',
+            data: category
+        });
+    } catch (error) {
+        console.log("Internal server error in updateIsPopular service");
+        res.status(500).json({
+            success: false,
+            message: "Internal server error in updateIsPopular service",
+            error: error.message
+        })
+    }
+}

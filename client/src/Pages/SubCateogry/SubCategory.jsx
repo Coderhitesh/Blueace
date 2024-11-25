@@ -372,7 +372,7 @@ function SubCategory() {
               {Array.isArray(allService) &&
                 allService.map((item, index) => (
                   <div
-                    className='col-lg-4'
+                    className='col-lg-4 mb-3'
                     key={index}
                     onClick={() => openModal(item)}
                     data-bs-toggle="modal"

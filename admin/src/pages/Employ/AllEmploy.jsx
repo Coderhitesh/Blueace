@@ -21,6 +21,8 @@ function AllEmploy() {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
     const [showFilter, setShowFilter] = useState(false);
+    const [filterAddress, setFilterAddress] = useState("");
+
 
     const fetchVendorDetail = async () => {
         try {
@@ -32,7 +34,7 @@ function AllEmploy() {
             const r = filterData.reverse();
             setVendors(r);
         } catch (error) {
-            toast.error('An error occurred while fetching Employ data.');
+            toast.error('An error occurred while fetching Employee data.');
             console.error('Fetch error:', error);
         } finally {
             setLoading(false);
@@ -48,14 +50,13 @@ function AllEmploy() {
     const filteredUsers = vendors.filter((user) => {
         const emailMatch = user.Email && user.Email.toLowerCase().includes(filterEmail.toLowerCase());
         const phoneNumberMatch = user.ContactNumber && user.ContactNumber.includes(filterPhoneNumber);
-        // const companyNameMatch = user.companyName && user.companyName.toLowerCase().includes(filterCompanyName);
+        const addressMatch = user.address && user.address.toLowerCase().includes(filterAddress.toLowerCase()); // Address filter
+        const startDateMatch = startDate ? new Date(user.createdAt) >= new Date(startDate) : true;
+        const endDateMatch = endDate ? new Date(user.createdAt) <= new Date(endDate) : true;
 
-        const userDate = new Date(user.createdAt);
-        const startDateMatch = startDate ? userDate >= new Date(startDate) : true;
-        const endDateMatch = endDate ? userDate <= new Date(endDate) : true;
-
-        return emailMatch && phoneNumberMatch && startDateMatch && endDateMatch;
+        return emailMatch && phoneNumberMatch && addressMatch && startDateMatch && endDateMatch;
     });
+
     const currentVendors = filteredUsers.slice(indexOfFirstVendor, indexOfLastVendor);
 
     const handleToggle = async (id, currentDeactiveStatus) => {
@@ -65,10 +66,10 @@ function AllEmploy() {
                 isDeactive: newDeactiveStatus
             })
             if (response.data.success) {
-                toast.success('Employ status updated successfully.');
+                toast.success('Employee status updated successfully.');
                 await fetchVendorDetail();
             } else {
-                toast.error('Failed to update Employ status.');
+                toast.error('Failed to update Employee status.');
             }
         } catch (error) {
             toast.error("An error occurred while updating the deactive status")
@@ -80,13 +81,13 @@ function AllEmploy() {
         try {
             const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${id}`);
             if (response.data.success) {
-                toast.success('Employ deleted successfully!');
+                toast.success('Employee deleted successfully!');
                 await fetchVendorDetail(); // Fetch vendors again after deletion
             } else {
-                toast.error('Failed to delete Employ');
+                toast.error('Failed to delete Employee');
             }
         } catch (error) {
-            toast.error('An error occurred while deleting the Employ.');
+            toast.error('An error occurred while deleting the Employee.');
         }
     };
 
@@ -95,11 +96,11 @@ function AllEmploy() {
         setModalVisible(true); // Open the modal
     };
 
-    const headers = ['S.No', 'Company Name', 'Employ Name', 'Employ Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
+    const headers = ['S.No', 'Company Name', 'Employee Name', 'Employee Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
-            <Breadcrumb heading={'Employs'} subHeading={'Employs'} LastHeading={'All Employs'} backLink={'/users/all-users'} />
+            <Breadcrumb heading={'Employees'} subHeading={'Employees'} LastHeading={'All Employees'} backLink={'/users/all-users'} />
             {loading ? (
                 <div>Loading...</div>
             ) : (
@@ -131,6 +132,17 @@ function AllEmploy() {
                                         onChange={(e) => setFilterPhoneNumber(e.target.value)}
                                     />
                                 </div>
+                                <div className="col-md-3">
+                                    <label htmlFor="" className='form-label'>Search by Address</label>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        placeholder="Search by Address"
+                                        value={filterAddress}
+                                        onChange={(e) => setFilterAddress(e.target.value)}
+                                    />
+                                </div>
+
                                 <div className="col-md-3">
                                     <label htmlFor="" className='form-label'>Search by Starting Date</label>
                                     <input
@@ -167,6 +179,7 @@ function AllEmploy() {
                                         View
                                     </button>
                                 </td>
+                                {/* <td>{`${vendor.HouseNo}, ${vendor.address}, ${vendor.PinCode}` || "Not-Available"}</td> */}
                                 <td>
                                     <Toggle
                                         isActive={vendor.isDeactive}
@@ -186,7 +199,7 @@ function AllEmploy() {
                         currentPage={currentPage}
                         paginate={setCurrentPage}
                         href="/vendors/add-employ"
-                        text="Add Employ"
+                        text="Add Employee"
                         errorMsg=""
                         handleOpen={() => { }}
                     />
@@ -215,11 +228,11 @@ function AllEmploy() {
                                                     <td>{selectedVendor.companyName || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ width: '28%' }}>Employ Name</td>
+                                                    <td style={{ width: '28%' }}>Employee Name</td>
                                                     <td>{selectedVendor.ownerName || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td style={{ width: '28%' }}>Employ Number</td>
+                                                    <td style={{ width: '28%' }}>Employee Number</td>
                                                     <td>{selectedVendor.ContactNumber || "Not Available"}</td>
                                                 </tr>
                                                 <tr>
@@ -232,7 +245,7 @@ function AllEmploy() {
                                                 </tr> */}
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Registered Address</td>
-                                                    <td>{selectedVendor.registerAddress || "Not Available"}</td>
+                                                    <td>{`${selectedVendor.HouseNo}, ${selectedVendor.address}, ${selectedVendor.PinCode}` || "Not-Available"}</td>
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>PAN No</td>
