@@ -18,7 +18,7 @@ const PaymentFailed = () => {
         </p>
         <div style={styles.buttonContainer}>
           <Link to="/retry-payment" style={styles.primaryButton}>Retry Payment</Link>
-          <a href="tel:+91 9311550874" style={styles.secondaryButton}>Contact Support</a>
+          <a href="tel:+91 9311539090" style={styles.secondaryButton}>Contact Support</a>
         </div>
       </div>
     </div>

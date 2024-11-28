@@ -37,7 +37,7 @@ function Footer() {
                      C-126, Office No-1 Gate No – 1, First Floor Naraina Industrial Area, Phase – 01, New Delhi - 110028
                   </div>
                   <div className="address mt-3">
-                    <strong>Phone:</strong>+91 9311550874<br/>
+                    <strong>Phone:</strong>+91 9311539090<br/>
                     <br />
                     <strong>Mail:</strong> blueaceindia@gmail.com<br/>
                   </div>

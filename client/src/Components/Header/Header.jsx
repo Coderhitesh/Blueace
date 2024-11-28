@@ -94,8 +94,8 @@ function Header() {
               <div className="header-contact">
                 <ul className="nav nav-pills nav-top">
                   <li className="d-none d-sm-block">
-                    <a href="tel:+919311550874" target="_blank" className="text-white">
-                      <i className="fas fa-mobile"></i> +91 9311550874
+                    <a href="tel:+919311539090" target="_blank" className="text-white">
+                      <i className="fas fa-mobile"></i> +91 9311539090
                     </a>
                   </li>
                   <li className="d-none d-sm-block mx-3">
@@ -249,7 +249,7 @@ function Header() {
             </div>
             <div className="nav-menus-wrapper" style={{ transitionProperty: 'none' }}>
               <ul className="nav-menu">
-                <li className="active">
+                <li className="">
                   <Link to={'/'}>Home</Link>
                 </li>
                 <li>
@@ -264,7 +264,7 @@ function Header() {
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>{item.name}</Link></li>
                       ))
                     }
-                  </ul>
+                  </ul> 
                 </li>
                 <li>
                   <Link to={'/products'}>Products</Link>

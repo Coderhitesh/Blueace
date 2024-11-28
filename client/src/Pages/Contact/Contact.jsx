@@ -123,14 +123,14 @@ function Contact() {
                   <div className="bg-white rounded p-3 mb-2">
                     <h4 className="ft-medium mb-3 theme-cl">Call Us:</h4>
                     <h6 className="ft-medium mb-1">Customer Care:</h6>
-                    <p className="mb-2">+91 458 753 6924</p>
+                    <p className="mb-2">+91 9311539090</p>
                   </div>
                 </div>
                 <div className="col-xl-4 col-lg-4 col-md-12">
                   <div className="bg-white rounded p-3 mb-2">
                     <h4 className="ft-medium mb-3 theme-cl">Drop A Mail:</h4>
                     <p>Drop mail we will contact you within 24 hours.</p>
-                    <p className="lh-1 text-dark">info@gmail.com</p>
+                    <p className="lh-1 text-dark">support@blueaceindia.com</p>
                   </div>
                 </div>
               </div>
