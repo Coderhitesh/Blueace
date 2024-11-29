@@ -53,6 +53,7 @@ function BlogPage() {
 								<ol class="breadcrumb mb-0">
 									<li class="breadcrumb-item"><Link to={'/'} style={{color:'white'}}>Home</Link></li>
 									<li class="breadcrumb-item"  style={{color:'white'}}>/</li>
+                                    {/* hello */}
 									<li class="breadcrumb-item active" style={{color:'white'}} aria-current="page">Blogs</li>
 								</ol>
 							</nav>
