@@ -737,7 +737,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
 
 exports.PaymentVerify = async (req, res) => {
     try {
-
+        console.log("i am hit")
         const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
         console.log(req.body)
 
@@ -793,11 +793,11 @@ exports.PaymentVerify = async (req, res) => {
         findOrder.paymentMethod = method;
 
         await findOrder.save();
-        // res.redirect('http://localhost:5174/successfull-payment')
-        res.status(400).json({
-            success: true,
-            message: 'Payment successful',
-        })
+        res.redirect('http://localhost:5987/successfull-payment')
+        // res.status(400).json({
+        //     success: true,
+        //     message: 'Payment successful',
+        // })
     } catch (error) {
         console.log(error)
         // res.redirect(`http://localhost:5174/failed-payment?error=${error?.message || "Internal server Error"}`)

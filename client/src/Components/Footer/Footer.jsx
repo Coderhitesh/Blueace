@@ -34,7 +34,7 @@ function Footer() {
                   />
                   {/* <h1>LOGO</h1> */}
                   <div className="address mt-2">
-                     C-126, Office No-1 Gate No – 1, First Floor Naraina Industrial Area, Phase – 01, New Delhi - 110028
+                     C-126, Office No-1 Gate No - 1, First Floor Naraina Industrial Area, Phase – 01, New Delhi - 110028
                   </div>
                   <div className="address mt-3">
                     <strong>Phone:</strong>+91 9311539090<br/>
@@ -44,27 +44,17 @@ function Footer() {
                   <div className="address mt-2">
                     <ul className="list-inline">
                       <li className="list-inline-item">
-                        <a href="#" className="theme-cl">
+                        <a href="https://www.facebook.com/blueacelimited/" target='_blank' className="theme-cl">
                           <i className="lni lni-facebook-filled"></i>
                         </a>
                       </li>
                       <li className="list-inline-item">
-                        <a href="#" className="theme-cl">
-                          <i className="lni lni-twitter-filled"></i>
-                        </a>
-                      </li>
-                      <li className="list-inline-item">
-                        <a href="#" className="theme-cl">
-                          <i className="lni lni-youtube"></i>
-                        </a>
-                      </li>
-                      <li className="list-inline-item">
-                        <a href="#" className="theme-cl">
+                        <a href="https://www.instagram.com/blueacelimited/" target='_blank' className="theme-cl">
                           <i className="lni lni-instagram-filled"></i>
                         </a>
                       </li>
                       <li className="list-inline-item">
-                        <a href="#" className="theme-cl">
+                        <a href="https://www.linkedin.com/company/blueace-ltd " target='_blank' className="theme-cl">
                           <i className="lni lni-linkedin-original"></i>
                         </a>
                       </li>
@@ -115,6 +105,8 @@ function Footer() {
                     }
                     <li><Link to={`/voltas-central-ac`}>- Voltas Central Ac</Link></li>
                     <li><Link to={`/hvac`}>- HVAC</Link></li>
+                    <li><Link to={`/heat-pump-installation`}>- Heat Pump</Link></li>
+                    <li><Link to={`/cassette-air-conditioning`}>- Cassette Air Conditioning</Link></li>
                   </ul>
                 </div>
               </div>

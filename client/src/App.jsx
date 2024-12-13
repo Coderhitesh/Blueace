@@ -44,6 +44,8 @@ import ForgetVendorPassword from "./service-provider/ForgetVendorPassword"
 import VoltasCentralAC from "./Pages/VoltasCentralAC/VoltasCentralAC"
 import HVAC from "./Pages/HVAC/HVAC"
 import Term from "./Pages/Term/Term"
+import HeatPump from "./Pages/HeatPump/HeatPump"
+import CassetteAir from "./Pages/CassetteAir/CassetteAir"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -60,11 +62,11 @@ function App() {
           <Route path="/make-esitimated-bill" element={<EstimatedBudget />} />
           <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
 
-          
+
           <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/about-us" element={
             <About />
-            } />
+          } />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/sign-up" element={<Registration />} />
@@ -101,7 +103,9 @@ function App() {
 
           <Route path="/voltas-central-ac" element={<VoltasCentralAC />} />
           <Route path="/hvac" element={<HVAC />} />
-          
+          <Route path="/heat-pump-installation" element={<HeatPump />} />
+          <Route path="/cassette-air-conditioning" element={<CassetteAir />} />
+
         </Routes>
         {/* <NewsLetter /> */}
         <Footer />

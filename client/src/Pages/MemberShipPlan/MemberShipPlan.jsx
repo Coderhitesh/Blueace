@@ -87,7 +87,7 @@ function MemberShipPlan() {
                     name: 'Blueace',
                     description: 'Purchase Membership Plan',
                     order_id: order?.id || '',
-                    // callback_url: "https://www.api.blueaceindia.com/api/v1/payment-verify",
+                    callback_url: "https://www.api.blueaceindia.com/api/v1/payment-verify",
                     prefill: {
                         name: vendorData.ownerName, // Prefill customer data
                         email: vendorData.Email,
@@ -96,17 +96,9 @@ function MemberShipPlan() {
                     theme: {
                         color: '#F37254'
                     },
-                    handler: function (response) {
-                        // Successful payment redirection
-                        window.location.href = '/successfull-payment';
-                    },
                 };
 
                 const rzp = new window.Razorpay(options);
-                rzp.on('payment.failed', function (response) {
-                    // Failed payment redirection
-                    window.location.href = '/failed-payment';
-                });
         
                 rzp.open();
             }

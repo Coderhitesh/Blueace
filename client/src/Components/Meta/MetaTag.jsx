@@ -3,7 +3,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import PropTypes from 'prop-types';
 
-const MetaTag = ({ title, description, keyword, focusKeywords }) => {
+const MetaTag = ({ title, description, keyword, focusKeywords, robots }) => {
   return (
     <Helmet>
       <meta charSet="utf-8" />
@@ -11,6 +11,7 @@ const MetaTag = ({ title, description, keyword, focusKeywords }) => {
       <meta name="description" content={description} />
       <meta name="keywords" content={keyword} />
       <meta name="focus-keywords" content={focusKeywords} />
+      <meta name="robots" content={robots} />
     </Helmet>
   );
 };
@@ -21,6 +22,7 @@ MetaTag.propTypes = {
   description: PropTypes.string.isRequired,
   keyword: PropTypes.string.isRequired,
   focusKeywords: PropTypes.string,
+  robots: PropTypes.string,
 };
 
 // Optional defaultProps to avoid undefined values

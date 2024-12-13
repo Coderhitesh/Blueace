@@ -16,7 +16,7 @@ import MetaTag from '../../Components/Meta/MetaTag'
 function Home() {
   return (
     <div>
-      <MetaTag title={'Blueace india'} />
+      <MetaTag title={'Find The Best Quality of HVAC solutions at Blueace'} description={'Welcome to Blueace provides top-notch heating, ventilation, and air conditioning solutions where comfort meets expertise. Contact us today for more details: +91 9311539090'} keyword='HVAC solutions' focusKeywords={'HVAC solutions'} />
       <Hero />
       <CategoryHome />
       <FeatureListHome />   
