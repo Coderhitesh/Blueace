@@ -7,10 +7,10 @@ const EstimatedBudget = new mongoose.Schema({
         required: true
     },
     EstimatedTotalPrice: {
-        type: Number, 
+        type: Number,
         required: true
     },
-    vendor:{
+    vendor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Vendor',
     },
@@ -26,12 +26,18 @@ const EstimatedBudget = new mongoose.Schema({
         },
         Discount: {
             type: Number,
-          
+
         }
     }],
 
-    statusOfBill:{
-        type:Boolean
+    BillStatus: {
+        type: String,
+        default: 'Pending',
+        enum: ['Pending', 'Accepted', 'Rejected']
+    },
+
+    statusOfBill: {
+        type: Boolean
     },
 
 }, { timestamps: true });

@@ -68,12 +68,13 @@ exports.UpdateStatusOfBill = async (req, res) => {
         if (!bill) {
             return res.status(404).json({ message: 'Bill not found' });
         }
-        if(bill.statusOfBill === true){
+        if (bill.statusOfBill === true) {
             return res.status(400).json({ message: 'Bill is already approved' });
         }
 
         // Update the bill status
         bill.statusOfBill = status;
+        bill.BillStatus = status ? 'Accepted' : 'Rejected'
         await bill.save();
 
         return res.status(200).json({ message: 'Bill status updated successfully', updatedBill: bill });
@@ -83,7 +84,6 @@ exports.UpdateStatusOfBill = async (req, res) => {
         res.status(500).json({ message: 'An error occurred while updating the bill status. Please try again later.' });
     }
 };
-
 
 exports.deleteBill = async (req, res) => {
     try {

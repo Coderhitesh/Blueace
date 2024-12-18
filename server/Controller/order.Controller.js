@@ -3,7 +3,8 @@ const Order = require('../Model/Order.Model');
 const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage, deleteVideoFromCloudinary, uploadVideo } = require('../Utils/Cloudnary');
 const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
-const User = require('../Model/UserModel')
+const User = require('../Model/UserModel');
+const { error } = require('console');
 require("dotenv").config()
 
 exports.makeOrder = async (req, res) => {
@@ -155,7 +156,7 @@ exports.findOrderById = async (req, res) => {
         // Find orders based on the filter
         const orders = await Order.find({
             $or: [{
-                VendorAllotedStatus: true,
+                // VendorAllotedStatus: "Accepted",
                 vendorAlloted: vendorAlloted
             }]
         })
@@ -511,7 +512,7 @@ exports.AssignVendor = async (req, res) => {
         }
 
         // Check if vendor is already allotted for a new assignment
-        if (type === "new-vendor" && order.VendorAllotedStatus) {
+        if (type === "new-vendor" && order.VendorAllotedStatus === 'Accepted') {
             return res.status(404).json({
                 success: false,
                 message: "Vendor already allotted"
@@ -549,7 +550,7 @@ exports.AssignVendor = async (req, res) => {
         order.vendorAlloted = Vendorid;
         order.OrderStatus = "Vendor Assigned";
         order.VendorAllotedTime = currentISTTime;
-        order.VendorAllotedStatus = true;
+        order.VendorAllotedStatus = "Send Request";
         order.workingDay = workingDay;
         order.workingTime = workingTime;
 
@@ -571,6 +572,55 @@ exports.AssignVendor = async (req, res) => {
         });
     }
 };
+
+exports.AcceptOrderRequest = async (req, res) => {
+    try {
+        const { venderId } = req.params;
+        const { VendorAllotedStatus } = req.body;
+        const order = await Order.findOne({ vendorAlloted: venderId })
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found",
+                error: "Order not found"
+            });
+        }
+        if(VendorAllotedStatus === 'Accepted'){
+            order.VendorAllotedStatus = VendorAllotedStatus;
+            order.save()
+            return res.status(200).json({
+                success: true,
+                message: "Order accepted successfully",
+                data: order
+            })
+        }
+        // console.log("VendorAllotedStatus",VendorAllotedStatus)
+        if(VendorAllotedStatus === 'Reject'){
+            // console.log("i am in VendorAllotedStatus")
+            order.VendorAllotedStatus = "Pending";
+            order.OrderStatus = 'Pending';
+            order.vendorAlloted = null
+            // console.log("i am done")
+
+            order.save();
+            return res.status(200).json({
+                success: true,
+                message: "Order rejected successfully",
+                data: order
+            })
+        }
+
+    }
+    catch (error) {
+        console.log("Internal server error", error)
+        res.status(501).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message
+        });
+    }
+}
+
 
 exports.updateBeforWorkImage = async (req, res) => {
     const uploadedImages = [];

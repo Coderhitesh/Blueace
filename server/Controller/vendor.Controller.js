@@ -857,6 +857,138 @@ exports.vendorLogout = async (req, res) => {
     }
 }
 
+exports.updateVendorApp = async (req, res) => {
+    try {
+        const vendorId = req.params._id;
+        // console.log('Vendor ID:', vendorId);
+
+        // Destructure the fields from the request body
+        const {
+            companyName,
+            yearOfRegistration,
+            address,
+            HouseNo,
+            PinCode,
+            Email,
+            FullName,
+            ContactNumber,
+            panNo,
+            gstNo,
+            adharNo,
+        } = req.body;
+
+        console.log('Request Body:', req.body);
+
+        // Fetch the existing vendor by ID
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Vendor not found',
+            });
+        }
+
+        // Check if the Email is being updated and if it already exists
+        if (Email && Email !== vendor.Email) {
+            const existingVendorEmail = await Vendor.findOne({ Email });
+            if (existingVendorEmail) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Email already exists as a Vendor',
+                });
+            }
+        }
+
+        // Check if the ContactNumber is being updated and if it already exists
+        if (ContactNumber && ContactNumber !== vendor.ContactNumber) {
+            const existingVendorNumber = await Vendor.findOne({ ContactNumber });
+            if (existingVendorNumber) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Contact number already exists as a Vendor',
+                });
+            }
+        }
+
+        // Update only the fields that are provided in the request body
+        const fieldsToUpdate = {};
+        if (companyName && companyName !== vendor.companyName) {
+            fieldsToUpdate.companyName = companyName;
+        }
+        if (yearOfRegistration && yearOfRegistration !== vendor.yearOfRegistration) {
+            fieldsToUpdate.yearOfRegistration = yearOfRegistration;
+        }
+        if (address && address !== vendor.address) {
+            fieldsToUpdate.address = address;
+        }
+        if (HouseNo && HouseNo !== vendor.HouseNo) {
+            fieldsToUpdate.HouseNo = HouseNo;
+        }
+        if (PinCode && PinCode !== vendor.PinCode) {
+            fieldsToUpdate.PinCode = PinCode;
+        }
+        if (Email && Email !== vendor.Email) {
+            fieldsToUpdate.Email = Email;
+        }
+        if (FullName && FullName !== vendor.ownerName) {
+            fieldsToUpdate.ownerName = FullName;
+        }
+        if (ContactNumber && ContactNumber !== vendor.ContactNumber) {
+            fieldsToUpdate.ContactNumber = ContactNumber;
+        }
+        if (panNo && panNo !== vendor.panNo) {
+            fieldsToUpdate.panNo = panNo;
+        }
+        if (gstNo && gstNo !== vendor.gstNo) {
+            fieldsToUpdate.gstNo = gstNo;
+        }
+        if (adharNo && adharNo !== vendor.adharNo) {
+            fieldsToUpdate.adharNo = adharNo;
+        }
+
+        // Update the vendor with the fields that have changed
+        if (Object.keys(fieldsToUpdate).length > 0) {
+            Object.assign(vendor, fieldsToUpdate);
+        }
+
+        // Save the updated vendor document
+        const updatedVendor = await vendor.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Vendor updated successfully',
+            data: updatedVendor,
+        });
+    } catch (error) {
+        console.error('Error updating vendor:', error);
+
+        // Handle specific errors
+        if (error.code === 11000) {
+            const duplicateField = Object.keys(error.keyValue)[0];
+            return res.status(400).json({
+                success: false,
+                message: `${duplicateField} already exists`,
+            });
+        }
+
+        if (error.name === 'ValidationError') {
+            const messages = Object.values(error.errors).map((err) => err.message);
+            return res.status(400).json({
+                success: false,
+                message: messages.join('. '),
+            });
+        }
+
+        // Handle generic errors
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in updating vendor',
+            error: error.message,
+        });
+    }
+};
+
+
 exports.ChangeOldVendorPassword = async (req, res) => {
     try {
         const vendorId = req.params._id;

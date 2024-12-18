@@ -90,6 +90,7 @@ function Footer() {
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
+                    <li><Link to={`/air-cooled-chiller`}>- Air Cooled Chiller</Link></li>
                   </ul>
                 </div>
               </div>

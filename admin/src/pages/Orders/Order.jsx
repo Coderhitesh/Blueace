@@ -190,7 +190,7 @@ function Order() {
                                 </td> */}
                                 <td style={{ whiteSpace: 'nowrap' }}>
                                     {vendor?.userId?.UserType === 'Corporate' ? (
-                                        vendor.VendorAllotedStatus ? (
+                                        vendor.VendorAllotedStatus === 'Accepted' ? (
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                                 Change Member
                                             </a>
@@ -200,7 +200,7 @@ function Order() {
                                             </a>
                                         )
                                     ) : (
-                                        vendor.VendorAllotedStatus ? (
+                                        vendor.VendorAllotedStatus === 'Accepted'  ? (
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                                 Change Vendor
                                             </a>

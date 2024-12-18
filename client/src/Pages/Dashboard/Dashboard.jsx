@@ -15,6 +15,7 @@ import AddTimingSlot from './VendorData/AddTimingSlot';
 import EditTimingSlot from './VendorData/EditTimingSlot';
 import VerifyAccount from './VendorData/VerifyAccount';
 import StarRating from '../../Components/StarRating/StarRating';
+import OrderVenderRequest from './VendorData/OrderVenderRequest';
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -55,13 +56,14 @@ function Dashboard() {
         const fetchOrderById = async () => {
             try {
                 const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
-                setAllOrder(res.data.data)
                 const allData = res.data.data
-                const activeData = allData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
+                const isAccepted = allData.filter((item)=> item.VendorAllotedStatus === "Accepted")
+                setAllOrder(isAccepted)
+                const activeData = isAccepted.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
                 setActiveOrder(activeData)
-                const completeData = allData.filter((item) => item.OrderStatus === 'Service Done')
+                const completeData = isAccepted.filter((item) => item.OrderStatus === 'Service Done')
                 setCompleteOrderCount(completeData.length)
-                const cancelOrderData = allData.filter((item) => item.OrderStatus === 'Cancelled')
+                const cancelOrderData = isAccepted.filter((item) => item.OrderStatus === 'Cancelled')
                 setCancelOrderCount(cancelOrderData.length)
             } catch (error) {
                 console.log(error)
@@ -235,6 +237,11 @@ function Dashboard() {
                                                 <i className="lni lni-dashboard me-2"></i>Dashboard
                                             </a>
                                         </li>
+                                        <li onClick={() => handleTabClick('order-request')} className={`${activeTab === 'order-request' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-files me-2"></i>Order Request
+                                            </a>
+                                        </li>
                                         <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
                                             <a>
                                                 <i className="lni lni-files me-2"></i>Active Order
@@ -316,6 +323,11 @@ function Dashboard() {
                                         <li onClick={() => handleTabClick('Dashboard')} className={`${activeTab === 'Dashboard' ? 'active' : ''}`}>
                                             <a>
                                                 <i className="lni lni-dashboard me-2"></i>Dashboard
+                                            </a>
+                                        </li>
+                                        <li onClick={() => handleTabClick('order-request')} className={`${activeTab === 'order-request' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-files me-2"></i>Order Request
                                             </a>
                                         </li>
                                         <li onClick={() => handleTabClick('Active-Order')} className={`${activeTab === 'Active-Order' ? 'active' : ''}`}>
@@ -403,6 +415,7 @@ function Dashboard() {
                 {activeTab === 'add-slot-time' && <AddTimingSlot userData={userData} />}
                 {activeTab === 'edit-slot-time' && <EditTimingSlot userData={userData} />}
                 {activeTab === 'verify-account' && <VerifyAccount userData={userData} />}
+                {activeTab === 'order-request' && <OrderVenderRequest userData={userData} />}
             </div>
         </>
     );

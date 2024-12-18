@@ -38,9 +38,15 @@ const OrderSchema = new mongoose.Schema({
         type: String
     },
     VendorAllotedStatus: {
-        type: Boolean,
-        default: false
+        type: String,
+        default: 'Pending',
+        enum: ['Pending','Send Request', 'Accepted','Reject']
     },
+    // VendorAllotedStatus: {
+    //     type: Boolean,
+    //     default: false,
+    //     // enum: ['']
+    // },
     fullName: {
         type: String,
         // required: true

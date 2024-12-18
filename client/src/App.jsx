@@ -46,6 +46,7 @@ import HVAC from "./Pages/HVAC/HVAC"
 import Term from "./Pages/Term/Term"
 import HeatPump from "./Pages/HeatPump/HeatPump"
 import CassetteAir from "./Pages/CassetteAir/CassetteAir"
+import AirColdChiller from "./Pages/AirColdChiller/AirColdChiller"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -105,6 +106,7 @@ function App() {
           <Route path="/hvac" element={<HVAC />} />
           <Route path="/heat-pump-installation" element={<HeatPump />} />
           <Route path="/cassette-air-conditioning" element={<CassetteAir />} />
+          <Route path="/air-cooled-chiller" element={<AirColdChiller />} />
 
         </Routes>
         {/* <NewsLetter /> */}
