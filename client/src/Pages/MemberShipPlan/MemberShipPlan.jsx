@@ -69,7 +69,7 @@ function MemberShipPlan() {
             const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
-            console.log("Orders", res.data.data)
+            // console.log("Orders", res.data.data)
             const order = res.data.data.razorpayOrder;
 
             if(!order){

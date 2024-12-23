@@ -4,7 +4,8 @@ const SendEmail = require('../Utils/SendEmail');
 const Vendor = require('../Model/vendor.Model');
 const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary');
 const fs = require("fs")
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { sendSMS } = require('../Utils/SMSSender');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -24,7 +25,7 @@ exports.register = async (req, res) => {
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
-                msg: `Please fill all the required fields: ${emptyField.join(', ')}`
+                message: `Please fill all the required fields: ${emptyField.join(', ')}`
             })
         }
 
@@ -36,7 +37,7 @@ exports.register = async (req, res) => {
         if (existingUserEmail) {
             return res.status(400).json({
                 success: false,
-                msg: 'Email already exists as a User'
+                message: 'Email already exists as a User'
             });
         }
 
@@ -44,7 +45,7 @@ exports.register = async (req, res) => {
         if (existingUserContact) {
             return res.status(403).json({
                 success: false,
-                msg: 'Number already exists as a User'
+                message: 'Number already exists as a User'
             });
         }
 
@@ -70,7 +71,7 @@ exports.register = async (req, res) => {
         if (Password.length <= 6) {
             return res.status(403).json({
                 success: false,
-                msg: 'Password Length Must be Greater than 6 Digits'
+                message: 'Password Length Must be Greater than 6 Digits'
             });
         }
 
@@ -97,72 +98,76 @@ exports.register = async (req, res) => {
         // Save user to database
         await newUser.save();
 
+        const message = `Dear ${FullName},Thank you for registering with Blueace. We are delighted to have you as a part of our community. If you have any questions or need assistance, please feel free to contact us.`
+
+        // await sendSMS(ContactNumber, message)
+
         // Prepare email options
-        const emailOptions = {
-            email: Email,
-            subject: 'Welcome to Blueace!',
-            message: `
-                <html>
-                <head>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            line-height: 1.6;
-                            background-color: #f5f5f5;
-                            padding: 20px;
-                        }
-                        .container {
-                            max-width: 600px;
-                            margin: 0 auto;
-                            background-color: #fff;
-                            padding: 20px;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-                        .header {
-                            background-color: #007bff;
-                            color: #fff;
-                            padding: 10px;
-                            text-align: center;
-                            border-top-left-radius: 8px;
-                            border-top-right-radius: 8px;
-                        }
-                        .content {
-                            padding: 20px;
-                        }
-                        .content p {
-                            margin-bottom: 10px;
-                        }
-                        .footer {
-                            text-align: center;
-                            margin-top: 20px;
-                            color: #666;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h1>Welcome to Blueace!</h1>
-                        </div>
-                        <div class="content">
-                            <p>Dear ${FullName},</p>
-                            <p>Thank you for registering with Blueace. We are delighted to have you as a part of our community.</p>
-                            <p>If you have any questions or need assistance, please feel free to contact us.</p>
-                        </div>
-                        <div class="footer">
-                            <p>Best regards,</p>
-                            <p>Blueace Team</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `
-        };
+        // const emailOptions = {
+        //     email: Email,
+        //     subject: 'Welcome to Blueace!',
+        //     message: `
+        //         <html>
+        //         <head>
+        //             <style>
+        //                 body {
+        //                     font-family: Arial, sans-serif;
+        //                     line-height: 1.6;
+        //                     background-color: #f5f5f5;
+        //                     padding: 20px;
+        //                 }
+        //                 .container {
+        //                     max-width: 600px;
+        //                     margin: 0 auto;
+        //                     background-color: #fff;
+        //                     padding: 20px;
+        //                     border-radius: 8px;
+        //                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        //                 }
+        //                 .header {
+        //                     background-color: #007bff;
+        //                     color: #fff;
+        //                     padding: 10px;
+        //                     text-align: center;
+        //                     border-top-left-radius: 8px;
+        //                     border-top-right-radius: 8px;
+        //                 }
+        //                 .content {
+        //                     padding: 20px;
+        //                 }
+        //                 .content p {
+        //                     margin-bottom: 10px;
+        //                 }
+        //                 .footer {
+        //                     text-align: center;
+        //                     margin-top: 20px;
+        //                     color: #666;
+        //                 }
+        //             </style>
+        //         </head>
+        //         <body>
+        //             <div class="container">
+        //                 <div class="header">
+        //                     <h1>Welcome to Blueace!</h1>
+        //                 </div>
+        //                 <div class="content">
+        //                     <p>Dear ${FullName},</p>
+        //                     <p>Thank you for registering with Blueace. We are delighted to have you as a part of our community.</p>
+        //                     <p>If you have any questions or need assistance, please feel free to contact us.</p>
+        //                 </div>
+        //                 <div class="footer">
+        //                     <p>Best regards,</p>
+        //                     <p>Blueace Team</p>
+        //                 </div>
+        //             </div>
+        //         </body>
+        //         </html>
+        //     `
+        // };
 
 
         // Send welcome email
-        await SendEmail(emailOptions);
+        // await SendEmail(emailOptions);
 
         // Send token to the user
         await SendToken(newUser, res, 201);
@@ -207,14 +212,14 @@ exports.login = async (req, res) => {
             if (isDeactive) {
                 return res.status(401).json({
                     success: false,
-                    msg: 'Your account is deactivated'
+                    message: 'Your account is deactivated'
                 });
             }
             const isMatch = await user.comparePassword(Password);
             if (!isMatch) {
                 return res.status(401).json({
                     success: false,
-                    msg: 'Enter Correct Password'
+                    message: 'Enter Correct Password'
                 });
             }
 
@@ -225,7 +230,7 @@ exports.login = async (req, res) => {
             if (isDeactive) {
                 return res.status(401).json({
                     success: false,
-                    msg: 'Your account is deactivated'
+                    message: 'Your account is deactivated'
                 });
             }
 
@@ -233,7 +238,7 @@ exports.login = async (req, res) => {
             if (!isMatch) {
                 return res.status(401).json({
                     success: false,
-                    msg: 'Enter Correct Password'
+                    message: 'Enter Correct Password'
                 });
             }
 
@@ -243,7 +248,7 @@ exports.login = async (req, res) => {
         console.error('Login error:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         });
     }
 };
@@ -300,7 +305,7 @@ exports.ChangeOldPassword = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
 
@@ -309,7 +314,7 @@ exports.ChangeOldPassword = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                msg: 'Enter Correct Old Password'
+                message: 'Enter Correct Old Password'
             });
         }
 
@@ -318,7 +323,7 @@ exports.ChangeOldPassword = async (req, res) => {
         await user.save();
         res.status(200).json({
             success: true,
-            msg: 'Password changed successfully'
+            message: 'Password changed successfully'
         });
 
     } catch (error) {
@@ -337,13 +342,13 @@ exports.logout = async (req, res) => {
         res.clearCookie('token'); // Replace 'token' with your cookie name
         res.status(200).json({
             success: true,
-            msg: 'Logged out successfully'
+            message: 'Logged out successfully'
         });
     } catch (error) {
         console.error('Logout error:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error in user logout'
+            message: 'Internal Server Error in user logout'
         });
     }
 };
@@ -357,7 +362,7 @@ exports.passwordChangeRequest = async (req, res) => {
         if (NewPassword.length <= 6) {
             return res.status(403).json({
                 success: false,
-                msg: 'Password Length Must be Greater than 6 Digits'
+                message: 'Password Length Must be Greater than 6 Digits'
             });
         }
 
@@ -367,15 +372,15 @@ exports.passwordChangeRequest = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
+        const userNumber = user ? user.ContactNumber : '';
         // Generate OTP and expiry time
         const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
         const OTPExpires = new Date();
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
 
-        // Update user document with OTP and expiry
         await User.findOneAndUpdate(
             { Email },
             {
@@ -388,108 +393,22 @@ exports.passwordChangeRequest = async (req, res) => {
             { new: true }
         );
 
-        // Prepare email options
-        const emailOptions = {
-            email: Email,
-            subject: 'Password Reset OTP',
-            message: `
-                <html>
-                <head>
-                </head>
-                <body>
-                    <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
-                    <p>Please use this OTP within 10 minutes to reset your password.</p>
-                </body>
-                </html>
-            `
-        };
-
-        // Send OTP via email
-        await SendEmail(emailOptions);
+        const message = `Your OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
+        // await sendSMS(userNumber, message)
 
         res.status(200).json({
             success: true,
-            msg: 'OTP sent successfully. Check your email.'
+            message: 'OTP sent successfully. Check your SMS Box.'
         });
 
-
-        // Generate OTP and expiry time
-        // const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
-        // const OTPExpires = new Date();
-        // OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
-
-        // Update user document with OTP and expiry
-        // await User.findOneAndUpdate(
-        //     { Email },
-        //     {
-        //         $set: {
-        //             PasswordChangeOtp: OTP,
-        //             OtpExpiredTime: OTPExpires,
-        //             NewPassword: NewPassword
-        //         }
-        //     },
-        //     { new: true }
-        // );
-
-        // Prepare email options
-        // const emailOptions = {
-        //     email: Email,
-        //     subject: 'Password Reset OTP',
-        //     message: `
-        //         <html>
-        //         <head>
-        //         </head>
-        //         <body>
-        //             <p>Your OTP for password reset is: <strong>${OTP}</strong></p>
-        //             <p>Please use this OTP within 10 minutes to reset your password.</p>
-        //         </body>
-        //         </html>
-        //     `
-        // };
-
-        // Send OTP via email
-        // await SendEmail(emailOptions);
-
-        // res.status(200).json({
-        //     success: true,
-        //     msg: 'OTP sent successfully. Check your email.'
-        // });
     } catch (error) {
         console.error('Password change request error:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         });
     }
 };
-
-exports.deleteUser = async (req, res) => {
-    try {
-        const userId = req.params._id;
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                msg: 'User not found'
-            });
-        }
-        // Delete user
-        await User.findByIdAndDelete(userId);
-        res.status(200).json({
-            success: true,
-            msg: 'User deleted successfully'
-        });
-
-    } catch (error) {
-        console.log("Internal server error in deleting user")
-        res.status(500).json({
-            success: false,
-            msg: 'Internal Server Error',
-            error: error.message
-        })
-    }
-}
-
 
 exports.verifyOtpAndChangePassword = async (req, res) => {
     const { Email, PasswordChangeOtp, NewPassword } = req.body;
@@ -505,10 +424,11 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
         if (!user) {
             return res.status(400).json({
                 success: false,
-                msg: 'Invalid OTP or OTP has expired'
+                message: 'Invalid OTP or OTP has expired'
             });
         }
-        console.log(user)
+        const userNumber = user ? user.ContactNumber : '';
+        // console.log(user)
         // Update password
         user.Password = NewPassword; // Assign NewPassword from user object to Password field
         user.PasswordChangeOtp = undefined;
@@ -516,38 +436,23 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
         user.NewPassword = undefined; // Clear NewPassword field after using it
         await user.save();
 
-        // Send password change success email
-        const successEmailOptions = {
-            email: Email,
-            subject: 'Password Changed Successfully',
-            message: `
-                <html>
-                <head>
-                   
-                </head>
-                <body>
-                    <p>Your password has been successfully changed.</p>
-                    <p>If you did not perform this action, please contact us immediately.</p>
-                </body>
-                </html>
-            `
-        };
+        const message = `Your password has been successfully changed. If you did not perform this action, please contact us immediately.`
 
-        // Send email notification
-        await SendEmail(successEmailOptions);
+        // await sendSMS(userNumber, message)
 
         res.status(200).json({
             success: true,
-            msg: 'Password changed successfully'
+            message: 'Password changed successfully'
         });
     } catch (error) {
         console.error('Verify OTP and change password error:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         });
     }
 };
+
 exports.resendOtp = async (req, res) => {
     const { Email } = req.body;
 
@@ -558,17 +463,24 @@ exports.resendOtp = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
 
-        // // Check if OTP is expired or not
-        // if (user.OtpExpiredTime > Date.now()) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         msg: 'OTP is not yet expired. Please wait before requesting a new one.'
-        //     });
-        // }
+        const userNumber = user ? user.ContactNumber : '';
+
+        // Check if the OTP has been sent recently
+        const currentTime = Date.now();
+        const otpLastSentTime = user.OtpExpiredTime ? user.OtpExpiredTime.getTime() : 0;
+
+        // If OTP was sent less than 3 minutes ago, return an error
+        if (otpLastSentTime && (currentTime - otpLastSentTime) < 3 * 60 * 1000) {
+            const remainingTime = Math.ceil((3 * 60 * 1000 - (currentTime - otpLastSentTime)) / 1000); // In seconds
+            return res.status(400).json({
+                success: false,
+                message: `Please wait ${remainingTime} seconds before requesting a new OTP.`
+            });
+        }
 
         // Generate new OTP and update expiry time
         const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
@@ -580,38 +492,52 @@ exports.resendOtp = async (req, res) => {
         user.OtpExpiredTime = OTPExpires;
         await user.save();
 
-        // Prepare email options
-        const emailOptions = {
-            email: Email,
-            subject: 'Password Reset OTP',
-            message: `
-                <html>
-                <head>
-                
-                </head>
-                <body>
-                    <p>Your new OTP for password reset is: <strong>${OTP}</strong></p>
-                    <p>Please use this OTP within 10 minutes to reset your password.</p>
-                </body>
-                </html>
-            `
-        };
+        const message = `Your new OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
 
-        // Send OTP via email
-        await SendEmail(emailOptions);
+        // Send OTP via SMS
+        // await sendSMS(userNumber, message);
 
         res.status(200).json({
             success: true,
-            msg: 'New OTP sent successfully. Check your email.'
+            message: 'New OTP sent successfully. Check your SMS Box.'
         });
+
     } catch (error) {
         console.error('Resend OTP error:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         });
     }
 };
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const userId = req.params._id;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+        // Delete user
+        await User.findByIdAndDelete(userId);
+        res.status(200).json({
+            success: true,
+            message: 'User deleted successfully'
+        });
+
+    } catch (error) {
+        console.log("Internal server error in deleting user")
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: error.message
+        })
+    }
+}
+
 
 exports.addDeliveryDetails = async (req, res) => {
     try {
@@ -621,7 +547,7 @@ exports.addDeliveryDetails = async (req, res) => {
         if (!userExist) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
 
@@ -631,7 +557,7 @@ exports.addDeliveryDetails = async (req, res) => {
         if (!city || !pincode || !houseNo || !street || !nearByLandMark) {
             return res.status(400).json({
                 success: false,
-                msg: 'All fields are required'
+                message: 'All fields are required'
             });
         }
 
@@ -649,14 +575,14 @@ exports.addDeliveryDetails = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: 'Delivery details added/updated successfully',
+            message: 'Delivery details added/updated successfully',
             user: userExist
         });
     } catch (error) {
         console.error('Error adding delivery details:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         });
     }
 };
@@ -698,7 +624,7 @@ exports.updateDeliveryAddress = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
         console.log(req.body)
@@ -717,14 +643,14 @@ exports.updateDeliveryAddress = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            msg: 'Delivery address updated successfully',
+            message: 'Delivery address updated successfully',
             user: user // Optionally, you can return the updated user object
         });
     } catch (error) {
         console.error('Error updating delivery address:', error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         });
     }
 };
@@ -735,19 +661,19 @@ exports.getAllUsers = async (req, res) => {
         if (!allUser) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             })
         }
         res.status(200).json({
             success: true,
-            msg: 'All Users',
+            message: 'All Users',
             data: allUser
         })
     } catch (error) {
         console.log(error)
         return res.status(500).json({
             success: false,
-            msg: 'Internal Server Error'
+            message: 'Internal Server Error'
         })
     }
 }
@@ -760,7 +686,7 @@ exports.getSingleUserById = async (req, res) => {
         if (!mongoose.isValidObjectId(id)) {
             return res.status(400).json({
                 success: false,
-                msg: 'Invalid ID format'
+                message: 'Invalid ID format'
             });
         }
 
@@ -769,20 +695,20 @@ exports.getSingleUserById = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
 
         res.status(200).json({
             success: true,
-            msg: 'User found',
+            message: 'User found',
             data: user
         });
     } catch (error) {
         console.error("Internal server error", error);
         res.status(500).json({
             success: false,
-            msg: 'Internal Server Error in fetching single user by ID',
+            message: 'Internal Server Error in fetching single user by ID',
             message: error.message
         });
     }
@@ -911,14 +837,14 @@ exports.updateUserType = async (req, res) => {
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             })
         }
         user.UserType = UserType;
         await user.save();
         res.status(200).json({
             success: true,
-            msg: 'User Type Updated',
+            message: 'User Type Updated',
             data: user
         })
     } catch (error) {
@@ -946,6 +872,34 @@ exports.universelLogin = async (req, res) => {
         }
         res.status(200).json({
             success: true,
+            message: 'user is founded',
+            data: user
+        })
+    } catch (error) {
+        console.log('Internal server error in universel login', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in universel login',
+            error: error.message
+        })
+    }
+}
+
+exports.getMyDetails = async (req, res) => {
+    try {
+        const id = req.user.id?._id;
+        const user = await User.findById(id)
+
+        if (!user) {
+            const vendor = await Vendor.findById(id).populate('workingHour memberShipPlan')
+            return res.status(200).json({
+                success: true,
+                message: 'vendor is founded',
+                data: vendor
+            })
+        }
+        res.status(200).json({
+            success: true, 
             message: 'user is founded',
             data: user
         })

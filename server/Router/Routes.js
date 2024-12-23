@@ -1,6 +1,6 @@
 const express = require('express')
 const { protect } = require('../Middleware/Protect')
-const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive, universelLogin } = require('../Controller/Usercontroller')
+const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive, universelLogin, getMyDetails } = require('../Controller/Usercontroller')
 const router = express.Router()
 const upload = require('../Middleware/Multer')
 const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory, getServiceCategoryByName, updateIsPopular } = require('../Controller/serviceCategory.Controller')
@@ -13,7 +13,7 @@ const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainC
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword, updateReadyToWork, sendOtpForVerification, verifyVendor, resendVerifyOtp, deleteVendorMember, updateVendorApp } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember, AcceptOrderRequest } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember, AcceptOrderRequest, makeOrderPayment, verifyOrderPayment } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
@@ -25,6 +25,9 @@ const { createSlotTiming, getAllSlotTiming, updateSlotTiming, deleteSlotTiming, 
 const { createVendorRating, getAllVendorRatings, getVendorRatingById, updateVendorRating, deleteVendorRating } = require('../Controller/vendorRating.Controller')
 const { createScript, getSingleScript, updateScript, getAllScript, deleteScript } = require('../Controller/script.Controller')
 const { getCurrentLocationByLatLng, getLatLngByAddress, AutoCompleteAddress } = require('../Controller/Location.Controller')
+const { createTerm, getAllTerm, getSingleTerm, deleteTerm, updateTerm } = require('../Controller/Term.Controller')
+const { createCommission, getAllCommission, getSingleCommission, updateCommission, deleteCommission } = require('../Controller/Commission.Controller')
+const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdrawRequest, deleteWithdrawRequest } = require('../Controller/withdraw.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -38,6 +41,7 @@ router.post('/resend-otp', resendOtp)
 router.put('/update-user-deactive-status/:_id', updateUserDeactive)
 
 router.get('/findUser/:_id',universelLogin)
+router.get('/find_me',protect, getMyDetails)
 
 
 router.post('/Add-Delivery-Address', protect, addDeliveryDetails)
@@ -142,7 +146,6 @@ router.get('/get-vendor-member/:vendorId', getMembersByVendorId);
 router.put('/update-vendor-member/:vendorId/:memberId', upload.single('memberAdharImage'), updateMember);
 // Add this route in your routes file (e.g., vendorRoutes.js)
 router.post('/add-vendor-member/:vendorId', upload.fields([{ name: 'memberAdharImage', maxCount: 1 }]), addNewVendorMember);
-router.post('/member-ship-plan/:vendorId', memberShipPlanGateWay);
 router.post('/vendor-loging', vendorLogin)
 router.get('/vendor-logout', vendorLogout)
 router.post('/vendor-password-change', vendorPasswordChangeRequest)
@@ -194,6 +197,7 @@ router.delete('/delete-membership-plan/:_id', deleteMemberShipPlan)
 router.put('/update-membership-plan/:_id', updateMemberShipPlan)
 
 //Paymnet gateway routes
+router.post('/member-ship-plan/:vendorId', memberShipPlanGateWay);
 router.post('/payment-verify', PaymentVerify)
 
 // Order routers
@@ -209,13 +213,14 @@ router.put('/update-after-work-image/:_id', upload.single('afterWorkImage'), upd
 router.put('/update-before-work-video/:_id', upload.single('beforeWorkVideo'), updateBeforeWorkVideo);
 router.put('/update-after-work-video/:_id', upload.single('afterWorkVideo'), updateAfterWorkVideo);
 router.put('/update-allot-vendor-member/:_id',AllowtVendorMember)
+// router
 
 
 
 //for fetching vendor for order
 router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
 router.post('/assign-Vendor/:orderId/:Vendorid/:type/:workingDay/:workingTime', AssignVendor)
-router.put('/update-vendor-order-request/:venderId',AcceptOrderRequest)
+router.put('/update-vendor-order-request/:orderId',AcceptOrderRequest)
 
 // for blog routes 
 
@@ -277,6 +282,34 @@ router.delete('/delete-script/:_id',deleteScript)
 router.post('/Fetch-Current-Location',getCurrentLocationByLatLng)
 router.get('/geocode',getLatLngByAddress)
 router.get('/autocomplete',AutoCompleteAddress)
+
+// term router here 
+router.post('/create-term',createTerm)
+router.get('/get-all-term',getAllTerm)
+router.get('/get-single-term/:id',getSingleTerm)
+router.delete('/delete-term/:id',deleteTerm)
+router.put('/update-term/:id',updateTerm)
+
+// commission router here 
+
+router.post('/create-commission',createCommission)
+router.get('/get-all-commission',getAllCommission)
+router.get('/get-single-commission/:id',getSingleCommission)
+router.put('/update-commission/:id',updateCommission)
+router.delete('/delete-commission/:id',deleteCommission)
+
+// pament of bill route 
+
+router.post('/create-bill-payment/:orderId',makeOrderPayment)
+router.post('/verify-bill-payment',verifyOrderPayment)
+
+// withdraw router here 
+
+router.post('/create-withdraw-request',createWithdrawRequest)
+router.get('/get-all-withdraw-request',getAllWithdraw)
+router.get('/get-single-withdraw-request/:id',getSingleWithdraw)
+router.put('/update-withdraw-status/:id',updateWithdrawRequest)
+router.delete('/delete-withdraw-request/:id',deleteWithdrawRequest)
 
 
 module.exports = router;

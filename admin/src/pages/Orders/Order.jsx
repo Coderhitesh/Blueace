@@ -190,7 +190,7 @@ function Order() {
                                 </td> */}
                                 <td style={{ whiteSpace: 'nowrap' }}>
                                     {vendor?.userId?.UserType === 'Corporate' ? (
-                                        vendor.VendorAllotedStatus === 'Accepted' ? (
+                                         vendor.VendorAllotedStatus === 'Accepted' || vendor.VendorAllotedStatus === 'Send Request' ? (
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                                 Change Member
                                             </a>
@@ -200,7 +200,7 @@ function Order() {
                                             </a>
                                         )
                                     ) : (
-                                        vendor.VendorAllotedStatus === 'Accepted'  ? (
+                                        vendor.VendorAllotedStatus === 'Accepted' || vendor.VendorAllotedStatus === 'Send Request' ? (
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                                 Change Vendor
                                             </a>
@@ -217,7 +217,8 @@ function Order() {
                                 <td className='fw-bolder'>{vendor?.AllowtedVendorMember || 'Not Allowted'}</td>
 
                                 <td className='fw-bolder'>
-                                    {vendor?.userId?.UserType === 'Corporate' ? (
+                                    {vendor?.OrderStatus}
+                                    {/* {vendor?.userId?.UserType === 'Corporate' ? (
                                         <select
                                             name="orderStatus"
                                             defaultValue={vendor?.OrderStatus || ""}
@@ -232,7 +233,7 @@ function Order() {
                                         </select>
                                     ) : (
                                         vendor?.OrderStatus || "Not-Available"
-                                    )}
+                                    )} */}
                                 </td>
 
                                 <td>

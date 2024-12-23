@@ -42,11 +42,6 @@ const OrderSchema = new mongoose.Schema({
         default: 'Pending',
         enum: ['Pending','Send Request', 'Accepted','Reject']
     },
-    // VendorAllotedStatus: {
-    //     type: Boolean,
-    //     default: false,
-    //     // enum: ['']
-    // },
     fullName: {
         type: String,
         // required: true
@@ -77,25 +72,14 @@ const OrderSchema = new mongoose.Schema({
             // required: true // Make public_id required
         }
     },
-
-    // city: {
-    //     type: String,
-    // },
-
     pinCode: {
         type: String,
         match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
     },
-
     houseNo: {
         type: String,
         // required: true
     },
-
-    // street: {
-    //     type: String,
-    //     required: true
-    // },
     address: {
         type: String,
         required: true
@@ -163,7 +147,32 @@ const OrderSchema = new mongoose.Schema({
     },
     workingTime: {
         type: String
-    }
+    },
+    totalAmount:{
+        type: Number
+    },
+    commissionPercent: {
+        type: Number
+    },
+    vendorCommissionAmount: {
+        type: Number
+    },
+    adminCommissionAmount: {
+        type: Number
+    },
+    transactionId: {
+        type: String
+    },
+    PaymentStatus:{
+        type:String,
+        default:'pending',
+    },
+    paymentMethod:{
+        type:String
+    },
+    razorpayOrderId: {
+        type: String
+    },
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

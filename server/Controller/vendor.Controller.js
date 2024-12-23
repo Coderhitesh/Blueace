@@ -5,11 +5,11 @@ const sendToken = require('../Utils/SendToken');
 const fs = require('fs').promises;
 const axios = require('axios')
 
-
 const crypto = require('crypto')
-const MembershipPlan = require('../Model/memberShip.Model')
 const Razorpay = require('razorpay');
+const MembershipPlan = require('../Model/memberShip.Model')
 const User = require('../Model/UserModel');
+const { sendSMS } = require('../Utils/SMSSender');
 require('dotenv').config()
 // Initialize Razorpay instance with your key and secret
 const razorpayInstance = new Razorpay({
@@ -201,69 +201,73 @@ exports.registerVendor = async (req, res) => {
         }
 
         // Send welcome email
-        const emailOptions = {
-            email: Email,
-            subject: 'Welcome to Blueace!',
-            message: `
-                <html>
-                <head>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            line-height: 1.6;
-                            background-color: #f5f5f5;
-                            padding: 20px;
-                        }
-                        .container {
-                            max-width: 600px;
-                            margin: 0 auto;
-                            background-color: #fff;
-                            padding: 20px;
-                            border-radius: 8px;
-                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                        }
-                        .header {
-                            background-color: #007bff;
-                            color: #fff;
-                            padding: 10px;
-                            text-align: center;
-                            border-top-left-radius: 8px;
-                            border-top-right-radius: 8px;
-                        }
-                        .content {
-                            padding: 20px;
-                        }
-                        .content p {
-                            margin-bottom: 10px;
-                        }
-                        .footer {
-                            text-align: center;
-                            margin-top: 20px;
-                            color: #666;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h1>Welcome to Blueace!</h1>
-                        </div>
-                        <div class="content">
-                            <p>Dear ${ownerName},</p>
-                            <p>Thank you for registering with Blueace. We are delighted to have you as a part of our community.</p>
-                            <p>If you have any questions or need assistance, please feel free to contact us.</p>
-                        </div>
-                        <div class="footer">
-                            <p>Best regards,</p>
-                            <p>Blueace Team</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `
-        };
+        // const emailOptions = {
+        //     email: Email,
+        //     subject: 'Welcome to Blueace!',
+        //     message: `
+        //         <html>
+        //         <head>
+        //             <style>
+        //                 body {
+        //                     font-family: Arial, sans-serif;
+        //                     line-height: 1.6;
+        //                     background-color: #f5f5f5;
+        //                     padding: 20px;
+        //                 }
+        //                 .container {
+        //                     max-width: 600px;
+        //                     margin: 0 auto;
+        //                     background-color: #fff;
+        //                     padding: 20px;
+        //                     border-radius: 8px;
+        //                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        //                 }
+        //                 .header {
+        //                     background-color: #007bff;
+        //                     color: #fff;
+        //                     padding: 10px;
+        //                     text-align: center;
+        //                     border-top-left-radius: 8px;
+        //                     border-top-right-radius: 8px;
+        //                 }
+        //                 .content {
+        //                     padding: 20px;
+        //                 }
+        //                 .content p {
+        //                     margin-bottom: 10px;
+        //                 }
+        //                 .footer {
+        //                     text-align: center;
+        //                     margin-top: 20px;
+        //                     color: #666;
+        //                 }
+        //             </style>
+        //         </head>
+        //         <body>
+        //             <div class="container">
+        //                 <div class="header">
+        //                     <h1>Welcome to Blueace!</h1>
+        //                 </div>
+        //                 <div class="content">
+        //                     <p>Dear ${ownerName},</p>
+        //                     <p>Thank you for registering with Blueace. We are delighted to have you as a part of our community.</p>
+        //                     <p>If you have any questions or need assistance, please feel free to contact us.</p>
+        //                 </div>
+        //                 <div class="footer">
+        //                     <p>Best regards,</p>
+        //                     <p>Blueace Team</p>
+        //                 </div>
+        //             </div>
+        //         </body>
+        //         </html>
+        //     `
+        // };
 
-        await sendEmail(emailOptions);
+        // await sendEmail(emailOptions);
+
+        const message = `Dear ${ownerName}, Thank you for registering with Blueace. We are delighted to have you as a part of our community. If you have any questions or need assistance, please feel free to contact us.`
+        // await sendSMS(ContactNumber, message)
+
         await sendToken(newVendorSave, res, 201);
 
     } catch (error) {
@@ -296,10 +300,10 @@ exports.registerVendor = async (req, res) => {
 exports.updateReadyToWork = async (req, res) => {
     try {
         const id = req.params._id;
-        console.log("i am hit")
+        // console.log("i am hit")
         const { readyToWork } = req.body;
         const existingVendor = await Vendor.findById(id)
-        console.log("existingVendor",existingVendor)
+        // console.log("existingVendor",existingVendor)
 
         if (!existingVendor) {
             return res.status(400).json({
@@ -737,9 +741,9 @@ exports.memberShipPlanGateWay = async (req, res) => {
 
 exports.PaymentVerify = async (req, res) => {
     try {
-        console.log("i am hit")
+        // console.log("i am hit")
         const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
-        console.log(req.body)
+        // console.log(req.body)
 
         if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
             return res.status(400).json({
@@ -877,7 +881,7 @@ exports.updateVendorApp = async (req, res) => {
             adharNo,
         } = req.body;
 
-        console.log('Request Body:', req.body);
+        // console.log('Request Body:', req.body);
 
         // Fetch the existing vendor by ID
         const vendor = await Vendor.findById(vendorId);
@@ -1008,14 +1012,14 @@ exports.ChangeOldVendorPassword = async (req, res) => {
             });
         }
 
-        console.log('vendorid', vendorId)
+        // console.log('vendorid', vendorId)
 
         const user = await Vendor.findById(vendorId);
 
         if (!user) {
             return res.status(404).json({
                 success: false,
-                msg: 'User not found'
+                message: 'User not found'
             });
         }
 
@@ -1024,7 +1028,7 @@ exports.ChangeOldVendorPassword = async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                msg: 'Enter Correct Old Password'
+                message: 'Enter Correct Old Password'
             });
         }
 
@@ -1033,7 +1037,7 @@ exports.ChangeOldVendorPassword = async (req, res) => {
         await user.save();
         res.status(200).json({
             success: true,
-            msg: 'Password changed successfully'
+            message: 'Password changed successfully'
         });
 
     } catch (error) {
@@ -1063,6 +1067,8 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
                 message: 'Vendor not found'
             })
         }
+
+        const vendorNumber = existingVendor ? existingVendor.Password : '';
 
         const OTP = Math.floor(100000 + Math.random() * 900000);
         const OTPExpires = new Date();
@@ -1095,7 +1101,10 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
             `
         };
 
-        await sendEmail(emailOptions);
+        // await sendEmail(emailOptions);
+
+        const message = `Your OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
+        // await sendSMS(vendorNumber, message)
 
         res.status(200).json({
             success: true,
@@ -1120,8 +1129,8 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
             OtpExpiredTime: { $gt: Date.now() }
         });
 
-        console.log("vendor", vendor)
-        console.log("Email", Email)
+        // console.log("vendor", vendor)
+        // console.log("Email", Email)
 
         if (!vendor) {
             return res.status(400).json({
@@ -1130,6 +1139,8 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
             })
         }
 
+        const vendorNumber = vendor ? vendor.ContactNumber : '';
+
         vendor.Password = NewPassword;
         vendor.PasswordChangeOtp = undefined;
         vendor.OtpExpiredTime = undefined;
@@ -1137,23 +1148,27 @@ exports.VendorVerifyOtpAndChangePassword = async (req, res) => {
 
         await vendor.save();
 
-        const successEmailOptions = {
-            email: Email,
-            subject: 'Password Changed Successfully',
-            message: `
-                <html>
-                <head>
-                   
-                </head>
-                <body>
-                    <p>Your password has been successfully changed.</p>
-                    <p>If you did not perform this action, please contact us immediately.</p>
-                </body>
-                </html>
-            `
-        }
+        // const successEmailOptions = {
+        //     email: Email,
+        //     subject: 'Password Changed Successfully',
+        //     message: `
+        //         <html>
+        //         <head>
 
-        await sendEmail(successEmailOptions)
+        //         </head>
+        //         <body>
+        //             <p>Your password has been successfully changed.</p>
+        //             <p>If you did not perform this action, please contact us immediately.</p>
+        //         </body>
+        //         </html>
+        //     `
+        // }
+
+        // await sendEmail(successEmailOptions)
+
+        const message = `Your password has been successfully changed. If you did not perform this action, please contact us immediately.`
+
+        // await sendSMS(vendorNumber, message)
 
         res.status(200).json({
             success: true,
@@ -1181,6 +1196,21 @@ exports.vendorResendOTP = async (req, res) => {
             })
         }
 
+        const vendorNumber = vendor ? vendor.ContactNumber : '';
+
+        // Check if the OTP has been sent recently
+        const currentTime = Date.now();
+        const otpLastSentTime = vendor.OtpExpiredTime ? vendor.OtpExpiredTime.getTime() : 0;
+
+        // If OTP was sent less than 3 minutes ago, return an error
+        if (otpLastSentTime && (currentTime - otpLastSentTime) < 3 * 60 * 1000) {
+            const remainingTime = Math.ceil((3 * 60 * 1000 - (currentTime - otpLastSentTime)) / 1000); // In seconds
+            return res.status(400).json({
+                success: false,
+                message: `Please wait ${remainingTime} seconds before requesting a new OTP.`
+            });
+        }
+
         const OTP = Math.floor(100000 + Math.random() * 900000)
         const OTPExpires = new Date();
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
@@ -1189,27 +1219,31 @@ exports.vendorResendOTP = async (req, res) => {
         vendor.OtpExpiredTime = OTPExpires;
         await vendor.save();
 
-        const emailOptions = {
-            email: Email,
-            subject: 'Password Reset OTP',
-            message: `
-                <html>
-                <head>
-                
-                </head>
-                <body>
-                    <p>Your new OTP for password reset is: <strong>${OTP}</strong></p>
-                    <p>Please use this OTP within 10 minutes to reset your password.</p>
-                </body>
-                </html>
-            `
-        }
+        // const emailOptions = {
+        //     email: Email,
+        //     subject: 'Password Reset OTP',
+        //     message: `
+        //         <html>
+        //         <head>
 
-        await sendEmail(emailOptions);
+        //         </head>
+        //         <body>
+        //             <p>Your new OTP for password reset is: <strong>${OTP}</strong></p>
+        //             <p>Please use this OTP within 10 minutes to reset your password.</p>
+        //         </body>
+        //         </html>
+        //     `
+        // }
+
+        // await sendEmail(emailOptions);
+
+        const message = `Your new OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
+
+        // await sendSMS(userNumber, message);
 
         res.status(200).json({
             success: true,
-            message: 'New OTP sent successfully. Check your email.'
+            message: 'New OTP sent successfully. Check your SMS Box.'
         })
 
     } catch (error) {
@@ -1302,7 +1336,7 @@ exports.updateVendor = async (req, res) => {
     const uploadedImages = [];
     try {
         const vendorId = req.params._id;
-   
+
         const {
             companyName,
             yearOfRegistration,
@@ -1359,36 +1393,36 @@ exports.updateVendor = async (req, res) => {
         vendor.adharNo = adharNo || vendor.adharNo;
         if (RangeWhereYouWantService) {
             // console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
-        
+
             // Validate the new RangeWhereYouWantService
             const isValidRange = RangeWhereYouWantService.every((service, index) => {
                 console.log(`Checking service at index ${index}:`, service);
-        
+
                 const location = service?.location;
                 console.log(`Location:`, location);
-        
+
                 const type = location?.type;
                 console.log(`Type:`, type);
-        
+
                 const coordinates = location?.coordinates;
                 console.log(`Coordinates:`, coordinates);
-        
+
                 const isTypeValid = type === "Point";
                 const areCoordinatesArray = Array.isArray(coordinates);
                 const hasTwoCoordinates = areCoordinatesArray && coordinates.length === 2;
                 const areCoordinatesValid = hasTwoCoordinates && coordinates.every(coord => coord !== "" && coord !== null && coord !== undefined);
-        
+
                 // console.log(`isTypeValid:`, isTypeValid);
                 // console.log(`areCoordinatesArray:`, areCoordinatesArray);
                 // console.log(`hasTwoCoordinates:`, hasTwoCoordinates);
                 // console.log(`areCoordinatesValid:`, areCoordinatesValid);
-        
+
                 return isTypeValid && areCoordinatesArray && hasTwoCoordinates && areCoordinatesValid;
             });
-        
+
             if (isValidRange) {
                 const isDifferent = JSON.stringify(RangeWhereYouWantService) !== JSON.stringify(vendor.RangeWhereYouWantService);
-        
+
                 if (isDifferent) {
                     vendor.RangeWhereYouWantService = RangeWhereYouWantService;
                     console.log("RangeWhereYouWantService updated.");
@@ -1399,7 +1433,7 @@ exports.updateVendor = async (req, res) => {
                 console.warn("Invalid RangeWhereYouWantService format provided. Skipping update.");
             }
         }
-        
+
 
         if (req.files) {
             const { panImage, adharImage, gstImage, vendorImage } = req.files;
@@ -1542,7 +1576,7 @@ exports.getSingleVendor = async (req, res) => {
 
 exports.sendOtpForVerification = async (req, res) => {
     try {
-        console.log("i am hit")
+        // console.log("i am hit")
         const { Email } = req.body;
         if (!Email) {
             return res.status(400).json({
@@ -1559,47 +1593,42 @@ exports.sendOtpForVerification = async (req, res) => {
             })
         }
 
+        const vendorNumber = vendor ? vendor.ContactNumber : '';
+
         const OTP = Math.floor(100000 + Math.random() * 900000);
         const OTPExpires = new Date();
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
-
-        // await Vendor.findOneAndUpdate(
-        //     { Email },
-        //     {
-        //         $set: {
-        //             VerifyOTP: OTP,
-        //             OtpExpiredTime: OTPExpires
-        //         }
-        //     },
-        //     { new: true }
-        // )
 
         vendor.VerifyOTP = OTP,
             vendor.OtpExpiredTime = OTPExpires
         await vendor.save()
 
-        const emailOptions = {
-            email: Email,
-            subject: 'Account Verification OTP',
-            message: `
-                <html>
-                <head>
-                </head>
-                <body>
-                    <p>Hello,</p>
-                    <p>Your OTP for verifying your account is: <strong>${OTP}</strong></p>
-                    <p>Please enter this OTP within 10 minutes to complete your account verification.</p>
-                    <p>If you did not request this, please disregard this email.</p>
-                    <br>
-                    <p>Best Regards,</p>
-                    <p>Team Blueace India</p>
-                </body>
-                </html>
-            `
-        };
+        // const emailOptions = {
+        //     email: Email,
+        //     subject: 'Account Verification OTP',
+        //     message: `
+        //         <html>
+        //         <head>
+        //         </head>
+        //         <body>
+        //             <p>Hello,</p>
+        //             <p>Your OTP for verifying your account is: <strong>${OTP}</strong></p>
+        //             <p>Please enter this OTP within 10 minutes to complete your account verification.</p>
+        //             <p>If you did not request this, please disregard this email.</p>
+        //             <br>
+        //             <p>Best Regards,</p>
+        //             <p>Team Blueace India</p>
+        //         </body>
+        //         </html>
+        //     `
+        // };
 
 
-        await sendEmail(emailOptions)
+        // await sendEmail(emailOptions)
+
+        const message = `Your OTP for verifying your account is: ${OTP}. Please enter this OTP within 10 minutes to complete your account verification. If you did not request this, please disregard this SMS.`
+
+        // await sendSMS(vendorNumber, message)
 
         res.status(200).json({
             success: true,
@@ -1639,6 +1668,9 @@ exports.verifyVendor = async (req, res) => {
             });
         }
 
+        const vendorNumber = vendor ? vendor.ContactNumber : '';
+        const vendorName = vendor ? vendor.ownerName : '';
+
         // Check if OTP has expired
         const currentTime = new Date();
         if (vendor.OtpExpiredTime && currentTime > vendor.OtpExpiredTime) {
@@ -1672,6 +1704,20 @@ exports.verifyVendor = async (req, res) => {
 
         // Generate token if OTP is correct
         // const token = await generateToken(vendor._id);
+
+        const message = `Dear ${vendorName},
+
+Congratulations! Your verification process has been successfully completed. You are now verified to use our services and platform.
+
+If you have any questions or need further assistance, feel free to contact our support team.
+
+Thank you for being a part of our network.
+
+Best regards,  
+Team Blueace India`;
+
+        // await sendSMS(vendorNumber, message)
+
         res.status(200).json({
             success: true,
             message: 'Vendor verified successfully',
@@ -1699,47 +1745,63 @@ exports.resendVerifyOtp = async (req, res) => {
             })
         }
 
+        const vendorNumber = vendor ? vendor.ContactNumber : '';
+        const vendorName = vendor ? vendor.ownerName : '';
+
+        // Check if the OTP has been sent recently
+        const currentTime = Date.now();
+        const otpLastSentTime = vendor.OtpExpiredTime ? vendor.OtpExpiredTime.getTime() : 0;
+
+        // If OTP was sent less than 3 minutes ago, return an error
+        if (otpLastSentTime && (currentTime - otpLastSentTime) < 3 * 60 * 1000) {
+            const remainingTime = Math.ceil((3 * 60 * 1000 - (currentTime - otpLastSentTime)) / 1000); // In seconds
+            return res.status(400).json({
+                success: false,
+                message: `Please wait ${remainingTime} seconds before requesting a new OTP.`
+            });
+        }
+
         const OTP = Math.floor(100000 + Math.random() * 900000);
         const OTPExpires = new Date();
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
-
-        // await Vendor.findOneAndUpdate(
-        //     { Email },
-        //     {
-        //         $set: {
-        //             VerifyOTP: OTP,
-        //             OtpExpiredTime: OTPExpires
-        //         }
-        //     },
-        //     { new: true }
-        // )
 
         vendor.VerifyOTP = OTP,
             vendor.OtpExpiredTime = OTPExpires
         await vendor.save()
 
-        const emailOptions = {
-            email: Email,
-            subject: 'Resend: Verify Your Account with OTP',
-            message: `
-                <html>
-                <head>
-                </head>
-                <body>
-                    <p>Dear User,</p>
-                    <p>We noticed that you requested to resend the OTP for verifying your account. Your new OTP is: <strong>${OTP}</strong></p>
-                    <p>Please use this OTP within the next 10 minutes to complete your account verification process.</p>
-                    <p>If you did not request this, please ignore this email.</p>
-                    <br>
-                    <p>Thank you,</p>
-                    <p>Team Blueace India</p>
-                </body>
-                </html>
-            `
-        };
+        // const emailOptions = {
+        //     email: Email,
+        //     subject: 'Resend: Verify Your Account with OTP',
+        //     message: `
+        //         <html>
+        //         <head>
+        //         </head>
+        //         <body>
+        //             <p>Dear User,</p>
+        //             <p>We noticed that you requested to resend the OTP for verifying your account. Your new OTP is: <strong>${OTP}</strong></p>
+        //             <p>Please use this OTP within the next 10 minutes to complete your account verification process.</p>
+        //             <p>If you did not request this, please ignore this email.</p>
+        //             <br>
+        //             <p>Thank you,</p>
+        //             <p>Team Blueace India</p>
+        //         </body>
+        //         </html>
+        //     `
+        // };
+
+        const message = `Dear ${vendorName},
+        We noticed that you requested to resend the OTP for verifying your account. Your new OTP is: ${OTP},
+
+        Please use this OTP within the next 10 minutes to complete your account verification process.
+
+        If you did not request this, please ignore this email.
+
+        Best regards,  
+        Team Blueace India`
 
 
-        await sendEmail(emailOptions)
+        // await sendEmail(emailOptions)
+        // await sendSMS(vendorNumber,message)
 
         res.status(200).json({
             success: true,

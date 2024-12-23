@@ -39,7 +39,9 @@ function Footer() {
                   <div className="address mt-3">
                     <strong>Phone:</strong>+91 9311539090<br/>
                     <br />
-                    <strong>Mail:</strong> blueaceindia@gmail.com<br/>
+                    <strong>Phone:</strong>+91 9811550874<br/>
+                    <br />
+                    <strong>Mail:</strong> info@blueaceindia.com<br/>
                   </div>
                   <div className="address mt-2">
                     <ul className="list-inline">

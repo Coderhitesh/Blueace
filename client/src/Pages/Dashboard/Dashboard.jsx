@@ -16,7 +16,7 @@ import EditTimingSlot from './VendorData/EditTimingSlot';
 import VerifyAccount from './VendorData/VerifyAccount';
 import StarRating from '../../Components/StarRating/StarRating';
 import OrderVenderRequest from './VendorData/OrderVenderRequest';
-
+import Wallet from './VendorData/Wallet';
 function Dashboard() {
     const navigate = useNavigate();
     const [activeOrder, setActiveOrder] = useState([]);
@@ -25,13 +25,10 @@ function Dashboard() {
     const [allCancelOrderCount, setCancelOrderCount] = useState(0)
     const [activeTab, setActiveTab] = useState('Dashboard');
     const url = window.location.hash.substring(1);
-
     const [collapseState, setCollapseState] = useState(false);
-
     const toggleCollapse = () => {
         setCollapseState(prevState => !prevState);
     };
-
     useEffect(() => {
         window.scrollTo({
             top: 0,
@@ -43,21 +40,23 @@ function Dashboard() {
     const userDataMain = userDataString ? JSON.parse(userDataString) : null;
     const token = sessionStorage.getItem('token');
     const userId = userDataMain?._id;
-    // console.log("userDataMain", userDataMain)
     const role = userDataMain?.Role
     const isVerified = userData.verifyed
     const slotAdded = userData?.workingHour
     const [readyToWork, setReadyToWork] = useState();
-    // useEffect(()=>{
-    //     setReadyToWork(userData.readyToWork)
-    // },[])
-
+    const [vendorId, setVendorId] = useState(null)
     useEffect(() => {
+        if (userDataMain !== undefined) {
+            setVendorId(userDataMain._id);
+        }
+    }, [userDataMain]);
+    useEffect(() => {
+        if (!userId) return;
         const fetchOrderById = async () => {
             try {
                 const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
                 const allData = res.data.data
-                const isAccepted = allData.filter((item)=> item.VendorAllotedStatus === "Accepted")
+                const isAccepted = allData.filter((item) => item.VendorAllotedStatus === "Accepted")
                 setAllOrder(isAccepted)
                 const activeData = isAccepted.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
                 setActiveOrder(activeData)
@@ -70,8 +69,7 @@ function Dashboard() {
             }
         }
         fetchOrderById()
-    }, [])
-
+    }, [userId])
     const findUser = async () => {
         try {
             const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
@@ -81,14 +79,9 @@ function Dashboard() {
             console.log(error)
         }
     }
-
-
-
     useEffect(() => {
         findUser();
-        // fetchOrderById();
     }, []);
-
     useEffect(() => {
         if (url) {
             setActiveTab(url);
@@ -96,7 +89,6 @@ function Dashboard() {
             setActiveTab('Dashboard')
         }
     }, [url])
-
     const handleLogout = async () => {
         try {
             const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
@@ -111,8 +103,6 @@ function Dashboard() {
             toast.error(error?.response?.data?.msg || 'Internal server error during logout');
         }
     };
-
-    // console.log('readyToWork',readyToWork)
     const handleChangeReadyToWork = async () => {
         try {
             // console.log('i am hit')
@@ -130,7 +120,6 @@ function Dashboard() {
             toast.error("Failed to update status");
         }
     };
-
     const handleDelete = async (userId) => {
         Swal.fire({
             title: "Are you sure?",
@@ -158,8 +147,6 @@ function Dashboard() {
             }
         });
     };
-
-    // Function to collapse the navigation after a tab is selected
     const collapseNavigation = () => {
         const collapseElement = document.getElementById('MobNav');
         const collapseInstance = window.bootstrap.Collapse.getInstance(collapseElement);
@@ -167,12 +154,10 @@ function Dashboard() {
             collapseInstance.hide();
         }
     };
-
     const handleTabClick = (tab) => {
         setActiveTab(tab);
         collapseNavigation(); // Collapse navigation on tab change
     };
-
     return (
         <>
             <section
@@ -205,7 +190,7 @@ function Dashboard() {
                                     </div>
                                     <div className="dashploio">
                                         <span className="agd-location">
-                                            <i className="lni lni-map-marker me-1"></i>{`${userData.HouseNo}, ${userData.address} (${userData.PinCode}`}
+                                            <i className="lni lni-map-marker me-1"></i>{`${userData.HouseNo}, ${userData.address} (${userData.PinCode})`}
                                         </span>
                                     </div>
                                     <div className="listing-rating high">
@@ -217,7 +202,6 @@ function Dashboard() {
                     </div>
                 </div>
             </section>
-
             <div className="goodup-dashboard-wrap gray px-4 py-5">
                 <a
                     className="mobNavigation"
@@ -252,6 +236,7 @@ function Dashboard() {
                                                 <i className="lni lni-add-files me-2"></i>All Orders
                                             </a>
                                         </li>
+                                        
                                         {
                                             !slotAdded && (
                                                 <li onClick={() => handleTabClick('add-slot-time')} className={`${activeTab === 'add-slot-time' ? 'active' : ''}`}>
@@ -279,17 +264,11 @@ function Dashboard() {
                                                 </li>
                                             )
                                         }
-                                        {/* <li onClick={() => handleTabClick('add-slot-time')} className={`${activeTab === 'add-slot-time' ? 'active' : ''}`}>
+                                        <li onClick={() => handleTabClick('Wallet-history')} className={`${activeTab === 'Wallet-history' ? 'active' : ''}`}>
                                             <a>
-                                                <i className="lni lni-bookmark me-2"></i>Add Slot Time
+                                                <i className="lni lni-add-files me-2"></i>Wallet History
                                             </a>
                                         </li>
-                                        <li onClick={() => handleTabClick('edit-slot-time')} className={`${activeTab === 'edit-slot-time' ? 'active' : ''}`}>
-                                            <a>
-                                                <i className="lni lni-bookmark me-2"></i>Edit Slot Time
-                                            </a>
-                                        </li> */}
-
                                     </ul>
                                     <ul data-submenu-title="My Accounts">
                                         <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
@@ -377,6 +356,11 @@ function Dashboard() {
                                                 </li>
                                             )
                                         }
+                                        <li onClick={() => handleTabClick('Wallet-history')} className={`${activeTab === 'Wallet-history' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-add-files me-2"></i>Wallet History
+                                            </a>
+                                        </li>
                                     </ul>
                                     <ul data-submenu-title="My Accounts">
                                         <li onClick={() => handleTabClick('profile')} className={`${activeTab === 'profile' ? 'active' : ''}`}>
@@ -405,7 +389,7 @@ function Dashboard() {
                         }
                     </div>
                 </div>
-                {activeTab === 'Dashboard' && <VendorDashboard handleChangeReadyToWork={handleChangeReadyToWork} readyToWork={readyToWork} userData={userData} allOrder={allOrder} activeOrder={activeOrder} allCompleteOrderCount={allCompleteOrderCount} allCancelOrderCount={allCancelOrderCount} />}
+                {activeTab === 'Dashboard' && <VendorDashboard handleChangeReadyToWork={handleChangeReadyToWork} readyToWork={readyToWork} userData={userData} allOrder={allOrder} activeOrder={activeOrder} allCompleteOrderCount={allCompleteOrderCount} allCancelOrderCount={allCancelOrderCount} vendorId={vendorId} />}
                 {activeTab === 'Active-Order' && <ActiveVendorOrder userData={userData} activeOrder={activeOrder} />}
                 {activeTab === 'All-Order' && <AllVendorOrder userData={userData} allOrder={allOrder} />}
                 {activeTab === 'members' && <VendorMember userData={userData} />}
@@ -416,6 +400,7 @@ function Dashboard() {
                 {activeTab === 'edit-slot-time' && <EditTimingSlot userData={userData} />}
                 {activeTab === 'verify-account' && <VerifyAccount userData={userData} />}
                 {activeTab === 'order-request' && <OrderVenderRequest userData={userData} />}
+                {activeTab === 'Wallet-history' && <Wallet userData={userData} />}
             </div>
         </>
     );

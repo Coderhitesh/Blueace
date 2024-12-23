@@ -255,7 +255,7 @@ function UserDashboard() {
                 </div>
 
                 {activeTab === 'Dashboard' && <DashboardContent userData={userData} activeOrder={activeOrder} allOrder={allOrder} completeOrderCount={completeOrderCount} cancelOrderCount={cancelOrderCount}  />}
-                {activeTab === 'Active-Order' && <UserActiveOrder activeOrder={activeOrder} />}
+                {activeTab === 'Active-Order' && <UserActiveOrder userData={userData} activeOrder={activeOrder} />}
                 {activeTab === 'User-All-Order' && <UserAllOrder allOrder={allOrder} userData={userData} />}
                 {activeTab === 'profile' && <Profile userData={userData} />}
                 {activeTab === 'changePassword' && <ChangePassword userData={userData} />}

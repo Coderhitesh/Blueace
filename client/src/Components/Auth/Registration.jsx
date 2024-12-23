@@ -129,7 +129,7 @@ function Registration() {
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data.msg || 'An error occurred');
+      toast.error(err.response.data.message || 'An error occurred');
     } finally {
       setLoading(false);
     }

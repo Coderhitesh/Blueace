@@ -28,3 +28,48 @@
     font-weight: 500;
     color: #333;
 }
+
+
+.withdraw-modal-hitesh {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .withdraw-modal-hitesh .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    text-align: center;
+  }
+  
+  .withdraw-modal-hitesh .amount-options button {
+    margin: 5px;
+  }
+  
+  .withdraw-modal-hitesh .input-group {
+    width: 100%;
+  }
+  
+  .withdraw-modal-hitesh .input-group input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .withdraw-modal-hitesh button {
+    width: 100px;
+    margin: 5px;
+  }
+  
+  .withdraw-modal-hitesh .for-withdraw{
+    width: 100%;
+  }

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import axios from 'axios'
 
 function UserActiveOrder({ userData, activeOrder }) {
+    console.log("userData",userData)
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
@@ -12,6 +14,61 @@ function UserActiveOrder({ userData, activeOrder }) {
 
     // Handle page change
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // Dynamically load the Razorpay script
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handlePayment = async (orderId, totalAmount) => {
+        try {
+            const scriptLoaded = await loadRazorpayScript();
+            if (!scriptLoaded) {
+                alert('Failed to load Razorpay SDK. Please check your connection.');
+                return;
+            }
+            const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`, {
+                totalAmount: totalAmount
+            })
+
+            const order = res.data.data.razorpayOrder;
+            // if(!order){
+
+            // }
+
+            if (order) {
+                const options = {
+                    key: 'rzp_test_cz0vBQnDwFMthJ',
+                    amount: totalAmount * 100,
+                    currency: 'INR',
+                    name: 'Blueace',
+                    description: 'Purchase Membership Plan',
+                    order_id: order?.id || '',
+                    callback_url: "https://www.api.blueaceindia.com/api/v1/verify-bill-payment",
+                    prefill: {
+                        name: userData?.name, // Prefill customer data
+                        email: userData?.email,
+                        contact: userData?.PhoneNumber
+                    },
+                    theme: {
+                        color: '#F37254'
+                    },
+                };
+
+                const rzp = new window.Razorpay(options);
+
+                rzp.open();
+            }
+        } catch (error) {
+            console.log('Internal server error in paying bill', error);
+        }
+    }
 
     return (
         <div className="goodup-dashboard-content">
@@ -61,6 +118,7 @@ function UserActiveOrder({ userData, activeOrder }) {
 
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Video</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Payment</th>
 
                                                 {/* <th style={{whiteSpace:"nowrap"}}>City</th>
                                                 <th style={{whiteSpace:"nowrap"}}>Pin Code</th>
@@ -75,7 +133,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 currentOrders.map((order) => (
 
                                                     <tr key={order._id}>
-                                                        {console.log("order",order)}
+                                                        {console.log("order", order)}
                                                         {/* <td><img style={{ width: '100px', height: '80px' }} src={order?.serviceId?.serviceImage?.url} alt={order?.serviceId?.name} /></td> */}
                                                         <td>{order?.serviceId?.subCategoryId?.name}</td>
                                                         <td>{order.serviceType}</td>
@@ -132,6 +190,21 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                                 <span>No video uploaded</span>
                                                             )}
                                                         </td>
+
+                                                        {
+                                                            order?.EstimatedBill?.BillStatus === 'Accepted' ? (
+                                                                <td><button
+                                                                    style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                                                    className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                    disabled={order.PaymentStatus === 'paid'}
+                                                                    onClick={()=>handlePayment(order?._id,order?.EstimatedBill?.EstimatedTotalPrice)}
+                                                                >
+                                                                    Pay
+                                                                </button></td>
+                                                            ) : (
+                                                                <td>Bill is not Accepted</td>
+                                                            )
+                                                        }
 
                                                         {/* <td>
                                                             {order?.beforeWorkImage?.url ? (

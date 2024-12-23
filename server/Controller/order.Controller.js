@@ -5,12 +5,24 @@ const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
 const User = require('../Model/UserModel');
 const { error } = require('console');
+const { sendSMS } = require('../Utils/SMSSender');
+const ServiceCategory = require('../Model/serviceCategoty.Model');
 require("dotenv").config()
+const crypto = require('crypto')
+const Razorpay = require('razorpay');
+const Commission = require('../Model/Commission.Model');
+const axios = require('axios')
+
+const razorpayInstance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,   // Razorpay Key ID
+    key_secret: process.env.RAZORPAY_KEY_SECRET, // Razorpay Secret Key
+});
 
 exports.makeOrder = async (req, res) => {
     try {
         // console.log('body', req.body);
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
+        const AdminNumber = process.env.ADMIN_NUMBER;
 
         // Check for missing required fields
         const emptyField = [];
@@ -59,6 +71,10 @@ exports.makeOrder = async (req, res) => {
             console.warn('No voice note uploaded, proceeding to create order without it.');
         }
 
+        // Fetch service name using populate
+        const service = await ServiceCategory.findById(serviceId); // Find the service by ID
+        const serviceName = service ? service.name : 'Service'; // Use the service name or a default value if not found
+
         // Create new order with voice note details if available
         const newOrder = new Order({
             userId,
@@ -78,6 +94,29 @@ exports.makeOrder = async (req, res) => {
             RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
             orderTime
         });
+
+        // await sendSMS(
+        //     phoneNumber,
+        //     `Dear ${fullName}, your order for ${serviceName} (${serviceType}) has been successfully placed. Thank you for choosing our service! We will assign a vendor shortly and be in touch to confirm the details.`
+        // );
+
+        // Create a message for the admin
+        const adminMessage = `
+            New Order Placed:
+            - User Name: ${fullName}
+            - User Email: ${email}
+            - User Phone: ${phoneNumber}
+            - Service Name: ${serviceName}
+            - Service Type: ${serviceType}
+            - Message: ${message || 'No message provided'}
+            - Address: ${houseNo}, ${address}, ${nearByLandMark ? nearByLandMark + ', ' : ''}${pinCode}
+            - Order Time: ${orderTime}
+            
+            Please assign a vendor to this order.
+        `;
+
+        // Send the message to admin
+        // await sendSMS(AdminNumber, adminMessage);
 
         // Save the order to the database
         await newOrder.save();
@@ -501,8 +540,12 @@ exports.AssignVendor = async (req, res) => {
             });
         }
 
+        const findVendor = await Vendor.findById(Vendorid);
+        const vendorNumber = findVendor?.ContactNumber;
+
         // Fetch the specific order by orderId
-        const order = await Order.findById(orderId);
+        const order = await Order.findById(orderId).populate('serviceId');
+        const serviceName = order ? order.serviceId.name : 'Service';
 
         if (!order) {
             return res.status(404).json({
@@ -554,6 +597,14 @@ exports.AssignVendor = async (req, res) => {
         order.workingDay = workingDay;
         order.workingTime = workingTime;
 
+        // Construct the full address
+        const fullAddress = `${order.houseNo}, ${order.address}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
+
+        // Send SMS notification to the vendor
+        const vendorMessage = `You have been assigned a new task for ${serviceName}. The service is scheduled for ${workingDay} at ${workingTime}. The address is: ${fullAddress}. Please confirm and accept the task.`;
+
+        // await sendSMS(vendorNumber, vendorMessage); // Send SMS to the vendor's phone number (make sure you have Vendor's contact)
+
         // Save the updated order
         await order.save();
 
@@ -575,9 +626,17 @@ exports.AssignVendor = async (req, res) => {
 
 exports.AcceptOrderRequest = async (req, res) => {
     try {
-        const { venderId } = req.params;
+        const { orderId } = req.params;
         const { VendorAllotedStatus } = req.body;
-        const order = await Order.findOne({ vendorAlloted: venderId })
+
+        // console.log("orderId",orderId)
+        // console.log("VendorAllotedStatus",VendorAllotedStatus)
+
+        const order = await Order.findById(orderId)
+            .populate('serviceId')
+            .populate('vendorAlloted')
+            .populate('userId');
+
         if (!order) {
             return res.status(404).json({
                 success: false,
@@ -585,42 +644,67 @@ exports.AcceptOrderRequest = async (req, res) => {
                 error: "Order not found"
             });
         }
-        if(VendorAllotedStatus === 'Accepted'){
+
+        const userNumber = order ? order.phoneNumber : '';
+        const vendorName = order ? order.vendorAlloted.companyName : '';
+        const AdminNumber = process.env.ADMIN_NUMBER;
+        const serviceName = order ? order.serviceId.name : 'Service';
+        const serviceType = order ? order.serviceType : 'Not specified';
+        const fullAddress = `${order.houseNo}, ${order.address}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
+
+        if (VendorAllotedStatus === 'Accepted') {
             order.VendorAllotedStatus = VendorAllotedStatus;
-            order.save()
+
+            // Save the order with the updated status
+            await order.save();
+
+            // Message for the user (optional, if needed)
+            // const userMessage = `Your order for ${serviceName} (${serviceType}) has been accepted by vendor ${vendorName}. The service will be carried out at: ${fullAddress}.`;
+
+            // Message for admin
+            // const adminMessage = `Order for ${serviceName} (${serviceType}) has been accepted by vendor ${vendorName}. The service will be performed at: ${fullAddress}. Please note the vendor has accepted the task.`;
+
+            // Send the messages (Assuming sendSMS is a function that sends SMS to the respective phone numbers)
+            // await sendSMS(userNumber, userMessage); // Sending message to the user
+            // await sendSMS(AdminNumber, adminMessage); // Sending message to admin
+            console.log("finish",order)
             return res.status(200).json({
                 success: true,
                 message: "Order accepted successfully",
                 data: order
-            })
+            });
         }
-        // console.log("VendorAllotedStatus",VendorAllotedStatus)
-        if(VendorAllotedStatus === 'Reject'){
-            // console.log("i am in VendorAllotedStatus")
+
+        if (VendorAllotedStatus === 'Reject') {
             order.VendorAllotedStatus = "Pending";
             order.OrderStatus = 'Pending';
-            order.vendorAlloted = null
-            // console.log("i am done")
+            order.vendorAlloted = null;
 
-            order.save();
+            // Save the order with the updated status
+            await order.save();
+
+            // Message for the admin (rejection)
+            // const adminRejectionMessage = `Order for ${serviceName} (${serviceType}) has been rejected by vendor ${vendorName}. The order is now pending. Please assign another vendor to this order. The address is: ${fullAddress}.`;
+
+            // Send the rejection message to admin
+            // await sendSMS(AdminNumber, adminRejectionMessage); // Sending message to admin
+
             return res.status(200).json({
                 success: true,
                 message: "Order rejected successfully",
                 data: order
-            })
+            });
         }
 
-    }
-    catch (error) {
-        console.log("Internal server error", error)
+    } catch (error) {
+        console.log("Internal server error", error);
         res.status(501).json({
             success: false,
             message: "Internal Server Error",
             error: error.message
         });
     }
-}
-
+};
 
 exports.updateBeforWorkImage = async (req, res) => {
     const uploadedImages = [];
@@ -809,7 +893,7 @@ exports.updateAfterWorkVideo = async (req, res) => {
                 message: 'Please upload a video',
             })
         }
-        order.OrderStatus = "Service Done"
+        // order.OrderStatus = "Service Done"
         const updatedOrder = await order.save()
 
         res.status(200).json({
@@ -847,7 +931,6 @@ exports.AllowtVendorMember = async (req, res) => {
             message: 'Allowt Vendor Member is updated',
             data: order
         })
-
     } catch (error) {
         console.log('Internal server error in allowing vendor member', error)
         res.status(500).json({
@@ -857,3 +940,180 @@ exports.AllowtVendorMember = async (req, res) => {
         })
     }
 }
+
+exports.makeOrderPayment = async (req, res) => {
+    try {
+        // console.log("totalamount",req.body)
+        const { orderId } = req.params;
+        const { totalAmount } = req.body;
+        // console.log("orderId",orderId)
+        const order = await Order.findById(orderId)
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found'
+            })
+        }
+        if (!totalAmount) {
+            res.status(400).json({
+                success: false,
+                message: 'Total amount is required',
+                error: 'Total amount is required'
+            })
+        }
+
+        if (totalAmount === 0 || totalAmount === null) {
+            res.status(400).json({
+                success: false,
+                message: 'Total amount is required',
+                error: 'Total amount is required'
+            })
+        }
+
+
+        const razorpayOptions = {
+            amount: totalAmount * 100 || 5000000,
+            currency: 'INR',
+            payment_capture: 1,
+        };
+
+        const razorpayOrder = await razorpayInstance.orders.create(razorpayOptions);
+
+        if (!razorpayOrder) {
+            return res.status(500).json({
+                success: false,
+                message: 'Error in creating Razorpay order',
+                error: 'Error in creating Razorpay order'
+            })
+        }
+
+        order.razorpayOrderId = razorpayOrder.id;
+        await order.save()
+        res.status(200).json({
+            success: true,
+            message: 'Order created successfully',
+            data: {
+                order,
+                razorpayOrder,
+            }
+        })
+
+    } catch (error) {
+        console.log('Internal server error', error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}
+
+exports.verifyOrderPayment = async (req, res) => {
+    try {
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
+        // Validate input
+        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid request',
+            });
+        }
+
+        // Generate the signature
+        const generatedSignature = crypto
+            .createHmac('SHA256', process.env.RAZORPAY_KEY_SECRET)
+            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+            .digest('hex');
+
+        if (generatedSignature !== razorpay_signature) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid signature',
+            });
+        }
+
+        // Fetch payment details
+        const paymentDetails = await axios.get(
+            `https://api.razorpay.com/v1/payments/${razorpay_payment_id}`,
+            {
+                auth: {
+                    username: process.env.RAZORPAY_KEY_ID,
+                    password: process.env.RAZORPAY_KEY_SECRET,
+                },
+            }
+        );
+
+        const { method, status, bank, wallet, card_id, amount } = paymentDetails.data;
+
+        // If payment is not successful, handle failure
+        if (status !== 'captured') {
+            return res.redirect(
+                `http://localhost:5174/vendors/payment-failure?error=Payment failed via ${method || 'unknown method'}`
+            );
+        }
+
+        // Find the order in the database
+        const findOrder = await Order.findOne({ razorpayOrderId: razorpay_order_id }).populate('vendorAlloted');
+        if (!findOrder) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found.',
+            });
+        }
+        const vendor = findOrder?.vendorAlloted;
+        const vendorRole = findOrder?.vendorAlloted?.Role;
+
+        // Fetch commission details
+        const allCommission = await Commission.find();
+        const employeeCommission = allCommission.find((item) => item.name === 'Employee');
+        const vendorCommission = allCommission.find((item) => item.name === 'Vendor');
+
+        let commissionPercent = 0;
+        if (vendorRole === 'vendor') {
+            commissionPercent = vendorCommission ? parseFloat(vendorCommission.percent) : 0;
+        } else if (vendorRole === 'employ') {
+            commissionPercent = employeeCommission ? parseFloat(employeeCommission.percent) : 0;
+        }
+
+        // Calculate commission amounts
+        const totalAmount = amount / 100; // Convert to actual amount from paise
+        const vendorCommissionAmount = (commissionPercent / 100) * totalAmount;
+        const adminCommissionAmount = totalAmount - vendorCommissionAmount;
+
+        // Update the order
+        findOrder.totalAmount = totalAmount;
+        findOrder.commissionPercent = commissionPercent;
+        findOrder.vendorCommissionAmount = vendorCommissionAmount;
+        findOrder.adminCommissionAmount = adminCommissionAmount;
+        findOrder.transactionId = razorpay_payment_id;
+        findOrder.PaymentStatus = 'paid';
+        findOrder.paymentMethod = method;
+        findOrder.OrderStatus = "Service Done"
+        vendor.walletAmount = vendorCommissionAmount;
+
+        await vendor.save();
+        await findOrder.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Payment verified and order updated successfully',
+            data: {
+                totalAmount,
+                commissionPercent,
+                vendorCommissionAmount,
+                adminCommissionAmount,
+                transactionId: razorpay_payment_id,
+                PaymentStatus: 'captured',
+                paymentMethod: method,
+            },
+        });
+    } catch (error) {
+        console.error('Internal server error', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};

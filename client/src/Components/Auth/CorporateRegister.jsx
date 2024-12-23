@@ -170,7 +170,7 @@ function CorporateRegister() {
       }
     } catch (err) {
       console.log(err);
-      toast.error(err.response?.data.msg || 'An error occurred');
+      toast.error(error.response.data.message || 'An error occurred');
     } finally {
       setLoading(false);
     }

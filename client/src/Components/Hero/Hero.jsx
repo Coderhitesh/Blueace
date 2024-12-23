@@ -10,7 +10,7 @@ function Hero() {
       const bannerData = res.data.data
       const filterData = bannerData.filter((item) => item.active === true)
       setBanner(filterData)
-      console.log(filterData)
+      console.log('filterData',bannerData)
     } catch (error) {
       console.log('Internal server error in fetching banner',error)
     }

@@ -189,6 +189,10 @@ const VendorSchema = new mongoose.Schema({
     },
     PinCode: {
         type: Number
+    },
+    walletAmount: {
+        type: Number,
+        default: 0
     }
 }, { timestamps: true })
 

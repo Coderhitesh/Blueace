@@ -97,7 +97,7 @@ function Term() {
                 </p>
                 <p className="mb-4">
                   BlueAce Limited<br />
-                  Email: <a href="mailto:blueaceindia@gmail.com">blueaceindia@gmail.com</a><br />
+                  Email: <a href="mailto:info@blueaceindia.com">info@blueaceindia.com</a><br />
                   Phone: <a href="tel:93115 39090">+91 93115 39090</a><br />
                   Address: Phase-1, C-126, Indl. Area, Naraina, New Delhi, Delhi 110028
                 </p>

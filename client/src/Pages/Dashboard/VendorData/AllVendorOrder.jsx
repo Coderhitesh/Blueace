@@ -69,6 +69,8 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Estimated Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Video</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Bill Amount</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Payment Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -169,6 +171,12 @@ function AllVendorOrder({ userData, allOrder }) {
                                                         {/* <td>{order.message}</td> */}
 
                                                         {/* <td>{new Date(order.createdAt).toLocaleString()}</td> */}
+                                                        {order.totalAmount ? (
+                                                            <td>Rs.{order.totalAmount || 'Not available'}</td>
+                                                        ) : (
+                                                            <td>{order.totalAmount || 'Not available'}</td>
+                                                        )}
+                                                        <td>{order?.PaymentStatus || "User is not available"}</td>
                                                     </tr>
                                                 ))
                                             ) : (

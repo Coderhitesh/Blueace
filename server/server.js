@@ -10,6 +10,7 @@ const Router = require('./Router/Routes')
 const { rateLimit } = require('express-rate-limit')
 // Middlewares
 ConnectDB()
+app.use(cors());
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 15 minutes
     limit: 200,
@@ -34,7 +35,6 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors());
 
 app.use(limiter)
 app.use('/api/v1', Router)

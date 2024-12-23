@@ -38,7 +38,7 @@ function OrderVenderRequest({ userData }) {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-vendor-order-request/${userId}`, { VendorAllotedStatus: newStatus });
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-vendor-order-request/${orderId}`, { VendorAllotedStatus: newStatus });
             toast.success('Order status updated successfully');
         } catch (error) {
             console.error(error);

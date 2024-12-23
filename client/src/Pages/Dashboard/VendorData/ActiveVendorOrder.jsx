@@ -180,9 +180,10 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                         <th style={{ whiteSpace: 'nowrap' }}>Allot Member</th>
                                                     )
                                                 }
-                                                <th style={{ whiteSpace: 'nowrap' }}>Order Status</th>
+                                                {/* <th style={{ whiteSpace: 'nowrap' }}>Order Status</th> */}
                                                 <th style={{ whiteSpace: 'nowrap' }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>After Work Video</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Payment Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -249,7 +250,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                 </td>
                                                             )
                                                         }
-                                                        <td>
+                                                        {/*<td>
                                                             <select
                                                                 value={order.OrderStatus}
                                                                 className='form-control'
@@ -260,7 +261,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                 <option value="Service Done">Service Done</option>
                                                                 <option value="Cancelled">Cancelled</option>
                                                             </select>
-                                                        </td>
+                                                        </td>*/}
                                                         {/* <td>
                                                             <input
                                                                 type="file"
@@ -362,6 +363,8 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                 {afterLoading[order._id] ? 'Uploading...' : 'Upload Video'}
                                                             </button>
                                                         </td>
+
+                                                        <td>{order?.PaymentStatus || "User is not available"}</td>
 
                                                     </tr>
                                                 ))

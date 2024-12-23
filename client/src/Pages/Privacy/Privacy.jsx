@@ -64,7 +64,7 @@ function Privacy() {
                 <h4 className="mb-3">9. Contact Us</h4>
                 <p className="">If you have any questions or concerns about this Privacy Policy, or if you would like to exercise your rights regarding your personal data, please contact us at:</p>
                 BlueAce Limited <br/>
-                Email: <a href="mailto:blueaceindia@gmail.com">blueaceindia@gmail.com</a> <br/>
+                Email: <a href="mailto:info@blueaceindia.com">info@blueaceindia.com</a> <br/>
                 Phone: <a href="tel:93115 39090">+91 93115 39090</a> <br/>
               </div>
             </div>

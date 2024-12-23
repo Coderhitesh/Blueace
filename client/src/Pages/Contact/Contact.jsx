@@ -116,7 +116,7 @@ function Contact() {
                 <div className="col-xl-4 col-lg-4 col-md-12">
                   <div className="bg-white rounded p-3 mb-2">
                     <h4 className="ft-medium mb-3 theme-cl">Address info:</h4>
-                    <p>Vijay Vihar, Rithala<br />New Delhi</p>
+                    <p>C-126, Office No-1 Gate No - 1, First Floor Naraina Industrial Area, Phase – 01, New Delhi - 110028</p>
                   </div>
                 </div>
                 <div className="col-xl-4 col-lg-4 col-md-12">
@@ -124,13 +124,14 @@ function Contact() {
                     <h4 className="ft-medium mb-3 theme-cl">Call Us:</h4>
                     <h6 className="ft-medium mb-1">Customer Care:</h6>
                     <p className="mb-2">+91 9311539090</p>
+                    <p className="mb-2">+91 9811550874</p>
                   </div>
                 </div>
                 <div className="col-xl-4 col-lg-4 col-md-12">
                   <div className="bg-white rounded p-3 mb-2">
                     <h4 className="ft-medium mb-3 theme-cl">Drop A Mail:</h4>
                     <p>Drop mail we will contact you within 24 hours.</p>
-                    <p className="lh-1 text-dark">support@blueaceindia.com</p>
+                    <p className="lh-1 text-dark">info@blueaceindia.com</p>
                   </div>
                 </div>
               </div>

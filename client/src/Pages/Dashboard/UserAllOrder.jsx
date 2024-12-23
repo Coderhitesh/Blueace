@@ -125,6 +125,8 @@ function UserAllOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Image</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Image</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Bill Amount</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>Payment Status</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -232,8 +234,12 @@ function UserAllOrder({ userData, allOrder }) {
                                                                 </div>
                                                             </div>
                                                         )}
-
-
+                                                        {order.totalAmount ? (
+                                                            <td>Rs.{order.totalAmount || 'Not available'}</td>
+                                                        ) : (
+                                                            <td>{order.totalAmount || 'Not available'}</td>
+                                                        )}
+                                                        <td>{order.PaymentStatus || 'Not available'}</td>
 
                                                     </tr>
                                                 ))
