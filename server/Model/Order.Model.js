@@ -173,6 +173,10 @@ const OrderSchema = new mongoose.Schema({
     razorpayOrderId: {
         type: String
     },
+    VendorAllotedBoolean:{
+        type:Boolean,
+        default:false
+    }
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

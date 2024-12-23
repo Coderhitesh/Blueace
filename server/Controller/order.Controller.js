@@ -596,6 +596,7 @@ exports.AssignVendor = async (req, res) => {
         order.VendorAllotedStatus = "Send Request";
         order.workingDay = workingDay;
         order.workingTime = workingTime;
+        order.VendorAllotedBoolean = true;
 
         // Construct the full address
         const fullAddress = `${order.houseNo}, ${order.address}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
@@ -667,7 +668,7 @@ exports.AcceptOrderRequest = async (req, res) => {
             // Send the messages (Assuming sendSMS is a function that sends SMS to the respective phone numbers)
             // await sendSMS(userNumber, userMessage); // Sending message to the user
             // await sendSMS(AdminNumber, adminMessage); // Sending message to admin
-            console.log("finish",order)
+            // console.log("finish",order)
             return res.status(200).json({
                 success: true,
                 message: "Order accepted successfully",
@@ -679,6 +680,7 @@ exports.AcceptOrderRequest = async (req, res) => {
             order.VendorAllotedStatus = "Pending";
             order.OrderStatus = 'Pending';
             order.vendorAlloted = null;
+            order.VendorAllotedBoolean = false;
 
             // Save the order with the updated status
             await order.save();
