@@ -193,7 +193,36 @@ const VendorSchema = new mongoose.Schema({
     walletAmount: {
         type: Number,
         default: 0
-    }
+    },
+    bankDetail: {
+        accountHolderName: {
+            type: String,
+        },
+        bankName: {
+            type: String,
+        },
+        accountNumber: {
+            type: String,
+            validate: {
+                validator: function (v) {
+                    return /^\d{9,18}$/.test(v); // Ensures the account number is numeric and 9–18 digits long
+                },
+                message: props => `${props.value} is not a valid account number!`,
+            },
+        },
+        ifscCode: {
+            type: String,
+            validate: {
+                validator: function (v) {
+                    return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v); // Standard IFSC code format
+                },
+                message: props => `${props.value} is not a valid IFSC code!`,
+            },
+        },
+        branchName: {
+            type: String,
+        }
+    },
 }, { timestamps: true })
 
 VendorSchema.pre('save', async function (next) {

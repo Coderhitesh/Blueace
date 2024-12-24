@@ -17,6 +17,7 @@ import VerifyAccount from './VendorData/VerifyAccount';
 import StarRating from '../../Components/StarRating/StarRating';
 import OrderVenderRequest from './VendorData/OrderVenderRequest';
 import Wallet from './VendorData/Wallet';
+import BankDetail from './VendorData/BankDetail';
 function Dashboard() {
     const navigate = useNavigate();
     const [activeOrder, setActiveOrder] = useState([]);
@@ -276,6 +277,11 @@ function Dashboard() {
                                                 <i className="lni lni-user me-2"></i>My Profile
                                             </a>
                                         </li>
+                                        <li onClick={() => handleTabClick('Bank-detail')} className={`${activeTab === 'Bank-detail' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-user me-2"></i>Bank Detail
+                                            </a>
+                                        </li>
                                         <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
                                             <a>
                                                 <i className="lni lni-lock-alt me-2"></i>Change Password
@@ -368,6 +374,11 @@ function Dashboard() {
                                                 <i className="lni lni-user me-2"></i>My Profile
                                             </a>
                                         </li>
+                                        <li onClick={() => handleTabClick('Bank-detail')} className={`${activeTab === 'Bank-detail' ? 'active' : ''}`}>
+                                            <a>
+                                                <i className="lni lni-user me-2"></i>Bank Detail
+                                            </a>
+                                        </li>
                                         <li onClick={() => handleTabClick('changePassword')} className={`${activeTab === 'changePassword' ? 'active' : ''}`}>
                                             <a>
                                                 <i className="lni lni-lock-alt me-2"></i>Change Password
@@ -389,7 +400,7 @@ function Dashboard() {
                         }
                     </div>
                 </div>
-                {activeTab === 'Dashboard' && <VendorDashboard handleChangeReadyToWork={handleChangeReadyToWork} readyToWork={readyToWork} userData={userData} allOrder={allOrder} activeOrder={activeOrder} allCompleteOrderCount={allCompleteOrderCount} allCancelOrderCount={allCancelOrderCount} vendorId={vendorId} />}
+                {activeTab === 'Dashboard' && <VendorDashboard handleChangeReadyToWork={handleChangeReadyToWork} readyToWork={readyToWork} userData={userData} userId={userId} allOrder={allOrder} activeOrder={activeOrder} allCompleteOrderCount={allCompleteOrderCount} allCancelOrderCount={allCancelOrderCount} vendorId={vendorId} />}
                 {activeTab === 'Active-Order' && <ActiveVendorOrder userData={userData} activeOrder={activeOrder} />}
                 {activeTab === 'All-Order' && <AllVendorOrder userData={userData} allOrder={allOrder} />}
                 {activeTab === 'members' && <VendorMember userData={userData} />}
@@ -401,6 +412,7 @@ function Dashboard() {
                 {activeTab === 'verify-account' && <VerifyAccount userData={userData} />}
                 {activeTab === 'order-request' && <OrderVenderRequest userData={userData} />}
                 {activeTab === 'Wallet-history' && <Wallet userData={userData} />}
+                {activeTab === 'Bank-detail' && <BankDetail userData={userData} />}
             </div>
         </>
     );

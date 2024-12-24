@@ -30,6 +30,7 @@ function UserDashboard() {
     const userDataMain = userDataString ? JSON.parse(userDataString) : null;
     const token = sessionStorage.getItem('token');
     const userId = userDataMain?._id;
+    const [loading,setLoading] = useState(false)
 
     useEffect(()=>{
         const findUser = async () => {
@@ -46,6 +47,7 @@ function UserDashboard() {
     // console.log("userdata",userData)
 
     const fetchOrderById = async () => {
+        setLoading(false)
         try {
             const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-user-id?userId=${userId}`, );
             setAllOrder(res.data.data)
@@ -57,24 +59,13 @@ function UserDashboard() {
             setCompleteOrderCount(filterCompletOrder.length);
             const filterCancelOrder = allData.filter((item) => item.OrderStatus === 'Cancelled');
             setCancelOrderCount(filterCancelOrder.length);
+            setLoading(false)
         } catch (error) {
             console.log(error)
+        }finally{
+            setLoading(false)
         }
     }
-
-    // const fetchOrderData = async () => {
-    //     try {
-    //         const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
-    //         const orderData = res.data.data;
-    //         const filterData = orderData.filter((item) => item?.userId?._id === userData?._id);
-    //         setAllOrder(filterData);
-    //         const filterStatusData = filterData.filter((item) => item.OrderStatus !== 'Service Done' && item.OrderStatus !== 'Cancelled');
-    //         setActiveOrder(filterStatusData);
-    //     } catch (error) {
-    //         console.log(error);
-    //         toast.error(error.response?.data.message || 'Internal server error in fetching orderData');
-    //     }
-    // };
 
     useEffect(() => {
         // fetchOrderData();
@@ -254,7 +245,7 @@ function UserDashboard() {
                     </div>
                 </div>
 
-                {activeTab === 'Dashboard' && <DashboardContent userData={userData} activeOrder={activeOrder} allOrder={allOrder} completeOrderCount={completeOrderCount} cancelOrderCount={cancelOrderCount}  />}
+                {activeTab === 'Dashboard' && <DashboardContent userData={userData} activeOrder={activeOrder} allOrder={allOrder} completeOrderCount={completeOrderCount} cancelOrderCount={cancelOrderCount} loading={loading} />}
                 {activeTab === 'Active-Order' && <UserActiveOrder userData={userData} activeOrder={activeOrder} />}
                 {activeTab === 'User-All-Order' && <UserAllOrder allOrder={allOrder} userData={userData} />}
                 {activeTab === 'profile' && <Profile userData={userData} />}

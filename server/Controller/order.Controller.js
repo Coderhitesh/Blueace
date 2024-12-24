@@ -972,9 +972,13 @@ exports.makeOrderPayment = async (req, res) => {
             })
         }
 
+        // Ensure amount is converted to an integer (in paise)
+        const integerAmount = Math.floor(totalAmount);
+        // console.log("integerAmount",integerAmount)
+
 
         const razorpayOptions = {
-            amount: totalAmount * 100 || 5000000,
+            amount: integerAmount * 100 || 5000000,
             currency: 'INR',
             payment_capture: 1,
         };

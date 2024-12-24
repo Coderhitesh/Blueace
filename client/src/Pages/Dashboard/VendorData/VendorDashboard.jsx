@@ -5,17 +5,19 @@ import './vendorCss.css';
 import verifiedImage from './verifiedImage.png';
 
 
-function VendorDashboard({ vendorId, readyToWork, handleChangeReadyToWork, }) {
+function VendorDashboard({ userId, readyToWork, handleChangeReadyToWork, }) {
     const userDataString = sessionStorage.getItem('user');
-    const userData = userDataString ? JSON.parse(userDataString) : null;
-    const [userId,setUserId] = useState(null)
+    const userDataJson = userDataString ? JSON.parse(userDataString) : null;
+    // const [userId, setUserId] = useState(null)
     const [showModal, setShowModal] = useState(false);
     const [withdrawAmount, setWithdrawAmount] = useState('');
     const [activeOrder, setActiveOrder] = useState([]);
     const [allOrder, setAllOrder] = useState([]);
     const [allCompleteOrderCount, setCompleteOrder] = useState([]);
     const [walletAmount, setWalletAmount] = useState(0);
-    const [isVerified,setIsVerify] = useState(false);
+    const [isVerified, setIsVerify] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [userData, setUserData] = useState({})
 
     useEffect(() => {
         window.scrollTo({
@@ -25,19 +27,38 @@ function VendorDashboard({ vendorId, readyToWork, handleChangeReadyToWork, }) {
     }, [])
 
     useEffect(() => {
-        if (userData?.walletAmount !== undefined) {
-            setWalletAmount(userData.walletAmount);
+        // if (userData?.walletAmount !== undefined) {
+        //     setWalletAmount(userData.walletAmount);
+        // }
+        // if (userData?.verifyed !== undefined) {
+        //     setIsVerify(userData.verifyed);
+        // }
+        // if (userData !== undefined) {
+        //     setUserId(userData._id);
+        // }
+    }, []);
+
+    const handleFetchVendor = async () => {
+        setLoading(true)
+        // setUserId(userDataJson._id);
+
+        try {
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
+            setUserData(res.data.data)
+            const allData = res.data.data
+            setWalletAmount(Math.round(allData?.walletAmount || 0));
+            setIsVerify(allData?.verifyed);
+            setLoading(false)
+        } catch (error) {
+            console.log("Internal server error", error)
+        }finally{
+            setLoading(false)
         }
-        if(userData?.verifyed !== undefined){
-            setIsVerify(userData.verifyed);
-        }
-        if(userData !== undefined){
-            setUserId(userData._id);
-        }
-    }, [userData]);
+    }
 
     useEffect(() => {
         if (!userId) return;
+        setLoading(true)
         const fetchOrderById = async () => {
             try {
                 const res = await axios.get(
@@ -54,12 +75,19 @@ function VendorDashboard({ vendorId, readyToWork, handleChangeReadyToWork, }) {
                 setCompleteOrder(isAccepted.filter(
                     (item) => item.OrderStatus === 'Service Done'
                 ));
+                setLoading(false)
             } catch (error) {
                 console.log(error);
+            } finally {
+                setLoading(false)
             }
         };
         fetchOrderById();
     }, [userId]);
+
+    useEffect(()=>{
+        handleFetchVendor()
+    },[])
 
     const handleWithdraw = async () => {
         try {
@@ -83,6 +111,9 @@ function VendorDashboard({ vendorId, readyToWork, handleChangeReadyToWork, }) {
             behavior: 'smooth'
         })
     }, [])
+    if (loading) {
+        return <div>Loading...</div>
+    }
     return (
         <>
             <div className="goodup-dashboard-content">

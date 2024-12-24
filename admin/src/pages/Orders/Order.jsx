@@ -3,7 +3,6 @@ import axios from 'axios';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
-import Toggle from '../../components/Forms/toggle';
 import moment from 'moment';
 
 function Order() {
@@ -17,6 +16,8 @@ function Order() {
     const [showFilter, setShowFilter] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [paymentModel, setPaymentModel] = useState(false)
+    const [paymentDetail, setPaymentDetail] = useState(null)
 
     const fetchAllOrders = async () => {
         try {
@@ -68,6 +69,11 @@ function Order() {
         modal.show();
     };
 
+    const handleViewPayment = (vendor) => {
+        setPaymentDetail(vendor)
+        setPaymentModel(true)
+    }
+
     const handleView = (vendor) => {
         setSelectedVendor(vendor); // Set the selected vendor details
         setModalVisible(true); // Open the modal
@@ -88,7 +94,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Select Vendor', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Select Vendor', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -190,7 +196,7 @@ function Order() {
                                 </td> */}
                                 <td style={{ whiteSpace: 'nowrap' }}>
                                     {vendor?.userId?.UserType === 'Corporate' ? (
-                                         vendor.VendorAllotedStatus === 'Accepted' || vendor.VendorAllotedStatus === 'Send Request' ? (
+                                        vendor.VendorAllotedStatus === 'Accepted' || vendor.VendorAllotedStatus === 'Send Request' ? (
                                             <a href={`/Alloted/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                                 Change Member
                                             </a>
@@ -236,7 +242,7 @@ function Order() {
                                     )} */}
                                 </td>
 
-                                <td>
+                                <td className='fw-bolder'>
                                     <button
                                         onClick={() => {
                                             const estimatedBillStr = JSON.stringify(vendor.EstimatedBill);
@@ -251,7 +257,7 @@ function Order() {
                                 </td>
                                 <td className={`text-center ${vendor.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
                                     {/* { console.log(vendor.EstimatedBill?._id?.statusOfBill)} */}
-                                    {vendor.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
+                                    {vendor.EstimatedBill?.statusOfBill ? 'Accepted' : 'Bill Not Generated Yet'}
                                 </td>
 
                                 {/* <td className='fw-bolder'>
@@ -268,7 +274,7 @@ function Order() {
                                         <span>No image uploaded</span>
                                     )}
                                 </td> */}
-                                <td>
+                                <td className='fw-bolder'>
                                     {vendor?.beforeWorkVideo?.url ? (
                                         <video
                                             width="200"
@@ -284,7 +290,7 @@ function Order() {
                                     )}
                                 </td>
 
-                                <td>
+                                <td className='fw-bolder'>
                                     {vendor?.afterWorkVideo?.url ? (
                                         <video
                                             width="200"
@@ -299,7 +305,16 @@ function Order() {
                                         <span>No video uploaded</span>
                                     )}
                                 </td>
-                                <td>
+                                <td className='fw-bolder'>
+                                    {vendor?.PaymentStatus === 'paid' ? (
+                                        <button className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" type="button" onClick={() => handleViewPayment(vendor)}>
+                                            View
+                                        </button>
+                                    ) : (
+                                        <span>Service Not Done</span>
+                                    )}
+                                </td>
+                                <td className='fw-bolder'>
                                     <button onClick={() => handleDelete(vendor._id)} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
                                         Delete
                                     </button>
@@ -361,6 +376,56 @@ function Order() {
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Land Mark</td>
                                                     <td>{`${selectedVendor.NearByLandMark}` || "Not Available"}</td>
+                                                </tr>
+
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                    <div className="modal-footer">
+                                        <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {paymentModel && paymentDetail && (
+                        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">
+                            <div className="modal-dialog modal-xl" role="document">
+                                <div className="modal-content">
+                                    <div className="modal-header">
+                                        <h5 className="modal-title" id="exampleModalLabel">Bank Detail</h5>
+                                        <button type="button" className="close" onClick={() => setPaymentModel(false)} aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div className="modal-body">
+
+                                        <table className="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th>Field</th>
+                                                    <th>Information</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Transaction Id</td>
+                                                    <td>{paymentDetail.transactionId || "Not Available"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Payment Method</td>
+                                                    <td>{paymentDetail.paymentMethod || "Not Available"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Total Amount</td>
+                                                    <td>Rs.{paymentDetail.totalAmount || "Not Available"}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td style={{ width: '28%' }}>Vendor Commission Amount</td>
+                                                    <td>Rs.{paymentDetail.vendorCommissionAmount || "Not Available"}</td>
                                                 </tr>
 
                                             </tbody>

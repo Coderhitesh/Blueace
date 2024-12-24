@@ -64,6 +64,7 @@ import AllScript from '../Script/AllScript'
 import AddScript from '../Script/AddScript'
 import EditScript from '../Script/EditScript'
 import AddUser from '../UserDetail/AddUser'
+import AllWithdraw from '../Withdraw/AllWithdraw'
 
 const Home = () => {
     return (
@@ -185,6 +186,10 @@ const Home = () => {
                         <Route path='/all-script' element={<AllScript />} />
                         <Route path='/add-script' element={<AddScript />} />
                         <Route path='/edit-script/:id' element={<EditScript />} />
+
+                        {/* withdraw route here  */}
+                        <Route path='/withdraw/all-withdraw' element={<AllWithdraw />} />
+
 
                     </Routes>
                 </div>

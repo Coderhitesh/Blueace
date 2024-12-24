@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const WithDrawSchema = new mongoose.Schema({
     vendor: {
         type: mongoose.Types.ObjectId,
-        res: 'Vendor'
+        ref: 'Vendor'
     },
     amount: {
         type: Number,
@@ -15,7 +15,7 @@ const WithDrawSchema = new mongoose.Schema({
         enum: ['Pending','Approved','Rejected'],
         required: true
     }
-})
+},{timestamps:true})
 
 const WithDraw = mongoose.model('WithDraw',WithDrawSchema)
 module.exports = WithDraw;

@@ -1816,3 +1816,71 @@ exports.resendVerifyOtp = async (req, res) => {
         })
     }
 }
+
+exports.updateBankDetail = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        const {
+            accountHolderName,
+            bankName,
+            accountNumber,
+            ifscCode,
+            branchName,
+            // panCardNumber
+        } = req.body;
+
+        // Validate input
+        if (!accountHolderName || !bankName || !accountNumber || !ifscCode || !branchName) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required',
+            });
+        }
+
+        // Find the provider
+        const vendor = await Vendor.findById(vendorId);
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'vendor not found',
+            });
+        }
+
+        // Check if bank details already exist
+        if (vendor.bankDetail && Object.keys(vendor.bankDetail).length > 0) {
+            // Update only the provided fields
+            vendor.bankDetail.accountHolderName = accountHolderName;
+            vendor.bankDetail.bankName = bankName;
+            vendor.bankDetail.accountNumber = accountNumber;
+            vendor.bankDetail.ifscCode = ifscCode;
+            vendor.bankDetail.branchName = branchName;
+            // vendor.bankDetail.panCardNumber = panCardNumber;
+        } else {
+            // Create new bank details
+            vendor.bankDetail = {
+                accountHolderName,
+                bankName,
+                accountNumber,
+                ifscCode,
+                branchName,
+                // panCardNumber,
+            };
+        }
+
+        // Save the updated vendor
+        await vendor.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Bank details updated successfully',
+            bankDetail: vendor.bankDetail,
+        });
+    } catch (error) {
+        console.error("Internal server error", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};

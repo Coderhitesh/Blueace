@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-function DashboardContent({ userData, activeOrder, allOrder, completeOrderCount, cancelOrderCount }) {
+function DashboardContent({ userData, activeOrder, allOrder, completeOrderCount, cancelOrderCount, loading }) {
 	const [dashboard, setDashboard] = useState({})
 	const token = sessionStorage.getItem('token');
 	useEffect(() => {
@@ -15,7 +15,7 @@ function DashboardContent({ userData, activeOrder, allOrder, completeOrderCount,
 				headers: { Authorization: `Bearer ${token}` }
 			})
 
-			console.log(data)
+			// console.log(data)
 			setDashboard(data)
 		} catch (error) {
 			console.log(error)
@@ -24,6 +24,9 @@ function DashboardContent({ userData, activeOrder, allOrder, completeOrderCount,
 	useEffect(() => {
 		fetchDashboardData()
 	}, [token])
+	if(loading) {
+		return <div>Loading...</div>
+	}
 
 	return (
 		<>

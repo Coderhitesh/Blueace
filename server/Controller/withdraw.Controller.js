@@ -42,7 +42,7 @@ exports.createWithdrawRequest = async (req, res) => {
 exports.getSingleWithdraw = async (req, res) => {
     try {
         const { id } = req.params;
-        const withdraw = await Withdraw.findById(id)
+        const withdraw = await Withdraw.findById(id).populate('vendor')
         if (!withdraw) {
             return res.status(400).json({
                 success: false,
@@ -67,7 +67,7 @@ exports.getSingleWithdraw = async (req, res) => {
 
 exports.getAllWithdraw = async (req, res) => {
     try {
-        const allWithdraw = await Withdraw.find();
+        const allWithdraw = await Withdraw.find().populate('vendor');
         if (!allWithdraw) {
             return res.status(400).json({
                 success: false,
@@ -94,74 +94,75 @@ exports.updateWithdrawRequest = async (req, res) => {
     try {
         const { id } = req.params;
         const { status, vendorId } = req.body;
-        const withdraw = await Withdraw.findById(id)
+
+        // Fetch withdrawal record
+        const withdraw = await Withdraw.findById(id);
         if (!withdraw) {
-            return res.status(400).json({
-                success: false,
-                message: "Withdrawal not found",
-                error: "Withdrawal not found"
-            })
+            return res.status(400).json({ success: false, message: "Withdrawal not found" });
         }
-        if (!status) {
-            return res.status(400).json({
-                success: false,
-                message: "Status is required",
-                error: "Status is required"
-            })
+
+        // Validate status and vendor ID
+        if (!status || !['Approved', 'Rejected'].includes(status)) {
+            return res.status(400).json({ success: false, message: "Invalid or missing status value" });
         }
         if (!vendorId) {
-            return res.status(400).json({
-                success: false,
-                message: "Vendor ID is required",
-                error: "Vendor ID is required"
-            })
+            return res.status(400).json({ success: false, message: "Vendor ID is required" });
         }
+
+        // Fetch vendor details
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
+            return res.status(400).json({ success: false, message: "Vendor not found" });
+        }
+
+        // Check existing withdrawal status
+        if (['Approved', 'Rejected'].includes(withdraw.status)) {
             return res.status(400).json({
                 success: false,
-                message: "Vendor not found",
-                error: "Vendor not found"
-            })
+                message: `Withdrawal is already ${withdraw.status.toLowerCase()}`,
+            });
         }
+
+        // Handle status updates
         const vendorWallet = vendor?.walletAmount;
         const withdrawAmount = withdraw?.amount;
+
         if (status === 'Approved') {
             if (vendorWallet < withdrawAmount) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Insufficient balance",
-                    error: "Insufficient balance"
-                })
+                return res.status(400).json({ success: false, message: "Insufficient balance" });
             }
+
+            // Approve withdrawal and deduct wallet amount
             withdraw.status = status;
             vendor.walletAmount -= withdrawAmount;
             await withdraw.save();
             await vendor.save();
+
             return res.status(200).json({
                 success: true,
                 message: "Withdrawal approved",
                 data: withdraw
-            })
-        }
-        if (status === 'Rejected') {
+            });
+        } else if (status === 'Rejected') {
+            // Reject withdrawal
             withdraw.status = status;
             await withdraw.save();
+
             return res.status(200).json({
                 success: true,
                 message: "Withdrawal rejected",
                 data: withdraw
-            })
+            });
         }
     } catch (error) {
-        console.log("Internal server error", error)
-        res.status(500).json({
+        console.error("Error in updateWithdrawRequest:", error);
+        return res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
-        })
+        });
     }
-}
+};
 
 exports.deleteWithdrawRequest = async (req, res) => {
     try {
