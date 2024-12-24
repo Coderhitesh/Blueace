@@ -40,13 +40,13 @@ function AllEnquiry() {
         try {
             const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-contact/${id}`);
             if (response.data.success) {
-                toast.success('FAQ deleted successfully!');
+                toast.success('Enquiry deleted successfully!');
                 await fetchFAQData(); // Fetch categories again after deletion
             } else {
-                toast.error('Failed to delete FAQ');
+                toast.error('Failed to delete Enquiry');
             }
         } catch (error) {
-            toast.error('An error occurred while deleting the FAQ.');
+            toast.error('An error occurred while deleting the Enquiry.');
         }
     };
 
