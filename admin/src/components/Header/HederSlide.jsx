@@ -195,6 +195,18 @@ const HederSlide = () => {
                         <i className="fa-solid fa-thumbtack"></i>
                         <Link
                             className="sidebar-link"
+                            to="/commission/all-commission"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All Commission</h6>
+                        </Link>
+                    </li>
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
                             to="/withdraw/all-withdraw"
                            >
                             <svg className="stroke-icon">

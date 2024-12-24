@@ -311,7 +311,7 @@ router.post('/create-withdraw-request',createWithdrawRequest)
 router.get('/get-all-withdraw-request',getAllWithdraw)
 router.get('/get-single-withdraw-request/:id',getSingleWithdraw)
 router.put('/update-withdraw-status/:id',updateWithdrawRequest)
-router.delete('/delete-withdraw-request/:id',deleteWithdrawRequest)
+router.delete('/delete-withdraw-request/:withdrawId',deleteWithdrawRequest)
 router.get('/get-withdraw-request-by-vendorId/:vendorId',getWithdrawByVendorId)
 
 

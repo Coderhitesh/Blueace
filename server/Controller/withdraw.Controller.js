@@ -167,6 +167,7 @@ exports.updateWithdrawRequest = async (req, res) => {
 exports.deleteWithdrawRequest = async (req, res) => {
     try {
         const withdrawId = req.params.withdrawId;
+        console.log("withdrawId",withdrawId)
         const deleteWithdraw = await Withdraw.findByIdAndDelete(withdrawId);
         if (!deleteWithdraw) {
             return res.status(404).json({

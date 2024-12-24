@@ -65,6 +65,9 @@ import AddScript from '../Script/AddScript'
 import EditScript from '../Script/EditScript'
 import AddUser from '../UserDetail/AddUser'
 import AllWithdraw from '../Withdraw/AllWithdraw'
+import AddCommission from '../Commission/AddCommission'
+import AllCommission from '../Commission/AllCommission'
+import EditCommission from '../Commission/EditCommission'
 
 const Home = () => {
     return (
@@ -189,6 +192,11 @@ const Home = () => {
 
                         {/* withdraw route here  */}
                         <Route path='/withdraw/all-withdraw' element={<AllWithdraw />} />
+
+                        {/* commission route here  */}
+                        <Route path='/commission/all-commission' element={<AllCommission />} />
+                        <Route path='/commission/add-commission' element={<AddCommission />} />
+                        <Route path='/commission/edit-commission/:id' element={<EditCommission />} />
 
 
                     </Routes>

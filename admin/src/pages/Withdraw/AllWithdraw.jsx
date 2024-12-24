@@ -16,6 +16,7 @@ function AllWithdraw() {
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
   const [selectedVendor, setSelectedVendor] = useState(null); // 
 
+
   const productsPerPage = 10;
 
   const fetchVendorDetail = async () => {
@@ -80,16 +81,21 @@ function AllWithdraw() {
 
   // Delete vendor
   const handleDelete = async (id) => {
+    setLoading(true)
     try {
       const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-withdraw-request/${id}`);
       if (response.data.success) {
         toast.success('Withdraw Request deleted successfully.');
         fetchVendorDetail();
+        setLoading(false)
       } else {
         toast.error('Failed to delete withdraw request.');
       }
     } catch (error) {
       toast.error('Error deleting the withdraw request.');
+      console.log("Internal server error",error)
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -173,7 +179,7 @@ function AllWithdraw() {
                   </select>
                 </td>
                 <td>
-                  <button className="btn btn-danger" onClick={() => handleDelete(vendor._id)}>Delete</button>
+                  <button className="btn btn-danger" disabled={loading} onClick={() => handleDelete(vendor._id)}>{loading ? 'Deleting..':'Delete'}</button>
                 </td>
                 <td>{new Date(vendor.createdAt).toLocaleString()}</td>
               </tr>
