@@ -188,3 +188,29 @@ exports.deleteWithdrawRequest = async (req, res) => {
         })
     }
 }
+
+exports.getWithdrawByVendorId = async (req, res) => {
+    try {
+        const { vendorId } = req.params;
+        const withdraw = await Withdraw.find({ vendor: vendorId }).populate('vendor');
+        if (!withdraw) {
+            return res.status(404).json({
+                success: false,
+                message: "Withdrawal not found",
+                error: "Withdrawal not found"
+            })
+        }
+        res.status(200).json({
+            success: true,
+            message: "Withdrawal found",
+            data: withdraw
+        })
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}

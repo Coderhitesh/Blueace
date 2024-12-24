@@ -1,308 +1,208 @@
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
-function Wallet() {
-	useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		})
-	}, [])
+function Wallet({userData}) {
+  const [allWithdraw, setAllWithDraw] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const userId = userData?._id;
 
-	const [allWithdraw, setAllWithDraw] = useState([])
-	const handleWalletFetch = async () => {
-		try {
-			const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-withdraw-request')
-			const allData = data.data;
-			setAllWithDraw(allData.reverse())
-		} catch (error) {
-			console.log("Internal server error", error)
-		}
-	}
+  const handleWalletFetch = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-withdraw-request-by-vendorId/${userId}`);
+      if (response.data?.data && Array.isArray(response.data.data)) {
+        setAllWithDraw(response.data.data.reverse());
+      } else {
+        setAllWithDraw([]);
+      }
+    } catch (error) {
+      console.error("Error fetching wallet data:", error);
+      toast.error("Failed to load withdrawal requests");
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
-	useEffect(() => {
-		handleWalletFetch()
-	},[])
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    handleWalletFetch();
+  }, []);
 
-	// console.log("allWithdraw",allWithdraw)
+  const getStatusBadgeClass = (status) => {
+    switch (status.toLowerCase()) {
+      case 'pending':
+        return 'bg-warning';
+      case 'approved':
+        return 'bg-success';
+      case 'rejected':
+        return 'bg-danger';
+      default:
+        return 'bg-secondary';
+    }
+  };
 
-	return (
-		<>
-			<div class="goodup-dashboard-content">
-				<div class="dashboard-tlbar d-block mb-5">
-					<div class="row">
-						<div class="colxl-12 col-lg-12 col-md-12">
-							<h1 class="ft-medium">Wallet</h1>
-							<nav aria-label="breadcrumb">
-								<ol class="breadcrumb">
-									<li class="breadcrumb-item text-muted"><a href="/">Home</a></li>
-									<li class="breadcrumb-item text-muted"><a>Dashboard</a></li>
-									<li class="breadcrumb-item"><a class="theme-cl">Wallet</a></li>
-								</ol>
-							</nav>
-						</div>
-					</div>
-				</div>
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
 
-				<div class="dashboard-widg-bar d-block">
-					{/* <div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12 mb-3">
-								<div class="alert bg-inverse text-light d-flex align-items-center" role="alert">
-									<p class="p-0 m-0 ft-medium full-width">Your listing <a href="#" class="text-success">Wedding Willa Resort</a> has been approved!</p>
-									<button type="button" class="btn-close text-light" data-bs-dismiss="alert" aria-label="Close"></button>
-								</div>
-							</div>
-						</div> */}
-					<div class="row">
-						<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-							<div class="dsd-boxed-widget py-5 px-4 bg-danger rounded">
-								<h2 class="ft-medium mb-1 fs-xl text-light">$<span class="count">12500</span></h2>
-								<p class="p-0 m-0 text-light fs-md">Withdrawable Balance</p>
-								<i class="fas fa-credit-card"></i>
-							</div>
-						</div>
-						<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-							<div class="dsd-boxed-widget py-5 px-4 bg-success rounded">
-								<h2 class="ft-medium mb-1 fs-xl text-light">$<span class="count">18000</span></h2>
-								<p class="p-0 m-0 text-light fs-md">Total Earnings</p>
-								<i class="fas fa-wallet"></i>
-							</div>
-						</div>
-						<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-							<div class="dsd-boxed-widget py-5 px-4 bg-warning rounded">
-								<h2 class="ft-medium mb-1 fs-xl text-light count">312</h2>
-								<p class="p-0 m-0 text-light fs-md">Total Reviews</p>
-								<i class="lni lni-comments"></i>
-							</div>
-						</div>
-						<div class="col-xl-3 col-lg-3 col-md-6 col-sm-6">
-							<div class="dsd-boxed-widget py-5 px-4 bg-purple rounded">
-								<h2 class="ft-medium mb-1 fs-xl text-light count">616</h2>
-								<p class="p-0 m-0 text-light fs-md">Total Order</p>
-								<i class="fas fa-shopping-basket"></i>
-							</div>
-						</div>
-					</div>
+  return (
+    <div className="container-fluid py-4">
+      {/* Header */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <h2 className="mb-2">Wallet Dashboard</h2>
+          <nav aria-label="breadcrumb">
+            <ol className="breadcrumb">
+              <li className="breadcrumb-item"><a href="/">Home</a></li>
+              <li className="breadcrumb-item">Dashboard</li>
+              <li className="breadcrumb-item active">Wallet</li>
+            </ol>
+          </nav>
+        </div>
+      </div>
 
-					{/* <!-- row --> */}
-					<div class="row">
+      {/* Statistics Cards */}
+      <div className="row g-3 mb-4">
+        <div className="col-sm-6 col-xl-3">
+          <div className="card bg-primary text-white h-100">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <div className="flex-grow-1">
+                  <h4 className="mb-1">₹12,500</h4>
+                  <p className="mb-0">Withdrawable Balance</p>
+                </div>
+                <div className="ms-3">
+                  <i className="fas fa-wallet fa-2x opacity-75"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-sm-6 col-xl-3">
+          <div className="card bg-success text-white h-100">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <div className="flex-grow-1">
+                  <h4 className="mb-1">₹18,000</h4>
+                  <p className="mb-0">Total Earnings</p>
+                </div>
+                <div className="ms-3">
+                  <i className="fas fa-money-bill-wave fa-2x opacity-75"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-sm-6 col-xl-3">
+          <div className="card bg-info text-white h-100">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <div className="flex-grow-1">
+                  <h4 className="mb-1">312</h4>
+                  <p className="mb-0">Total Reviews</p>
+                </div>
+                <div className="ms-3">
+                  <i className="fas fa-star fa-2x opacity-75"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="col-sm-6 col-xl-3">
+          <div className="card bg-warning text-white h-100">
+            <div className="card-body">
+              <div className="d-flex align-items-center">
+                <div className="flex-grow-1">
+                  <h4 className="mb-1">616</h4>
+                  <p className="mb-0">Total Orders</p>
+                </div>
+                <div className="ms-3">
+                  <i className="fas fa-shopping-cart fa-2x opacity-75"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-						{/* <!-- Area Chart --> */}
-						<div class="col-md-8 col-sm-12">
-							<div class="dash-card">
-								<div class="dash-card-header">
-									<h4 class="mb-0">View Chart</h4>
-								</div>
-								<div class="dash-card-body">
-									<div class="chart" id="revenue-chart" style={{ height: '365px' }}></div>
-								</div>
-							</div>
-						</div>
-
-						{/* <!-- Donut Chart --> */}
-						<div class="col-md-4 col-sm-12">
-							<div class="dash-card">
-								<div class="dash-card-header">
-									<h4>Followers</h4>
-								</div>
-								<div class="ground-list ground-hover-list">
-									<div class="ground ground-list-single">
-										<a href="#">
-											<img class="ground-avatar" src="assets/img/t-1.png" alt="..." />
-											<span class="profile-status bg-online pull-right"></span>
-										</a>
-
-										<div class="ground-content">
-											<h6><a href="#">Maryam Amiri</a></h6>
-											<small class="text-fade"><i class="fas fa-map-marker-alt me-1"></i>New York, USA</small>
-										</div>
-									</div>
-
-									<div class="ground ground-list-single">
-										<a href="#">
-											<img class="ground-avatar" src="assets/img/t-2.png" alt="..." />
-											<span class="profile-status bg-offline pull-right"></span>
-										</a>
-
-										<div class="ground-content">
-											<h6><a href="#">Maryam Amiri</a></h6>
-											<small class="text-fade"><i class="fas fa-map-marker-alt me-1"></i>Canada, USA</small>
-										</div>
-									</div>
-
-									<div class="ground ground-list-single">
-										<a href="#">
-											<img class="ground-avatar" src="assets/img/t-3.png" alt="..." />
-											<span class="profile-status bg-working pull-right"></span>
-										</a>
-
-										<div class="ground-content">
-											<h6><a href="#">Maryam Amiri</a></h6>
-											<small class="text-fade"><i class="fas fa-map-marker-alt me-1"></i>Denver, USA</small>
-										</div>
-									</div>
-
-									<div class="ground ground-list-single">
-										<a href="#">
-											<img class="ground-avatar" src="assets/img/t-4.png" alt="..." />
-											<span class="profile-status bg-busy pull-right"></span>
-										</a>
-
-										<div class="ground-content">
-											<h6><a href="#">Maryam Amiri</a></h6>
-											<small class="text-fade"><i class="fas fa-map-marker-alt me-1"></i>Liverpool, UK</small>
-										</div>
-									</div>
-
-									<div class="ground ground-list-single">
-										<a href="#">
-											<img class="ground-avatar" src="assets/img/t-5.png" alt="..." />
-											<span class="profile-status bg-online pull-right"></span>
-										</a>
-
-										<div class="ground-content">
-											<h6><a href="#">Maryam Amiri</a></h6>
-											<small class="text-fade"><i class="fas fa-map-marker-alt me-1"></i>California</small>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-					</div>
-					{/* <!-- /.row --> */}
-
-					<div class="row">
-						<div class="col-lg-6 col-md-12">
-							<div class="goodup-dashboard-grouping-list with-icons">
-								<h4>Recent Activities</h4>
-								<ul>
-									<li>
-										<i class="dsd-icon-uiyo ti-layers text-purple bg-light-purple"></i> Your listing <strong><a href="#">Hotel The Lalit</a></strong> has been approved!
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-
-									<li>
-										<i class="dsd-icon-uiyo ti-star text-success bg-light-success"></i> Christopher K. Allen left a review <div class="grping-list-rates high" data-rating="5.0"></div> on <strong><a href="#">Bluchee Burger</a></strong>
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-
-									<li>
-										<i class="dsd-icon-uiyo ti-heart text-warning bg-light-warning"></i> Someone bookmarked your <strong><a href="#">Snow Valley House</a></strong> listing!
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-
-									<li>
-										<i class="dsd-icon-uiyo ti-star text-info bg-light-info"></i> Jesus A. Rhodes left a review <div class="grping-list-rates mid" data-rating="3.8"></div> on <strong><a href="#">Sonal Cafe</a></strong>
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-
-									<li>
-										<i class="dsd-icon-uiyo ti-heart text-danger bg-light-danger"></i> Someone bookmarked your <strong><a href="#">Blue Bear Bar</a></strong> listing!
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-
-									<li>
-										<i class="dsd-icon-uiyo ti-star text-success bg-light-success"></i> Michael H. Bright left a review <div class="grping-list-rates high" data-rating="4.7"></div> on <strong><a href="#">Lucky Dhaba</a></strong>
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-
-									<li>
-										<i class="dsd-icon-uiyo ti-star text-purple bg-light-purple"></i> Arnold A. Lynn left a review <div class="grping-list-rates low" data-rating="2.8"></div> on <strong><a href="#">Madhu Sweet House</a></strong>
-										<a href="#" class="close-list-item"><i class="fa fa-close"></i></a>
-									</li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="col-lg-6 col-md-12">
-							<div class="goodup-dashboard-grouping-list invoices with-icons">
-								<h4>Invoices</h4>
-								<ul>
-
-									<li><i class="dsd-icon-uiyo ti-files text-warning bg-light-warning"></i>
-										<strong>Starter Plan</strong>
-										<ul>
-											<li class="unpaid">Unpaid</li>
-											<li>Order: #LS5410</li>
-											<li>Date: 16 Sep 2022</li>
-										</ul>
-										<div class="buttons-to-right">
-											<a href="javascript:void(0);" class="button gray">View Invoice</a>
-										</div>
-									</li>
-
-									<li><i class="dsd-icon-uiyo ti-files text-success bg-light-success"></i>
-										<strong>Basic Plan</strong>
-										<ul>
-											<li class="paid">Paid</li>
-											<li>Order: #LS5487</li>
-											<li>Date: 19 Aug 2022</li>
-										</ul>
-										<div class="buttons-to-right">
-											<a href="javascript:void(0);" class="button gray">View Invoice</a>
-										</div>
-									</li>
-
-									<li><i class="dsd-icon-uiyo ti-files text-danger bg-light-danger"></i>
-										<strong>Extended Plan</strong>
-										<ul>
-											<li class="pending">Pending</li>
-											<li>Order: #LS6413</li>
-											<li>Date: 07 Jul 2022</li>
-										</ul>
-										<div class="buttons-to-right">
-											<a href="javascript:void(0);" class="button gray">View Invoice</a>
-										</div>
-									</li>
-
-									<li><i class="dsd-icon-uiyo ti-files text-success bg-light-success"></i>
-										<strong>Platinum Plan</strong>
-										<ul>
-											<li class="cancel">Cancel</li>
-											<li>Order: #LS6100</li>
-											<li>Date: 15 Jun 2022</li>
-										</ul>
-										<div class="buttons-to-right">
-											<a href="javascript:void(0);" class="button gray">View Invoice</a>
-										</div>
-									</li>
-
-									<li><i class="dsd-icon-uiyo ti-files text-warning bg-light-warning"></i>
-										<strong>Extended Plan</strong>
-										<ul>
-											<li class="paid">Paid</li>
-											<li>Order: #LS6257</li>
-											<li>Date: 14 05 May 2022</li>
-										</ul>
-										<div class="buttons-to-right">
-											<a href="javascript:void(0);" class="button gray">View Invoice</a>
-										</div>
-									</li>
-
-									<li><i class="dsd-icon-uiyo ti-files text-info bg-light-info"></i>
-										<strong>Platinum Plan</strong>
-										<ul>
-											<li class="unpaid">Unpaid</li>
-											<li>Order: #LS6548</li>
-											<li>Date: 10 May 2022</li>
-										</ul>
-										<div class="buttons-to-right">
-											<a href="javascript:void(0);" class="button gray">View Invoice</a>
-										</div>
-									</li>
-
-								</ul>
-							</div>
-						</div>
-					</div>
-
-				</div>
-
-			</div>
-		</>
-	)
+      {/* Withdrawal Requests Table */}
+      <div className="card shadow-sm">
+        <div className="card-header bg-white py-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <h5 className="mb-0">
+              <i className="fas fa-history me-2"></i>
+              Withdrawal Requests
+            </h5>
+            <button className="btn btn-primary">
+              <i className="fas fa-plus me-2"></i>
+              New Request
+            </button>
+          </div>
+        </div>
+        <div className="card-body">
+          {loading ? (
+            <div className="text-center py-5">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          ) : allWithdraw.length > 0 ? (
+            <div className="table-responsive">
+              <table className="table table-hover">
+                <thead className="table-light">
+                  <tr>
+                    <th>Request ID</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Vendor ID</th>
+                    <th>Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allWithdraw.map((request,index) => (
+                    <tr key={request._id}>
+                      <td>
+                        <span className="fw-medium">#{request._id.slice(-8)}</span>
+                      </td>
+                      <td>
+                        <span className="fw-bold">₹{request.amount.toLocaleString()}</span>
+                      </td>
+                      <td>
+                        <span className={`badge ${getStatusBadgeClass(request.status)}`}>
+                          {request.status}
+                        </span>
+                      </td>
+                      <td>
+                        <small className="text-muted">{request.vendor}</small>
+                      </td>
+                      <td>
+                        {request.createdAt ? formatDate(request.createdAt) : 'N/A'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-5">
+              <i className="fas fa-inbox fa-3x text-muted mb-3"></i>
+              <h5>No withdrawal requests found</h5>
+              <p className="text-muted">Your withdrawal history will appear here</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-export default Wallet
+export default Wallet;

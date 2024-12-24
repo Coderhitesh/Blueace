@@ -27,7 +27,7 @@ const { createScript, getSingleScript, updateScript, getAllScript, deleteScript 
 const { getCurrentLocationByLatLng, getLatLngByAddress, AutoCompleteAddress } = require('../Controller/Location.Controller')
 const { createTerm, getAllTerm, getSingleTerm, deleteTerm, updateTerm } = require('../Controller/Term.Controller')
 const { createCommission, getAllCommission, getSingleCommission, updateCommission, deleteCommission } = require('../Controller/Commission.Controller')
-const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdrawRequest, deleteWithdrawRequest } = require('../Controller/withdraw.Controller')
+const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdrawRequest, deleteWithdrawRequest, getWithdrawByVendorId } = require('../Controller/withdraw.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -310,6 +310,7 @@ router.get('/get-all-withdraw-request',getAllWithdraw)
 router.get('/get-single-withdraw-request/:id',getSingleWithdraw)
 router.put('/update-withdraw-status/:id',updateWithdrawRequest)
 router.delete('/delete-withdraw-request/:id',deleteWithdrawRequest)
+router.get('/get-withdraw-request-by-vendorId/:vendorId',getWithdrawByVendorId)
 
 
 module.exports = router;
