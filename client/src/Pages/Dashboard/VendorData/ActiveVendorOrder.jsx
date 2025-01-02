@@ -167,6 +167,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Number</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Address</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>LandMark</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Date</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Voice Note</th>
@@ -199,6 +200,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                         <td>{order?.phoneNumber || order?.userId?.ContactNumber || "User is not available"}</td>
                                                         <td>{`${order?.houseNo}, ${order?.address}, ${order?.pinCode}` || "User is not available"}</td>
                                                         <td>{order?.nearByLandMark || "User is not available"}</td>
+                                                        <td>{new Date(order?.workingDate).toLocaleDateString() || "Date is not available"}</td>
                                                         <td>{order?.workingDay || "User is not available"}</td>
                                                         <td>{order?.workingTime || "User is not available"}</td>
                                                         <td>

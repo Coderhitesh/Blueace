@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios'
 
 function UserActiveOrder({ userData, activeOrder }) {
-    console.log("userData",userData)
+    // console.log("userData", userData)
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 3;
@@ -16,55 +16,68 @@ function UserActiveOrder({ userData, activeOrder }) {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // Dynamically load the Razorpay script
-    const loadRazorpayScript = () => {
-        return new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
-    };
+    // const loadRazorpayScript = () => {
+    //     return new Promise((resolve) => {
+    //         const script = document.createElement('script');
+    //         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    //         script.onload = () => resolve(true);
+    //         script.onerror = () => resolve(false);
+    //         document.body.appendChild(script);
+    //     });
+    // };
 
     const handlePayment = async (orderId, totalAmount) => {
         try {
-            const scriptLoaded = await loadRazorpayScript();
-            if (!scriptLoaded) {
-                alert('Failed to load Razorpay SDK. Please check your connection.');
-                return;
+            const checkoutResponse = await axios.post(
+                `https://www.api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`,
+                { totalAmount: totalAmount },
+                // {
+                //     headers: {
+                //         Authorization: `Bearer ${userToken}`,
+                //     },
+                // }
+            );
+
+            if (checkoutResponse.data.success) {
+
+                window.location.href = checkoutResponse.data.url;
+            } else {
+                console.error('Error initiating payment:', checkoutResponse.data.msg);
             }
-            const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`, {
-                totalAmount: totalAmount
-            })
-
-            const order = res.data.data.razorpayOrder;
-            // if(!order){
-
+            // const scriptLoaded = await loadRazorpayScript();
+            // if (!scriptLoaded) {
+            //     alert('Failed to load Razorpay SDK. Please check your connection.');
+            //     return;
             // }
+            // const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`, {
+            //     totalAmount: totalAmount
+            // })
 
-            if (order) {
-                const options = {
-                    key: 'rzp_test_cz0vBQnDwFMthJ',
-                    amount: totalAmount * 100,
-                    currency: 'INR',
-                    name: 'Blueace',
-                    description: 'Purchase Membership Plan',
-                    order_id: order?.id || '',
-                    callback_url: "https://www.api.blueaceindia.com/api/v1/verify-bill-payment",
-                    prefill: {
-                        name: userData?.name, // Prefill customer data
-                        email: userData?.email,
-                        contact: userData?.PhoneNumber
-                    },
-                    theme: {
-                        color: '#F37254'
-                    },
-                };
+            // const order = res.data.data.razorpayOrder;
 
-                const rzp = new window.Razorpay(options);
+            // if (order) {
+            //     const options = {
+            //         key: 'rzp_test_cz0vBQnDwFMthJ',
+            //         amount: totalAmount * 100,
+            //         currency: 'INR',
+            //         name: 'Blueace',
+            //         description: 'Purchase Membership Plan',
+            //         order_id: order?.id || '',
+            //         callback_url: "https://www.api.blueaceindia.com/api/v1/verify-bill-payment",
+            //         prefill: {
+            //             name: userData?.name, // Prefill customer data
+            //             email: userData?.email,
+            //             contact: userData?.PhoneNumber
+            //         },
+            //         theme: {
+            //             color: '#F37254'
+            //         },
+            //     };
 
-                rzp.open();
-            }
+            //     const rzp = new window.Razorpay(options);
+
+            //     rzp.open();
+            // }
         } catch (error) {
             console.log('Internal server error in paying bill', error);
         }
@@ -111,6 +124,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Email</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Number</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Allowted Member</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Date</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
@@ -141,6 +155,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.ContactNumber || "Vendor is not allowted"}</td>
                                                         <td>{order.AllowtedVendorMember || 'No Member Allowted'}</td>
+                                                        <td>{new Date(order?.workingDate).toLocaleDateString() || 'Date is not Allowted'}</td>
                                                         <td>{order.workingDay || 'Vendor is not Allowted'}</td>
                                                         <td>{order.workingTime || 'Vendor is not Allowted'}</td>
                                                         <td>{order.OrderStatus}</td>
@@ -197,7 +212,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                                     style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
                                                                     className='btn btn-sm theme-bg text-light rounded ft-medium'
                                                                     disabled={order.PaymentStatus === 'paid'}
-                                                                    onClick={()=>handlePayment(order?._id,order?.EstimatedBill?.EstimatedTotalPrice)}
+                                                                    onClick={() => handlePayment(order?._id, order?.EstimatedBill?.EstimatedTotalPrice)}
                                                                 >
                                                                     Pay
                                                                 </button></td>

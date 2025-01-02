@@ -200,7 +200,7 @@ router.put('/update-membership-plan/:_id', updateMemberShipPlan)
 
 //Paymnet gateway routes
 router.post('/member-ship-plan/:vendorId', memberShipPlanGateWay);
-router.post('/payment-verify', PaymentVerify)
+router.post('/payment-verify/:transactionId', PaymentVerify)
 
 // Order routers
 
@@ -221,7 +221,7 @@ router.put('/update-allot-vendor-member/:_id',AllowtVendorMember)
 
 //for fetching vendor for order
 router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
-router.post('/assign-Vendor/:orderId/:Vendorid/:type/:workingDay/:workingTime', AssignVendor)
+router.post('/assign-Vendor/:orderId/:Vendorid/:type/:workingDay/:workingTime/:workingDate', AssignVendor)
 router.put('/update-vendor-order-request/:orderId',AcceptOrderRequest)
 
 // for blog routes 
@@ -303,7 +303,8 @@ router.delete('/delete-commission/:id',deleteCommission)
 // pament of bill route 
 
 router.post('/create-bill-payment/:orderId',makeOrderPayment)
-router.post('/verify-bill-payment',verifyOrderPayment)
+// router.post('/verify-bill-payment',verifyOrderPayment)
+router.post('/status-payment/:transactionId',  verifyOrderPayment);
 
 // withdraw router here 
 

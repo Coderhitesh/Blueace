@@ -199,7 +199,7 @@ function AddServiceCategory() {
                             name='name'
                             value={formData.name}
                             onChange={handleChange}
-                            required={true}
+                            // required={true}
                         />
                     </div>
 

@@ -176,6 +176,9 @@ const OrderSchema = new mongoose.Schema({
     VendorAllotedBoolean:{
         type:Boolean,
         default:false
+    },
+    workingDate: {
+        type: Date
     }
 }, { timestamps: true })
 

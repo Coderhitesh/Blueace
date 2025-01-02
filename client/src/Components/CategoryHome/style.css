@@ -1,0 +1,33 @@
+.hbs-box{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.hbs-inner-box{
+    width: 19%;
+}
+.services-box-title{
+    color:#111;
+
+}
+
+@media (max-width:1024px) {
+    .hbs-inner-box{
+        width: 18%;
+    }
+}
+
+@media (max-width:770px) {
+    .hbs-inner-box{
+        width: 30%;
+    }
+}
+
+@media (max-width:508px) {
+    .hbs-inner-box{
+        width: 48%;
+    }
+}

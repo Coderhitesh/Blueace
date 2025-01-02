@@ -12,6 +12,8 @@ const crypto = require('crypto')
 const Razorpay = require('razorpay');
 const Commission = require('../Model/Commission.Model');
 const axios = require('axios')
+const merchantId = process.env.PHONEPAY_MERCHANT_ID
+const apiKey = process.env.PHONEPAY_API_KEY
 
 const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,   // Razorpay Key ID
@@ -480,6 +482,7 @@ exports.fetchVendorByLocation = async (req, res) => {
                 totalPages,
                 preSelectedDay: findOrder.workingDay,
                 preSelectedTime: findOrder.workingTime,
+                preSelectedDate: findOrder.workingDate,
                 data: filterWithActive,
                 message: 'Vendors fetched successfully',
             });
@@ -515,6 +518,7 @@ exports.fetchVendorByLocation = async (req, res) => {
             limit: parseInt(limit),
             preSelectedDay: findOrder.workingDay,
             preSelectedTime: findOrder.workingTime,
+            preSelectedDate: findOrder.workingDate,
             totalPages,
             data: filterVendorForUser,
             message: 'Vendors fetched successfully',
@@ -530,8 +534,8 @@ exports.fetchVendorByLocation = async (req, res) => {
 
 exports.AssignVendor = async (req, res) => {
     try {
-        const { orderId, Vendorid, type, workingDay, workingTime } = req.params;
-
+        const { orderId, Vendorid, type, workingDay, workingTime, workingDate } = req.params;
+        // console.log("workingDate",workingDate)
         // Validate required parameters
         if (!orderId || !Vendorid) {
             return res.status(404).json({
@@ -568,10 +572,27 @@ exports.AssignVendor = async (req, res) => {
             OrderStatus: { $nin: ['Service Done', 'Cancelled'] }
         });
 
-        // Check if the vendor is busy on the given workingDay and workingTime
-        const isVendorBusy = activeOrders.some(
-            (activeOrder) => activeOrder.workingDay === workingDay && activeOrder.workingTime === workingTime
-        );
+        // console.log("workingDate", workingDate)
+
+        // Function to normalize the date (remove time)
+        const normalizeDate = (dateString) => {
+            const date = new Date(dateString);
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        };
+
+        // Check if the vendor is busy on the given workingDay, workingTime, and workingDate
+        const isVendorBusy = activeOrders.some((activeOrder) => {
+            const activeDate = normalizeDate(activeOrder.workingDate);
+            const newDate = normalizeDate(workingDate);
+
+            return (
+                activeDate.getTime() === newDate.getTime() &&
+                activeOrder.workingDay === workingDay &&
+                activeOrder.workingTime === workingTime
+            );
+        });
+
+        // console.log("isVendorBusy", isVendorBusy)
 
         if (isVendorBusy) {
             return res.status(404).json({
@@ -596,6 +617,7 @@ exports.AssignVendor = async (req, res) => {
         order.VendorAllotedStatus = "Send Request";
         order.workingDay = workingDay;
         order.workingTime = workingTime;
+        order.workingDate = workingDate;
         order.VendorAllotedBoolean = true;
 
         // Construct the full address
@@ -605,6 +627,7 @@ exports.AssignVendor = async (req, res) => {
         const vendorMessage = `You have been assigned a new task for ${serviceName}. The service is scheduled for ${workingDay} at ${workingTime}. The address is: ${fullAddress}. Please confirm and accept the task.`;
 
         // await sendSMS(vendorNumber, vendorMessage); // Send SMS to the vendor's phone number (make sure you have Vendor's contact)
+        // console.log("order", order)
 
         // Save the updated order
         await order.save();
@@ -945,7 +968,6 @@ exports.AllowtVendorMember = async (req, res) => {
 
 exports.makeOrderPayment = async (req, res) => {
     try {
-        // console.log("totalamount",req.body)
         const { orderId } = req.params;
         const { totalAmount } = req.body;
         // console.log("orderId",orderId)
@@ -974,35 +996,56 @@ exports.makeOrderPayment = async (req, res) => {
 
         // Ensure amount is converted to an integer (in paise)
         const integerAmount = Math.floor(totalAmount);
-        // console.log("integerAmount",integerAmount)
 
+        const transactionId = crypto.randomBytes(9).toString('hex');
+        const merchantUserId = crypto.randomBytes(12).toString('hex');
 
-        const razorpayOptions = {
-            amount: integerAmount * 100 || 5000000,
-            currency: 'INR',
-            payment_capture: 1,
+        const data = {
+            merchantId: merchantId,
+            merchantTransactionId: transactionId,
+            merchantUserId,
+            name: "User",
+            amount: integerAmount * 100,
+            redirectUrl: `https://www.api.blueaceindia.com/api/v1/status-payment/${transactionId}}`,
+            redirectMode: 'POST',
+            paymentInstrument: {
+                type: 'PAY_PAGE'
+            }
         };
 
-        const razorpayOrder = await razorpayInstance.orders.create(razorpayOptions);
-
-        if (!razorpayOrder) {
-            return res.status(500).json({
-                success: false,
-                message: 'Error in creating Razorpay order',
-                error: 'Error in creating Razorpay order'
-            })
-        }
-
-        order.razorpayOrderId = razorpayOrder.id;
-        await order.save()
-        res.status(200).json({
-            success: true,
-            message: 'Order created successfully',
+        const payload = JSON.stringify(data);
+        const payloadMain = Buffer.from(payload).toString('base64');
+        const keyIndex = 1;
+        const string = payloadMain + '/pg/v1/pay' + apiKey;
+        const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+        const checksum = sha256 + '###' + keyIndex;
+        const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+        const options = {
+            method: 'POST',
+            url: prod_URL,
+            headers: {
+                accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-VERIFY': checksum
+            },
             data: {
-                order,
-                razorpayOrder,
+                request: payloadMain
             }
+        };
+
+        const response = await axios.request(options);
+        // console.log("i am response id ", response?.data?.data?.merchantTransactionId);
+        const updateOrder = await Order.findById(orderId)
+        if (updateOrder) {
+            updateOrder.razorpayOrderId = response?.data?.data?.merchantTransactionId
+            await updateOrder.save()
+        }
+        res.status(201).json({
+            success: true,
+            url: response.data.data.instrumentResponse.redirectInfo.url
         })
+
+
 
     } catch (error) {
         console.log('Internal server error', error)
@@ -1015,105 +1058,89 @@ exports.makeOrderPayment = async (req, res) => {
 }
 
 exports.verifyOrderPayment = async (req, res) => {
+    const { transactionId: merchantTransactionId } = req.body;
+
+    if (!merchantTransactionId) {
+        return res.status(400).json({ success: false, message: "Merchant transaction ID not provided" });
+    }
+
     try {
-        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+        const merchantIdD = merchantId; // Ensure merchantId is defined
+        const keyIndex = 1;
+        const string = `/pg/v1/status/${merchantIdD}/${merchantTransactionId}` + apiKey;
+        const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+        const checksum = sha256 + "###" + keyIndex;
+        const testUrlCheck = "https://api.phonepe.com/apis/hermes/pg/v1";
 
-        // Validate input
-        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid request',
-            });
-        }
-
-        // Generate the signature
-        const generatedSignature = crypto
-            .createHmac('SHA256', process.env.RAZORPAY_KEY_SECRET)
-            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-            .digest('hex');
-
-        if (generatedSignature !== razorpay_signature) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid signature',
-            });
-        }
-
-        // Fetch payment details
-        const paymentDetails = await axios.get(
-            `https://api.razorpay.com/v1/payments/${razorpay_payment_id}`,
-            {
-                auth: {
-                    username: process.env.RAZORPAY_KEY_ID,
-                    password: process.env.RAZORPAY_KEY_SECRET,
-                },
+        const options = {
+            method: 'GET',
+            url: `${testUrlCheck}/status/${merchantId}/${merchantTransactionId}`,
+            headers: {
+                accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-VERIFY': checksum,
+                'X-MERCHANT-ID': `${merchantId}`
             }
-        );
+        };
 
-        const { method, status, bank, wallet, card_id, amount } = paymentDetails.data;
+        const { data } = await axios.request(options);
 
-        // If payment is not successful, handle failure
-        if (status !== 'captured') {
-            return res.redirect(
-                `http://localhost:5174/vendors/payment-failure?error=Payment failed via ${method || 'unknown method'}`
-            );
+        console.log("data", data);
+
+        if (data.status === "success") {
+            // Fetch payment details
+            const { amount, paymentInstrument, transactionId } = data?.data?.transaction || {};
+            const method = paymentInstrument?.method || 'unknown';
+
+            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId });
+            if (!findOrder) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Order not found.',
+                });
+            }
+
+            const vendor = findOrder?.vendorAlloted;
+            const vendorRole = findOrder?.vendorAlloted?.Role;
+
+            // Fetch commission details
+            const allCommission = await Commission.find();
+            const employeeCommission = allCommission.find((item) => item.name === 'Employee');
+            const vendorCommission = allCommission.find((item) => item.name === 'Vendor');
+
+            let commissionPercent = 0;
+            if (vendorRole === 'vendor') {
+                commissionPercent = vendorCommission ? parseFloat(vendorCommission.percent) : 0;
+            } else if (vendorRole === 'employ') {
+                commissionPercent = employeeCommission ? parseFloat(employeeCommission.percent) : 0;
+            }
+
+            // Calculate commission amounts
+            const totalAmount = amount / 100; // Convert to actual amount from paise
+            const vendorCommissionAmount = (commissionPercent / 100) * totalAmount;
+            const adminCommissionAmount = totalAmount - vendorCommissionAmount;
+
+            // Update the order
+            findOrder.totalAmount = totalAmount;
+            findOrder.commissionPercent = commissionPercent;
+            findOrder.vendorCommissionAmount = vendorCommissionAmount;
+            findOrder.adminCommissionAmount = adminCommissionAmount;
+            findOrder.transactionId = transactionId;
+            findOrder.PaymentStatus = 'paid';
+            findOrder.paymentMethod = method;
+            findOrder.OrderStatus = "Service Done";
+            vendor.walletAmount = vendorCommissionAmount;
+
+            await vendor.save();
+            await findOrder.save();
+
+            const successRedirect = `http://localhost:5173/successful-payment`;
+            return res.redirect(successRedirect);
+        } else {
+            const failureRedirect = `http://localhost:5173/failed-payment`;
+            return res.redirect(failureRedirect);
         }
 
-        // Find the order in the database
-        const findOrder = await Order.findOne({ razorpayOrderId: razorpay_order_id }).populate('vendorAlloted');
-        if (!findOrder) {
-            return res.status(400).json({
-                success: false,
-                message: 'Order not found.',
-            });
-        }
-        const vendor = findOrder?.vendorAlloted;
-        const vendorRole = findOrder?.vendorAlloted?.Role;
-
-        // Fetch commission details
-        const allCommission = await Commission.find();
-        const employeeCommission = allCommission.find((item) => item.name === 'Employee');
-        const vendorCommission = allCommission.find((item) => item.name === 'Vendor');
-
-        let commissionPercent = 0;
-        if (vendorRole === 'vendor') {
-            commissionPercent = vendorCommission ? parseFloat(vendorCommission.percent) : 0;
-        } else if (vendorRole === 'employ') {
-            commissionPercent = employeeCommission ? parseFloat(employeeCommission.percent) : 0;
-        }
-
-        // Calculate commission amounts
-        const totalAmount = amount / 100; // Convert to actual amount from paise
-        const vendorCommissionAmount = (commissionPercent / 100) * totalAmount;
-        const adminCommissionAmount = totalAmount - vendorCommissionAmount;
-
-        // Update the order
-        findOrder.totalAmount = totalAmount;
-        findOrder.commissionPercent = commissionPercent;
-        findOrder.vendorCommissionAmount = vendorCommissionAmount;
-        findOrder.adminCommissionAmount = adminCommissionAmount;
-        findOrder.transactionId = razorpay_payment_id;
-        findOrder.PaymentStatus = 'paid';
-        findOrder.paymentMethod = method;
-        findOrder.OrderStatus = "Service Done"
-        vendor.walletAmount = vendorCommissionAmount;
-
-        await vendor.save();
-        await findOrder.save();
-
-        res.status(200).json({
-            success: true,
-            message: 'Payment verified and order updated successfully',
-            data: {
-                totalAmount,
-                commissionPercent,
-                vendorCommissionAmount,
-                adminCommissionAmount,
-                transactionId: razorpay_payment_id,
-                PaymentStatus: 'captured',
-                paymentMethod: method,
-            },
-        });
     } catch (error) {
         console.error('Internal server error', error);
         res.status(500).json({

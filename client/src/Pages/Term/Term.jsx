@@ -56,10 +56,12 @@ function Term() {
                   You agree to provide accurate and complete information when requesting our services. You are responsible for ensuring that the location and equipment where the service is to be performed are accessible and suitable for the services requested. BlueAce Limited is not liable for any damages caused by incorrect or incomplete information provided by you.
                 </p>
 
-                <h4 className="mb-3">5. Cancellation Policy</h4>
-                <p className="mb-4">
+                <h4 className="mb-3">5. Refund Policy</h4>
+                <p className="mb-0">- Once the refund request is approved we will refund your amount and it will get credited in your bank accout in 7-10 business days in original payment days</p>
+                <p className="mb-4">- Our pricing range starts from 1000 rupees</p>
+                {/* <p className="mb-4">
                   If you wish to cancel a scheduled service, you must notify BlueAce Limited at least 24 hours in advance. Cancellations made within less than 24 hours may incur a cancellation fee. In case of emergencies, please contact us immediately.
-                </p>
+                </p> */}
 
                 <h4 className="mb-3">6. Limitation of Liability</h4>
                 <p className="mb-4">

@@ -415,10 +415,10 @@ function Order() {
                                                     <td style={{ width: '28%' }}>Transaction Id</td>
                                                     <td>{paymentDetail.transactionId || "Not Available"}</td>
                                                 </tr>
-                                                <tr>
+                                                {/* <tr>
                                                     <td style={{ width: '28%' }}>Payment Method</td>
                                                     <td>{paymentDetail.paymentMethod || "Not Available"}</td>
-                                                </tr>
+                                                </tr> */}
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Total Amount</td>
                                                     <td>Rs.{paymentDetail.totalAmount || "Not Available"}</td>

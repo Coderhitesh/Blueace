@@ -119,6 +119,7 @@ function UserAllOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Email</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Vendor Number</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Allowted Member</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Service Date</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
@@ -144,6 +145,7 @@ function UserAllOrder({ userData, allOrder }) {
                                                         <td>{order?.vendorAlloted?.Email || "Vendor is not allowted"}</td>
                                                         <td>{order?.vendorAlloted?.ContactNumber || "Vendor is not allowted"}</td>
                                                         <td>{order.AllowtedVendorMember || 'No Member Allowted'}</td>
+                                                        <td>{new Date(order?.workingDate).toLocaleDateString() || 'Date is not Allowted'}</td>
                                                         <td>{order.workingDay || 'Vendor is not Allowted'}</td>
                                                         <td>{order.workingTime || 'Vendor is not Allowted'}</td>
                                                         <td>{order.OrderStatus}</td>

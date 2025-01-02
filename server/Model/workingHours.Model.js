@@ -1,9 +1,22 @@
 const mongoose = require('mongoose');
 
 const scheduleMiniSchema = new mongoose.Schema({
+    date: {
+        type: Date, // Specifies that the date field should be a valid Date object
+        required: true, // Makes the date field mandatory
+        validate: {
+            validator: function (value) {
+                // Ensure the date corresponds to the day of the week
+                const options = { weekday: 'long' };
+                const dayOfWeek = new Intl.DateTimeFormat('en-US', options).format(value);
+                return this.day === dayOfWeek;
+            },
+            message: 'The date must match the specified day of the week.'
+        }
+    },
     day: { 
         type: String, 
-        required: true, 
+        // required: true, 
         enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] // Optional: restrict values to valid weekdays
     },
     morningSlot: {

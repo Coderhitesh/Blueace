@@ -61,4 +61,17 @@ footer.light-footer {
   /* display: none; */
   z-index: 0 !important;
 }
-.
+
+/* responsive css */
+
+.popup-logo{
+  width: 70px!important;
+}
+
+@media (max-width: 768px) {
+  .Goodup-grid-thumb a img {
+      min-height: 200px;
+      max-height: 200px;
+      object-fit: cover;
+  }
+}

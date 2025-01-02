@@ -55,13 +55,17 @@ function Privacy() {
                 <h4 className="mb-3">6. Cookies</h4>
                 <p className="mb-4">Our website may use cookies to enhance your experience, analyze website traffic, and provide personalized content. You can control cookie settings through your browser, but please note that some features of the site may not function correctly if cookies are disabled.</p>
 
-                <h4 className="mb-3">7. Your Rights</h4>
+                <h4 className="mb-3">7. Your Rights</h4> 
                 <p className="mb-4">You have the right to access, update, or delete your personal information that we hold. If you wish to exercise any of these rights, please contact us using the details provided on our website. You can also opt out of marketing communications by following the unsubscribe link in our emails.</p>
 
                 <h4 className="mb-3">8. Changes to This Privacy Policy</h4>
                 <p className="mb-4">We may update this Privacy Policy from time to time to reflect changes in our practices or legal requirements. Any changes will be posted on this page, and the updated policy will take effect immediately upon posting.</p>
 
-                <h4 className="mb-3">9. Contact Us</h4>
+                <h4 className="mb-3">9. Refund Policy</h4>
+                <p className="mb-0">- Once the refund request is approved we will refund your amount and it will get credited in your bank accout in 7-10 business days in original payment days</p>
+                <p className="mb-4">- Our pricing range starts from 1000 rupees</p>
+                
+                <h4 className="mb-3">10. Contact Us</h4>
                 <p className="">If you have any questions or concerns about this Privacy Policy, or if you would like to exercise your rights regarding your personal data, please contact us at:</p>
                 BlueAce Limited <br/>
                 Email: <a href="mailto:info@blueaceindia.com">info@blueaceindia.com</a> <br/>

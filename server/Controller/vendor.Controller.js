@@ -12,10 +12,12 @@ const User = require('../Model/UserModel');
 const { sendSMS } = require('../Utils/SMSSender');
 require('dotenv').config()
 // Initialize Razorpay instance with your key and secret
-const razorpayInstance = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID,   // Razorpay Key ID
-    key_secret: process.env.RAZORPAY_KEY_SECRET, // Razorpay Secret Key
-});
+// const razorpayInstance = new Razorpay({
+//     key_id: process.env.RAZORPAY_KEY_ID,   // Razorpay Key ID
+//     key_secret: process.env.RAZORPAY_KEY_SECRET, // Razorpay Secret Key
+// });
+const merchantId = process.env.PHONEPAY_MERCHANT_ID
+const apiKey = process.env.PHONEPAY_API_KEY
 
 exports.registerVendor = async (req, res) => {
     const uploadedImages = [];
@@ -640,8 +642,6 @@ exports.updateMember = async (req, res) => {
     }
 };
 
-
-
 exports.memberShipPlanGateWay = async (req, res) => {
     try {
         const { vendorId } = req.params;
@@ -656,15 +656,6 @@ exports.memberShipPlanGateWay = async (req, res) => {
             });
         }
 
-        // Check if the vendor already has a membership plan
-        // if (vendor.memberShipPlan) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Vendor already has a membership plan.',
-        //     });
-        // }
-
-        // Find membership plan by ID
         const foundMembershipPlan = await MembershipPlan.findById(memberShipPlan);
         if (!foundMembershipPlan) {
             return res.status(404).json({
@@ -680,7 +671,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
             vendor.PaymentStatus = 'paid'
             await vendor.save();
             console.log("I am Done with free")
-            // res.redirect('http://localhost:5174/successfull-payment')
+            res.redirect('http://localhost:5173/successfull-payment')
             res.status(200).json({
                 success: true,
                 data: vendor
@@ -688,7 +679,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
         }
 
         const planPrice = foundMembershipPlan.price;
-        console.log("Plan", planPrice)
+        // console.log("Plan", planPrice)
         if (!planPrice && planPrice !== 0) {
             return res.status(400).json({
                 success: false,
@@ -697,35 +688,53 @@ exports.memberShipPlanGateWay = async (req, res) => {
         }
 
         if (planPrice) {
-            const razorpayOptions = {
-                amount: planPrice * 100 || 5000000,
-                currency: 'INR',
-                payment_capture: 1,
+
+            const transactionId = crypto.randomBytes(9).toString('hex');
+            const merchantUserId = crypto.randomBytes(12).toString('hex');
+
+            const data = {
+                merchantId: merchantId,
+                merchantTransactionId: transactionId,
+                merchantUserId,
+                name: "User",
+                amount: planPrice * 100,
+                redirectUrl: `https://www.api.blueaceindia.com/api/v1/payment-verify/${transactionId}}`,
+                redirectMode: 'POST',
+                paymentInstrument: {
+                    type: 'PAY_PAGE'
+                }
             };
 
-            const razorpayOrder = await razorpayInstance.orders.create(razorpayOptions);
-
-            if (!razorpayOrder) {
-                return res.status(500).json({
-                    success: false,
-                    message: 'Error in creating Razorpay order',
-                });
-            }
-
-            // Update the vendor's membership price and orderId (for tracking)
-            vendor.memberShipPrice = planPrice;
-            vendor.razorpayOrderId = razorpayOrder.id; // Store Razorpay orderId for later tracking
-            await vendor.save();
-
-            // Send the Razorpay order information to the frontend
-            return res.status(200).json({
-                success: true,
-                message: 'Razorpay order created successfully',
+            const payload = JSON.stringify(data);
+            const payloadMain = Buffer.from(payload).toString('base64');
+            const keyIndex = 1;
+            const string = payloadMain + '/pg/v1/pay' + apiKey;
+            const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+            const checksum = sha256 + '###' + keyIndex;
+            const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+            const options = {
+                method: 'POST',
+                url: prod_URL,
+                headers: {
+                    accept: 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-VERIFY': checksum
+                },
                 data: {
-                    vendor,
-                    razorpayOrder,
+                    request: payloadMain
                 }
-            });
+            };
+
+            const response = await axios.request(options);
+
+            vendor.memberShipPrice = planPrice;
+            vendor.razorpayOrderId = response?.data?.data?.merchantTransactionId; // Store Razorpay orderId for later tracking
+            await vendor.save();
+            res.status(201).json({
+                success: true,
+                url: response.data.data.instrumentResponse.redirectInfo.url
+            })
+        
         }
 
     } catch (error) {
@@ -740,68 +749,62 @@ exports.memberShipPlanGateWay = async (req, res) => {
 
 
 exports.PaymentVerify = async (req, res) => {
+
+    const { transactionId: merchantTransactionId } = req.body;
+
+    if (!merchantTransactionId) {
+        return res.status(400).json({ success: false, message: "Merchant transaction ID not provided" });
+    }
     try {
-        // console.log("i am hit")
-        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
-        // console.log(req.body)
 
-        if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid request',
-            })
-        }
 
-        const genreaterSignature = crypto.createHash('SHA256', {
-            razorpay_payment_id,
-            razorpay_order_id,
-            key_secret: process.env.RAZORPAY_KEY_SECRET
-        }).update(process.env.RAZORPAY_KEY_SECRET).digest('hex')
+        const merchantIdD = merchantId; // Ensure merchantId is defined
+        const keyIndex = 1;
+        const string = `/pg/v1/status/${merchantIdD}/${merchantTransactionId}` + apiKey;
+        const sha256 = crypto.createHash('sha256').update(string).digest('hex');
+        const checksum = sha256 + "###" + keyIndex;
+        const testUrlCheck = "https://api.phonepe.com/apis/hermes/pg/v1";
 
-        // console.log(genreaterSignature)
-
-        if (!genreaterSignature === razorpay_signature) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid signature',
-            })
-        }
-
-        const paymentDetails = await axios.get(`https://api.razorpay.com/v1/payments/${razorpay_payment_id}`, {
-            auth: {
-                username: process.env.RAZORPAY_KEY_ID,
-                password: process.env.RAZORPAY_KEY_SECRET,
+        const options = {
+            method: 'GET',
+            url: `${testUrlCheck}/status/${merchantId}/${merchantTransactionId}`,
+            headers: {
+                accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-VERIFY': checksum,
+                'X-MERCHANT-ID': `${merchantId}`
             }
-        });
+        };
 
+        const { data } = await axios.request(options);
 
-        const { method, status, bank, wallet, card_id } = paymentDetails.data;
+        console.log("data", data)
 
-        // If payment is not successful, handle failure
-        if (status !== 'captured') {
-            return res.redirect(`http://localhost:5174/vendors/payment-failure?error=Payment failed via ${method || 'unknown method'}`);
+        if (data.status === "success") {
+            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId });
+            if (!findOrder) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Order not found.',
+                });
+            }
+            const transition = data?.data?.transaction;
+            const method = transition?.paymentInstrument?.method || 'unknown';
+
+            // Update order details with payment status and method
+            findOrder.transactionId = razorpay_payment_id;
+            findOrder.PaymentStatus = 'paid';
+            findOrder.paymentMethod = method;
+
+            await findOrder.save();
+
+            const successRedirect = `http://localhost:5173/successfull-payment`;
+            return res.redirect(successRedirect);
+        } else {
+            const failureRedirect = `http://localhost:5173/failed-payment`;
+            return res.redirect(failureRedirect);
         }
 
-        // Find the order in the database
-        const findOrder = await Vendor.findOne({ razorpayOrderId: razorpay_order_id });
-        if (!findOrder) {
-            return res.status(400).json({
-                success: false,
-                message: 'Order not found.',
-            });
-        }
-
-        // Update order details with payment status and method
-        findOrder.transactionId = razorpay_payment_id;
-        findOrder.PaymentStatus = 'paid';
-        findOrder.paymentMethod = method;
-
-        await findOrder.save();
-        res.redirect('http://localhost:5987/successfull-payment')
-        // res.status(400).json({
-        //     success: true,
-        //     message: 'Payment successful',
-        // })
     } catch (error) {
         console.log(error)
         // res.redirect(`http://localhost:5174/failed-payment?error=${error?.message || "Internal server Error"}`)

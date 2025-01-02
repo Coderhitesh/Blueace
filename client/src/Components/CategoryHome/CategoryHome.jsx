@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios'
 import { Link } from 'react-router-dom';
+import "./style.css"
 
 function CategoryHome() {
   const [allSubCategory, setSubCategory] = useState([])
@@ -36,11 +37,11 @@ function CategoryHome() {
           </div>
 
           {/* <!-- row --> */}
-          <div className="row align-items-center pb-4">
+          <div className="hbs-box pb-4">
             {allSubCategory && allSubCategory.map((category, index) => (
               <div
                 key={index}
-                className="col-xl-2 col-lg-2 col-md-3 col-sm-6 col-6"
+                className="hbs-inner-box"
               >
                 <div className="cats-wrap text-center">
                   <Link to={`/service/${category.name.replace(/\s+/g, '-').toLowerCase()}`} className="Goodup-catg-wrap">

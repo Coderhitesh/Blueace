@@ -45,65 +45,78 @@ function MemberShipPlan() {
     };
 
     // Dynamically load the Razorpay script
-    const loadRazorpayScript = () => {
-        return new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
-    };
+    // const loadRazorpayScript = () => {
+    //     return new Promise((resolve) => {
+    //         const script = document.createElement('script');
+    //         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    //         script.onload = () => resolve(true);
+    //         script.onerror = () => resolve(false);
+    //         document.body.appendChild(script);
+    //     });
+    // };
 
     // Handle submission of selected membership plan for a vendor
     const handleSubmit = async (vendorId, planId, planPrice) => {
         try {
-            // Make sure the Razorpay script is loaded
-            const scriptLoaded = await loadRazorpayScript();
-            if (!scriptLoaded) {
-                alert('Failed to load Razorpay SDK. Please check your connection.');
-                return;
-            }
 
-            // Create the membership plan order
             const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
-            // console.log("Orders", res.data.data)
-            const order = res.data.data.razorpayOrder;
 
-            if(!order){
-                toast.success('Membership Plan Purchase successfully!')
-                window.location.href = '/successfully-member'
+            if (res.data.success) {
+
+                window.location.href = res.data.url;
+            } else {
+                console.error('Error initiating payment:', res.data.message);
             }
+
+
+            // Make sure the Razorpay script is loaded
+            // const scriptLoaded = await loadRazorpayScript();
+            // if (!scriptLoaded) {
+            //     alert('Failed to load Razorpay SDK. Please check your connection.');
+            //     return;
+            // }
+
+            // Create the membership plan order
+            // const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/member-ship-plan/${vendorId}`, {
+            //     memberShipPlan: planId
+            // });
+            // console.log("Orders", res.data.data)
+            // const order = res.data.data.razorpayOrder;
+
+            // if(!order){
+            //     toast.success('Membership Plan Purchase successfully!')
+            //     window.location.href = '/successfully-member'
+            // }
 
             // Razorpay options
-            if (order) {
+            // if (order) {
 
-                const options = {
-                    key: 'rzp_test_cz0vBQnDwFMthJ',
-                    amount: planPrice * 100,
-                    currency: 'INR',
-                    name: 'Blueace',
-                    description: 'Purchase Membership Plan',
-                    order_id: order?.id || '',
-                    callback_url: "https://www.api.blueaceindia.com/api/v1/payment-verify",
-                    prefill: {
-                        name: vendorData.ownerName, // Prefill customer data
-                        email: vendorData.Email,
-                        contact: vendorData.ContactNumber
-                    },
-                    theme: {
-                        color: '#F37254'
-                    },
-                };
+            //     const options = {
+            //         key: 'rzp_test_cz0vBQnDwFMthJ',
+            //         amount: planPrice * 100,
+            //         currency: 'INR',
+            //         name: 'Blueace',
+            //         description: 'Purchase Membership Plan',
+            //         order_id: order?.id || '',
+            //         callback_url: "https://www.api.blueaceindia.com/api/v1/payment-verify",
+            //         prefill: {
+            //             name: vendorData.ownerName, // Prefill customer data
+            //             email: vendorData.Email,
+            //             contact: vendorData.ContactNumber
+            //         },
+            //         theme: {
+            //             color: '#F37254'
+            //         },
+            //     };
 
-                const rzp = new window.Razorpay(options);
+            //     const rzp = new window.Razorpay(options);
         
-                rzp.open();
-            }
+            //     rzp.open();
+            // }
 
-            toast.success('Membership Plan Purchase successfully!')
+            // toast.success('Membership Plan Purchase successfully!')
             
         } catch (error) {
             console.log('Internal server error in buying membership plan', error);

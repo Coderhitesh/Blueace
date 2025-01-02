@@ -11,7 +11,8 @@ const VendorForOrder = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [preSelect, setPreSelect] = useState(null);
     const [totalPages, setTotalPages] = useState(1);
-    const [vendorSelections, setVendorSelections] = useState({}); // Track selections per vendor
+    const [vendorSelections, setVendorSelections] = useState({});
+    const [workingDates, setWorkingDates] = useState({});
     const { id } = useParams();
     const limit = 10;
     const url = new URLSearchParams(window.location.search);
@@ -32,14 +33,29 @@ const VendorForOrder = () => {
             setCurrentPage(res.data.currentPage);
             setTotalPages(res.data.totalPages);
 
-            // Initialize selections for pre-selected vendor
-            if (res.data.AlreadyAllottedVendor && res.data.preSelectedDay && res.data.preSelectedTime) {
-                setVendorSelections({
-                    [res.data.AlreadyAllottedVendor]: {
-                        day: res.data.preSelectedDay,
-                        time: res.data.preSelectedTime
+            // Initialize selections for pre-selected vendor with all data
+            if (res.data.AlreadyAllottedVendor) {
+                const preSelectedVendorId = res.data.AlreadyAllottedVendor;
+                const preSelectedDay = res.data.preSelectedDay;
+
+                // Set working dates for pre-selected vendor
+                if (preSelectedDay) {
+                    const dates = getNext30Days(preSelectedDay);
+                    setWorkingDates(prev => ({
+                        ...prev,
+                        [preSelectedVendorId]: dates
+                    }));
+                }
+
+                // Set vendor selections with all pre-selected data
+                setVendorSelections(prev => ({
+                    ...prev,
+                    [preSelectedVendorId]: {
+                        day: res.data.preSelectedDay || '',
+                        time: res.data.preSelectedTime || '',
+                        date: res.data.preSelectedDate || ''
                     }
-                });
+                }));
             }
         } catch (error) {
             console.error('Error fetching vendors', error);
@@ -47,19 +63,37 @@ const VendorForOrder = () => {
         }
     };
 
+
     useEffect(() => {
         fetchData(currentPage);
     }, [currentPage]);
 
+    // Helper function to get next 30 days
+    const getNext30Days = (selectedDay) => {
+        const dates = [];
+        const today = new Date();
+        const next30Days = new Date();
+        next30Days.setDate(today.getDate() + 30);
+
+        for (let d = new Date(today); d <= next30Days; d.setDate(d.getDate() + 1)) {
+            const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'long' });
+            
+            if (dayOfWeek === selectedDay) {
+                dates.push(new Date(d));
+            }
+        }
+        return dates;
+    };
+
     const handleAssignOrder = async (vendorId) => {
         const selection = vendorSelections[vendorId] || {};
-        if (!selection.day || !selection.time) {
-            toast.error('Please select both day and time');
+        if (!selection.day || !selection.time || !selection.date) {
+            toast.error('Please select day, time and date');
             return;
         }
 
         try {
-            const url = `https://www.api.blueaceindia.com/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}/${selection.day}/${selection.time}`;
+            const url = `https://www.api.blueaceindia.com/api/v1/assign-Vendor/${id}/${vendorId}/${type ? type : 'new-vendor'}/${selection.day}/${selection.time}/${selection.date}`;
             const res = await axios.post(url);
 
             if (res.data.success) {
@@ -75,12 +109,30 @@ const VendorForOrder = () => {
     };
 
     const handleDayChange = (vendorId, day) => {
+        const availableDates = getNext30Days(day);
+
+        setWorkingDates(prev => ({
+            ...prev,
+            [vendorId]: availableDates
+        }));
+
         setVendorSelections(prev => ({
             ...prev,
             [vendorId]: {
                 ...prev[vendorId],
                 day,
-                time: '' // Reset time when day changes
+                time: '',
+                date: ''
+            }
+        }));
+    };
+
+    const handleDateChange = (vendorId, date) => {
+        setVendorSelections(prev => ({
+            ...prev,
+            [vendorId]: {
+                ...prev[vendorId],
+                date
             }
         }));
     };
@@ -123,6 +175,7 @@ const VendorForOrder = () => {
                 {data.map((vendor) => {
                     const vendorSelection = vendorSelections[vendor._id] || {};
                     const isPreSelected = preSelect === vendor._id;
+                    const vendorDates = workingDates[vendor._id] || [];
 
                     return (
                         <div className="col-md-3 mb-4" key={vendor._id}>
@@ -153,12 +206,12 @@ const VendorForOrder = () => {
 
                                     {/* Day Selection */}
                                     <div className="mb-3">
-                                        <label>Select Day:</label>
-                                        <select 
-                                            className="form-control"
+                                        <label className="form-label">Select Day:</label>
+                                        <select
+                                            className="form-select"
                                             value={vendorSelection.day || ''}
                                             onChange={(e) => handleDayChange(vendor._id, e.target.value)}
-                                            disabled={isPreSelected}
+                                            // disabled={isPreSelected}
                                         >
                                             <option value="">Select a day</option>
                                             {vendor?.workingHour?.schedule?.map((schedule, index) => (
@@ -169,15 +222,40 @@ const VendorForOrder = () => {
                                         </select>
                                     </div>
 
-                                    {/* Time Selection */}
+                                    {/* Date Selection */}
                                     {vendorSelection.day && (
                                         <div className="mb-3">
-                                            <label>Select Time:</label>
-                                            <select 
-                                                className="form-control"
+                                            <label className="form-label">Select Date:</label>
+                                            <select
+                                                className="form-select"
+                                                value={vendorSelection.date || ''}
+                                                onChange={(e) => handleDateChange(vendor._id, e.target.value)}
+                                                // disabled={isPreSelected}
+                                            >
+                                                <option value="">Select a date</option>
+                                                {vendorDates.map((date, index) => (
+                                                    <option key={index} value={date.toISOString()}>
+                                                        {date.toLocaleDateString('en-US', {
+                                                            weekday: 'long',
+                                                            year: 'numeric',
+                                                            month: 'long',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
+
+                                    {/* Time Selection */}
+                                    {vendorSelection.day && vendorSelection.date && (
+                                        <div className="mb-3">
+                                            <label className="form-label">Select Time:</label>
+                                            <select
+                                                className="form-select"
                                                 value={vendorSelection.time || ''}
                                                 onChange={(e) => handleTimeChange(vendor._id, e.target.value)}
-                                                disabled={isPreSelected}
+                                                // disabled={isPreSelected}
                                             >
                                                 <option value="">Select a time</option>
                                                 {renderTimeSlots(vendor, vendorSelection.day)}
@@ -185,18 +263,28 @@ const VendorForOrder = () => {
                                         </div>
                                     )}
 
+                                    {/* Pre-selected Info */}
+                                    {isPreSelected && (
+                                        <div className="alert alert-info mt-3">
+                                            <h6 className="mb-2">Currently Selected:</h6>
+                                            <p className="mb-1"><strong>Day:</strong> {vendorSelection.day}</p>
+                                            <p className="mb-1"><strong>Date:</strong> {new Date(vendorSelection.date).toLocaleDateString()}</p>
+                                            <p className="mb-0"><strong>Time:</strong> {vendorSelection.time}</p>
+                                        </div>
+                                    )}
+
                                     <button
                                         disabled={isPreSelected}
-                                        className={`btn ${isPreSelected ? 'bg-danger' : 'bg-success'} btn-block text-white`}
+                                        className={`btn ${isPreSelected ? 'btn-danger' : 'btn-success'} w-100 mt-3`}
                                         onClick={() => handleAssignOrder(vendor._id)}
                                     >
                                         {isPreSelected ? 'Already Selected' : 'Assign Order'}
                                     </button>
 
                                     {isPreSelected && (
-                                        <span className="position-absolute top-0 end-0 m-2">
+                                        <div className="position-absolute top-0 end-0 m-2">
                                             <span className="badge bg-info">Already selected</span>
-                                        </span>
+                                        </div>
                                     )}
                                 </div>
                             </div>

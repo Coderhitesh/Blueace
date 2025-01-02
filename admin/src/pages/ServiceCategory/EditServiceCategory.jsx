@@ -225,7 +225,7 @@ function EditServiceCategory() {
                             name='name'
                             value={formData.name}
                             onChange={handleChange}
-                            required={true}
+                            // required={true}
                         />
                     </div>
 
@@ -349,7 +349,7 @@ function EditServiceCategory() {
                             name='metaTitle'
                             value={formData.metaTitle}
                             onChange={handleChange}
-                            required={true}
+                            // required={true}
                             id='metaTitle'
                         ></textarea>
                     </div>
@@ -363,7 +363,7 @@ function EditServiceCategory() {
                             name='metaDescription'
                             value={formData.metaDescription}
                             onChange={handleChange}
-                            required={true}
+                            // required={true}
                             id='metaDescription'
                         ></textarea>
                     </div>
@@ -377,7 +377,7 @@ function EditServiceCategory() {
                             name='metaKeyword'
                             value={formData.metaKeyword}
                             onChange={handleChange}
-                            required={true}
+                            // required={true}
                             id='metaKeyword'
                         ></textarea>
                     </div>
@@ -391,7 +391,7 @@ function EditServiceCategory() {
                             name='metafocus'
                             value={formData.metafocus}
                             onChange={handleChange}
-                            required={true}
+                            // required={true}
                             id='metafocus'
                         ></textarea>
                     </div>

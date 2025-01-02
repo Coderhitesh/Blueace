@@ -74,7 +74,7 @@ function FeatureListHome() {
 							},
 							1024: {
 								slidesPerView: 4,
-								spaceBetween: 50,
+								spaceBetween: 20,
 							},
 						}}
 
@@ -119,9 +119,9 @@ function FeatureListHome() {
 												<div class="Goodup-ft-last">
 													<div class="Goodup-inline">
 														{/* <div class="Goodup-bookmark-btn"><button type="button">Get Enquiry</button></div> */}
-														<div class="Goodup-bookmark-btn ">
+														<div class="Goodup-bookmark-btn product-list-btn">
 															{/* <button type="button"> */}
-																<Link style={{ backgroundColor:"#00225F", color:'white', padding:'4px 7px', borderRadius:'8px', marginLeft:'0px'}} to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>Get Enquiry</Link>
+																<Link style={{ backgroundColor:"#00225F", color:'white', padding:'4px 7px', borderRadius:'8px', marginLeft:'0px', whiteSpace:'nowrap'}} to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>Get Enquiry</Link>
 															{/* </button> */}
 														</div>
 

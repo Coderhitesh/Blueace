@@ -17,7 +17,7 @@ const PaymentFailed = () => {
           Unfortunately, your transaction could not be completed. Please try again or contact support if the issue persists.
         </p>
         <div style={styles.buttonContainer}>
-          <Link to="/retry-payment" style={styles.primaryButton}>Retry Payment</Link>
+          <Link to="/" style={styles.primaryButton}>Back to Home</Link>
           <a href="tel:+91 9311539090" style={styles.secondaryButton}>Contact Support</a>
         </div>
       </div>

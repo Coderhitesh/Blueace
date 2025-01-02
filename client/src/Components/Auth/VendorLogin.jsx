@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
+import logo from '../Header/logo.webp'
 
 function VendorLogin() {
     const [loading, setLoading] = useState(false);
@@ -62,7 +63,7 @@ function VendorLogin() {
             navigate(redirectUrl);
 
         } catch (error) {
-            const errorMessage = error.response.data.message;
+            const errorMessage = error.response.data.msg;
             toast.error(`Error logging in: ${errorMessage}`);
             console.error('Login failed. Please check your credentials.', errorMessage);
             console.log(error)
@@ -80,12 +81,13 @@ function VendorLogin() {
 
     return (
         <>
-            <div className="bg-dark">
+            <div className="">
                 <div className="modal-dialog login-pop-form" role="document">
-                    <div className="modal-content py-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F4F4F7' }} id="loginmodal">
-                        <div className="modal-body p-5 col-xl-6 col-lg-8 col-md-12" style={{ backgroundColor: 'white' }}>
+                    <div className="modal-content login-content-border py-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F4F4F7' }} id="loginmodal">
+                        <div className="modal-body p-5 col-xl-9 col-lg-9 col-md-12" style={{ backgroundColor: 'white' }}>
                             <div className="text-center mb-4">
-                                <h4 className="m-0 ft-medium">Login Your Account</h4>
+                                 <img src={logo} className='popup-logo'/> 
+                                <h4 className="m-0 ft-medium mt-3 text-uppercase">Login as Vendor</h4>
                             </div>
 
                             <form className="submit-form" onSubmit={handleSubmit}>
@@ -130,9 +132,9 @@ function VendorLogin() {
                                             </label>
                                         </div>
                                         <div className="eltio_k2">
-                                            <Link to={'/forgot-vendor-password'} className="theme-cl">
+                                            <a href={'/forgot-vendor-password'} className="theme-cl">
                                                 Forget Password?
-                                            </Link>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -147,7 +149,7 @@ function VendorLogin() {
                                 </div>
 
                                 <div className="form-group text-center mt-4 mb-0">
-                                    <p className="mb-0">Don't Have An Account? <Link to={'/vendor-registration'} className="ft-medium text-success">Register</Link></p>
+                                    <p className="mb-0">Don't Have An Account? <a href='/vendor-registration' className="ft-medium text-success">Register</a></p>
                                 </div>
 
                             </form>

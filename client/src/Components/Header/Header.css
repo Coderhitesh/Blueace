@@ -185,3 +185,25 @@
 .custom-mobile-dropdown-item:hover {
   background-color: #f1f1f1;
 }
+
+
+.user-model-box{
+  /* background-image: linear-gradient(60deg, rgb(0 34 95 / 95%), rgb(5 169 218 / 90%))!important; */
+  background: #f4f4f7!important;
+}
+
+.login-content-border, .login-modal-header{
+  border: var(--bs-modal-border-width) solid rgb(0 0 0 / 0%)!important;
+}
+
+.dropdown-toggle::after{
+  display: none!important;
+}
+
+@media(max-width :490px){
+  .signin-mobile-v{
+    position: absolute;
+    right:45px;
+    top:13px;
+  }
+}
