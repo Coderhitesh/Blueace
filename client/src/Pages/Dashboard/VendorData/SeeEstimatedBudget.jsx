@@ -18,7 +18,7 @@ const SeeEstimatedBudget = () => {
 
     // const handleFetchUser = async () => {
     //     try {
-    //         const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-user/${vendorId}`)
+    //         const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-user/${vendorId}`)
     //         console.log(res.data.data.Role)
     //     } catch (error) {
     //         console.log("Internal server error",error)
@@ -44,11 +44,12 @@ const SeeEstimatedBudget = () => {
 
     const handleApprove = async () => {
         try {
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
+            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
                 status: true
             });
             if (response.status === 200) {
                 toast.success('Bill approved successfully! Please Wait Our Vendor Call You Shortly');
+                window.location.href = '/user-dashboard'
             }
         } catch (error) {
             toast.error(error.response.data.message);
@@ -59,11 +60,12 @@ const SeeEstimatedBudget = () => {
 
     const handleDecline = async () => {
         try {
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
+            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-status-bills/${estimatedBill._id}`, {
                 status: false
             });
             if (response.status === 200) {
                 toast.success('Bill declined successfully! Please Wait Our Vendor Call You Shortly for further discussion');
+                window.location.href = '/user-dashboard'
             }
         } catch (error) {
             toast.error(error.response.data.message);

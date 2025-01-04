@@ -13,11 +13,11 @@ const SuccessPayment = () => {
         </div>
         <h1 style={styles.title}>Payment Successful</h1>
         <p style={styles.message}>
-          Thank you for your payment! Your transaction has been completed, and a receipt has been sent to your email.
+          Thank you for your payment! Your transaction has been completed.
         </p>
         <div style={styles.buttonContainer}>
           <Link to="/" style={styles.primaryButton}>Return to Home</Link>
-          <Link to="/order-history" style={styles.secondaryButton}>View Order History</Link>
+          {/* <Link to="/order-history" style={styles.secondaryButton}>View Order History</Link> */}
         </div>
       </div>
     </div>
@@ -79,6 +79,7 @@ const styles = {
     fontWeight: 'bold',
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
     transition: 'background-color 0.3s ease',
+    width:'100%'
   },
   secondaryButton: {
     backgroundColor: '#fff',

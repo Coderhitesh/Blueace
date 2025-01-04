@@ -37,7 +37,7 @@ function Profile({ userData }) {
 
 	const fetchExistingUser = async () => {
 		try {
-			const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-user/${userId}`);
+			const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-user/${userId}`);
 			const existinguser = data.data;
 			setFormData({
 				FullName: existinguser.FullName,
@@ -78,7 +78,7 @@ function Profile({ userData }) {
 	const fetchAddressSuggestions = async (query) => {
 		try {
 			// console.log("query",query)
-			const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+			const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
 			console.log(res.data)
 			setAddressSuggestions(res.data || []);
 		} catch (err) {
@@ -89,7 +89,7 @@ function Profile({ userData }) {
 	// Fetch latitude and longitude based on selected address
 	const fetchGeocode = async (selectedAddress) => {
 		try {
-			const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+			const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
 			// console.log("geo", res.data)
 			const { latitude, longitude } = res.data;
 			setLocation({ latitude, longitude });
@@ -157,7 +157,7 @@ function Profile({ userData }) {
 		}
 
 		try {
-			const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user/${userId}`, Payload, {
+			const res = await axios.put(`https://api.blueaceindia.com/api/v1/update-user/${userId}`, Payload, {
 				headers: { 'Content-Type': 'multipart/form-data' },
 			});
 			toast.success(res.data.message);

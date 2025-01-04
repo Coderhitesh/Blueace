@@ -18,6 +18,15 @@ exports.createWithdrawRequest = async (req, res) => {
                 error: "Amount is required"
             })
         }
+        const findVendor = await Vendor.findById(vendor)
+        const vendorWallet = findVendor?.walletAmount;
+        if (vendorWallet < amount) {
+            return res.status(400).json({
+                success: false,
+                message: "Insufficient balance",
+                error: "Insufficient balance"
+            })
+        }
         const withdraw = new Withdraw({
             vendor: vendor,
             amount: amount
@@ -167,7 +176,7 @@ exports.updateWithdrawRequest = async (req, res) => {
 exports.deleteWithdrawRequest = async (req, res) => {
     try {
         const withdrawId = req.params.withdrawId;
-        console.log("withdrawId",withdrawId)
+        console.log("withdrawId", withdrawId)
         const deleteWithdraw = await Withdraw.findByIdAndDelete(withdrawId);
         if (!deleteWithdraw) {
             return res.status(404).json({

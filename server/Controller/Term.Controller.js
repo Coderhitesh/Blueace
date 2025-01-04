@@ -27,7 +27,7 @@ exports.createTerm = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Term page is added successfully'
+            message: 'Term page is added successfully',
         })
 
     } catch (error) {

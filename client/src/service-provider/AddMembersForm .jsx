@@ -56,7 +56,7 @@ const AddMembersForm = () => {
 
         try {
             const response = await axios.post(
-                `https://www.api.blueaceindia.com/api/v1/register-vendor-member/${vendorId}`,
+                `https://api.blueaceindia.com/api/v1/register-vendor-member/${vendorId}`,
                 formData,
                 {
                     headers: {
@@ -69,7 +69,8 @@ const AddMembersForm = () => {
             window.location.href = `/membership-plan/${vendorId}`
         } catch (error) {
             console.error('Error:', error);
-            alert(error.response?.data?.message || 'Error occurred');
+            // alert(error.response?.data?.message || 'Error occurred');
+            toast.error(error.response?.data?.message || 'Error occurred')
         } finally {
             setLoading(false)
         }

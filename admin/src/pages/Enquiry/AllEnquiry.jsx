@@ -15,7 +15,7 @@ function AllEnquiry() {
     const fetchFAQData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-contact')
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-contact')
             if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
@@ -38,7 +38,7 @@ function AllEnquiry() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-contact/${id}`);
+            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-contact/${id}`);
             if (response.data.success) {
                 toast.success('Enquiry deleted successfully!');
                 await fetchFAQData(); // Fetch categories again after deletion

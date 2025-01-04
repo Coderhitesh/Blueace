@@ -65,7 +65,7 @@ const Register = () => {
 
         try {
             // Send data to the backend
-            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', registrationData);
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/Create-User', registrationData);
 
             if (res.data.success) {
                 setSuccess('User registered successfully');

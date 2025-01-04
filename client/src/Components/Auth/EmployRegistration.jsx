@@ -59,7 +59,7 @@ function EmployRegistration() {
     const fetchAddressSuggestions = async (query) => {
         try {
             // console.log("query",query)
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
             // console.log(res.data)
             setAddressSuggestions(res.data || []);
         } catch (err) {
@@ -70,7 +70,7 @@ function EmployRegistration() {
     // Fetch latitude and longitude based on selected address
     const fetchGeocode = async (selectedAddress) => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
             // console.log("geo", res.data)
             const { latitude, longitude } = res.data;
             setLocation({ latitude, longitude });
@@ -208,7 +208,7 @@ function EmployRegistration() {
         payload.append('RangeWhereYouWantService[0][location][coordinates][1]', location.latitude);
 
         try {
-            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/register-vendor', payload, {
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/register-vendor', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Employee Registration Successful!');

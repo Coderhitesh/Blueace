@@ -150,6 +150,10 @@ const VendorSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MembershipPlan'
     },
+    isMember: {
+        type: Boolean,
+        default: false
+    },
     razorpayOrderId: {
         type: String
     },
@@ -223,6 +227,10 @@ const VendorSchema = new mongoose.Schema({
             type: String,
         }
     },
+    createdFrom: {
+        type: String,
+        enum: ['Admin','Website']
+    }
 }, { timestamps: true })
 
 VendorSchema.pre('save', async function (next) {

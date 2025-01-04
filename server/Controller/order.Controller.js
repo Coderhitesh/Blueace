@@ -813,7 +813,7 @@ exports.updateAfterWorkImage = async (req, res) => {
                 message: 'No image uploaded'
             })
         }
-        order.OrderStatus = "Service Done"
+        // order.OrderStatus = "Service Done"
         const updatedOrder = await order.save()
 
         res.status(200).json({
@@ -1006,7 +1006,8 @@ exports.makeOrderPayment = async (req, res) => {
             merchantUserId,
             name: "User",
             amount: integerAmount * 100,
-            redirectUrl: `https://www.api.blueaceindia.com/api/v1/status-payment/${transactionId}}`,
+            callbackUrl: `https://www.blueaceindia.com/failed-payment`,
+            redirectUrl: `https://api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -1020,6 +1021,7 @@ exports.makeOrderPayment = async (req, res) => {
         const sha256 = crypto.createHash('sha256').update(string).digest('hex');
         const checksum = sha256 + '###' + keyIndex;
         const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+        // const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
         const options = {
             method: 'POST',
             url: prod_URL,
@@ -1058,7 +1060,8 @@ exports.makeOrderPayment = async (req, res) => {
 }
 
 exports.verifyOrderPayment = async (req, res) => {
-    const { transactionId: merchantTransactionId } = req.body;
+    const { merchantTransactionId } = req.params;
+    // console.log("i am hit",merchantTransactionId)
 
     if (!merchantTransactionId) {
         return res.status(400).json({ success: false, message: "Merchant transaction ID not provided" });
@@ -1071,6 +1074,7 @@ exports.verifyOrderPayment = async (req, res) => {
         const sha256 = crypto.createHash('sha256').update(string).digest('hex');
         const checksum = sha256 + "###" + keyIndex;
         const testUrlCheck = "https://api.phonepe.com/apis/hermes/pg/v1";
+        // const testUrlCheck = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1";
 
         const options = {
             method: 'GET',
@@ -1085,12 +1089,12 @@ exports.verifyOrderPayment = async (req, res) => {
 
         const { data } = await axios.request(options);
 
-        console.log("data", data);
+        // console.log("out data", data);
 
-        if (data.status === "success") {
+        if (data.success === true) {
+            // console.log("i am in",data)
             // Fetch payment details
-            const { amount, paymentInstrument, transactionId } = data?.data?.transaction || {};
-            const method = paymentInstrument?.method || 'unknown';
+            const amount = data?.data?.amount;
 
             const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId });
             if (!findOrder) {
@@ -1100,13 +1104,17 @@ exports.verifyOrderPayment = async (req, res) => {
                 });
             }
 
-            const vendor = findOrder?.vendorAlloted;
-            const vendorRole = findOrder?.vendorAlloted?.Role;
+            const vendorId = findOrder?.vendorAlloted?._id;
+            const vendor = await Vendor.findById(vendorId);
+            const vendorRole = vendor?.Role;
+            // console.log("vendor role",vendorRole)
 
             // Fetch commission details
             const allCommission = await Commission.find();
             const employeeCommission = allCommission.find((item) => item.name === 'Employee');
             const vendorCommission = allCommission.find((item) => item.name === 'Vendor');
+
+            // console.log("commission",employeeCommission,vendorCommission)
 
             let commissionPercent = 0;
             if (vendorRole === 'vendor') {
@@ -1120,24 +1128,28 @@ exports.verifyOrderPayment = async (req, res) => {
             const vendorCommissionAmount = (commissionPercent / 100) * totalAmount;
             const adminCommissionAmount = totalAmount - vendorCommissionAmount;
 
+            // console.log("vendorCommissionAmount",vendorCommissionAmount)
+            // console.log("adminCommissionAmount",adminCommissionAmount)
+
             // Update the order
             findOrder.totalAmount = totalAmount;
             findOrder.commissionPercent = commissionPercent;
             findOrder.vendorCommissionAmount = vendorCommissionAmount;
             findOrder.adminCommissionAmount = adminCommissionAmount;
-            findOrder.transactionId = transactionId;
+            // findOrder.transactionId = transactionId;
+            findOrder.transactionId = data?.data?.merchantTransactionId;
             findOrder.PaymentStatus = 'paid';
-            findOrder.paymentMethod = method;
+            // findOrder.paymentMethod = method;
             findOrder.OrderStatus = "Service Done";
             vendor.walletAmount = vendorCommissionAmount;
 
             await vendor.save();
             await findOrder.save();
 
-            const successRedirect = `http://localhost:5173/successful-payment`;
+            const successRedirect = `https://www.blueaceindia.comsuccessfull-payment`;
             return res.redirect(successRedirect);
         } else {
-            const failureRedirect = `http://localhost:5173/failed-payment`;
+            const failureRedirect = `https://www.blueaceindia.comfailed-payment`;
             return res.redirect(failureRedirect);
         }
 

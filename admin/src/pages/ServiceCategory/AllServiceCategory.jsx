@@ -16,7 +16,7 @@ function AllServiceCategory() {
     const fetchVouchers = async () => {
         setLoading(true); // Set loading state before fetching
         try {
-            const response = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
+            const response = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category');
             if (response.data.success) {
                 // console.log('data',response.data.data)
                 const datasave = response.data.data;
@@ -43,7 +43,7 @@ function AllServiceCategory() {
             // console.log('currentActiveStatus', currentActiveStatus)
             const newActiveStatus = !currentActiveStatus; // Toggle the status
             // console.log('newActiveStatus', newActiveStatus)
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-ispopular/${id}`, {
+            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-ispopular/${id}`, {
                 isPopular: newActiveStatus
             });
 
@@ -63,7 +63,7 @@ function AllServiceCategory() {
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-service-category/${id}`);
+            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-service-category/${id}`);
             if (response.data.success) {
                 toast.success('Category deleted successfully!');
                 await fetchVouchers(); // Fetch categories again after deletion

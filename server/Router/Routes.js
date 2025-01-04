@@ -200,7 +200,7 @@ router.put('/update-membership-plan/:_id', updateMemberShipPlan)
 
 //Paymnet gateway routes
 router.post('/member-ship-plan/:vendorId', memberShipPlanGateWay);
-router.post('/payment-verify/:transactionId', PaymentVerify)
+router.post('/payment-verify/:merchantTransactionId', PaymentVerify)
 
 // Order routers
 
@@ -304,7 +304,7 @@ router.delete('/delete-commission/:id',deleteCommission)
 
 router.post('/create-bill-payment/:orderId',makeOrderPayment)
 // router.post('/verify-bill-payment',verifyOrderPayment)
-router.post('/status-payment/:transactionId',  verifyOrderPayment);
+router.post('/status-payment/:merchantTransactionId',  verifyOrderPayment);
 
 // withdraw router here 
 

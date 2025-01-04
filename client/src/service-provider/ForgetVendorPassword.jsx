@@ -31,7 +31,7 @@ function ForgetVendorPassword() {
         setLoading(true)
         event.preventDefault()
         try {
-          const response = await axios.post("https://www.api.blueaceindia.com/api/v1/vendor-password-change", formData)
+          const response = await axios.post("https://api.blueaceindia.com/api/v1/vendor-password-change", formData)
           console.log(response.data);
           toast.success(response.data.message)
           setgetOtp(true);
@@ -55,7 +55,7 @@ function ForgetVendorPassword() {
         Payload.append('NewPassword',formData.NewPassword)
         Payload.append('OTP',formData.PasswordChangeOtp)
         try {
-          const response = await axios.post(`https://www.api.blueaceindia.com/api/v1/vendor-verify-otp`, formData)
+          const response = await axios.post(`https://api.blueaceindia.com/api/v1/vendor-verify-otp`, formData)
           console.log(response.data);
           // setLoading(false);
           toast.success(response.data.message)
@@ -77,7 +77,7 @@ function ForgetVendorPassword() {
         setLoading(true)
         otpevent.preventDefault()
         try {
-          const response = await axios.post(`https://www.api.blueaceindia.com/api/v1/vendor-resend-otp`, formData)
+          const response = await axios.post(`https://api.blueaceindia.com/api/v1/vendor-resend-otp`, formData)
           console.log(response.data);
           // setLoading(false);
     

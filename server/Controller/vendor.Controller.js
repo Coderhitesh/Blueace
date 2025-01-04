@@ -10,6 +10,7 @@ const Razorpay = require('razorpay');
 const MembershipPlan = require('../Model/memberShip.Model')
 const User = require('../Model/UserModel');
 const { sendSMS } = require('../Utils/SMSSender');
+const Order = require('../Model/Order.Model');
 require('dotenv').config()
 // Initialize Razorpay instance with your key and secret
 // const razorpayInstance = new Razorpay({
@@ -37,7 +38,8 @@ exports.registerVendor = async (req, res) => {
             RangeWhereYouWantService,
             Role,
             HouseNo,
-            PinCode
+            PinCode,
+            createdFrom
         } = req.body;
 
         const emptyField = [];
@@ -118,7 +120,8 @@ exports.registerVendor = async (req, res) => {
             RangeWhereYouWantService,
             Role,
             HouseNo,
-            PinCode
+            PinCode,
+            createdFrom
         });
 
         // Handle main vendor images
@@ -698,7 +701,8 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 merchantUserId,
                 name: "User",
                 amount: planPrice * 100,
-                redirectUrl: `https://www.api.blueaceindia.com/api/v1/payment-verify/${transactionId}}`,
+                callbackUrl: `https://www.blueaceindia.com/failed-payment`,
+                redirectUrl: `https://api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
                 redirectMode: 'POST',
                 paymentInstrument: {
                     type: 'PAY_PAGE'
@@ -712,6 +716,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
             const sha256 = crypto.createHash('sha256').update(string).digest('hex');
             const checksum = sha256 + '###' + keyIndex;
             const prod_URL = "https://api.phonepe.com/apis/hermes/pg/v1/pay";
+            // const prod_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay";
             const options = {
                 method: 'POST',
                 url: prod_URL,
@@ -734,7 +739,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 success: true,
                 url: response.data.data.instrumentResponse.redirectInfo.url
             })
-        
+
         }
 
     } catch (error) {
@@ -750,7 +755,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
 
 exports.PaymentVerify = async (req, res) => {
 
-    const { transactionId: merchantTransactionId } = req.body;
+    const { merchantTransactionId } = req.params;
 
     if (!merchantTransactionId) {
         return res.status(400).json({ success: false, message: "Merchant transaction ID not provided" });
@@ -764,6 +769,7 @@ exports.PaymentVerify = async (req, res) => {
         const sha256 = crypto.createHash('sha256').update(string).digest('hex');
         const checksum = sha256 + "###" + keyIndex;
         const testUrlCheck = "https://api.phonepe.com/apis/hermes/pg/v1";
+        // const testUrlCheck = "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1";
 
         const options = {
             method: 'GET',
@@ -778,30 +784,41 @@ exports.PaymentVerify = async (req, res) => {
 
         const { data } = await axios.request(options);
 
-        console.log("data", data)
+        // console.log("data out", data)
 
-        if (data.status === "success") {
-            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId });
-            if (!findOrder) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Order not found.',
-                });
-            }
-            const transition = data?.data?.transaction;
-            const method = transition?.paymentInstrument?.method || 'unknown';
+        const findOrder = await Vendor.findOne({ razorpayOrderId: merchantTransactionId });
+        if (!findOrder) {
+            return res.status(400).json({
+                success: false,
+                message: 'Order not found.',
+            });
+        }
 
-            // Update order details with payment status and method
-            findOrder.transactionId = razorpay_payment_id;
+        if (data.success === true) {
+
+            findOrder.transactionId = data?.data?.merchantTransactionId;
             findOrder.PaymentStatus = 'paid';
-            findOrder.paymentMethod = method;
+            findOrder.isMember = true;
 
             await findOrder.save();
 
-            const successRedirect = `http://localhost:5173/successfull-payment`;
+            let redirectEndPoint;
+            if (findOrder?.createdFrom === 'Admin') {
+                redirectEndPoint = 'https://admin.blueace.co.in'
+            } else {
+                redirectEndPoint = 'https://www.blueaceindia.com'
+            }
+            const successRedirect = `${redirectEndPoint}/successfull-payment`;
             return res.redirect(successRedirect);
+
         } else {
-            const failureRedirect = `http://localhost:5173/failed-payment`;
+            let redirectEndPoint;
+            if (findOrder?.createdFrom === 'Admin') {
+                redirectEndPoint = 'https://admin.blueace.co.in/'
+            } else {
+                redirectEndPoint = 'https://www.blueaceindia.com'
+            }
+            const failureRedirect = `${redirectEndPoint}/failed-payment`;
             return res.redirect(failureRedirect);
         }
 

@@ -14,7 +14,7 @@ function Service() {
 
     const fetchAllService = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category');
             setAllService(res.data.data);
         } catch (error) {
             console.log(error);
@@ -23,7 +23,7 @@ function Service() {
 
     const fetchSubCategory = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-main-category');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-main-category');
             setAllSubCategory(res.data.data);
         } catch (error) {
             console.log(error);

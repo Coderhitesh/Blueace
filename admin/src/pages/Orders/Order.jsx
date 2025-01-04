@@ -21,7 +21,7 @@ function Order() {
 
     const fetchAllOrders = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-order');
             setAllOrders(res.data.data);
             setLoading(false);
         } catch (error) {
@@ -32,7 +32,7 @@ function Order() {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-order-status/${orderId}`, { OrderStatus: newStatus });
 
             toast.success('Order status updated successfully');
             fetchAllOrders();
@@ -48,7 +48,7 @@ function Order() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-order/${id}`);
+            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-order/${id}`);
             if (response.data.success) {
                 toast.success('Order deleted successfully!');
                 await fetchAllOrders(); // Fetch vendors again after deletion
@@ -402,7 +402,6 @@ function Order() {
                                         </button>
                                     </div>
                                     <div className="modal-body">
-
                                         <table className="table table-bordered">
                                             <thead>
                                                 <tr>
@@ -415,10 +414,6 @@ function Order() {
                                                     <td style={{ width: '28%' }}>Transaction Id</td>
                                                     <td>{paymentDetail.transactionId || "Not Available"}</td>
                                                 </tr>
-                                                {/* <tr>
-                                                    <td style={{ width: '28%' }}>Payment Method</td>
-                                                    <td>{paymentDetail.paymentMethod || "Not Available"}</td>
-                                                </tr> */}
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Total Amount</td>
                                                     <td>Rs.{paymentDetail.totalAmount || "Not Available"}</td>
@@ -431,10 +426,9 @@ function Order() {
                                             </tbody>
 
                                         </table>
-
                                     </div>
                                     <div className="modal-footer">
-                                        <button type="button" className="btn btn-secondary" onClick={() => setModalVisible(false)}>Close</button>
+                                        <button type="button" className="btn btn-secondary" onClick={() => setPaymentModel(false)}>Close</button>
                                     </div>
                                 </div>
                             </div>

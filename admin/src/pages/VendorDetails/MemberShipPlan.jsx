@@ -17,7 +17,7 @@ function MemberShipPlan() {
 
     const fetchVendorDetail = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/all-vendor')
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/all-vendor')
             const allVendorData = res.data.data
             const filterVendor = allVendorData.filter((item) => item._id === vendorId)
             setVendorData({
@@ -37,82 +37,29 @@ function MemberShipPlan() {
     // Fetch all membership plans
     const fetchMemberShipPlan = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-membership-plan');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-membership-plan');
             setPrice(res.data.data); // Set membership plans to state
         } catch (error) {
             console.log(error);
         }
     };
 
-    // Dynamically load the Razorpay script
-    const loadRazorpayScript = () => {
-        return new Promise((resolve) => {
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => resolve(true);
-            script.onerror = () => resolve(false);
-            document.body.appendChild(script);
-        });
-    };
-
     // Handle submission of selected membership plan for a vendor
     const handleSubmit = async (vendorId, planId, planPrice) => {
         try {
-            // Make sure the Razorpay script is loaded
-            const scriptLoaded = await loadRazorpayScript();
-            if (!scriptLoaded) {
-                alert('Failed to load Razorpay SDK. Please check your connection.');
-                return;
-            }
 
             // Create the membership plan order
-            const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/member-ship-plan/${vendorId}`, {
+            const res = await axios.post(`https://api.blueaceindia.com/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
-            console.log("Orders", res.data.data)
-            const order = res.data.data.razorpayOrder;
 
-            if(!order){
-                toast.success('Membership Plan Purchase successfully!')
-                window.location.href = '/vendors/all-vendor'
+            if (res.data.success) {
+
+                window.location.href = res.data.url;
+            } else {
+                console.error('Error initiating payment:', res.data.message);
             }
 
-            // Razorpay options
-            if (order) {
-
-                const options = {
-                    key: 'rzp_test_cz0vBQnDwFMthJ',
-                    amount: planPrice * 100,
-                    currency: 'INR',
-                    name: 'Blueace',
-                    description: 'Purchase Membership Plan',
-                    order_id: order?.id || '',
-                    // callback_url: "https://www.api.blueaceindia.com/api/v1/payment-verify",
-                    prefill: {
-                        name: vendorData.ownerName, // Prefill customer data
-                        email: vendorData.Email,
-                        contact: vendorData.ContactNumber
-                    },
-                    theme: {
-                        color: '#F37254'
-                    },
-                    handler: function (response) {
-                        // Successful payment redirection
-                        window.location.href = '/successfull-payment';
-                    },
-                };
-
-                const rzp = new window.Razorpay(options);
-                rzp.on('payment.failed', function (response) {
-                    // Failed payment redirection
-                    window.location.href = '/failed-payment';
-                });
-        
-                rzp.open();
-            }
-
-            // toast.success('Membership Plan Purchase successfully!')
-            
         } catch (error) {
             console.log('Internal server error in buying membership plan', error);
         }

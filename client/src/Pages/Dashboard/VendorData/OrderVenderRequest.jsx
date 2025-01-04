@@ -21,7 +21,7 @@ function OrderVenderRequest({ userData }) {
 
     const handleFetchRequestOrder = async () => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
                 // setAllOrder(res.data.data)
                 const allData = res.data.data
                 const requestOrder = allData.filter((item) => item.VendorAllotedStatus === 'Send Request')
@@ -38,8 +38,9 @@ function OrderVenderRequest({ userData }) {
     // Handle order status change
     const handleOrderStatusChange = async (orderId, newStatus) => {
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-vendor-order-request/${orderId}`, { VendorAllotedStatus: newStatus });
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-vendor-order-request/${orderId}`, { VendorAllotedStatus: newStatus });
             toast.success('Order status updated successfully');
+            handleFetchRequestOrder();
         } catch (error) {
             console.error(error);
             Swal.fire("Error", "Failed to update order status", "error");

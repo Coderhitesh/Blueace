@@ -21,7 +21,7 @@ function AllWithdraw() {
 
   const fetchVendorDetail = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-withdraw-request');
+      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-withdraw-request');
       const allData = res.data.data;
       setVendors(allData.reverse());
     } catch (error) {
@@ -43,7 +43,7 @@ function AllWithdraw() {
   // Handle status update
   const handleStatusChange = async (withdrawId, newStatus,vendor) => {
     try {
-      const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-withdraw-status/${withdrawId}`, {
+      const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-withdraw-status/${withdrawId}`, {
         status: newStatus,
         vendorId: vendor // assuming this is the vendor ID
       });
@@ -83,7 +83,7 @@ function AllWithdraw() {
   const handleDelete = async (id) => {
     setLoading(true)
     try {
-      const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-withdraw-request/${id}`);
+      const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-withdraw-request/${id}`);
       if (response.data.success) {
         toast.success('Withdraw Request deleted successfully.');
         fetchVendorDetail();
