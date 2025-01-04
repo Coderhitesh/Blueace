@@ -814,7 +814,7 @@ exports.PaymentVerify = async (req, res) => {
         } else {
             let redirectEndPoint;
             if (findOrder?.createdFrom === 'Admin') {
-                redirectEndPoint = 'https://admin.blueace.co.in/'
+                redirectEndPoint = 'https://admin.blueace.co.in'
             } else {
                 redirectEndPoint = 'https://www.blueaceindia.com'
             }

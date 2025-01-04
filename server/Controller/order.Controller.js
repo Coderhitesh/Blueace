@@ -1146,10 +1146,10 @@ exports.verifyOrderPayment = async (req, res) => {
             await vendor.save();
             await findOrder.save();
 
-            const successRedirect = `https://www.blueaceindia.comsuccessfull-payment`;
+            const successRedirect = `https://www.blueaceindia.com/successfull-payment`;
             return res.redirect(successRedirect);
         } else {
-            const failureRedirect = `https://www.blueaceindia.comfailed-payment`;
+            const failureRedirect = `https://www.blueaceindia.com/failed-payment`;
             return res.redirect(failureRedirect);
         }
 

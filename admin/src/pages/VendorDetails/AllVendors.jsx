@@ -196,55 +196,59 @@ function AllVendors() {
                                         <div className="row">
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Company Name:</h6>
-                                                <p>{selectedVendor.companyName}</p>
+                                                <p>{selectedVendor?.companyName}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Owner Name:</h6>
-                                                <p>{selectedVendor.ownerName || "Not Available"}</p>
+                                                <p>{selectedVendor?.ownerName || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Contact Number:</h6>
-                                                <p>{selectedVendor.ContactNumber || "Not Available"}</p>
+                                                <p>{selectedVendor?.ContactNumber || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Email:</h6>
-                                                <p>{selectedVendor.Email || "Not Available"}</p>
+                                                <p>{selectedVendor?.Email || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Year of Registration:</h6>
-                                                <p>{selectedVendor.yearOfRegistration || "Not Available"}</p>
+                                                <p>{selectedVendor?.yearOfRegistration || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Register Address:</h6>
-                                                <p>{`${selectedVendor.HouseNo}, ${selectedVendor.address}, ${selectedVendor.PinCode}` || "Not-Available"}</p>
+                                                <p>{`${selectedVendor?.HouseNo}, ${selectedVendor.address}, ${selectedVendor.PinCode}` || "Not-Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>PAN Number:</h6>
-                                                <p>{selectedVendor.panNo || "Not Available"}</p>
+                                                <p>{selectedVendor?.panNo || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>GST Number:</h6>
-                                                <p>{selectedVendor.gstNo || "Not Available"}</p>
+                                                <p>{selectedVendor?.gstNo || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Aadhar Number:</h6>
-                                                <p>{selectedVendor.adharNo || "Not Available"}</p>
+                                                <p>{selectedVendor?.adharNo || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
-                                                <h6 className=' mb-2'>Payment Status:</h6>
-                                                <p>{selectedVendor.PaymentStatus || "Not Available"}</p>
+                                                <h6 className=' mb-2'>Plan Name:</h6>
+                                                <p>{selectedVendor?.memberShipPlan?.name || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
-                                                <h6 className=' mb-2'>Average Rating:</h6>
-                                                <p>{selectedVendor.averageRating || "Not Available"}</p>
+                                                <h6 className=' mb-2'>Plan Price:</h6>
+                                                <p>{selectedVendor?.memberShipPlan?.price || "Not Available"}</p>
+                                            </div>
+                                            <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                                                <h6 className=' mb-2'>Plan Payment Status:</h6>
+                                                <p>{selectedVendor?.PaymentStatus || "Not Available"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Verified:</h6>
-                                                <p>{selectedVendor.verifyed ? "Yes" : "No"}</p>
+                                                <p>{selectedVendor?.verifyed ? "Yes" : "No"}</p>
                                             </div>
                                             <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                                                 <h6 className=' mb-2'>Ready to Work:</h6>
-                                                <p>{selectedVendor.readyToWork ? "Yes" : "No"}</p>
+                                                <p>{selectedVendor?.readyToWork ? "Yes" : "No"}</p>
                                             </div>
 
                                             {/* Image Section */}
@@ -252,7 +256,7 @@ function AllVendors() {
                                             <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
                                                 <h6>PAN Image:</h6>
                                                 {selectedVendor.panImage?.url ? (
-                                                    <img src={selectedVendor.panImage.url} className=' mt-2' alt="PAN" style={{ width: '50%', height: '150px'  }} />
+                                                    <img src={selectedVendor?.panImage?.url} className=' mt-2' alt="PAN" style={{ width: '50%', height: '150px'  }} />
                                                 ) : (
                                                     <p>Not Available</p>
                                                 )}
@@ -260,7 +264,7 @@ function AllVendors() {
                                             <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
                                                 <h6>Aadhar Image:</h6>
                                                 {selectedVendor.adharImage?.url ? (
-                                                    <img src={selectedVendor.adharImage.url} className=' mt-2' alt="Aadhar" style={{ width: '50%', height: '150px'  }} />
+                                                    <img src={selectedVendor.adharImage?.url} className=' mt-2' alt="Aadhar" style={{ width: '50%', height: '150px'  }} />
                                                 ) : (
                                                     <p>Not Available</p>
                                                 )}
@@ -268,7 +272,7 @@ function AllVendors() {
                                             <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
                                                 <h6>GST Image:</h6>
                                                 {selectedVendor.gstImage?.url ? (
-                                                    <img src={selectedVendor.gstImage.url} className=' mt-2' alt="GST" style={{ width: '50%', height: '150px'  }} />
+                                                    <img src={selectedVendor?.gstImage?.url} className=' mt-2' alt="GST" style={{ width: '50%', height: '150px'  }} />
                                                 ) : (
                                                     <p>Not Available</p>
                                                 )}
@@ -276,7 +280,7 @@ function AllVendors() {
                                             <div className=" col-lg-6 col-md-6 col-sm-6 mb-3">
                                                 <h6>Vendor Image:</h6>
                                                 {selectedVendor.vendorImage?.url ? (
-                                                    <img src={selectedVendor.vendorImage.url} className=' mt-2' alt="Vendor" style={{ width: '50%', height: '150px'  }} />
+                                                    <img src={selectedVendor?.vendorImage?.url} className=' mt-2' alt="Vendor" style={{ width: '50%', height: '150px'  }} />
                                                 ) : (
                                                     <p>Not Available</p>
                                                 )}
