@@ -35,7 +35,7 @@ function UserDashboard() {
     useEffect(()=>{
         const findUser = async () => {
             try {
-                const res = await axios.get(`https://api.blueaceindia.com/api/v1/findUser/${userId}`)
+                const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
                 setUserData(res.data.data)
             } catch (error) {
                 console.log(error)
@@ -49,7 +49,7 @@ function UserDashboard() {
     const fetchOrderById = async () => {
         setLoading(false)
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-order-by-user-id?userId=${userId}`, );
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-user-id?userId=${userId}`, );
             setAllOrder(res.data.data)
             // console.log("order by id",res.data.data)
             const allData = res.data.data
@@ -75,7 +75,7 @@ function UserDashboard() {
 
     const handleLogout = async () => {
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/Logout', {
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/Logout', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -101,7 +101,7 @@ function UserDashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`https://api.blueaceindia.com/api/v1/delete-user/${userId}`);
+                    await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-user/${userId}`);
                     sessionStorage.clear();
                     toast.success('User Deleted Successfully');
                     window.location.href = '/';

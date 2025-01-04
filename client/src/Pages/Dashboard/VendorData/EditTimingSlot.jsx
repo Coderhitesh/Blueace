@@ -11,7 +11,7 @@ function EditTimingSlot({ userData }) {
     // Fetch Existing Schedule
     const fetchExistingSchedule = async () => {
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-working-hours/${vendorId}`);
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-working-hours/${vendorId}`);
             if (res.data?.data?.schedule?.length > 0) {
                 setFormData(res.data.data.schedule); // Pre-populate with existing schedule
             } else {
@@ -27,7 +27,7 @@ function EditTimingSlot({ userData }) {
     // Fetch Time Slots
     const handleFetchTimeSlot = async () => {
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-timing');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-timing');
             setAllTimeSlot(res.data.data);
         } catch (error) {
             console.error("Error in getting time slots:", error);
@@ -59,7 +59,7 @@ function EditTimingSlot({ userData }) {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.put(`https://api.blueaceindia.com/api/v1/update-working-hours/${vendorId}`, { schedule: formData }, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-working-hours/${vendorId}`, { schedule: formData }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

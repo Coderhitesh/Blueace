@@ -48,7 +48,7 @@ function SubCategory() {
 
   const fetchdata = async () => {
     try {
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-service-category-by-name/${newTitle}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-service-category-by-name/${newTitle}`);
       setService(res.data.data);
       // console.log('data', res.data.data)
     } catch (error) {
@@ -58,7 +58,7 @@ function SubCategory() {
 
   const fetchAllData = async () => {
     try {
-      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service');
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
       const allData = res.data.data;
 
       // Apply regex search directly in the frontend filtering
@@ -218,7 +218,7 @@ function SubCategory() {
   const fetchAddressSuggestions = async (query) => {
     try {
       // console.log("query",query)
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
       console.log(res.data)
       setAddressSuggestions(res.data || []);
     } catch (err) {
@@ -229,7 +229,7 @@ function SubCategory() {
   // Fetch latitude and longitude based on selected address
   const fetchGeocode = async (selectedAddress) => {
     try {
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
       // console.log("geo", res.data)
       const { latitude, longitude } = res.data;
       setLocation({ latitude, longitude });
@@ -312,7 +312,7 @@ function SubCategory() {
     );
 
     try {
-      await axios.post('https://api.blueaceindia.com/api/v1/make-order', updatedFormData, {
+      await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
