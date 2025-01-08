@@ -47,6 +47,7 @@ import Term from "./Pages/Term/Term"
 import HeatPump from "./Pages/HeatPump/HeatPump"
 import CassetteAir from "./Pages/CassetteAir/CassetteAir"
 import AirColdChiller from "./Pages/AirColdChiller/AirColdChiller"
+import Whatsapp from "./Components/Whatsapp/Whatsapp"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -111,6 +112,7 @@ function App() {
         </Routes>
         {/* <NewsLetter /> */}
         <Footer />
+        <Whatsapp />
       </BrowserRouter>
     </>
   )

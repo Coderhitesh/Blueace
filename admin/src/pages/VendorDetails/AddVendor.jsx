@@ -202,7 +202,7 @@ function AddVendor() {
             const res = await axios.post('https://www.api.blueaceindia.com/api/v1/register-vendor', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            toast.success('Employee Registration Successful!');
+            // toast.success('Employee Registration Successful!');
             const vendorType = res.data.user.Role
             // console.log("vendorType",vendorType)
             if (vendorType === "vendor") {
