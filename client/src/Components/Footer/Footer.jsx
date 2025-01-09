@@ -4,8 +4,8 @@ import logo from './logo.webp'
 import axios from 'axios';
 
 function Footer() {
-  const [allService,setService] = useState([])
-  const fetchService = async() => {
+  const [allService, setService] = useState([])
+  const fetchService = async () => {
     try {
       const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
       const data = res.data.data
@@ -15,9 +15,9 @@ function Footer() {
       console.log(error)
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     fetchService();
-  },[])
+  }, [])
   return (
     <>
       {/* ============================ Footer Start ================================== */}
@@ -30,18 +30,18 @@ function Footer() {
                   <img
                     src={logo}
                     className="img-footer small mb-2"
-                    alt="logo" style={{width:"50px"}}
+                    alt="logo" style={{ width: "50px" }}
                   />
                   {/* <h1>LOGO</h1> */}
                   <div className="address mt-2">
-                     C-126, Office No-1 Gate No - 1, First Floor Naraina Industrial Area, Phase – 01, New Delhi - 110028
+                    C-126, Office No-1 Gate No - 1, First Floor Naraina Industrial Area, Phase – 01, New Delhi - 110028
                   </div>
                   <div className="address mt-3">
-                    <strong>Phone:</strong>+91 9311539090<br/>
+                    <strong>Phone:</strong>+91 9311539090<br />
                     <br />
-                    <strong>Phone:</strong>+91 9811550874<br/>
+                    <strong>Phone:</strong>+91 9811550874<br />
                     <br />
-                    <strong>Mail:</strong> info@blueaceindia.com<br/>
+                    <strong>Mail:</strong> info@blueaceindia.com<br />
                   </div>
                   <div className="address mt-2">
                     <ul className="list-inline">
@@ -58,6 +58,11 @@ function Footer() {
                       <li className="list-inline-item">
                         <a href="https://www.linkedin.com/company/blueace-ltd " target='_blank' className="theme-cl">
                           <i className="lni lni-linkedin-original"></i>
+                        </a>
+                      </li>
+                      <li className="list-inline-item">
+                        <a href="https://www.youtube.com/@Blueaceltd " target='_blank' className="theme-cl">
+                          <i class="fa-brands fa-youtube"></i>
                         </a>
                       </li>
                     </ul>
@@ -88,7 +93,7 @@ function Footer() {
                   <h4 className="widget_title">Our Products</h4>
                   <ul className="footer-menu">
                     {
-                      allService && allService.map((item,index)=>(
+                      allService && allService.map((item, index) => (
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
@@ -101,15 +106,15 @@ function Footer() {
                 <div className="footer_widget">
                   <h4 className="widget_title">Services</h4>
                   <ul className="footer-menu">
-                  {
-                      allService && allService.slice(0,7).map((item,index)=>(
+                    {
+                      allService && allService.slice(0, 7).map((item, index) => (
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
                     <li><Link to={`/voltas-central-ac`}>- Voltas Central Ac</Link></li>
                     <li><Link to={`/hvac`}>- HVAC</Link></li>
                     <li><Link to={`/heat-pump-installation`}>- Heat Pump</Link></li>
-                    <li><Link to={`/cassette-air-conditioning`}>- Cassette Air Conditioning</Link></li>
+                    <li><Link to={`/service/cassette-air-conditioning-system`}>- Cassette Air Conditioning</Link></li>
                   </ul>
                 </div>
               </div>

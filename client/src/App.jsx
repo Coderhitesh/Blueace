@@ -106,7 +106,7 @@ function App() {
           <Route path="/voltas-central-ac" element={<VoltasCentralAC />} />
           <Route path="/hvac" element={<HVAC />} />
           <Route path="/heat-pump-installation" element={<HeatPump />} />
-          <Route path="/cassette-air-conditioning" element={<CassetteAir />} />
+          <Route path="/service/cassette-air-conditioning-system" element={<CassetteAir />} />
           <Route path="/air-cooled-chiller" element={<AirColdChiller />} />
 
         </Routes>

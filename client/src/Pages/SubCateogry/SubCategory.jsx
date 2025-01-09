@@ -172,26 +172,6 @@ function SubCategory() {
   const [location, setLocation] = useState({ latitude: '', longitude: '' });
   const [addressSuggestions, setAddressSuggestions] = useState([]);
 
-
-  // Get user location
-  // const getLocation = () => {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         setLocation({
-  //           latitude: position.coords.latitude,
-  //           longitude: position.coords.longitude
-  //         });
-  //       },
-  //       (error) => {
-  //         toast.error('Unable to retrieve your location');
-  //       }
-  //     );
-  //   } else {
-  //     toast.error('Geolocation is not supported by this system');
-  //   }
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -286,11 +266,9 @@ function SubCategory() {
     updatedFormData.append('phoneNumber', formData.phoneNumber);
     updatedFormData.append('message', formData.message);
     updatedFormData.append('serviceType', formData.serviceType);
-    // updatedFormData.append('city', formData.city);
     updatedFormData.append('address', formData.address);
     updatedFormData.append('pinCode', formData.pinCode);
     updatedFormData.append('houseNo', formData.houseNo);
-    // updatedFormData.append('street', formData.street);
     updatedFormData.append('nearByLandMark', formData.nearByLandMark);
 
     // Append voice note file if available
