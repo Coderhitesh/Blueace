@@ -48,6 +48,7 @@ import HeatPump from "./Pages/HeatPump/HeatPump"
 import CassetteAir from "./Pages/CassetteAir/CassetteAir"
 import AirColdChiller from "./Pages/AirColdChiller/AirColdChiller"
 import Whatsapp from "./Components/Whatsapp/Whatsapp"
+import Career from "./Pages/Career/Career"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -69,6 +70,7 @@ function App() {
           <Route path="/about-us" element={
             <About />
           } />
+          <Route path="/career" element={<Career />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/sign-up" element={<Registration />} />

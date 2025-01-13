@@ -1,0 +1,25 @@
+.socailLinks a{
+    font-size: 17px !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    padding:8px;
+}
+
+.socailLinks:nth-child(1) a i{
+    color: #0866FF;
+}
+
+.socailLinks:nth-child(2) a i{
+    color: #d62976;
+}
+
+.socailLinks:nth-child(3) a i{
+    color: #0270AA;
+}
+
+.socailLinks:nth-child(4) a svg{
+    color: #FF0000;
+}

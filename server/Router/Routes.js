@@ -28,6 +28,7 @@ const { getCurrentLocationByLatLng, getLatLngByAddress, AutoCompleteAddress } = 
 const { createTerm, getAllTerm, getSingleTerm, deleteTerm, updateTerm } = require('../Controller/Term.Controller')
 const { createCommission, getAllCommission, getSingleCommission, updateCommission, deleteCommission } = require('../Controller/Commission.Controller')
 const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdrawRequest, deleteWithdrawRequest, getWithdrawByVendorId } = require('../Controller/withdraw.Controller')
+const { createCareer, getAllCareers, getCareerById, updateCareer, deleteCareer } = require('../Controller/Career.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -314,6 +315,14 @@ router.get('/get-single-withdraw-request/:id',getSingleWithdraw)
 router.put('/update-withdraw-status/:id',updateWithdrawRequest)
 router.delete('/delete-withdraw-request/:withdrawId',deleteWithdrawRequest)
 router.get('/get-withdraw-request-by-vendorId/:vendorId',getWithdrawByVendorId)
+
+// career router here 
+
+router.post('/careers', createCareer); // Create
+router.get('/careers', getAllCareers); // Read All
+router.get('/careers/:id', getCareerById); // Read One
+router.put('/careers/:id', updateCareer); // Update
+router.delete('/careers/:id', deleteCareer); // Delete
 
 
 module.exports = router;

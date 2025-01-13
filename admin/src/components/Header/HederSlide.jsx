@@ -215,6 +215,19 @@ const HederSlide = () => {
                             <h6 className="lan-2">All Withdraw</h6>
                         </Link>
                     </li>
+
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="/career/all-career"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All Career</h6>
+                        </Link>
+                    </li>
                 </ul>
             </div>
         </aside>

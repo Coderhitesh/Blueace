@@ -68,6 +68,9 @@ import AllWithdraw from '../Withdraw/AllWithdraw'
 import AddCommission from '../Commission/AddCommission'
 import AllCommission from '../Commission/AllCommission'
 import EditCommission from '../Commission/EditCommission'
+import AllCareer from '../Career/AllCareer'
+import EditCareer from '../Career/editCareer'
+import AddCareer from '../Career/AddCareer'
 
 const Home = () => {
     return (
@@ -197,6 +200,12 @@ const Home = () => {
                         <Route path='/commission/all-commission' element={<AllCommission />} />
                         <Route path='/commission/add-commission' element={<AddCommission />} />
                         <Route path='/commission/edit-commission/:id' element={<EditCommission />} />
+
+                        {/* career route here  */}
+
+                        <Route path='/career/all-career' element={<AllCareer />}/>
+                        <Route path='/career/add-career' element={<AddCareer />}/>
+                        <Route path='/career/edit-career/:id' element={<EditCareer />}/>
 
 
                     </Routes>

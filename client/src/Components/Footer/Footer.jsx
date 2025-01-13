@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from './logo.webp'
 import axios from 'axios';
+import './footer.css'
 
 function Footer() {
   const [allService, setService] = useState([])
@@ -45,22 +46,22 @@ function Footer() {
                   </div>
                   <div className="address mt-2">
                     <ul className="list-inline">
-                      <li className="list-inline-item">
+                      <li className="list-inline-item socailLinks">
                         <a href="https://www.facebook.com/blueacelimited/" target='_blank' className="theme-cl">
                           <i className="lni lni-facebook-filled"></i>
                         </a>
                       </li>
-                      <li className="list-inline-item">
+                      <li className="list-inline-item socailLinks">
                         <a href="https://www.instagram.com/blueacelimited/" target='_blank' className="theme-cl">
                           <i className="lni lni-instagram-filled"></i>
                         </a>
                       </li>
-                      <li className="list-inline-item">
+                      <li className="list-inline-item socailLinks">
                         <a href="https://www.linkedin.com/company/blueace-ltd " target='_blank' className="theme-cl">
                           <i className="lni lni-linkedin-original"></i>
                         </a>
                       </li>
-                      <li className="list-inline-item">
+                      <li className="list-inline-item socailLinks">
                         <a href="https://www.youtube.com/@Blueaceltd " target='_blank' className="theme-cl">
                           <i class="fa-brands fa-youtube"></i>
                         </a>
@@ -83,7 +84,7 @@ function Footer() {
                     <li><Link to={'/privacy'}>- Privacy</Link></li>
                     <li><Link to={'/term-and-conditions'}>- Terms & Conditions</Link></li>
                     <li><Link to={'/gallery'}>- Gallery</Link></li>
-                    {/* <li><Link to={'/'}>Dashboard</Link></li> */}
+                    <li><Link to={'/career'}>- Career</Link></li>
                   </ul>
                 </div>
               </div>
