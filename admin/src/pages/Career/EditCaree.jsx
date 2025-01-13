@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-function EditCareer() {
+function EditCaree() {
     const { id } = useParams();
     const [formData, setFormData] = useState({
         title: '',
@@ -160,4 +160,4 @@ function EditCareer() {
     );
 }
 
-export default EditCareer;
+export default EditCaree;

@@ -69,8 +69,8 @@ import AddCommission from '../Commission/AddCommission'
 import AllCommission from '../Commission/AllCommission'
 import EditCommission from '../Commission/EditCommission'
 import AllCareer from '../Career/AllCareer'
-import EditCareer from '../Career/editCareer'
 import AddCareer from '../Career/AddCareer'
+import EditCaree from '../Career/EditCaree'
 
 const Home = () => {
     return (
@@ -205,7 +205,7 @@ const Home = () => {
 
                         <Route path='/career/all-career' element={<AllCareer />}/>
                         <Route path='/career/add-career' element={<AddCareer />}/>
-                        <Route path='/career/edit-career/:id' element={<EditCareer />}/>
+                        <Route path='/career/edit-career/:id' element={<EditCaree />}/>
 
 
                     </Routes>
