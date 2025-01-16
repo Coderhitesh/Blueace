@@ -178,6 +178,8 @@ function SubCategory() {
     if (name === 'serviceType') {
       // Find the selected service from allService array
       const selectedService = allService.find((item) => item.name === value);
+      console.log("selectedService", selectedService)
+      console.log("value", value)
 
       // Update both serviceType and serviceId
       setFormData({

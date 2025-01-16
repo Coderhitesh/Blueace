@@ -10,6 +10,7 @@ function GetServicePopup({ handlePopupDeactive }) {
     const [addressSuggestions, setAddressSuggestions] = useState([]);
     const [allService, setAllService] = useState([]);
     const [serviceType, setServiceType] = useState([]);
+    const [serviceCagetgory, setserviceCagetgory] = useState({})
 
     // Voice Recording States
     const [isRecording, setIsRecording] = useState(false);
@@ -17,6 +18,8 @@ function GetServicePopup({ handlePopupDeactive }) {
     const [audioURL, setAudioURL] = useState('');
     const mediaRecorder = useRef(null);
     const audioChunks = useRef([]);
+
+    const [selectedService, setSelectedService] = useState(null)
 
     const [formData, setFormData] = useState({
         userId: '',
@@ -126,26 +129,36 @@ function GetServicePopup({ handlePopupDeactive }) {
 
         if (name === 'serviceId') {
             try {
-                const name = allService.find((item) => item._id === value);
+                const selectedService = allService.find((item) => item._id === value); // Find the service by ID
+                const serviceName = selectedService?.name;
                 const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service');
                 const allData = res.data.data;
-                const serviceName = name?.name;
-                const searchName = serviceName;
-                const regex = new RegExp(`^${searchName}$`, 'i');
-                const filterData = allData.filter((item) => regex.test(item?.subCategoryId?.name));
-                setServiceType(filterData);
+                const fil = allData.find((item) => item?.subCategoryId?.name === serviceName);
+                setSelectedService(fil)
+
+                if (serviceName) {
+                    const regex = new RegExp(`^${serviceName}$`, 'i'); // Case-insensitive match
+                    const filterData = allData.filter((item) => regex.test(item?.subCategoryId?.name));
+                    setServiceType(filterData); // Update service type options
+                }
             } catch (error) {
                 console.error('Error fetching services:', error);
             }
         }
 
-        setFormData(prev => {
-            const newData = { ...prev, [name]: value };
-            localStorage.setItem('serviceFormData', JSON.stringify(newData));
-            return newData;
-        });
+        if (name === 'serviceType') {
+            setFormData((prevFormData) => ({
+                ...prevFormData,
+                serviceType: value,
+            }));
+        } else {
+            setFormData((prevFormData) => {
+                const updatedFormData = { ...prevFormData, [name]: value };
+                localStorage.setItem('serviceFormData', JSON.stringify(updatedFormData)); // Persist to localStorage
+                return updatedFormData;
+            });
+        }
     };
-
 
     const fetchAddressSuggestions = async (query) => {
         try {
@@ -193,7 +206,7 @@ function GetServicePopup({ handlePopupDeactive }) {
             const updatedFormData = new FormData();
 
             updatedFormData.append('userId', userId);
-            updatedFormData.append('serviceId', formData.serviceId);
+            updatedFormData.append('serviceId', selectedService?._id);
             updatedFormData.append('fullName', formData.fullName);
             updatedFormData.append('email', formData.email);
             updatedFormData.append('phoneNumber', formData.phoneNumber);
@@ -216,9 +229,10 @@ function GetServicePopup({ handlePopupDeactive }) {
                     }
                 ])
             );
-            updatedFormData.append('voiceNote',audioURL)
+            updatedFormData.append('voiceNote', audioURL)
 
             const res = await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData);
+            setSelectedService(null)
             toast.success('Service request submitted successfully!');
             localStorage.removeItem('serviceFormData');
             handlePopupDeactive();
