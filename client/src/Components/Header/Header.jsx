@@ -68,7 +68,7 @@ function Header() {
       });
       sessionStorage.clear();
       toast.success('Logout successfully');
-      navigate('/sign-in');
+      window.location.href = '/'
     } catch (error) {
       console.log('Internal server in logout account', error);
       toast.error(error?.response?.data?.msg || 'Internal server error during logout');
@@ -94,7 +94,7 @@ function Header() {
       });
       sessionStorage.clear();
       toast.success('Logout successfully');
-      navigate('/sign-in');
+      window.location.href = '/';
     } catch (error) {
       console.log('Internal server in logout account', error);
       toast.error(error?.response?.data?.msg || 'Internal server error during logout');
@@ -275,11 +275,11 @@ function Header() {
                             </li>
                           </ul>
                         </li>
-                        <li className="add-listing theme-bg activeInDes">
+                        {/* <li className="add-listing theme-bg activeInDes">
                           <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                             <i className="fas fa-plus me-2"></i>Vendor Registration
                           </Link>
-                        </li>
+                        </li> */}
                       </>
                     )}
                   </>
@@ -403,11 +403,11 @@ function Header() {
                         </li>
                       </ul>
                     </li>
-                    <li className="add-listing theme-bg activeInMob">
+                    {/* <li className="add-listing theme-bg activeInMob">
                       <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                         <i className="fas fa-plus me-2"></i>Vendor Registration
                       </Link>
-                    </li>
+                    </li> */}
                   </>
                 )}
               </ul>
@@ -504,11 +504,11 @@ function Header() {
                       </li>
 
 
-                      <li className="add-listing theme-bg activeInDes">
+                      {/* <li className="add-listing theme-bg activeInDes">
                         <Link style={{ color: 'white' }} to={'/vendor-registration'}>
                           <i className="fas fa-plus me-2"></i>Vendor Registration
                         </Link>
-                      </li>
+                      </li> */}
                     </>
                   )}
 
@@ -632,9 +632,6 @@ function Header() {
                       </div>
                     </div>
                   </>
-
-
-
                 </>
 
               </ul>

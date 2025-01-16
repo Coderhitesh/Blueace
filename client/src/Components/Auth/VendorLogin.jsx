@@ -63,9 +63,9 @@ function VendorLogin() {
             navigate(redirectUrl);
 
         } catch (error) {
-            const errorMessage = error.response.data.msg;
+            const errorMessage = error?.response?.data?.message;
             toast.error(`Error logging in: ${errorMessage}`);
-            console.error('Login failed. Please check your credentials.', errorMessage);
+            // console.error('Login failed. Please check your credentials.', errorMessage);
             console.log(error)
         } finally {
             setLoading(false);

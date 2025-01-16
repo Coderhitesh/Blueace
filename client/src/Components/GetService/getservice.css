@@ -1,0 +1,132 @@
+.getservice-container {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.getservice-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.3s ease;
+}
+
+.getservice-wrapper:hover {
+    transform: translateY(-5px);
+}
+
+.getservice-button {
+    width: 65px;
+    height: 65px;
+    background: linear-gradient(145deg, #4338ca, #3730a3);
+    border-radius: 50%;
+    box-shadow: 0 6px 20px rgba(67, 56, 202, 0.3),
+                inset 0 2px 8px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.button-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.getservice-button i {
+    color: white;
+    font-size: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    animation: float 2s ease-in-out infinite;
+}
+
+.getservice-text {
+    color: #4338ca;
+    font-size: 18px;
+    font-weight: 600;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(67, 56, 202, 0.15);
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
+}
+
+.getservice-wrapper:hover .getservice-text {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.getservice-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+    z-index: 1;
+}
+
+.getservice-button svg{
+    font-size: 2rem;
+}
+
+.ripple {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 2s infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .getservice-container {
+        bottom: 20px;
+        left: 20px;
+    }
+    
+    .getservice-button {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .getservice-button i {
+        font-size: 24px;
+    }
+    
+    .getservice-text {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+}

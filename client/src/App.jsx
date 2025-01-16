@@ -49,13 +49,31 @@ import CassetteAir from "./Pages/CassetteAir/CassetteAir"
 import AirColdChiller from "./Pages/AirColdChiller/AirColdChiller"
 import Whatsapp from "./Components/Whatsapp/Whatsapp"
 import Career from "./Pages/Career/Career"
+import GetService from "./Components/GetService/GetService"
+import { useEffect, useState } from "react"
+import GetServicePopup from "./Components/getservicepopup/GetServicePopup"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
 function App() {
 
+  const [isPopUp, setPopUp] = useState(false)
+
+  const handlePopupActive = () => {
+    setPopUp(true)
+  }
+
+  const handlePopupDeactive = () => {
+    setPopUp(false)
+  }
+
+  // useEffect(() => {
+  //   handlePopupActive();
+  // }, []);
+
   return (
     <>
+      {/* <GetServicePopup handlePopupDeactive={handlePopupDeactive} /> */}
       <BrowserRouter>
         <Header />
         <Routes>
@@ -115,6 +133,8 @@ function App() {
         {/* <NewsLetter /> */}
         <Footer />
         <Whatsapp />
+        <GetService handlePopupActive={handlePopupActive} handlePopupDeactive={handlePopupDeactive} isPopUp={isPopUp} />
+
       </BrowserRouter>
     </>
   )

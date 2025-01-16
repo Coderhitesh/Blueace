@@ -229,8 +229,6 @@ function SubCategory() {
     }
   };
 
-
-
   const handleAlert = () => {
     toast.error('You are a vendor or employee; you cannot avail of the services.');
   }
