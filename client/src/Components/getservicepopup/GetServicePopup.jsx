@@ -103,7 +103,7 @@ function GetServicePopup({ handlePopupDeactive }) {
 
     const handleFetchService = async () => {
         try {
-            const { data } = await axios.get('http://localhost:7987/api/v1/get-all-service-category');
+            const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
             setAllService(data?.data);
         } catch (error) {
             console.log("Internal server error", error);
@@ -218,7 +218,7 @@ function GetServicePopup({ handlePopupDeactive }) {
             );
             updatedFormData.append('voiceNote',audioURL)
 
-            const res = await axios.post('http://localhost:7987/api/v1/make-order', updatedFormData);
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/make-order', updatedFormData);
             toast.success('Service request submitted successfully!');
             localStorage.removeItem('serviceFormData');
             handlePopupDeactive();
