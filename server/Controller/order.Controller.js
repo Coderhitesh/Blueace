@@ -1007,7 +1007,7 @@ exports.makeOrderPayment = async (req, res) => {
             name: "User",
             amount: integerAmount * 100,
             callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-            redirectUrl: `https://www.api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
+            redirectUrl: `https://api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'

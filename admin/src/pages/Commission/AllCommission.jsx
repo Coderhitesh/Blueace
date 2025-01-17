@@ -14,7 +14,7 @@ function AllCommission() {
     const fetchMarqueeData = async () => {
         setLoading(true)
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-commission')
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-commission')
             if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
@@ -37,7 +37,7 @@ function AllCommission() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-commission/${id}`);
+            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-commission/${id}`);
             if (response.data.success) {
                 toast.success('Commission deleted successfully!');
                 await fetchMarqueeData(); // Fetch categories again after deletion

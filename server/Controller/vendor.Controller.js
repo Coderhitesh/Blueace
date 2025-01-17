@@ -702,7 +702,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 name: "User",
                 amount: planPrice * 100,
                 callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-                redirectUrl: `https://www.api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
+                redirectUrl: `https://api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
                 redirectMode: 'POST',
                 paymentInstrument: {
                     type: 'PAY_PAGE'

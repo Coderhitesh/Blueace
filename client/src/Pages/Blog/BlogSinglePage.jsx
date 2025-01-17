@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import MetaTag from '../../Components/Meta/MetaTag';
 
 function BlogSinglePage() {
-    const { id } = useParams();
+    const { slug } = useParams();
     const [blog, setBlog] = useState({});
     const [allBlog, setAllBlog] = useState([]);
 
     const fetchBlog = async () => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-blog/${id}`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get_blog_by_slug/${slug}`);
             setBlog(res.data.data);
         } catch (error) {
-            console.log("Internal server error in fetching blog", error);
+            console.error("Internal server error in fetching blog", error);
+            setError('Blog not found or an error occurred.');
         }
     };
 
     const fetchAllBlog = async () => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-all-blogs`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-all-blogs`);
             const result = res.data.data;
             const filterData = result.filter((item) => item.isTranding === true);
             setAllBlog(filterData);
@@ -51,6 +53,7 @@ function BlogSinglePage() {
 
     return (
         <>
+        <MetaTag title={blog.metaTitle} description={blog.metaDescription} />
             <section className="page-title gray">
                 <div className="container">
                     <div className="row">

@@ -20,7 +20,7 @@ exports.createBlog = async (req, res) => {
             title,
             content,
             metaTitle,
-            metaDescription
+            metaDescription,
         })
         if (req.files) {
             const { smallImage, largeImage } = req.files;
@@ -186,7 +186,7 @@ exports.updateBlog = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const { title, content, metaTitle, metaDescription } = req.body;
+        const { title, content, metaTitle, metaDescription,slug } = req.body;
 
         // Find the existing blog by its ID
         const blog = await Blog.findById(id);
@@ -199,6 +199,7 @@ exports.updateBlog = async (req, res) => {
 
         // Update basic blog fields
         blog.title = title || blog.title;
+        blog.slug = slug || blog.slug;
         blog.content = content || blog.content;
         blog.metaTitle = metaTitle || blog.metaTitle;
         blog.metaDescription = metaDescription || blog.metaDescription;
@@ -289,3 +290,40 @@ exports.updateBlogIsTranding = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 }
+
+exports.getBlogBySlug = async (req, res) => {
+    try {
+        const { slug } = req.params;
+
+        // Validate the slug parameter
+        if (!slug || !slug.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid blog slug provided',
+            });
+        }
+
+        // Query the database explicitly by the slug field
+        const blog = await Blog.findOne({ slug });
+
+        if (!blog) {
+            return res.status(404).json({
+                success: false,
+                message: 'Blog not found',
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Blog found',
+            data: blog,
+        });
+    } catch (error) {
+        console.error("Internal server error:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};

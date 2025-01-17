@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom'; // To get the category ID from URL
 import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
+import { useMemo } from 'react';
 
 function EditBlog() {
     const { id } = useParams();
@@ -26,7 +27,7 @@ function EditBlog() {
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
-                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-blog/${id}`);
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-blog/${id}`);
                 const category = data.data;
 
                 setFormData({
@@ -126,7 +127,7 @@ function EditBlog() {
         }
 
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-blog/${id}`, payload, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-blog/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -143,10 +144,13 @@ function EditBlog() {
     };
 
     // Editor Configuration
-    const editorConfig = {
-        readonly: false,
-        height: 400,
-    };
+    const editorConfig = useMemo(
+		() => ({
+			readonly: false,
+            height: 400,
+		}),
+		[]
+	);
 
     const handleEditorChange = useCallback((newContent, field) => {
         setFormData((prevFormData) => ({

@@ -11,9 +11,9 @@ function BlogPage() {
 
     const fetchAllBlog = async (page) => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-all-blogs?page=${page}&limit=6`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-all-blogs?page=${page}&limit=6`);
             setAllBlog(res.data.data);
-            setTotalPages(res.data.totalPages);  // Set total pages based on the backend response
+            setTotalPages(res.data.totalPages); 
         } catch (error) {
             console.log("Internal server error in getting all blogs");
         }
@@ -80,11 +80,11 @@ function BlogPage() {
                                 <div key={index} className="col-xl-4 col-lg-4 col-md-6 col-sm-12">
                                     <div className="gup_blg_grid_box">
                                         <div className="gup_blg_grid_thumb">
-                                            <Link to={`/blog/${item._id}`}><img src={item.smallImage?.url} className="img-fluid" alt={item.title} /></Link>
+                                            <Link to={`/blog/${item.slug}`}><img src={item.smallImage?.url} className="img-fluid" alt={item.title} /></Link>
                                         </div>
                                         <div className="gup_blg_grid_caption">
                                             {/* <div className="blg_tag"><span>Marketing</span></div> */}
-                                            <div className="blg_title"><h4><Link to={`/blog/${item._id}`}>{item.title}</Link></h4></div>
+                                            <div className="blg_title"><h4><Link to={`/blog/${item.slug}`}>{item.title}</Link></h4></div>
                                             <div className="blg_desc"><p  dangerouslySetInnerHTML={{ __html: item.content || 'No description available.' }}></p></div>
                                         </div>
                                     </div>

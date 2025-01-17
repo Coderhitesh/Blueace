@@ -13,7 +13,7 @@ function Services() {
 
   const fetchServiceData = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category');
+      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category');
       const data = res.data.data;
       let filterData = data.filter((item) => item.isPopular)
 

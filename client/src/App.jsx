@@ -116,7 +116,7 @@ function App() {
           <Route path="/services" element={<Service />} />
           <Route path="/products" element={<Service />} />
           <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/:id" element={<BlogSinglePage />} />
+          <Route path="/blog/:slug" element={<BlogSinglePage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/successfully-booking" element={<OrderSuccessfully />} />
           <Route path="/successfully-member" element={<SuccessfullyMember />} />

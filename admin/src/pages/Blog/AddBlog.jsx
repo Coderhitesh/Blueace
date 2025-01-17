@@ -5,6 +5,7 @@ import Input from '../../components/Forms/Input';
 import axios from 'axios';
 import JoditEditor from 'jodit-react';
 import toast from 'react-hot-toast';
+import { useMemo } from 'react';
 
 function AddBlog() {
     const [formData, setFormData] = useState({
@@ -83,7 +84,7 @@ function AddBlog() {
         }
 
         try {
-            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/create-blog', payload, {
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/create-blog', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -97,10 +98,13 @@ function AddBlog() {
         }
     };
 
-    const editorConfig = {
-        readonly: false,
-        height: 400
-    };
+    const editorConfig = useMemo(
+		() => ({
+			readonly: false,
+            height: 400,
+		}),
+		[]
+	);
 
     const handleEditorChange = useCallback((newContent, field) => {
         setFormData(prevFormData => ({ ...prevFormData, [field]: newContent }));

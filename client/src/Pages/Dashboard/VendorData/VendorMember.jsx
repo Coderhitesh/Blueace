@@ -27,7 +27,7 @@ const VendorMember = ({ userData }) => {
   // Function to fetch existing member data
   const handleFetchExistingMember = async () => {
     try {
-      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-vendor-member/${userId}`);
+      const res = await axios.get(`https://api.blueaceindia.com/api/v1/get-vendor-member/${userId}`);
       const existingMembers = res.data.data.map((member) => ({
         name: member.name || '',
         memberAdharImageUrl: member.memberAdharImage?.url || '',
@@ -62,7 +62,7 @@ const VendorMember = ({ userData }) => {
         }
 
         await axios.put(
-          `https://www.api.blueaceindia.com/api/v1/update-vendor-member/${userId}/${member._id}`,
+          `https://api.blueaceindia.com/api/v1/update-vendor-member/${userId}/${member._id}`,
           formData,
           {
             headers: {
@@ -88,7 +88,7 @@ const VendorMember = ({ userData }) => {
     try {
       // Optional: Send delete request to the backend
       if (memberId) {
-        await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor-member/${userId}/${memberId}`);
+        await axios.delete(`https://api.blueaceindia.com/api/v1/delete-vendor-member/${userId}/${memberId}`);
         toast.success('Member removed successfully!');
       }
 

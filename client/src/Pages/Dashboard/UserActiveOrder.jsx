@@ -29,7 +29,7 @@ function UserActiveOrder({ userData, activeOrder }) {
     const handlePayment = async (orderId, totalAmount) => {
         try {
             const checkoutResponse = await axios.post(
-                `https://www.api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`,
+                `https://api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`,
                 { totalAmount: totalAmount },
                 // {
                 //     headers: {
@@ -49,7 +49,7 @@ function UserActiveOrder({ userData, activeOrder }) {
             //     alert('Failed to load Razorpay SDK. Please check your connection.');
             //     return;
             // }
-            // const res = await axios.post(`https://www.api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`, {
+            // const res = await axios.post(`https://api.blueaceindia.com/api/v1/create-bill-payment/${orderId}`, {
             //     totalAmount: totalAmount
             // })
 
@@ -63,7 +63,7 @@ function UserActiveOrder({ userData, activeOrder }) {
             //         name: 'Blueace',
             //         description: 'Purchase Membership Plan',
             //         order_id: order?.id || '',
-            //         callback_url: "https://www.api.blueaceindia.com/api/v1/verify-bill-payment",
+            //         callback_url: "https://api.blueaceindia.com/api/v1/verify-bill-payment",
             //         prefill: {
             //             name: userData?.name, // Prefill customer data
             //             email: userData?.email,
