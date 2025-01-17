@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import MetaTag from '../../Components/Meta/MetaTag';
 
@@ -49,7 +49,7 @@ function BlogSinglePage() {
     useEffect(() => {
         fetchAllBlog();
         fetchBlog();
-    }, []);
+    }, [slug]);
 
     return (
         <>
@@ -78,7 +78,7 @@ function BlogSinglePage() {
                             <div className="article_detail_wrapss single_article_wrap format-standard">
                                 <div className="article_body_wrap">
                                     <div className="article_featured_image">
-                                        <img className="img-fluid blog-image" src={blog.largeImage?.url} alt={blog.title} />
+                                        <img className="blog-image" src={blog.largeImage?.url} alt={blog.title} />
                                     </div>
                                     <div dangerouslySetInnerHTML={{ __html: blog.content || 'No description available.' }}></div>
                                     <span className="post-date">
@@ -94,11 +94,11 @@ function BlogSinglePage() {
                                 <ul>
                                     {allBlog && allBlog.slice(0, 8).map((item, index) => (
                                         <li key={index}>
-                                            <span className="left">
+                                            <Link to={`/blog/${item.slug}`} className="left">
                                                 <img src={item.smallImage?.url} alt={item.title} className="" />
-                                            </span>
+                                            </Link>
                                             <span className="right">
-                                                <a className="feed-title" href="#">{item.title}</a>
+                                                <Link className="feed-title" to={`/blog/${item.slug}`}>{item.title}</Link>
                                                 <span className="post-date">
                                                     <i className="ti-calendar"></i>
                                                     {item.createdAt ? timeAgo(item.createdAt) : "Date not available"}

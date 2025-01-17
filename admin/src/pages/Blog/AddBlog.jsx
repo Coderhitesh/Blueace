@@ -91,8 +91,8 @@ function AddBlog() {
             });
             toast.success('Service Created Successfully!');
         } catch (error) {
-            console.error('Error creating service:', error);
-            setError('Failed to create service.');
+            console.error('Error creating Blog:', error);
+            setError('Failed to create Blog.');
         } finally {
             setLoading(false);
         }

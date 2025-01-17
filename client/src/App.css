@@ -140,6 +140,12 @@
     }
 }
 
+@media (max-width:750px) {
+    .blog-image{
+        height: auto !important;
+    }
+}
+
 
 
 /* Basic styling for the modal */
