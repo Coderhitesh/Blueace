@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import logo from '../Header/logo.webp'
 
-function Login() {
+function Login({ onLoginSuccess }) {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         Email: '',
@@ -36,7 +36,7 @@ function Login() {
         };
 
         try {
-            const res = await axios.post('https://api.blueaceindia.com/api/v1/Login', Payload, {
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Login', Payload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -59,6 +59,9 @@ function Login() {
 
             toast.success('Login successful');
             
+            // Close the modal on successful login
+            onLoginSuccess();
+
             // Redirect to the original page or default to home
             navigate(redirectUrl);
 

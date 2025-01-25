@@ -48,6 +48,7 @@
 
 .whatsapp-button svg{
   font-size: 2rem;
+  color: white;
 }
 
 .whatsapp-button::before {

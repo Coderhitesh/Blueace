@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const scheduleMiniSchema = new mongoose.Schema({
     date: {
         type: Date, // Specifies that the date field should be a valid Date object
-        required: true, // Makes the date field mandatory
+        // required: true, // Makes the date field mandatory
         validate: {
             validator: function (value) {
                 // Ensure the date corresponds to the day of the week

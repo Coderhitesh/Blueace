@@ -22,7 +22,7 @@ function AllUserDetail() {
     const fetchUserDetail = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('https://api.blueaceindia.com/api/v1/AllUser');
+            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/AllUser');
             const datasave = res.data.data;
             const filterdata = datasave.filter((item) => item.UserType === "Normal");
             const r = filterdata.reverse();
@@ -60,7 +60,7 @@ function AllUserDetail() {
     // Handle updating the UserType
     const handleUserTypeChange = async (userId, newUserType) => {
         try {
-            await axios.put(`https://api.blueaceindia.com/api/v1/update-user-type/${userId}`, { UserType: newUserType });
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user-type/${userId}`, { UserType: newUserType });
             toast.success('User type updated successfully!');
             fetchUserDetail(); // Refetch the user details to update the table
         } catch (error) {
@@ -72,7 +72,7 @@ function AllUserDetail() {
     const handleToggle = async (id, currentDeactiveStatus) => {
         try {
             const newDeactiveStatus = !currentDeactiveStatus;
-            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-user-deactive-status/${id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user-deactive-status/${id}`, {
                 isDeactive: newDeactiveStatus
             });
             if (response.data.success) {
@@ -89,7 +89,7 @@ function AllUserDetail() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-user/${id}`);
+            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-user/${id}`);
             if (response.data.success) {
                 toast.success('User deleted successfully!');
                 await fetchUserDetail();

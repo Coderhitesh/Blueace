@@ -56,7 +56,7 @@ function CorporateRegister() {
   const fetchAddressSuggestions = async (query) => {
     try {
       // console.log("query",query)
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
       console.log(res.data)
       setAddressSuggestions(res.data || []);
     } catch (err) {
@@ -67,7 +67,7 @@ function CorporateRegister() {
   // Fetch latitude and longitude based on selected address
   const fetchGeocode = async (selectedAddress) => {
     try {
-      const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
       // console.log("geo", res.data)
       const { latitude, longitude } = res.data;
       setLocation({ latitude, longitude });
@@ -135,7 +135,7 @@ function CorporateRegister() {
     };
 
     try {
-      const res = await axios.post('https://api.blueaceindia.com/api/v1/Create-User', updatedFormData);
+      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', updatedFormData);
 
       sessionStorage.setItem('token', res.data.token);
       sessionStorage.setItem('user', JSON.stringify(res.data.user));
