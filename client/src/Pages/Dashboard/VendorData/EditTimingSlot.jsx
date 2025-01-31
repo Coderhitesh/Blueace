@@ -67,7 +67,7 @@ function EditTimingSlot({ userData }) {
             toast.success('Schedule Updated Successfully');
         } catch (error) {
             console.error("Error updating schedule:", error);
-            toast.error('Internal server error');
+            toast.error(error?.response?.data?.error || error?.response?.data?.message || 'Error updating schedule');
         }
         setLoading(false);
     };

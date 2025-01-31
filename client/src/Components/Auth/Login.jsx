@@ -60,14 +60,14 @@ function Login({ onLoginSuccess }) {
             toast.success('Login successful');
             
             // Close the modal on successful login
-            onLoginSuccess();
+            // onLoginSuccess();
 
             // Redirect to the original page or default to home
             navigate(redirectUrl);
 
         } catch (error) {
-            const errorMessage = error?.response?.data?.message;
-            toast.error(`Error logging in: ${errorMessage}`);
+            const errorMessage = error?.response?.data?.message || error?.response?.data?.error || 'Login failed. Please check your credentials.';
+            toast.error(errorMessage);
             // console.error('Login failed. Please check your credentials.', errorMessage);
             console.log(error)
         } finally {

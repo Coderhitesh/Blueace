@@ -21,7 +21,7 @@ exports.register = async (req, res) => {
         if (!HouseNo) emptyField.push('HouseNo');
         // if (!Street) emptyField.push('Street');
         if (!address) emptyField.push('address');
-        if (!NearByLandMark) emptyField.push('NearByLandMark');
+        // if (!NearByLandMark) emptyField.push('NearByLandMark');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -208,8 +208,8 @@ exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ Email });
         if (user) {
-            const isDeactive = user.isDeactive;
-            if (isDeactive) {
+            const isDeactive = user?.isDeactive;
+            if (isDeactive === true) {
                 return res.status(401).json({
                     success: false,
                     message: 'Your account is deactivated'
@@ -248,7 +248,8 @@ exports.login = async (req, res) => {
         console.error('Login error:', error);
         res.status(500).json({
             success: false,
-            message: 'Internal Server Error'
+            message: 'No excisting account. Please Register',
+            error: error.message
         });
     }
 };

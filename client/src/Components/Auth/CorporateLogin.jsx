@@ -10,7 +10,7 @@ function CorporateLogin() {
         Email: '',
         Password: ''
     });
-    
+
     const location = useLocation();  // Get the current location
     const navigate = useNavigate();  // Use this for navigation after login
 
@@ -58,7 +58,7 @@ function CorporateLogin() {
             sessionStorage.setItem('user', JSON.stringify(userData));
 
             toast.success('Login successful');
-            
+
             // Redirect to the original page or default to home
             navigate(redirectUrl);
 
@@ -86,7 +86,7 @@ function CorporateLogin() {
                     <div className="modal-content login-content-border py-4" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F4F4F7' }} id="loginmodal">
                         <div className="modal-body p-5 col-xl-9 col-lg-9 col-md-12" style={{ backgroundColor: 'white' }}>
                             <div className="text-center mb-4">
-                                <img src={logo} className='popup-logo'/> 
+                                <img src={logo} className='popup-logo' />
                                 <h4 className="m-0 ft-medium text-uppercase mt-3">Login as Corporate</h4>
                             </div>
 

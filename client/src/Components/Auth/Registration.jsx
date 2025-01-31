@@ -129,7 +129,7 @@ function Registration() {
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response.data.message || 'An error occurred');
+      toast.error(err.response.data.message || err.response.data.error || 'An error occurred');
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ function Registration() {
                     <div className="row">
                       <div className="col-6">
                         <div className="form-group">
-                          <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name</label>
+                          <label htmlFor="FullName" className='mb-1 fw-medium'>Full Name*</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -167,7 +167,7 @@ function Registration() {
                       </div>
                       <div className="col-6">
                         <div className="form-group">
-                          <label htmlFor="Email" className='mb-1 fw-medium'>Email</label>
+                          <label htmlFor="Email" className='mb-1 fw-medium'>Email*</label>
                           <input
                             type="email"
                             className="form-control rounded"
@@ -183,7 +183,7 @@ function Registration() {
 
                       <div className="col-6">
                         <div className="form-group">
-                          <label htmlFor="ContactNumber" className='mb-1 fw-medium'>Phone No.</label>
+                          <label htmlFor="ContactNumber" className='mb-1 fw-medium'>Phone No.*</label>
                           <input
                             type="text"
                             className="form-control rounded"
@@ -197,11 +197,11 @@ function Registration() {
                       </div>
                       <div className="col-6">
                         <div className="form-group">
-                          <label htmlFor="HouseNo" className='mb-1 fw-medium'>House No.</label>
+                          <label htmlFor="HouseNo" className='mb-1 fw-medium'>Complete Address*</label>
                           <input
                             type="text"
                             className="form-control rounded"
-                            placeholder="House No."
+                            placeholder="Complete Address"
                             name="HouseNo"
                             value={formData.HouseNo}
                             onChange={handleInputChange}
@@ -213,7 +213,7 @@ function Registration() {
 
                       <div className="position-relative col-6">
                         <div className="form-group">
-                          <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+                          <label htmlFor="address" className='mb-1 fw-medium'>LandMark*</label>
                           <input
                             type="text"
                             name="address"
@@ -221,6 +221,7 @@ function Registration() {
                             placeholder="Start typing address..."
                             onChange={handleInputChange}
                             className="form-control rounded"
+                            required
                           />
 
                           {addressSuggestions.length > 0 && (
@@ -245,7 +246,7 @@ function Registration() {
                         </div>
 
                       </div>
-                      <div className="col-6">
+                      {/* <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="NearByLandMark" className='mb-1 fw-medium'>Near By LandMark</label>
                           <input
@@ -258,7 +259,7 @@ function Registration() {
                             required
                           />
                         </div>
-                      </div>
+                      </div> */}
 
 
                       {/* <div className="col-6">
@@ -277,7 +278,7 @@ function Registration() {
                       </div> */}
                       <div className="col-6">
                         <div className="form-group">
-                          <label htmlFor="PinCode" className='mb-1 fw-medium'>Pin Code</label>
+                          <label htmlFor="PinCode" className='mb-1 fw-medium'>Pin Code*</label>
                           <input
                             type="Number"
                             className="form-control rounded"
@@ -291,9 +292,9 @@ function Registration() {
                       </div>
 
 
-                      <div className="col-6">
+                      <div className="col-12">
                         <div className="form-group">
-                          <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
+                          <label htmlFor="Password" className="mb-1 fw-medium">Password*</label>
                           {passwordError && (
                             <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
                               {passwordError}

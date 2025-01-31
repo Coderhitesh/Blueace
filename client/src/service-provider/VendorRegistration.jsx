@@ -243,6 +243,11 @@ function VendorRegistration() {
                                         </div>
 
                                         <div className="row">
+
+                                            <div className="form-group col-lg-6">
+                                                <label className=' fw-medium'>Complete Address*</label>
+                                                <input type="text" value={formData.HouseNo} name='HouseNo' onChange={handleChange} className="form-control rounded" required />
+                                            </div>
                                             <div className="position-relative col-lg-6">
                                                 <div className="form-group">
                                                     <label htmlFor="address" className='mb-1 fw-medium'>Address*</label>
@@ -275,11 +280,6 @@ function VendorRegistration() {
                                                         </div>
                                                     )}
                                                 </div>
-
-                                            </div>
-                                            <div className="form-group col-lg-6">
-                                                <label className=' fw-medium'>House No*</label>
-                                                <input type="text" value={formData.HouseNo} name='HouseNo' onChange={handleChange} className="form-control rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
                                                 <label className=' fw-medium'>Pin code*</label>

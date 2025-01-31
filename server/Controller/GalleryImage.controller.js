@@ -4,7 +4,7 @@ const fs = require('fs');
 
 exports.createGalleryImage = async (req, res) => {
     try {
-        console.log(req.file)
+        // console.log(req.file)
         const { galleryCategoryId } = req.body;
         if (!galleryCategoryId) {
             return res.status(400).json({

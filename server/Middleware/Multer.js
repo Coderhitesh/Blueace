@@ -5,6 +5,102 @@ const crypto = require('crypto');
 
 // MIME types for voice notes
 const voiceMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'];
+const videoMimeTypes = ['video/mp4', 'video/mpeg']; // Define video MIME types
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    let uploadDir;
+
+    // Check the file type to determine the upload directory
+    if (voiceMimeTypes.includes(file.mimetype)) {
+      uploadDir = path.join(__dirname, './public/voice-notes');
+    } else {
+      uploadDir = path.join(__dirname, './public/artits'); // Default directory
+    }
+
+    // Create directory if it doesn't exist
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdir(uploadDir, { recursive: true }, (err) => {
+        if (err) {
+          console.error('Error creating directory:', err);
+          return cb(err);
+        }
+        cb(null, uploadDir);
+      });
+    } else {
+      cb(null, uploadDir);
+    }
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = crypto.randomBytes(16).toString('hex'); // Generates a 32-character unique string
+    const extension = file.originalname.split('.').pop(); // Get the file extension
+
+    cb(null, `${uniqueSuffix}.${extension}`); // Save as uniqueSuffix.extension
+  }
+});
+
+// File filter to restrict uploads to images, videos, and voice notes
+const fileFilter = (req, file, cb) => {
+  const allowedMimeTypes = [
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/avif',
+    ...videoMimeTypes, // Video formats
+    ...voiceMimeTypes  // Voice note formats
+  ];
+
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    return cb(new Error('Unsupported file format'), false);
+  }
+
+  // Check file size limit for videos (50MB)
+  if (videoMimeTypes.includes(file.mimetype) && req.file?.size > 50 * 1024 * 1024) { 
+    return cb(new Error('Video file size exceeds 50MB limit'), false);
+  }
+
+  cb(null, true);
+};
+
+// Set up multer with storage, file filter, and limits
+const upload = multer({
+  storage: storage,
+  fileFilter: fileFilter,
+  limits: {
+    fileSize: 50 * 1024 * 1024 // 50MB size limit applied globally
+  }
+});
+
+module.exports = upload;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+const multer = require("multer");
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
+
+// MIME types for voice notes
+const voiceMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'];
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,7 +139,7 @@ const storage = multer.diskStorage({
 // File filter to restrict uploads to images, videos, and voice notes
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
-    'image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/mpeg',
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/avif', 'video/mp4', 'video/mpeg',
     ...voiceMimeTypes // Add voice MIME types
   ];
 
@@ -61,3 +157,4 @@ const upload = multer({
 });
 
 module.exports = upload;
+*/

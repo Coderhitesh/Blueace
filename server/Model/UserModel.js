@@ -71,7 +71,6 @@ const UserSchema = new mongoose.Schema({
     // },
     NearByLandMark: {
         type: String,
-        required: true
     },
     RangeWhereYouWantService: [
         rangeSchema

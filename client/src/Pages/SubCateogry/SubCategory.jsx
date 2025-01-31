@@ -68,8 +68,10 @@ function SubCategory() {
       // Filtering data based on regex match
       const filterData = allData.filter((item) => regex.test(item?.subCategoryId?.name));
 
+      const ActiveData = filterData.filter((item) => item.active === true);
+
       // console.log("filterData", filterData);
-      setAllService(filterData);
+      setAllService(ActiveData);
     } catch (error) {
       console.log('Internal server error in fetching service');
     }

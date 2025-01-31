@@ -47,6 +47,7 @@
 }
 
 .getservice-text {
+    display: none;
     color: #4338ca;
     font-size: 18px;
     font-weight: 600;

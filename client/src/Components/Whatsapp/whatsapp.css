@@ -73,6 +73,7 @@
 }
 
 .whatsapp-tooltip {
+  display: none;
   position: absolute;
   right: 75px;
   background: white;
@@ -143,4 +144,10 @@
   .whatsapp-tooltip {
       display: none;
   }
+
+  
+
+.whatsapp-tooltip{
+  display: none;
+}
 }

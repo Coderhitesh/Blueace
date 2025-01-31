@@ -40,7 +40,7 @@ function Forget() {
     catch (err) {
       console.log(err);
       console.log(err.response?.data.msg);
-      toast.error(err.response?.data?.msg ?? "Internal Server error")
+      toast.error(err.response?.data?.msg || "Internal Server error")
       setLoading(false)
     }finally{
       setLoading(false)

@@ -107,7 +107,7 @@ function EditBlog() {
             if (smallImagePreviews) {
                 payload.append('smallImage', smallImagePreviews);
             } else {
-                setError('Service image is required.');
+                setError('Blog Small Image is required.');
                 setLoading(false);
                 return;
             }
@@ -120,7 +120,7 @@ function EditBlog() {
             if (largeImagePreview) {
                 payload.append('largeImage', largeImagePreview);
             } else {
-                setError('Service banner is required.');
+                setError('Blog Large Image is required.');
                 setLoading(false);
                 return;
             }
@@ -136,8 +136,8 @@ function EditBlog() {
 
             setError('');
         } catch (error) {
-            console.error('Error updating service category:', error);
-            setError('Failed to update service category');
+            console.error('Error updating blogs:', error);
+            setError('Failed to update blogs');
         } finally {
             setLoading(false);
         }

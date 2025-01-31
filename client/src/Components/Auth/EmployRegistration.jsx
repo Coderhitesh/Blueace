@@ -223,9 +223,9 @@ function EmployRegistration() {
             // }
             window.location.href = '/'
         } catch (error) {
-            console.log(error)
+            console.log(error.response.data);
             if (error.response) {
-                toast.error(error.response.data.message || 'An error occurred');
+                toast.error(error.response.data.error || error.response.data || 'An error occurred');
             } else {
                 toast.error('Something went wrong. Please try again.');
             }
@@ -251,7 +251,7 @@ function EmployRegistration() {
                                         <div className="row">
                                             <div className="col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>Full Name</label>
+                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>Full Name*</label>
                                                     <input
                                                         type="text"
                                                         className="form-control rounded"
@@ -265,7 +265,7 @@ function EmployRegistration() {
                                             </div>
                                             <div className="col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="Email" className='mb-1 fw-medium'>Email</label>
+                                                    <label htmlFor="Email" className='mb-1 fw-medium'>Email*</label>
                                                     <input
                                                         type="email"
                                                         className="form-control rounded"
@@ -281,7 +281,7 @@ function EmployRegistration() {
 
                                             <div className="col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="ContactNumber" className='mb-1 fw-medium'>Phone No.</label>
+                                                    <label htmlFor="ContactNumber" className='mb-1 fw-medium'>Phone No.*</label>
                                                     <input
                                                         type="text"
                                                         className="form-control rounded"
@@ -295,7 +295,7 @@ function EmployRegistration() {
                                             </div>
                                             <div className="col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="panNo" className='mb-1 fw-medium'>PAN No.</label>
+                                                    <label htmlFor="panNo" className='mb-1 fw-medium'>PAN No.*</label>
                                                     <input
                                                         type="text"
                                                         className="form-control rounded"
@@ -309,7 +309,7 @@ function EmployRegistration() {
                                             </div>
                                             <div className="col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="adharNo" className='mb-1 fw-medium'>Aadhaar Card No</label>
+                                                    <label htmlFor="adharNo" className='mb-1 fw-medium'>Aadhaar Card No*</label>
                                                     <input
                                                         type="text"
                                                         className="form-control rounded"
@@ -321,9 +321,24 @@ function EmployRegistration() {
                                                     />
                                                 </div>
                                             </div>
+
+                                            <div className="col-6">
+                                                <div className="form-group">
+                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>Complete Address*</label>
+                                                    <input
+                                                        type="text"
+                                                        className="form-control rounded"
+                                                        placeholder="Complete Address"
+                                                        name="HouseNo"
+                                                        value={formData.HouseNo}
+                                                        onChange={handleChange}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
                                             <div className="position-relative col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+                                                    <label htmlFor="address" className='mb-1 fw-medium'>LandMark*</label>
                                                     <input
                                                         type="text"
                                                         name="address"
@@ -331,6 +346,7 @@ function EmployRegistration() {
                                                         placeholder="Start typing address..."
                                                         onChange={handleChange}
                                                         className="form-control rounded"
+                                                        required
                                                     />
 
                                                     {addressSuggestions.length > 0 && (
@@ -353,29 +369,14 @@ function EmployRegistration() {
                                                         </div>
                                                     )}
                                                 </div>
-
                                             </div>
                                             <div className="col-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>House No</label>
+                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>Pin code*</label>
                                                     <input
                                                         type="text"
                                                         className="form-control rounded"
-                                                        placeholder="Enter Your Name"
-                                                        name="HouseNo"
-                                                        value={formData.HouseNo}
-                                                        onChange={handleChange}
-                                                        required
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="col-6">
-                                                <div className="form-group">
-                                                    <label htmlFor="ownerName" className='mb-1 fw-medium'>Pin code</label>
-                                                    <input
-                                                        type="text"
-                                                        className="form-control rounded"
-                                                        placeholder="Enter Your Name"
+                                                        placeholder="Pin code"
                                                         name="PinCode"
                                                         value={formData.PinCode}
                                                         onChange={handleChange}
@@ -385,7 +386,7 @@ function EmployRegistration() {
                                             </div>
                                             <div className="col-12">
                                                 <div className="form-group">
-                                                    <label htmlFor="Password" className="mb-1 fw-medium">Password</label>
+                                                    <label htmlFor="Password" className="mb-1 fw-medium">Password*</label>
                                                     {passwordError && (
                                                         <p style={{ color: 'red', fontSize: '14px', marginBottom: '5px' }}>
                                                             {passwordError}

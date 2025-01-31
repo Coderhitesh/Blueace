@@ -70,7 +70,7 @@ function AddBlog() {
         if (formData.smallImage) {
             payload.append('smallImage', formData.smallImage);
         } else {
-            setError('Service image is required.');
+            setError('Blog Small Image is required.');
             setLoading(false);
             return;
         }
@@ -78,7 +78,7 @@ function AddBlog() {
         if (formData.largeImage) {
             payload.append('largeImage', formData.largeImage);
         } else {
-            setError('Service banner is required.');
+            setError('Blog Large Image is required.');
             setLoading(false);
             return;
         }
@@ -89,7 +89,7 @@ function AddBlog() {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            toast.success('Service Created Successfully!');
+            toast.success('Blog Added Successfully!');
         } catch (error) {
             console.error('Error creating Blog:', error);
             setError('Failed to create Blog.');
