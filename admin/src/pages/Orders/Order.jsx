@@ -94,7 +94,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Select Vendor', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -177,6 +177,8 @@ function Order() {
                                     ) : 'No voice note'}
                                 </td>
 
+                                <td className='fw-bolder'>{vendor?.message}</td>
+
                                 {/* <td style={{ whiteSpace: 'nowrap' }}>
                                     {vendor?.userId?.UserType === 'Corporate' ? (
                                         <a href={`/Alloted/${vendor._id}`} className="btn btn-primary btn-activity-primary rounded-pill px-4 py-2 shadow-sm">
@@ -216,6 +218,22 @@ function Order() {
                                             </a>
                                         )
                                     )}
+                                </td>
+                                {/* <td style={{whiteSpace:'nowrap'}}>
+                                    {vendor.VendorAllotedStatus === 'Accepted' || vendor.VendorAllotedStatus === 'Send Request' ? (
+                                            <a href={`/alloted-employee/${vendor._id}?type=change-vendor`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                                Change Member
+                                            </a>
+                                        ) : (
+                                            <a href={`/alloted-employee/${vendor._id}`} className="btn btn-primary btn-activity-primary rounded-pill px-4 py-2 shadow-sm">
+                                                Send Your Member
+                                            </a>
+                                        )}
+                                </td> */}
+                                <td className='fw-bolder' style={{ whiteSpace: "nowrap" }}>
+                                    <a href={`/alloted-employee/${vendor._id}`} className="btn btn-danger btn-activity-danger rounded-pill px-4 py-2 shadow-sm">
+                                        Send Member
+                                    </a>
                                 </td>
 
                                 <td className='fw-bolder'>{vendor?.workingDay || 'Not Allowted'}</td>

@@ -900,7 +900,7 @@ exports.getMyDetails = async (req, res) => {
             })
         }
         res.status(200).json({
-            success: true, 
+            success: true,
             message: 'user is founded',
             data: user
         })
@@ -909,6 +909,34 @@ exports.getMyDetails = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal Server Error in universel login',
+            error: error.message
+        })
+    }
+}
+
+exports.changeAMCStatus = async (req, res) => {
+    try {
+        const id = req.params._id;
+        const { isAMCUser } = req.body;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+        user.isAMCUser = isAMCUser;
+        const updatedUser = await user.save();
+        res.status(200).json({
+            success: true,
+            message: 'AMC Status Updated',
+            data: updatedUser
+        })
+    } catch (error) {
+        console.log('Internal server error in updating user type', error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in updating user type',
             error: error.message
         })
     }

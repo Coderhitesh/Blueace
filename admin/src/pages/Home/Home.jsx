@@ -71,6 +71,7 @@ import EditCommission from '../Commission/EditCommission'
 import AllCareer from '../Career/AllCareer'
 import AddCareer from '../Career/AddCareer'
 import EditCaree from '../Career/EditCaree'
+import OnlyEmployeeForOrder from '../Orders/OnlyEmployeeForOrder'
 
 const Home = () => {
     return (
@@ -146,6 +147,7 @@ const Home = () => {
                         <Route path='/vendors/add-membership-plan' element={<AddMemberShipPlan />} />
                         <Route path='/vendors/edit-membership-plan/:id' element={<EditMemberShipPlan />} />
                         <Route path='/Alloted/:id' element={<VendorForOrder />} />
+                        <Route path='/alloted-employee/:id' element={<OnlyEmployeeForOrder />} />
                         <Route path="/see-esitimated-bill" element={<SeeEstimatedBudget />} />
 
                         {/* time slot route here  */}

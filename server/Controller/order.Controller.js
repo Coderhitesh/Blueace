@@ -462,8 +462,8 @@ exports.fetchVendorByLocation = async (req, res) => {
                     }
                 }
             })
-                .limit(parseInt(limit))
-                .skip(skip)
+                // .limit(parseInt(limit))
+                // .skip(skip)
                 .populate('workingHour');
 
             // Fetch only vendors with role 'employ'
@@ -493,6 +493,9 @@ exports.fetchVendorByLocation = async (req, res) => {
 
         const OrderServiceLocation = findOrder.RangeWhereYouWantService[0].location;
         const skip = (Page - 1) * limit;
+        const allVendor = await Vendor.find()
+        const filterEmployee = allVendor.filter((item) => item.Role === 'employ')
+        const activeAllEmployee = filterEmployee.filter((item) => item.readyToWork === true)
 
         const locationResults = await Vendor.find({
             'RangeWhereYouWantService.location': {
@@ -502,8 +505,8 @@ exports.fetchVendorByLocation = async (req, res) => {
                 }
             }
         })
-            .limit(parseInt(limit))
-            .skip(skip)
+            // .limit(parseInt(limit))
+            // .skip(skip)
             .populate('workingHour');
 
         const filterWithActive = locationResults.filter((vendor) => vendor.readyToWork == true);
@@ -521,6 +524,7 @@ exports.fetchVendorByLocation = async (req, res) => {
             preSelectedDate: findOrder.workingDate,
             totalPages,
             data: filterVendorForUser,
+            allEmployee: activeAllEmployee,
             message: 'Vendors fetched successfully',
         });
 
@@ -531,6 +535,60 @@ exports.fetchVendorByLocation = async (req, res) => {
         });
     }
 };
+
+exports.fetchOnlyEmployee = async (req, res) => {
+    try {
+        const { orderId, limit = 10, Page = 1 } = req.query;
+
+        if (!orderId) {
+            return res.status(402).json({
+                success: false,
+                message: 'Order id is required',
+            });
+        }
+
+        const findOrder = await Order.findById(orderId).populate('userId'); // Populate the userId field
+
+        if (!findOrder) {
+            return res.status(404).json({
+                success: false,
+                message: 'Order not found',
+            });
+        }
+
+        const vendorWhichAllotedPast = findOrder.vendorAlloted || "No Vendor In Past";
+        const skip = (Page - 1) * limit;
+        const allVendor = await Vendor.find()
+            .populate('workingHour');
+        const filterEmployee = allVendor.filter((item) => item.Role === 'employ')
+        // console.log("filterEmployee".filterEmployee)
+        const activeAllEmployee = filterEmployee.filter((item) => item.readyToWork === true)
+        // console.log("activeAllEmployee",activeAllEmployee)
+
+        const totalPages = Math.ceil(activeAllEmployee.length / limit);
+
+        res.status(201).json({
+            success: true,
+            AlreadyAllottedVendor: vendorWhichAllotedPast || "No-Vendor In Past",
+            currentPage: parseInt(Page),
+            limit: parseInt(limit),
+            preSelectedDay: findOrder.workingDay,
+            preSelectedTime: findOrder.workingTime,
+            preSelectedDate: findOrder.workingDate,
+            totalPages,
+            data: activeAllEmployee,
+            message: 'Vendors fetched successfully',
+        });
+        
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}
 
 exports.AssignVendor = async (req, res) => {
     try {

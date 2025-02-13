@@ -94,6 +94,10 @@ const UserSchema = new mongoose.Schema({
     },
     address: {
         type: String
+    },
+    isAMCUser: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 
