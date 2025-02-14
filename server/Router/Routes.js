@@ -13,7 +13,7 @@ const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainC
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword, updateReadyToWork, sendOtpForVerification, verifyVendor, resendVerifyOtp, deleteVendorMember, updateVendorApp, updateBankDetail } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember, AcceptOrderRequest, makeOrderPayment, verifyOrderPayment, fetchOnlyEmployee } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember, AcceptOrderRequest, makeOrderPayment, verifyOrderPayment, fetchOnlyEmployee, makeOrderFromApp } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding, getBlogBySlug } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
@@ -29,6 +29,7 @@ const { createTerm, getAllTerm, getSingleTerm, deleteTerm, updateTerm } = requir
 const { createCommission, getAllCommission, getSingleCommission, updateCommission, deleteCommission } = require('../Controller/Commission.Controller')
 const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdrawRequest, deleteWithdrawRequest, getWithdrawByVendorId } = require('../Controller/withdraw.Controller')
 const { createCareer, getAllCareers, getCareerById, updateCareer, deleteCareer } = require('../Controller/Career.Controller')
+const { createErrorCode, getAllErrorCode, getErrorCodeById, updateErrorCode, deleteErrorCode } = require('../Controller/Error.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -207,6 +208,7 @@ router.post('/payment-verify/:merchantTransactionId', PaymentVerify)
 // Order routers
 
 router.post('/make-order', upload.single('voiceNote'), makeOrder)
+router.post('/make-order-app', upload.any(), makeOrderFromApp)
 router.get('/get-all-order', getAllOrder)
 router.get('/get-order-by-id', findOrderById);
 router.get('/get-order-by-user-id', findOrderByUserId);
@@ -217,9 +219,6 @@ router.put('/update-after-work-image/:_id', upload.single('afterWorkImage'), upd
 router.put('/update-before-work-video/:_id', upload.single('beforeWorkVideo'), updateBeforeWorkVideo);
 router.put('/update-after-work-video/:_id', upload.single('afterWorkVideo'), updateAfterWorkVideo);
 router.put('/update-allot-vendor-member/:_id',AllowtVendorMember)
-// router
-
-
 
 //for fetching vendor for order
 router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
@@ -326,6 +325,14 @@ router.get('/careers', getAllCareers); // Read All
 router.get('/careers/:id', getCareerById); // Read One
 router.put('/careers/:id', updateCareer); // Update
 router.delete('/careers/:id', deleteCareer); // Delete
+
+// error code router here 
+
+router.post('/create-error-code',createErrorCode)
+router.get('/get-all-error-code',getAllErrorCode)
+router.get('/get-single-error-code/:id',getErrorCodeById)
+router.put('/update-error-code/:id',updateErrorCode)
+router.delete('/delete-error-code/:id',deleteErrorCode)
 
 
 module.exports = router;
