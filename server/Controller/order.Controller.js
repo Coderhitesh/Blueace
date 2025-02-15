@@ -15,6 +15,14 @@ const axios = require('axios')
 const merchantId = process.env.PHONEPAY_MERCHANT_ID
 const apiKey = process.env.PHONEPAY_API_KEY
 
+const isProd = process.env.NODE_ENV === "production"
+
+const BASE_URL = isProd
+    ? "https://api.phonepe.com/apis/hermes/pg/v1"
+    : "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1"
+
+const REDIRECT_BASE_URL = isProd ? "https://www.blueaceindia.com" : "http://192.168.1.4:7987"
+
 const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,   // Razorpay Key ID
     key_secret: process.env.RAZORPAY_KEY_SECRET, // Razorpay Secret Key
@@ -1323,3 +1331,217 @@ exports.verifyOrderPayment = async (req, res) => {
         });
     }
 };
+
+exports.makeOrderPaymentApp = async (req, res) => {
+
+    try {
+        const { orderId } = req.params
+        const { totalAmount } = req.body
+
+
+        const order = await Order.findById(orderId)
+        if (!order) {
+            console.log("Order not found", { orderId })
+            return res.status(400).json({
+                success: false,
+                message: "Order not found",
+            })
+        }
+
+        if (!totalAmount || totalAmount <= 0) {
+            console.log("Invalid total amount", { totalAmount })
+            return res.status(400).json({
+                success: false,
+                message: "Valid total amount is required",
+                error: "Total amount must be greater than 0",
+            })
+        }
+
+        const integerAmount = Math.floor(totalAmount)
+        const transactionId = crypto.randomBytes(9).toString("hex")
+        const merchantUserId = crypto.randomBytes(12).toString("hex")
+
+        const data = {
+            merchantId: merchantId,
+            merchantTransactionId: transactionId,
+            merchantUserId,
+            amount: integerAmount * 100,
+            redirectUrl: `${REDIRECT_BASE_URL}/api/v1/status-payments/${transactionId}`,
+            redirectMode: "POST",
+            callbackUrl: `${REDIRECT_BASE_URL}/api/v1/status-payments/${transactionId}`,
+            paymentInstrument: {
+                type: "PAY_PAGE",
+            },
+        }
+
+
+
+        const payload = JSON.stringify(data)
+        const payloadMain = Buffer.from(payload).toString("base64")
+        const keyIndex = 1
+        const string = payloadMain + "/pg/v1/pay" + apiKey
+        const sha256 = crypto.createHash("sha256").update(string).digest("hex")
+        const checksum = sha256 + "###" + keyIndex
+
+        const options = {
+            method: "POST",
+            url: `${BASE_URL}/pay`,
+            headers: {
+                accept: "application/json",
+                "Content-Type": "application/json",
+                "X-VERIFY": checksum,
+            },
+            data: {
+                request: payloadMain,
+            },
+        }
+
+        const response = await axios.request(options)
+        console.log("Received response from PhonePe", {
+            status: response.status,
+            data: response.data,
+        })
+
+        if (response.data.success) {
+            const updateOrder = await Order.findByIdAndUpdate(
+                orderId,
+                { razorpayOrderId: response.data.data.merchantTransactionId },
+                { new: true },
+            )
+            console.log("Updated order with transaction ID", {
+                orderId,
+                transactionId: updateOrder.razorpayOrderId,
+            })
+
+            return res.status(201).json({
+                success: true,
+                url: response.data.data.instrumentResponse.redirectInfo.url,
+            })
+        } else {
+            console.log("Payment initiation failed", response.data)
+            return res.status(400).json({
+                success: false,
+                message: "Payment initiation failed",
+                error: response.data.message,
+            })
+        }
+    } catch (error) {
+        console.error("Internal server error in makeOrderPayment", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        })
+    }
+}
+
+exports.verifyOrderPaymentApp = async (req, res) => {
+    console.log("verifyOrderPayment called", {
+        params: req.params,
+        body: req.body,
+        query: req.query,
+    })
+
+    const { merchantTransactionId } = req.params
+
+    if (!merchantTransactionId) {
+        console.log("Merchant transaction ID not provided")
+        return res.status(400).json({
+            success: false,
+            message: "Merchant transaction ID not provided",
+        })
+    }
+
+    try {
+        const keyIndex = 1
+        const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + apiKey
+        const sha256 = crypto.createHash("sha256").update(string).digest("hex")
+        const checksum = sha256 + "###" + keyIndex
+
+        const options = {
+            method: "GET",
+            url: `${BASE_URL}/status/${merchantId}/${merchantTransactionId}`,
+            headers: {
+                accept: "application/json",
+                "Content-Type": "application/json",
+                "X-VERIFY": checksum,
+                "X-MERCHANT-ID": `${merchantId}`,
+            },
+        }
+
+        console.log("Sending status check request to PhonePe", { url: options.url })
+        const { data } = await axios.request(options)
+        console.log("Received status check response from PhonePe", data)
+
+        if (data.success === true) {
+            const amount = data.data.amount
+            console.log("Payment successful", { amount })
+
+            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId })
+            if (!findOrder) {
+                console.log("Order not found for transaction", { merchantTransactionId })
+                return res.status(400).json({
+                    success: false,
+                    message: "Order not found.",
+                })
+            }
+
+            const vendorId = findOrder.vendorAlloted._id
+            const vendor = await Vendor.findById(vendorId)
+            const vendorRole = vendor.Role
+            console.log("Vendor details", { vendorId, vendorRole })
+
+            const allCommission = await Commission.find()
+            const employeeCommission = allCommission.find((item) => item.name === "Employee")
+            const vendorCommission = allCommission.find((item) => item.name === "Vendor")
+
+            let commissionPercent = 0
+            if (vendorRole === "vendor") {
+                commissionPercent = vendorCommission ? Number.parseFloat(vendorCommission.percent) : 0
+            } else if (vendorRole === "employ") {
+                commissionPercent = employeeCommission ? Number.parseFloat(employeeCommission.percent) : 0
+            }
+
+            const totalAmount = amount / 100 // Convert to actual amount from paise
+            const vendorCommissionAmount = (commissionPercent / 100) * totalAmount
+            const adminCommissionAmount = totalAmount - vendorCommissionAmount
+
+            console.log("Commission calculation", {
+                totalAmount,
+                commissionPercent,
+                vendorCommissionAmount,
+                adminCommissionAmount,
+            })
+
+            findOrder.totalAmount = totalAmount
+            findOrder.commissionPercent = commissionPercent
+            findOrder.vendorCommissionAmount = vendorCommissionAmount
+            findOrder.adminCommissionAmount = adminCommissionAmount
+            findOrder.transactionId = data.data.merchantTransactionId
+            findOrder.PaymentStatus = "paid"
+            findOrder.OrderStatus = "Service Done"
+            vendor.walletAmount += vendorCommissionAmount
+
+            await vendor.save()
+            await findOrder.save()
+
+            console.log("Order and vendor updated successfully")
+
+            const successRedirect = `${REDIRECT_BASE_URL}/successfull-payment-app`
+            console.log("Redirecting to success page", { successRedirect })
+            return res.redirect(successRedirect)
+        } else {
+            console.log("Payment verification failed", data)
+            const failureRedirect = `${REDIRECT_BASE_URL}/failed-payment`
+            console.log("Redirecting to failure page", { failureRedirect })
+            return res.redirect(failureRedirect)
+        }
+    } catch (error) {
+        console.error("Internal server error in verifyOrderPayment", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message,
+        })
+    }
+}

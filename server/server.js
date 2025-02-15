@@ -8,6 +8,7 @@ const ConnectDB = require('./Config/DataBase');
 const cookieParser = require('cookie-parser')
 const Router = require('./Router/Routes')
 const { rateLimit } = require('express-rate-limit')
+const path = require('path');
 // Middlewares
 ConnectDB()
 app.use(cors());
@@ -34,6 +35,10 @@ app.use('/public',express.static('public'))
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.get('/successfull-payment-app', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.use(limiter)
 app.use('/api/v1', Router)
