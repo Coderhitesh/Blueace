@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { AlertCircle, FileText, Tag, Info, ChevronDown } from 'lucide-react';
+import { AlertCircle, FileText, Tag, Info } from 'lucide-react';
 
 const ErrorCode = () => {
   const { id } = useParams();
