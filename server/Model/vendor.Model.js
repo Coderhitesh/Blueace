@@ -73,8 +73,7 @@ const VendorSchema = new mongoose.Schema({
         required: true
     },
     gstNo: {
-        type: String,
-        required: true
+        type: String
     },
     adharNo: {
         type: String,

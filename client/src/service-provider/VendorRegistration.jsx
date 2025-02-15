@@ -7,6 +7,7 @@ function VendorRegistration() {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }, []);
 
+    const [haveGst, setHaveGst] = useState("No");
     const [previewPanImage, setPanImage] = useState(null);
     const [previewAdharImage, setAdharImage] = useState(null);
     const [previewGstImage, setGstImage] = useState(null);
@@ -34,6 +35,12 @@ function VendorRegistration() {
     });
     const [location, setLocation] = useState({ latitude: '', longitude: '' });
     const [addressSuggestions, setAddressSuggestions] = useState([]); // Suggestions state
+
+    const handleGstToggle = (e) => {
+        const value = e.target.value;  // Get selected value
+        console.log("value", value)
+        setHaveGst(value);  // Update the state with 'yes' or 'no'
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -86,22 +93,6 @@ function VendorRegistration() {
             console.error('Error fetching geocode:', err);
         }
     };
-
-    // const getLocation = () => {
-    //     if (navigator.geolocation) {
-    //         navigator.geolocation.getCurrentPosition(
-    //             (position) => {
-    //                 setLocation({
-    //                     latitude: position.coords.latitude,
-    //                     longitude: position.coords.longitude
-    //                 });
-    //             },
-    //             () => toast.error('Unable to retrieve your location')
-    //         );
-    //     } else {
-    //         toast.error('Geolocation is not supported by this system');
-    //     }
-    // };
 
     const handlePanImageUpload = (e) => {
         const file = e.target.files[0];
@@ -188,10 +179,6 @@ function VendorRegistration() {
         }
     };
 
-    // useEffect(() => {
-    //     getLocation();
-    // }, []);
-
     return (
         <>
             <section className="gray">
@@ -233,16 +220,30 @@ function VendorRegistration() {
                                                 <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control text-uppercase rounded" required />
                                             </div>
                                             <div className="form-group col-lg-6">
-                                                <label className=' fw-medium'>GST Number*</label>
-                                                <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" required />
+                                                <label className='fw-medium'>Do you have a GST Number?</label>
+                                                <select
+                                                    name="hasGst"
+                                                    value={haveGst}  // Bind it to the haveGst state
+                                                    onChange={handleGstToggle}  // Call handleGstToggle when selection changes
+                                                    className="form-control rounded"
+                                                    required
+                                                >
+                                                    <option value="No">No</option>
+                                                    <option value="Yes">Yes</option>
+                                                </select>
                                             </div>
+                                            {
+                                                haveGst === 'Yes' && (
+                                                    <div className="form-group col-lg-6">
+                                                        <label className=' fw-medium'>GST Number*</label>
+                                                        <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" required />
+                                                    </div>
+                                                )
+                                            }
                                             <div className="form-group col-lg-6">
                                                 <label className=' fw-medium'>Aadhar Number*</label>
                                                 <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" required />
                                             </div>
-                                        </div>
-
-                                        <div className="row">
 
                                             <div className="form-group col-lg-6">
                                                 <label className=' fw-medium'>Complete Address*</label>
@@ -295,7 +296,15 @@ function VendorRegistration() {
                                                 )}
                                                 <input type="password" value={formData.Password} name='Password' onChange={handleChange} className="form-control rounded" required />
                                             </div>
+
+
+
                                         </div>
+
+                                        {/* <div className="row">
+
+                                            
+                                        </div> */}
                                         <div className='row'>
                                             <h4 className='bg-primary text-white p-2 mb-5'>Documents Upload</h4>
                                             <div className="form-group col-lg-4">
@@ -308,25 +317,26 @@ function VendorRegistration() {
                                                 <input type="file" accept="image/*" onChange={handleAdharImageUpload} className="form-control mt-2" required />
                                                 {previewAdharImage && <img src={previewAdharImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
                                             </div>
-                                            <div className="form-group col-lg-4">
-                                                <label className=' fw-medium'>GST Registration Upload</label>
-                                                <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control mt-2" required />
-                                                {previewGstImage && <img src={previewGstImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
-                                            </div>
+                                            {
+                                                haveGst === 'Yes' && (
+                                                    <div className="form-group col-lg-4">
+                                                        <label className=' fw-medium'>GST Registration Upload</label>
+                                                        <input type="file" accept="image/*" onChange={handleGstImageUpload} className="form-control mt-2" required />
+                                                        {previewGstImage && <img src={previewGstImage} alt="Preview" style={{ width: '100px', height: '100px' }} />}
+                                                    </div>
+                                                )
+                                            }
+
                                         </div>
                                         <div className="form-group">
                                             <button type="submit" className="btn btn-md full-width theme-bg text-light rounded ft-medium" disabled={loading}>{`${loading ? "Registering..." : "Register"}`}</button>
                                         </div>
-                                        {/* <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
-                                            {loading ? 'Registering...' : 'Register'}
-                                        </button> */}
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                {/* <Toaster /> */}
             </section>
         </>
     );

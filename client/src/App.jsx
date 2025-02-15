@@ -52,6 +52,8 @@ import Career from "./Pages/Career/Career"
 import GetService from "./Components/GetService/GetService"
 import { useEffect, useState } from "react"
 import GetServicePopup from "./Components/getservicepopup/GetServicePopup"
+import ErrorCode from "./Pages/ErrorCode/ErrorCode"
+import ShowErrorCode from "./Pages/ErrorCode/ShowErrorCode"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -128,6 +130,8 @@ function App() {
           <Route path="/heat-pump-installation" element={<HeatPump />} />
           <Route path="/service/cassette-air-conditioning-system" element={<CassetteAir />} />
           <Route path="/air-cooled-chiller" element={<AirColdChiller />} />
+          <Route path="/error-code/:id" element={<ErrorCode />} />
+          <Route path="/show-error-code/:id" element={<ShowErrorCode />} />
 
         </Routes>
         {/* <NewsLetter /> */}

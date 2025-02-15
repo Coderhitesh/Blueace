@@ -55,7 +55,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>User Email</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>User Number</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>User Address</th>
-                                                <th style={{ whiteSpace: "nowrap" }}>LandMark</th>
+                                                {/* <th style={{ whiteSpace: "nowrap" }}>LandMark</th> */}
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Date</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
@@ -68,6 +68,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Watch Estimated</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Estimated Status</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>See Error Code</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Video</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Bill Amount</th>
@@ -85,7 +86,7 @@ function AllVendorOrder({ userData, allOrder }) {
                                                         <td>{order?.userId?.Email || "User is not available"}</td>
                                                         <td>{order?.userId?.ContactNumber || "User is not available"}</td>
                                                         <td>{`${order?.userId?.HouseNo}, ${order?.userId?.Street}, ${order?.userId?.City}, ${order?.userId?.PinCode}` || "User is not available"}</td>
-                                                        <td>{order?.userId?.NearByLandMark || "User is not available"}</td>
+                                                        {/* <td>{order?.userId?.NearByLandMark || "User is not available"}</td> */}
                                                         <td>{new Date(order?.workingDate).toLocaleDateString() || "Date is not available"}</td>
                                                         <td>{order?.workingDay || "User is not available"}</td>
                                                         <td>{order?.workingTime || "User is not available"}</td>
@@ -120,6 +121,11 @@ function AllVendorOrder({ userData, allOrder }) {
                                                         <td className={`text-center ${order.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
                                                             {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
                                                             {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
+                                                        </td>
+                                                        <td>
+                                                            <button onClick={() => window.location.href = `/show-error-code/${order._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
+                                                                See Error Code
+                                                            </button>
                                                         </td>
                                                         {/* <td>
                                                             {order?.beforeWorkImage?.url ? (

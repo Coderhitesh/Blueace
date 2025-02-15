@@ -78,6 +78,7 @@ import EditErrorCode from '../ErrorCode/EditErrorCode'
 import AllErrorHeading from '../ErrorHeading/AllErrorHeading'
 import AddErrorHeading from '../ErrorHeading/AddErrorHeading'
 import EditErrorHeading from '../ErrorHeading/EditErrorHeading'
+import ErrorCode from '../../components/ErrorCode/ErrorCode'
 
 const Home = () => {
     return (
@@ -225,6 +226,8 @@ const Home = () => {
                         <Route path='/Error-Code/all-error' element={<AllErrorCode />} />
                         <Route path='/Error-Code/add-error' element={<AddErrorCode />} />
                         <Route path='/error-Code/edit-error/:id' element={<EditErrorCode />} />
+
+                        <Route path='/show-error-code/:id' element={<ErrorCode />} />
 
                     </Routes>
                 </div>

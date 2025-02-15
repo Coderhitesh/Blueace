@@ -75,3 +75,59 @@ footer.light-footer {
       object-fit: cover;
   }
 }
+
+.error-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.error-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-card.selected {
+  border-color: #0d6efd;
+  background-color: #f8f9ff;
+}
+
+.code-badge {
+  background-color: #e9ecef;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-family: monospace;
+  font-weight: bold;
+  color: #495057;
+}
+
+.notes-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.notes-list li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.notes-list li:before {
+  content: "•";
+  position: absolute;
+  left: 0.5rem;
+  color: #0d6efd;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-container .icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #6c757d;
+}

@@ -129,6 +129,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Status</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>Order Esitmate</th>
+                                                <th style={{ whiteSpace: "nowrap" }}>See Error Code</th>
 
                                                 <th style={{ whiteSpace: "nowrap" }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: "nowrap" }}>After Work Video</th>
@@ -172,6 +173,12 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                                 {order?.EstimatedBill ? "See Budget" : "Bill Not Available"}
                                                             </button>
 
+                                                        </td>
+
+                                                        <td>
+                                                            <button onClick={() => window.location.href = `/show-error-code/${order._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
+                                                                See Error Code
+                                                            </button>
                                                         </td>
 
                                                         <td>

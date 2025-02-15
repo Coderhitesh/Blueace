@@ -1545,3 +1545,80 @@ exports.verifyOrderPaymentApp = async (req, res) => {
         })
     }
 }
+
+exports.updateErrorCodeInOrder = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { errorCode } = req.body; // This could be a single ObjectId or an array of ObjectIds
+  
+      const order = await Order.findById(id);
+  
+      if (!order) {
+        return res.status(400).json({
+          success: false,
+          message: "Order not found",
+        });
+      }
+  
+      // Ensure errorCode is always an array
+      if (!Array.isArray(errorCode)) {
+        return res.status(400).json({
+          success: false,
+          message: "errorCode must be an array",
+        });
+      }
+  
+      // Update the errorCode array
+      order.errorCode = [...new Set([...order.errorCode, ...errorCode])];  // Avoid duplicates
+  
+      await order.save();
+  
+      return res.status(200).json({
+        success: true,
+        message: "Error code(s) updated successfully",
+        data: order
+      });
+  
+    } catch (error) {
+      console.log("Internal server error", error);
+      res.status(500).json({
+        success: false,
+        message: "Internal server error",
+        error: error.message
+      });
+    }
+  }
+  
+exports.getSingleOrder = async (req, res) => {
+    try {
+        const { id } = req.params
+        const order = await Order.findById(id)
+            .populate({
+                path: 'errorCode',
+                populate: {
+                    path: 'Heading', // assuming 'heading' is a reference to another model
+                    model: 'ErrorCodeHeading' // replace with the actual model name if necessary
+                }
+            });
+
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: "Order not found",
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Order fetched successfully",
+            data: order
+        })
+
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}

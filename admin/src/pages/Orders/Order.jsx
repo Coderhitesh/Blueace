@@ -94,7 +94,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "See Error Code", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -276,6 +276,19 @@ function Order() {
                                 <td className={`text-center ${vendor.EstimatedBill?.statusOfBill ? 'text-success' : 'text-danger'}`}>
                                     {/* { console.log(vendor.EstimatedBill?._id?.statusOfBill)} */}
                                     {vendor.EstimatedBill?.statusOfBill ? 'Accepted' : 'Bill Not Generated Yet'}
+                                </td>
+
+                                <td className='fw-bolder'>
+                                    <button
+                                        onClick={() => {
+                                            window.location.href = `/show-error-code/${vendor._id}`;
+                                        }}
+                                        style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                        className='btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm'
+                                        // disabled={!vendor.EstimatedBill}
+                                    >
+                                        See Error Code
+                                    </button>
                                 </td>
 
                                 {/* <td className='fw-bolder'>

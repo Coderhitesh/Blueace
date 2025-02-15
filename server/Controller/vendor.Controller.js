@@ -52,7 +52,7 @@ exports.registerVendor = async (req, res) => {
         if (!ownerName) emptyField.push('Owner Name');
         if (!ContactNumber) emptyField.push('Contact Number');
         if (!panNo) emptyField.push('Pan No');
-        if (!gstNo) emptyField.push('GST No');
+        // if (!gstNo) emptyField.push('GST No');
         if (!adharNo) emptyField.push('Adhar No');
         if (!Password) emptyField.push('Password');
         if (!RangeWhereYouWantService) emptyField.push('Range Where You Want Service');

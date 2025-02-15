@@ -166,21 +166,23 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Email</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Number</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Address</th>
-                                                <th style={{ whiteSpace: 'nowrap' }}>LandMark</th>
+                                                {/* <th style={{ whiteSpace: 'nowrap' }}>LandMark</th> */}
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Date</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Voice Note</th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>Error Code </th>
+                                                <th style={{ whiteSpace: 'nowrap' }}>See Error Code </th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Make Estimated </th>
 
                                                 <th style={{ whiteSpace: 'nowrap' }}>Watch Estimated </th>
                                                 <th style={{ whiteSpace: 'nowrap' }}> Estimated Status</th>
 
-                                                {
+                                                {/* {
                                                     vendorType === 'vendor' && (
                                                         <th style={{ whiteSpace: 'nowrap' }}>Allot Member</th>
                                                     )
-                                                }
+                                                } */}
                                                 {/* <th style={{ whiteSpace: 'nowrap' }}>Order Status</th> */}
                                                 <th style={{ whiteSpace: 'nowrap' }}>Before Work Video</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>After Work Video</th>
@@ -199,7 +201,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                         <td>{order?.email || order?.userId?.Email || "User is not available"}</td>
                                                         <td>{order?.phoneNumber || order?.userId?.ContactNumber || "User is not available"}</td>
                                                         <td>{`${order?.houseNo}, ${order?.address}, ${order?.pinCode}` || "User is not available"}</td>
-                                                        <td>{order?.nearByLandMark || "User is not available"}</td>
+                                                        {/* <td>{order?.nearByLandMark || "User is not available"}</td> */}
                                                         <td>{new Date(order?.workingDate).toLocaleDateString() || "Date is not available"}</td>
                                                         <td>{order?.workingDay || "User is not available"}</td>
                                                         <td>{order?.workingTime || "User is not available"}</td>
@@ -210,6 +212,16 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                     Your browser does not support the audio element.
                                                                 </audio>
                                                             ) || 'Not Available'}
+                                                        </td>
+                                                        <td>
+                                                            <button onClick={() => window.location.href = `/error-code/${order._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
+                                                                Add Error Code
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <button onClick={() => window.location.href = `/show-error-code/${order._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
+                                                                See Error Code
+                                                            </button>
                                                         </td>
                                                         <td>
                                                             <button onClick={() => window.location.href = `/make-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
@@ -233,7 +245,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             {/* { console.log(order.EstimatedBill?._id?.statusOfBill)} */}
                                                             {order.EstimatedBill?.statusOfBill ? 'Accepted' : 'Declined'}
                                                         </td>
-                                                        {
+                                                        {/* {
                                                             vendorType === 'vendor' && (
                                                                 <td>
                                                                     <select
@@ -243,15 +255,13 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                                         onChange={(e) => handleAlloteVendorMember(order._id, e.target.value)}
                                                                     >
                                                                         <option defaultValue={order.AllowtedVendorMember}>{order.AllowtedVendorMember || '--Select Vendor Member--'}</option>
-                                                                        {/* <option value="Service Done">Service Done</option>
-                                                                        <option value="Cancelled">Cancelled</option> */}
                                                                         {vendorMember && vendorMember.map((item, index) => (
                                                                             <option key={index} value={item.name}>{item.name}</option>
                                                                         ))}
                                                                     </select>
                                                                 </td>
                                                             )
-                                                        }
+                                                        } */}
                                                         {/*<td>
                                                             <select
                                                                 value={order.OrderStatus}

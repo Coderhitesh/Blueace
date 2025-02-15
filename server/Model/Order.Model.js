@@ -40,7 +40,7 @@ const OrderSchema = new mongoose.Schema({
     VendorAllotedStatus: {
         type: String,
         default: 'Pending',
-        enum: ['Pending','Send Request', 'Accepted','Reject']
+        enum: ['Pending', 'Send Request', 'Accepted', 'Reject']
     },
     fullName: {
         type: String,
@@ -148,7 +148,7 @@ const OrderSchema = new mongoose.Schema({
     workingTime: {
         type: String
     },
-    totalAmount:{
+    totalAmount: {
         type: Number
     },
     commissionPercent: {
@@ -163,23 +163,29 @@ const OrderSchema = new mongoose.Schema({
     transactionId: {
         type: String
     },
-    PaymentStatus:{
-        type:String,
-        default:'pending',
+    PaymentStatus: {
+        type: String,
+        default: 'pending',
     },
-    paymentMethod:{
-        type:String
+    paymentMethod: {
+        type: String
     },
     razorpayOrderId: {
         type: String
     },
-    VendorAllotedBoolean:{
-        type:Boolean,
-        default:false
+    VendorAllotedBoolean: {
+        type: Boolean,
+        default: false
     },
     workingDate: {
         type: Date
-    }
+    },
+    errorCode: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ErrorCode'
+        }
+    ]
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

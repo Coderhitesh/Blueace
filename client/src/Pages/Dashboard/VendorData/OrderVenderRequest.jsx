@@ -88,7 +88,7 @@ function OrderVenderRequest({ userData }) {
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Email</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Number</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>User Address</th>
-                                                <th style={{ whiteSpace: 'nowrap' }}>LandMark</th>
+                                                {/* <th style={{ whiteSpace: 'nowrap' }}>LandMark</th> */}
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Date</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Day</th>
                                                 <th style={{ whiteSpace: 'nowrap' }}>Service Time</th>
@@ -108,7 +108,7 @@ function OrderVenderRequest({ userData }) {
                                                         <td>{order?.email || order?.userId?.Email || "User is not available"}</td>
                                                         <td>{order?.phoneNumber || order?.userId?.ContactNumber || "User is not available"}</td>
                                                         <td>{`${order?.houseNo}, ${order?.address}, ${order?.pinCode}` || "User is not available"}</td>
-                                                        <td>{order?.nearByLandMark || "User is not available"}</td>
+                                                        {/* <td>{order?.nearByLandMark || "User is not available"}</td> */}
                                                         <td>{new Date(order?.workingDate).toLocaleDateString() || "Date is not available"}</td>
                                                         <td>{order?.workingDay || "User is not available"}</td>
                                                         <td>{order?.workingTime || "User is not available"}</td>
