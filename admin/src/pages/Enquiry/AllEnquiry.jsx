@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
-import Toggle from '../../components/Forms/toggle';
-import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function AllEnquiry() {

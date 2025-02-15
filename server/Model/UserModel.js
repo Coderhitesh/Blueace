@@ -10,7 +10,7 @@ const rangeSchema = new mongoose.Schema({
         },
         coordinates: {
             type: [Number], // [longitude, latitude]
-            required: true
+            // required: true
         }
     }
 })
@@ -59,11 +59,13 @@ const UserSchema = new mongoose.Schema({
     // },
     PinCode: {
         type: String,
+        default: "000000",
         match: [/^\d{6}$/, 'Please enter a valid PinCode with 6 digits']
     },
     HouseNo: {
         type: String,
-        required: true
+        default: "H. No.",
+        // required: true
     },
     // Street: {
     //     type: String,
@@ -71,6 +73,7 @@ const UserSchema = new mongoose.Schema({
     // },
     NearByLandMark: {
         type: String,
+        default: "Landmark",
     },
     RangeWhereYouWantService: [
         rangeSchema

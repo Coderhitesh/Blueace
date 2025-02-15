@@ -72,6 +72,12 @@ import AllCareer from '../Career/AllCareer'
 import AddCareer from '../Career/AddCareer'
 import EditCaree from '../Career/EditCaree'
 import OnlyEmployeeForOrder from '../Orders/OnlyEmployeeForOrder'
+import AllErrorCode from '../ErrorCode/AllErrorCode'
+import AddErrorCode from '../ErrorCode/AddErrorCode'
+import EditErrorCode from '../ErrorCode/EditErrorCode'
+import AllErrorHeading from '../ErrorHeading/AllErrorHeading'
+import AddErrorHeading from '../ErrorHeading/AddErrorHeading'
+import EditErrorHeading from '../ErrorHeading/EditErrorHeading'
 
 const Home = () => {
     return (
@@ -209,6 +215,16 @@ const Home = () => {
                         <Route path='/career/add-career' element={<AddCareer />}/>
                         <Route path='/career/edit-career/:id' element={<EditCaree />}/>
 
+                        {/* error code heading routes here  */}
+                        <Route path='/error-code-heading/all-error-code-heading' element={<AllErrorHeading />} />
+                        <Route path='/error-code-heading/add-error-code-heading' element={<AddErrorHeading />} />
+                        <Route path='/error-code-heading/edit-error-code-heading/:id' element={<EditErrorHeading />} />
+
+                        {/* error code routes here  */}
+
+                        <Route path='/Error-Code/all-error' element={<AllErrorCode />} />
+                        <Route path='/Error-Code/add-error' element={<AddErrorCode />} />
+                        <Route path='/error-Code/edit-error/:id' element={<EditErrorCode />} />
 
                     </Routes>
                 </div>

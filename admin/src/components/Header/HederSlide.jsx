@@ -228,6 +228,32 @@ const HederSlide = () => {
                             <h6 className="lan-2">All Career</h6>
                         </Link>
                     </li>
+
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="/error-code-heading/all-error-code-heading"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All Error Heading</h6>
+                        </Link>
+                    </li>
+
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="/Error-Code/all-error"
+                           >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">All Error Code</h6>
+                        </Link>
+                    </li>
                 </ul>
             </div>
         </aside>

@@ -17,10 +17,10 @@ exports.register = async (req, res) => {
         if (!Email) emptyField.push('Email');
         if (!ContactNumber) emptyField.push('ContactNumber');
         // if (!City) emptyField.push('City');
-        if (!PinCode) emptyField.push('PinCode');
-        if (!HouseNo) emptyField.push('HouseNo');
+        // if (!PinCode) emptyField.push('PinCode');
+        // if (!HouseNo) emptyField.push('HouseNo');
         // if (!Street) emptyField.push('Street');
-        if (!address) emptyField.push('address');
+        // if (!address) emptyField.push('address');
         // if (!NearByLandMark) emptyField.push('NearByLandMark');
         if (emptyField.length > 0) {
             return res.status(400).json({
@@ -83,7 +83,7 @@ exports.register = async (req, res) => {
             ContactNumber,
             // City,
             PinCode,
-            UserType,
+            UserType ,
             HouseNo,
             // Street,
             address,

@@ -2,8 +2,8 @@ const mongoose = require('mongoose')
 
 const ErrorCodeSchema = new mongoose.Schema({
     Heading: {
-        type: String,
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ErrorCodeHeading'
     },
     code: {
         type: String,

@@ -3,10 +3,16 @@ const ErrorCode = require('../Model/ErrorCode.Model')
 exports.createErrorCode = async (req, res) => {
     try {
         const { Heading, code, description, note } = req.body;
+
+        // Array to track missing fields
         const emptyField = [];
+
+        // Check for missing required fields
         if (!Heading) emptyField.push('Heading');
-        if (!code) emptyField.push('code');
-        if (!description) emptyField.push('description');
+        if (!code) emptyField.push('Code');
+        if (!description) emptyField.push('Description');
+
+        // Return a message if there are missing fields
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -14,31 +20,39 @@ exports.createErrorCode = async (req, res) => {
             });
         }
 
+        // If note is provided as a string, convert it into an array
+        const formattedNote = note ? note.split(',').map(item => item.trim()) : [];
+
+        // Create a new ErrorCode object
         const newErrorCode = new ErrorCode({
             Heading,
             code,
             description,
-            note
+            note: formattedNote  // Save note as an array
         });
+
+        // Save the new error code in the database
         await newErrorCode.save();
+
+        // Send success response
         res.status(200).json({
             success: true,
             message: "Error code created successfully",
             data: newErrorCode
-        })
+        });
     } catch (error) {
-        console.log("Internal server error in creating error code", error)
+        console.log("Internal server error in creating error code:", error);
         res.status(500).json({
             success: false,
             message: "Internal server error in creating error code",
             error: error.message
-        })
+        });
     }
-}
+};
 
 exports.getAllErrorCode = async (req, res) => {
     try {
-        const errorCodes = await ErrorCode.find();
+        const errorCodes = await ErrorCode.find().populate('Heading');
         res.status(200).json({
             success: true,
             message: "Error codes fetched successfully",
@@ -54,11 +68,11 @@ exports.getAllErrorCode = async (req, res) => {
     }
 }
 
-exports.getErrorCodeById = async () => {
+exports.getErrorCodeById = async (req, res) => {
     try {
-        const {id} = req.params;
-        const errorCode = await ErrorCode.findById(id);
-        if(!errorCode){
+        const { id } = req.params;
+        const errorCode = await ErrorCode.findById(id).populate('Heading');
+        if (!errorCode) {
             return res.status(404).json({
                 success: false,
                 message: "Error code not found"
@@ -70,7 +84,7 @@ exports.getErrorCodeById = async () => {
             data: errorCode
         })
     } catch (error) {
-        console.log("Internal server error",error)
+        console.log("Internal server error", error)
         res.status(500).json({
             success: false,
             message: "Internal server error",
@@ -81,9 +95,9 @@ exports.getErrorCodeById = async () => {
 
 exports.deleteErrorCode = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         const errorCode = await ErrorCode.findByIdAndDelete(id);
-        if(!errorCode){
+        if (!errorCode) {
             return res.status(404).json({
                 success: false,
                 message: "Error code not found"
@@ -95,55 +109,58 @@ exports.deleteErrorCode = async (req, res) => {
             data: errorCode
         })
     } catch (error) {
-        console.log("Internal server error",error)
+        console.log("Internal server error", error)
         res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
         })
-    }
-}
+    }}
 
-exports.updateErrorCode = async (req,res) => {
+
+    exports.updateErrorCode = async (req, res) => {
     try {
-        const {id} = req.params;
-        const {Heading, code, description, note} = req.body;
+        const { id } = req.params;
+        const { Heading, code, description, note } = req.body;
+
+        // Check if the error code exists
         const errorCode = await ErrorCode.findById(id);
-        if(!errorCode){
+        if (!errorCode) {
             return res.status(404).json({
                 success: false,
                 message: "Error code not found"
-            })
+            });
         }
+
+        // Handle the note field
+        let formattedNote = [];
+        if (Array.isArray(note)) {
+            formattedNote = note; // If it's already an array, use it as is
+        } else if (typeof note === 'string') {
+            formattedNote = note.split(',').map(item => item.trim()); // If it's a string, split it
+        }
+
+        // Update the error code fields
         errorCode.Heading = Heading;
         errorCode.code = code;
         errorCode.description = description;
-        errorCode.note = note;
+        errorCode.note = formattedNote;
+
+        // Save the updated error code
         await errorCode.save();
+
+        // Send success response
         res.status(200).json({
             success: true,
             message: "Error code updated successfully",
             data: errorCode
-        })
+        });
     } catch (error) {
-        console.log("Internal server error",error)
+        console.log("Internal server error in updating error code:", error);
         res.status(500).json({
             success: false,
-            message: "Internal server error",
+            message: "Internal server error in updating error code",
             error: error.message
-        })
+        });
     }
-}
-
-// exports.findErrorCodebyHeading = async(req,res) => {
-//     try {
-//         const {} = req.params;
-//     } catch (error) {
-//         console.log("Internal server error",error)
-//         res.status(500).json({
-//             success: false,
-//             message: "Internal server error",
-//             error: error.message
-//         })
-//     }
-// }
+};

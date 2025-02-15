@@ -30,6 +30,7 @@ const { createCommission, getAllCommission, getSingleCommission, updateCommissio
 const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdrawRequest, deleteWithdrawRequest, getWithdrawByVendorId } = require('../Controller/withdraw.Controller')
 const { createCareer, getAllCareers, getCareerById, updateCareer, deleteCareer } = require('../Controller/Career.Controller')
 const { createErrorCode, getAllErrorCode, getErrorCodeById, updateErrorCode, deleteErrorCode } = require('../Controller/Error.Controller')
+const { createHeading, getAllHeading, updateHeading, deleteHeading, getHeadingById } = require('../Controller/ErrorCodeHeading.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -303,7 +304,7 @@ router.get('/get-single-commission/:id',getSingleCommission)
 router.put('/update-commission/:id',updateCommission)
 router.delete('/delete-commission/:id',deleteCommission)
 
-// pament of bill route 
+// pament of bill route
 
 router.post('/create-bill-payment/:orderId',makeOrderPayment)
 // router.post('/verify-bill-payment',verifyOrderPayment)
@@ -325,6 +326,13 @@ router.get('/careers', getAllCareers); // Read All
 router.get('/careers/:id', getCareerById); // Read One
 router.put('/careers/:id', updateCareer); // Update
 router.delete('/careers/:id', deleteCareer); // Delete
+
+// error code heading router here 
+router.post('/create-error-heading',createHeading)
+router.get('/get-all-error-heading',getAllHeading)
+router.get('/get-single-error-heading/:id',getHeadingById)
+router.put('/update-error-heading/:id',updateHeading)
+router.delete('/delete-error-heading/:id',deleteHeading)
 
 // error code router here 
 
