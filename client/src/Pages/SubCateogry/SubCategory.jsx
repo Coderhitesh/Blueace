@@ -525,12 +525,17 @@ function SubCategory() {
               <form onSubmit={handleModalSubmit}>
                 <div className='row'>
                   <div className='col-md-6 mb-2'>
-                    <label htmlFor='houseNo' className='col-form-label fw-medium'>Address</label>
+                    <label htmlFor='houseNo' className='col-form-label fw-medium'>Complete Address</label>
                     <input type='text' name='houseNo' className='form-control' id='houseNo' onChange={handleChange} required />
                   </div>
-                  <div className="position-relative col-6">
+                  
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='pinCode' className='col-form-label fw-medium'>Pin Code:</label>
+                    <input type='text' name='pinCode' className='form-control' id='pinCode' onChange={handleChange} required />
+                  </div>
+                  <div className="position-relative col-12">
                     <div className="form-group">
-                      <label htmlFor="address" className='mb-1 fw-medium'>LandMark</label>
+                      <label htmlFor="address" className='mb-1 fw-medium'>Landmark (e.g., Netaji Subhash Place)</label>
                       <input
                         type="text"
                         name="address"
@@ -561,10 +566,6 @@ function SubCategory() {
                       )}
                     </div>
 
-                  </div>
-                  <div className='col-md-6 mb-2'>
-                    <label htmlFor='pinCode' className='col-form-label fw-medium'>Pin Code:</label>
-                    <input type='text' name='pinCode' className='form-control' id='pinCode' onChange={handleChange} required />
                   </div>
                   {/* <div className='col-md-6 mb-2'>
                     <label htmlFor='nearByLandMark' className='col-form-label fw-medium'>Nearby Landmark:</label>

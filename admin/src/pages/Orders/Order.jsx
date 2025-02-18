@@ -22,6 +22,7 @@ function Order() {
     const fetchAllOrders = async () => {
         try {
             const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
+            console.log("res.data.data",res.data.data)
             setAllOrders(res.data.data);
             setLoading(false);
         } catch (error) {
@@ -74,6 +75,10 @@ function Order() {
         setPaymentModel(true)
     }
 
+    const handleRedirect = (vendorId) => {
+        window.location.href = `/show-vendor/${vendorId}`;
+    }
+
     const handleView = (vendor) => {
         setSelectedVendor(vendor); // Set the selected vendor details
         setModalVisible(true); // Open the modal
@@ -94,7 +99,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "See Error Code", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Vendor Allowted Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "See Error Code", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -166,6 +171,16 @@ function Order() {
                                 {/* User Detail Button to Open Modal */}
                                 <td className='fw-bolder'>
                                     <button className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" type="button" onClick={() => handleView(vendor?.userId)}>
+                                        View
+                                    </button>
+                                </td>
+                                <td className='fw-bolder'>
+                                    <button 
+                                    className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" 
+                                    type="button" 
+                                    onClick={() => handleRedirect(vendor?.vendorAlloted?._id)}
+                                    disabled={vendor?.VendorAllotedBoolean === false}
+                                    >
                                         View
                                     </button>
                                 </td>

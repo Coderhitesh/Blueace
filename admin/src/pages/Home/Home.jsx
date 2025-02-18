@@ -79,6 +79,7 @@ import AllErrorHeading from '../ErrorHeading/AllErrorHeading'
 import AddErrorHeading from '../ErrorHeading/AddErrorHeading'
 import EditErrorHeading from '../ErrorHeading/EditErrorHeading'
 import ErrorCode from '../../components/ErrorCode/ErrorCode'
+import VendorDetailPage from '../VendorDetailPage/VendorDetailPage'
 
 const Home = () => {
     return (
@@ -228,6 +229,8 @@ const Home = () => {
                         <Route path='/error-Code/edit-error/:id' element={<EditErrorCode />} />
 
                         <Route path='/show-error-code/:id' element={<ErrorCode />} />
+
+                        <Route path='/show-vendor/:id' element={<VendorDetailPage />} />
 
                     </Routes>
                 </div>

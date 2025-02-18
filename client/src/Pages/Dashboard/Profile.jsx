@@ -257,8 +257,8 @@ function Profile({ userData }) {
 											</div>
 											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
 												<div className="form-group">
-													<label className="mb-1">House No.</label>
-													<input type="text" value={formData.HouseNo} onChange={handleChange} name='HouseNo' className="form-control rounded" placeholder="91 256 584 7895" />
+													<label className="mb-1">Complete Address</label>
+													<input type="text" value={formData.HouseNo} onChange={handleChange} name='HouseNo' className="form-control rounded" placeholder="" />
 												</div>
 											</div>
 											{/* <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
@@ -275,7 +275,7 @@ function Profile({ userData }) {
 											</div> */}
 											<div className="col-xl-6 col-lg-6 col-md-12 position-relative col-sm-12">
 												<div className="form-group">
-													<label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+													<label htmlFor="address" className='mb-1 fw-medium'>Landmark (e.g., Netaji Subhash Place)</label>
 													<input
 														type="text"
 														name="address"

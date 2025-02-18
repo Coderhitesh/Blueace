@@ -233,19 +233,19 @@ function VendorProfile({ userData }) {
                                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                         <div className="form-group">
                                             <label className="mb-1">Name</label>
-                                            <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" placeholder="Owner Name" />
+                                            <input type="text" value={formData.ownerName} name='ownerName' onChange={handleChange} className="form-control rounded" />
                                         </div>
                                     </div>
                                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                         <div className="form-group">
                                             <label className="mb-1">Number</label>
-                                            <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Owner Name" />
+                                            <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" />
                                         </div>
                                     </div>
                                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                         <div className="form-group">
                                             <label className="mb-1">PAN No.</label>
-                                            <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control rounded" placeholder="Owner Name" />
+                                            <input type="text" value={formData.panNo} name='panNo' onChange={handleChange} className="form-control rounded" />
                                         </div>
                                     </div>
                                     {
@@ -253,7 +253,7 @@ function VendorProfile({ userData }) {
                                             <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                                 <div className="form-group">
                                                     <label className="mb-1">GST No.</label>
-                                                    <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" placeholder="Owner Name" />
+                                                    <input type="text" value={formData.gstNo} name='gstNo' onChange={handleChange} className="form-control rounded" />
                                                 </div>
                                             </div>
                                         )
@@ -261,7 +261,7 @@ function VendorProfile({ userData }) {
                                     <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
                                         <div className="form-group">
                                             <label className="mb-1">Aadhar No.</label>
-                                            <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" placeholder="Owner Name" />
+                                            <input type="text" value={formData.adharNo} name='adharNo' onChange={handleChange} className="form-control rounded" />
                                         </div>
                                     </div>
                                     {
@@ -274,9 +274,17 @@ function VendorProfile({ userData }) {
                                             </div>
                                         )
                                     }
+
+                                    <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                        <div className="form-group">
+                                            <label className="mb-1">Complete Address</label>
+                                            <input type="text" value={formData.HouseNo} onChange={handleChange} name='HouseNo' className="form-control rounded" placeholder="91 256 584 7895" />
+                                        </div>
+                                    </div>
+
                                     <div className="col-xl-6 col-lg-6 col-md-12 position-relative col-sm-12">
                                         <div className="form-group">
-                                            <label htmlFor="address" className='mb-1 fw-medium'>Address</label>
+                                            <label htmlFor="address" className='mb-1 fw-medium'>Landmark (e.g., Netaji Subhash Place)</label>
                                             <input
                                                 type="text"
                                                 name="address"
@@ -305,13 +313,6 @@ function VendorProfile({ userData }) {
                                                     </ul>
                                                 </div>
                                             )}
-                                        </div>
-                                    </div>
-
-                                    <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
-                                        <div className="form-group">
-                                            <label className="mb-1">House No.</label>
-                                            <input type="text" value={formData.HouseNo} onChange={handleChange} name='HouseNo' className="form-control rounded" placeholder="91 256 584 7895" />
                                         </div>
                                     </div>
 

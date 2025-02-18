@@ -432,33 +432,6 @@ function GetServicePopup({ handlePopupDeactive }) {
 
                                     {step === 3 && (
                                         <div className="row g-3">
-                                            <div className="col-12">
-                                                <div className="form-floating">
-                                                    <input type="text"
-                                                        className="form-control"
-                                                        name="address"
-                                                        value={formData.address}
-                                                        onChange={(e) => {
-                                                            handleChange(e);
-                                                            fetchAddressSuggestions(e.target.value);
-                                                        }}
-                                                        placeholder="Address"
-                                                        required />
-                                                    <label>Complete Address</label>
-                                                </div>
-                                                {addressSuggestions.length > 0 && (
-                                                    <div className="list-group mt-2">
-                                                        {addressSuggestions.map((suggestion, index) => (
-                                                            <button key={index}
-                                                                type="button"
-                                                                className="list-group-item list-group-item-action"
-                                                                onClick={() => fetchGeocode(suggestion.description)}>
-                                                                {suggestion.description}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
-                                            </div>
                                             <div className="col-md-6">
                                                 <div className="form-floating">
                                                     <input type="text"
@@ -482,6 +455,33 @@ function GetServicePopup({ handlePopupDeactive }) {
                                                         required />
                                                     <label>PIN Code</label>
                                                 </div>
+                                            </div>
+                                            <div className="col-12">
+                                                <div className="form-floating">
+                                                    <input type="text"
+                                                        className="form-control"
+                                                        name="address"
+                                                        value={formData.address}
+                                                        onChange={(e) => {
+                                                            handleChange(e);
+                                                            fetchAddressSuggestions(e.target.value);
+                                                        }}
+                                                        placeholder="Address"
+                                                        required />
+                                                    <label>Landmark (e.g., Netaji Subhash Place)</label>
+                                                </div>
+                                                {addressSuggestions.length > 0 && (
+                                                    <div className="list-group mt-2">
+                                                        {addressSuggestions.map((suggestion, index) => (
+                                                            <button key={index}
+                                                                type="button"
+                                                                className="list-group-item list-group-item-action"
+                                                                onClick={() => fetchGeocode(suggestion.description)}>
+                                                                {suggestion.description}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="col-12">
                                                 <div className="form-floating">

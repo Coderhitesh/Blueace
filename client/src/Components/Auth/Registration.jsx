@@ -213,7 +213,7 @@ function Registration() {
 
                       <div className="position-relative col-6">
                         <div className="form-group">
-                          <label htmlFor="address" className='mb-1 fw-medium'>LandMark*</label>
+                          <label htmlFor="address" className='mb-1 fw-medium'>Landmark (e.g., Netaji Subhash Place)*</label>
                           <input
                             type="text"
                             name="address"

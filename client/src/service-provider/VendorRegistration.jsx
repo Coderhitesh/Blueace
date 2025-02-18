@@ -251,7 +251,7 @@ function VendorRegistration() {
                                             </div>
                                             <div className="position-relative col-lg-6">
                                                 <div className="form-group">
-                                                    <label htmlFor="address" className='mb-1 fw-medium'>Address*</label>
+                                                    <label htmlFor="address" className='mb-1 fw-medium'>Landmark (e.g., Netaji Subhash Place)*</label>
                                                     <input
                                                         type="text"
                                                         name="address"

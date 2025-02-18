@@ -116,6 +116,7 @@ function Footer() {
                     <li><Link to={`/hvac`}>- HVAC</Link></li>
                     <li><Link to={`/heat-pump-installation`}>- Heat Pump</Link></li>
                     <li><Link to={`/service/cassette-air-conditioning-system`}>- Cassette Air Conditioning</Link></li>
+                    <li><Link to={`/service/ductable-air-conditioners`}>- Ductable Air Conditioners</Link></li>
                   </ul>
                 </div>
               </div>
