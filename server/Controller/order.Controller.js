@@ -3,9 +3,8 @@ const Order = require('../Model/Order.Model');
 const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage, deleteVideoFromCloudinary, uploadVideo } = require('../Utils/Cloudnary');
 const fs = require('fs').promises;
 const Vendor = require('../Model/vendor.Model')
-const User = require('../Model/UserModel');
-const { error } = require('console');
-const { sendSMS } = require('../Utils/SMSSender');
+const mongoose = require('mongoose');
+const { Types } = mongoose;
 const ServiceCategory = require('../Model/serviceCategoty.Model');
 require("dotenv").config()
 const crypto = require('crypto')
@@ -21,7 +20,7 @@ const BASE_URL = isProd
     ? "https://api.phonepe.com/apis/hermes/pg/v1"
     : "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1"
 
-const REDIRECT_BASE_URL = isProd ? "https://www.blueaceindia.com" : "http://192.168.1.4:7987"
+const REDIRECT_BASE_URL = isProd ? "https://www.blueaceindia.com" : "https://api.blueaceindia.com"
 
 const razorpayInstance = new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,   // Razorpay Key ID
@@ -193,8 +192,8 @@ exports.makeOrderFromApp = async (req, res) => {
         let voiceNoteDetails = null;
 
 
-        if (req.file) {
-            const voiceNoteUpload = await uploadVoiceNote(req.file.path);
+        if (req.files) {
+            const voiceNoteUpload = await uploadVoiceNote(req.files[0].path);
             const { url, public_id } = voiceNoteUpload;
 
             voiceNoteDetails = {
@@ -203,7 +202,7 @@ exports.makeOrderFromApp = async (req, res) => {
             };
 
 
-            fs.unlink(req.file.path, (err) => {
+            fs.unlink(req.files[0].path, (err) => {
                 if (err) {
                     console.error('Error deleting local voice note file:', err);
                 }
@@ -234,7 +233,7 @@ exports.makeOrderFromApp = async (req, res) => {
         });
 
         await newOrder.save();
-
+        console.log(newOrder)
         res.status(201).json({
             success: true,
             message: 'Order created successfully',
@@ -295,11 +294,11 @@ exports.findOrderById = async (req, res) => {
     try {
         // Extract vendorAlloted and userId from query parameters
         const { vendorAlloted } = req.query;
-        // console.log(vendorAlloted)
-        // Define a filter object
+        console.log(vendorAlloted)
+
         const filter = {};
 
-        // Add conditions to filter based on the presence of vendorAlloted and userId in the query
+
         if (vendorAlloted) {
             filter.vendorAlloted = vendorAlloted;
         }
@@ -344,6 +343,45 @@ exports.findOrderById = async (req, res) => {
     }
 }
 
+exports.findOrderByIdApp = async (req, res) => {
+    try {
+        const { orderid } = req.query;
+
+        console.log(orderid)
+
+        const orders = await Order.findById(orderid)
+            .populate('userId EstimatedBill vendorAlloted')
+            .populate({
+                path: 'serviceId',
+                populate: {
+                    path: 'subCategoryId',
+                    model: 'ServiceCategory',
+                }
+            })
+            .sort({ createdAt: -1 });
+
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'No orders found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Orders retrieved successfully',
+            data: orders
+        });
+    } catch (error) {
+        console.error("Internal server error in getting all orders:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error in getting all orders',
+            error: error.message
+        });
+    }
+};
+
 exports.findOrderByUserId = async (req, res) => {
     try {
         // Extract vendorAlloted and userId from query parameters
@@ -364,7 +402,7 @@ exports.findOrderByUserId = async (req, res) => {
                 userId: userId
             }]
         })
-            .populate('userId EstimatedBill vendorAlloted') // Populating userId, EstimatedBill, and vendorAlloted
+            .populate('userId EstimatedBill vendorAlloted errorCode') // Populating userId, EstimatedBill, and vendorAlloted
             .populate({
                 path: 'serviceId',
                 populate: {
@@ -1338,8 +1376,9 @@ exports.makeOrderPaymentApp = async (req, res) => {
         const { orderId } = req.params
         const { totalAmount } = req.body
 
-
+        console.log(totalAmount)
         const order = await Order.findById(orderId)
+
         if (!order) {
             console.log("Order not found", { orderId })
             return res.status(400).json({
@@ -1362,13 +1401,13 @@ exports.makeOrderPaymentApp = async (req, res) => {
         const merchantUserId = crypto.randomBytes(12).toString("hex")
 
         const data = {
-            merchantId: merchantId,
+            merchantId: "TESTPGPAYCREDUAT",
             merchantTransactionId: transactionId,
             merchantUserId,
             amount: integerAmount * 100,
-            redirectUrl: `${REDIRECT_BASE_URL}/api/v1/status-payments/${transactionId}`,
+            redirectUrl: `${REDIRECT_BASE_URL}/api/v1/status-payment-app/${transactionId}`,
             redirectMode: "POST",
-            callbackUrl: `${REDIRECT_BASE_URL}/api/v1/status-payments/${transactionId}`,
+            callbackUrl: `${REDIRECT_BASE_URL}/api/v1/status-payment-app/${transactionId}`,
             paymentInstrument: {
                 type: "PAY_PAGE",
             },
@@ -1379,7 +1418,7 @@ exports.makeOrderPaymentApp = async (req, res) => {
         const payload = JSON.stringify(data)
         const payloadMain = Buffer.from(payload).toString("base64")
         const keyIndex = 1
-        const string = payloadMain + "/pg/v1/pay" + apiKey
+        const string = payloadMain + "/pg/v1/pay" + "14d6df8a-75bf-4873-9adf-43bc1545094f"
         const sha256 = crypto.createHash("sha256").update(string).digest("hex")
         const checksum = sha256 + "###" + keyIndex
 
@@ -1454,13 +1493,13 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
     try {
         const keyIndex = 1
-        const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + apiKey
+        const string = `/pg/v1/status/TESTPGPAYCREDUAT/${merchantTransactionId}` + "14d6df8a-75bf-4873-9adf-43bc1545094f"
         const sha256 = crypto.createHash("sha256").update(string).digest("hex")
         const checksum = sha256 + "###" + keyIndex
 
         const options = {
             method: "GET",
-            url: `${BASE_URL}/status/${merchantId}/${merchantTransactionId}`,
+            url: `${BASE_URL}/status/TESTPGPAYCREDUAT/${merchantTransactionId}`,
             headers: {
                 accept: "application/json",
                 "Content-Type": "application/json",
@@ -1527,7 +1566,7 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
             console.log("Order and vendor updated successfully")
 
-            const successRedirect = `${REDIRECT_BASE_URL}/successfull-payment-app`
+            const successRedirect = `${REDIRECT_BASE_URL}/successfull-payment-app?orderId=${findOrder._id}`
             console.log("Redirecting to success page", { successRedirect })
             return res.redirect(successRedirect)
         } else {
@@ -1548,47 +1587,47 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
 exports.updateErrorCodeInOrder = async (req, res) => {
     try {
-      const { id } = req.params;
-      const { errorCode } = req.body; // This could be a single ObjectId or an array of ObjectIds
-  
-      const order = await Order.findById(id);
-  
-      if (!order) {
-        return res.status(400).json({
-          success: false,
-          message: "Order not found",
+        const { id } = req.params;
+        const { errorCode } = req.body; // This could be a single ObjectId or an array of ObjectIds
+
+        const order = await Order.findById(id);
+
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: "Order not found",
+            });
+        }
+
+        // Ensure errorCode is always an array
+        if (!Array.isArray(errorCode)) {
+            return res.status(400).json({
+                success: false,
+                message: "errorCode must be an array",
+            });
+        }
+
+        // Update the errorCode array
+        order.errorCode = [...new Set([...order.errorCode, ...errorCode])];  // Avoid duplicates
+
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Error code(s) updated successfully",
+            data: order
         });
-      }
-  
-      // Ensure errorCode is always an array
-      if (!Array.isArray(errorCode)) {
-        return res.status(400).json({
-          success: false,
-          message: "errorCode must be an array",
-        });
-      }
-  
-      // Update the errorCode array
-      order.errorCode = [...new Set([...order.errorCode, ...errorCode])];  // Avoid duplicates
-  
-      await order.save();
-  
-      return res.status(200).json({
-        success: true,
-        message: "Error code(s) updated successfully",
-        data: order
-      });
-  
+
     } catch (error) {
-      console.log("Internal server error", error);
-      res.status(500).json({
-        success: false,
-        message: "Internal server error",
-        error: error.message
-      });
+        console.log("Internal server error", error);
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        });
     }
-  }
-  
+}
+
 exports.getSingleOrder = async (req, res) => {
     try {
         const { id } = req.params
@@ -1620,5 +1659,57 @@ exports.getSingleOrder = async (req, res) => {
             message: "Internal server error",
             error: error.message
         })
+    }
+}
+
+
+
+exports.getAllDataOfVendor = async (req, res) => {
+    try {
+        const { vendorId } = req.query || {}
+        if (!vendorId) {
+            return res.status(400).json({
+                success: false,
+                message: "Vendor ID is required"
+            })
+        }
+
+        const foundInOrders = await Order.find({
+            vendorAlloted: vendorId,
+            OrderStatus: "Service Done"
+        }).populate('errorCode EstimatedBill serviceId')
+
+        if (foundInOrders.length === 0) {
+            return res.status(200).json({
+                success: true,
+                message: "No data found",
+                data: []
+            })
+        }
+
+        const calculateEarning = foundInOrders.reduce((acc, item) => (
+            acc + item.adminCommissionAmount
+        ), 0)
+
+        const calculateTotalOrders = foundInOrders.length
+
+        return res.status(200).json({
+            success: true,
+            message: "Data fetched successfully",
+            data: {
+                earning: calculateEarning,
+                totalOrders: calculateTotalOrders,
+                orders: foundInOrders
+            }
+        })
+
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+
     }
 }
