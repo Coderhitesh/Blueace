@@ -85,6 +85,7 @@
       document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get("orderId");
+        // i am done 
 
         const orderIdEl = document.getElementById("orderId");
         const transactionIdEl = document.getElementById("transactionId");
@@ -95,7 +96,7 @@
         async function fetchPaymentDetails() {
           try {
             const response = await axios.get(
-              `http://localhost:7987/api/v1/get-order-by-id-app?orderid=${orderId}`
+              `https://api.blueaceindia.com/api/v1/get-order-by-id-app?orderid=${orderId}`
             );
             const data = response.data;
             if (data.success) {
