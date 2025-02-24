@@ -95,7 +95,7 @@
         async function fetchPaymentDetails() {
           try {
             const response = await axios.get(
-              `http://localhost:7987/api/v1/get-order-by-id-app?orderid=${orderId}`
+              `https://api.blueaceindia.com/api/v1/get-order-by-id-app?orderid=${orderId}`
             );
             const data = response.data;
             if (data.success) {
