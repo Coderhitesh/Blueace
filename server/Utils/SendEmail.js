@@ -3,39 +3,32 @@ require('dotenv').config()
 
 const sendEmail = async (options) => {
     try {
-        // const transporter = nodemailer.createTransport({
-        //     host: 'smtp.gmail.com',
-        //     port: process.env.SMTP_PORT || 587,
-        //     secure: false, // true for 465, false for other ports
-        //     auth: {
-        //         user: process.env.EMAIL_USERNAME, // your Gmail address
-        //         pass: process.env.EMAIL_PASSWORD  // your Gmail password
-        //     }
-        // });
-
-        var transporter = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: process.env.SMTP_PORT || 2525,
+        const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 587,
+            secure: false,
             auth: {
                 user: process.env.EMAIL_USERNAME,
                 pass: process.env.EMAIL_PASSWORD
+            },
+            tls: {
+                rejectUnauthorized: false
             }
         });
 
-        console.log(process.env.EMAIL_USERNAME)
 
         const mailOptions = {
             from: `"Blueace" <${process.env.EMAIL_USERNAME}>`,
-            to: options.email, // list of receivers
-            subject: options.subject, // Subject line
-            html: options.message // html body
+            to: options.email,
+            subject: options.subject,
+            html: options.message
         };
-
         await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully');
+        return true
     } catch (error) {
         console.error('Error sending email:', error);
-        throw new Error('Error sending email');
+        return false
+
     }
 };
 

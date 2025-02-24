@@ -13,7 +13,7 @@ const { createServiceMainCategory, updateServiceMainCategory, getAllServiceMainC
 const { createBanner, getBanner, getSingleBanner, deleteBanner, updateBanner, updateBannerActiveStatus } = require('../Controller/banner.Controller')
 const { registerVendor, vendorLogin, vendorLogout, vendorPasswordChangeRequest, VendorVerifyOtpAndChangePassword, vendorResendOTP, addVendorMember, getAllVendor, updateDeactive, deleteVendor, memberShipPlanGateWay, PaymentVerify, updateVendor, getSingleVendor, updateVendorMember, getMembersByVendorId, updateMember, addNewVendorMember, ChangeOldVendorPassword, updateReadyToWork, sendOtpForVerification, verifyVendor, resendVerifyOtp, deleteVendorMember, updateVendorApp, updateBankDetail } = require('../Controller/vendor.Controller')
 const { createMemberShipPlan, getAllMemberShipPlan, getSingleMemberShipPlan, deleteMemberShipPlan, updateMemberShipPlan } = require('../Controller/membership.Controller')
-const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember, AcceptOrderRequest, makeOrderPayment, verifyOrderPayment, fetchOnlyEmployee, makeOrderFromApp, makeOrderPaymentApp, verifyOrderPaymentApp, updateErrorCodeInOrder, getSingleOrder } = require('../Controller/order.Controller')
+const { makeOrder, getAllOrder, updateOrderStatus, deleteOrder, fetchVendorByLocation, AssignVendor, updateBeforWorkImage, updateAfterWorkImage, findOrderById, findOrderByUserId, updateBeforeWorkVideo, updateAfterWorkVideo, AllowtVendorMember, AcceptOrderRequest, makeOrderPayment, verifyOrderPayment, fetchOnlyEmployee, makeOrderFromApp, makeOrderPaymentApp, verifyOrderPaymentApp, updateErrorCodeInOrder, getSingleOrder, getAllDataOfVendor, findOrderByIdApp } = require('../Controller/order.Controller')
 const { createBlog, getAllBlog, getSingleBlog, updateBlog, deleteBlog, updateBlogIsTranding, getBlogBySlug } = require('../Controller/blog.Controller')
 const { getAnylaticalData } = require('../Controller/Dashboard.controller')
 const { getAllBills, makeEstimated, UpdateStatusOfBill, deleteBill, updateBill } = require('../Controller/EstimatedBudget.Controller')
@@ -212,6 +212,7 @@ router.post('/make-order', upload.single('voiceNote'), makeOrder)
 router.post('/make-order-app', upload.any(), makeOrderFromApp)
 router.get('/get-all-order', getAllOrder)
 router.get('/get-order-by-id', findOrderById);
+router.get('/get-order-by-id-app', findOrderByIdApp);
 router.get('/get-order-by-user-id', findOrderByUserId);
 router.get('/get-order-by-id/:id', getSingleOrder)
 router.put('/update-order-status/:_id', updateOrderStatus)
@@ -341,12 +342,14 @@ router.put('/update-error-heading/:id',updateHeading)
 router.delete('/delete-error-heading/:id',deleteHeading)
 
 // error code router here 
-
 router.post('/create-error-code',createErrorCode)
 router.get('/get-all-error-code',getAllErrorCode)
 router.get('/get-single-error-code/:id',getErrorCodeById)
 router.put('/update-error-code/:id',updateErrorCode)
 router.delete('/delete-error-code/:id',deleteErrorCode)
+
+//anylitical
+router.get('/get-Data-Of-Vendor',getAllDataOfVendor)
 
 
 module.exports = router;

@@ -6,6 +6,7 @@ const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary')
 const fs = require("fs")
 const mongoose = require('mongoose');
 const { sendSMS } = require('../Utils/SMSSender');
+const sendEmail = require('../Utils/SendEmail');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -83,7 +84,7 @@ exports.register = async (req, res) => {
             ContactNumber,
             // City,
             PinCode,
-            UserType ,
+            UserType,
             HouseNo,
             // Street,
             address,
@@ -357,30 +358,32 @@ exports.logout = async (req, res) => {
 exports.passwordChangeRequest = async (req, res) => {
     try {
         const { Email, NewPassword } = req.body;
-        // console.log("Email",Email)
+        console.log(req.body)
 
-        // Check password length
+
         if (NewPassword.length <= 6) {
-            return res.status(403).json({
+            return res.status(400).json({
                 success: false,
-                message: 'Password Length Must be Greater than 6 Digits'
+                message: 'Your new password must be longer than 6 characters. Please try again with a stronger password.'
             });
         }
 
-        // Find user by email
+
         const user = await User.findOne({ Email });
-        // console.log("user",user)
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'We couldn’t find an account with that email. Please check and try again.'
             });
         }
-        const userNumber = user ? user.ContactNumber : '';
-        // Generate OTP and expiry time
-        const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+
+        const userEmail = user.Email;
+
+        // Generate OTP and set expiration time
+        const OTP = Math.floor(100000 + Math.random() * 900000);
         const OTPExpires = new Date();
-        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
+        OTPExpires.setTime(OTPExpires.getTime() + 2 * 60 * 1000);
+
 
         await User.findOneAndUpdate(
             { Email },
@@ -394,22 +397,42 @@ exports.passwordChangeRequest = async (req, res) => {
             { new: true }
         );
 
-        const message = `Your OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
-        // await sendSMS(userNumber, message)
+        // Prepare email content
+        const message = `Hi there,\n\nYour OTP for resetting your password is: ${OTP}.\n\nPlease use this OTP within the next 2 minutes to complete your password reset.\n\nIf you didn’t request this change, please ignore this email.\n\nThank you,\nSupport Team`;
 
+        const options = {
+            email: userEmail,
+            subject: 'Your Password Reset OTP',
+            message: message
+        };
+
+        // Send OTP via email
+        try {
+            await sendEmail(options);
+            console.log('OTP sent successfully');
+        } catch (error) {
+            console.error('Error sending OTP:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'There was an issue sending the OTP. Please try again later.'
+            });
+        }
+
+        // Successful response
         res.status(200).json({
             success: true,
-            message: 'OTP sent successfully. Check your SMS Box.'
+            message: 'An OTP has been sent to your registered email. Please check your inbox and follow the instructions to reset your password.'
         });
 
     } catch (error) {
         console.error('Password change request error:', error);
         res.status(500).json({
             success: false,
-            message: 'Internal Server Error'
+            message: 'Oops! Something went wrong on our end. Please try again later.'
         });
     }
 };
+
 
 exports.verifyOtpAndChangePassword = async (req, res) => {
     const { Email, PasswordChangeOtp, NewPassword } = req.body;
@@ -428,7 +451,7 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
                 message: 'Invalid OTP or OTP has expired'
             });
         }
-        const userNumber = user ? user.ContactNumber : '';
+        const userEmail = user ? user.Email : '';
         // console.log(user)
         // Update password
         user.Password = NewPassword; // Assign NewPassword from user object to Password field
@@ -437,9 +460,6 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
         user.NewPassword = undefined; // Clear NewPassword field after using it
         await user.save();
 
-        const message = `Your password has been successfully changed. If you did not perform this action, please contact us immediately.`
-
-        // await sendSMS(userNumber, message)
 
         res.status(200).json({
             success: true,
@@ -458,7 +478,6 @@ exports.resendOtp = async (req, res) => {
     const { Email } = req.body;
 
     try {
-        // Find the user by email
         const user = await User.findOne({ Email });
 
         if (!user) {
@@ -468,39 +487,58 @@ exports.resendOtp = async (req, res) => {
             });
         }
 
-        const userNumber = user ? user.ContactNumber : '';
-
-        // Check if the OTP has been sent recently
+        // Check if OTP was sent recently
         const currentTime = Date.now();
         const otpLastSentTime = user.OtpExpiredTime ? user.OtpExpiredTime.getTime() : 0;
 
-        // If OTP was sent less than 3 minutes ago, return an error
-        if (otpLastSentTime && (currentTime - otpLastSentTime) < 3 * 60 * 1000) {
-            const remainingTime = Math.ceil((3 * 60 * 1000 - (currentTime - otpLastSentTime)) / 1000); // In seconds
-            return res.status(400).json({
-                success: false,
-                message: `Please wait ${remainingTime} seconds before requesting a new OTP.`
-            });
-        }
+    
 
-        // Generate new OTP and update expiry time
-        const OTP = Math.floor(100000 + Math.random() * 900000); // Generate 6-digit OTP
+    
+        const OTP = Math.floor(100000 + Math.random() * 900000); 
         const OTPExpires = new Date();
-        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10); // Set expiry time to 10 minutes from now
+        OTPExpires.setTime(OTPExpires.getTime() + 2 * 60 * 1000);
 
-        // Update user document with new OTP and expiry
+
+     
         user.PasswordChangeOtp = OTP;
         user.OtpExpiredTime = OTPExpires;
         await user.save();
 
-        const message = `Your new OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
+      
+        const message = `
+            Hi there,
+            
+            Your OTP for resetting your password is: ${OTP}.
+            
+            Please use this OTP within the next 2 minutes to complete your password reset.
+            
+            If you didn’t request this change, please ignore this email.
+            
+            Thank you,
+            Support Team
+        `;
 
-        // Send OTP via SMS
-        // await sendSMS(userNumber, message);
+        // Email options
+        const options = {
+            email: user.Email,
+            subject: 'Your Password Reset OTP',
+            message: message
+        };
+
+        try {
+            await sendEmail(options);
+            console.log('OTP sent successfully');
+        } catch (error) {
+            console.error('Error sending OTP:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'There was an issue sending the OTP. Please try again later.'
+            });
+        }
 
         res.status(200).json({
             success: true,
-            message: 'New OTP sent successfully. Check your SMS Box.'
+            message: 'New OTP sent successfully. Check your email inbox.'
         });
 
     } catch (error) {
@@ -511,6 +549,7 @@ exports.resendOtp = async (req, res) => {
         });
     }
 };
+
 
 exports.deleteUser = async (req, res) => {
     try {
@@ -864,7 +903,7 @@ exports.universelLogin = async (req, res) => {
         const id = req.params._id;
         const user = await User.findById(id)
         if (!user) {
-            const vendor = await Vendor.findById(id)
+            const vendor = await Vendor.findById(id).populate('workingHour')
             return res.status(200).json({
                 success: true,
                 message: 'vendor is founded',

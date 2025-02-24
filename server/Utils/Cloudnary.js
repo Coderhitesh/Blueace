@@ -111,15 +111,19 @@ const deletePdfFromCloudinary = async (public_id) => {
 const uploadVoiceNote = async (file) => {
     try {
         const result = await cloudinary.uploader.upload(file, {
-            folder: "voice-notes",      // Store in a separate folder for voice notes
-            resource_type: "video"      // Cloudinary treats audio files as "video" resource type
+            folder: "voice-notes",           // Store in 'voice-notes' folder
+            resource_type: "video",          // Audio files treated as 'video' in Cloudinary
+            public_id: `voice_${Date.now()}`, // Unique file name with timestamp
+            format: "mp3"                    // Force mp3 format
         });
-        return { url: result.secure_url, public_id: result.public_id }; // Return URL and public_id
+
+        return { url: result.secure_url, public_id: result.public_id };
     } catch (error) {
-        console.error(error);
+        console.error("Cloudinary Upload Error:", error);
         throw new Error('Failed to upload voice note');
     }
 };
+
 
 // Delete Voice Note from Cloudinary
 const deleteVoiceNoteFromCloudinary = async (public_id) => {
