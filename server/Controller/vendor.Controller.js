@@ -670,15 +670,14 @@ exports.memberShipPlanGateWay = async (req, res) => {
         // Update vendor's membership plan
         vendor.memberShipPlan = memberShipPlan;
 
-        if (foundMembershipPlan.price === 0 || foundMembershipPlan.name === 'Free' || foundMembershipPlan.name === 'free') {
-            vendor.PaymentStatus = 'paid'
+        if (foundMembershipPlan.price === 0 || foundMembershipPlan.name.toLowerCase() === 'free') {
+            vendor.PaymentStatus = 'paid';
             await vendor.save();
-            console.log("I am Done with free")
-            res.redirect('http://localhost:5173/successfull-payment')
-            res.status(200).json({
+            console.log("I am Done with free");
+            return res.json({
                 success: true,
-                data: vendor
-            })
+                url: 'https://www.blueaceindia.com/successfull-payment'
+            });
         }
 
         const planPrice = foundMembershipPlan.price;
