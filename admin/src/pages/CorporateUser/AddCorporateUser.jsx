@@ -143,7 +143,7 @@ function AddCorporateUser() {
                         <input type="text" value={formData.ContactNumber} name='ContactNumber' onChange={handleChange} className="form-control rounded" placeholder="Contact Number*" required />
                     </div>
                     <div className="col-lg-6 mt-3">
-                        <input type="text" value={formData.HouseNo} name='HouseNo' onChange={handleChange} className="form-control rounded" placeholder="House No*" required />
+                        <input type="text" value={formData.HouseNo} name='HouseNo' onChange={handleChange} className="form-control rounded" placeholder="Complete Address*" required />
                     </div>
                     <div className="position-relative col-lg-6 mt-3">
                         <input
@@ -175,9 +175,9 @@ function AddCorporateUser() {
                             </div>
                         )}
                     </div>
-                    <div className="col-lg-6 mt-3">
+                    {/* <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.NearByLandMark} name='NearByLandMark' onChange={handleChange} className="form-control rounded" placeholder="Near By LandMark*" required />
-                    </div>
+                    </div> */}
                     <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.PinCode} name='PinCode' onChange={handleChange} className="form-control rounded" placeholder="Pin Code*" required />
                     </div>

@@ -46,13 +46,13 @@ function AllUserDetail() {
     const filteredUsers = users.filter((user) => {
         const emailMatch = user.Email.toLowerCase().includes(filterEmail.toLowerCase());
         const phoneNumberMatch = user.ContactNumber.includes(filterPhoneNumber);
-        const addressMatch = user.address.toLowerCase().includes(filterAddress.toLowerCase()); // Address filter logic
+        // const addressMatch = user.address.toLowerCase().includes(filterAddress.toLowerCase()); // Address filter logic
 
         const userDate = new Date(user.createdAt);
         const startDateMatch = startDate ? userDate >= new Date(startDate) : true;
         const endDateMatch = endDate ? userDate <= new Date(endDate) : true;
 
-        return emailMatch && phoneNumberMatch && addressMatch && startDateMatch && endDateMatch;
+        return emailMatch && phoneNumberMatch && startDateMatch && endDateMatch;
     });
 
     const currentServices = filteredUsers.slice(indexOfFirstVoucher, indexOfLastVoucher);

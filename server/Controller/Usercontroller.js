@@ -491,20 +491,20 @@ exports.resendOtp = async (req, res) => {
         const currentTime = Date.now();
         const otpLastSentTime = user.OtpExpiredTime ? user.OtpExpiredTime.getTime() : 0;
 
-    
 
-    
-        const OTP = Math.floor(100000 + Math.random() * 900000); 
+
+
+        const OTP = Math.floor(100000 + Math.random() * 900000);
         const OTPExpires = new Date();
         OTPExpires.setTime(OTPExpires.getTime() + 2 * 60 * 1000);
 
 
-     
+
         user.PasswordChangeOtp = OTP;
         user.OtpExpiredTime = OTPExpires;
         await user.save();
 
-      
+
         const message = `
             Hi there,
             
@@ -976,6 +976,34 @@ exports.changeAMCStatus = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal Server Error in updating user type',
+            error: error.message
+        })
+    }
+}
+
+exports.updateIsAMCUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { isAMCUser } = req.body;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+        user.isAMCUser = isAMCUser;
+        const updatedUser = await user.save();
+        res.status(200).json({
+            success: true,
+            message: 'AMC Status Updated',
+            data: updatedUser
+        })
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
             error: error.message
         })
     }

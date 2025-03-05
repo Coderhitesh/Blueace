@@ -99,7 +99,7 @@ function Order() {
     const indexOfFirstVendor = indexOfLastVendor - productsPerPage;
     const currentallOrders = filteredVendors.slice(indexOfFirstVendor, indexOfLastVendor);
 
-    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Service Address', 'User Detail', 'Vendor Allowted Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "See Error Code", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
+    const headers = ['S.No', 'Service Name', 'Service Type', 'User Name', 'User Type', 'Is AMC User', 'Service Address', 'User Detail', 'Vendor Allowted Detail', 'Voice Note', 'Message', 'Select Vendor', 'Select Employee', 'Service Day', 'Service Time', 'Vendor Member Allowted', 'OrderStatus', "Estimated Bill", "Bill Status", "See Error Code", "Before Work Video", "After Work Video", "Payment Detail", 'Delete', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -167,6 +167,7 @@ function Order() {
                                 <td className='fw-bolder'>{vendor?.serviceType}</td>
                                 <td className='fw-bolder'>{vendor?.userId?.FullName || "Not-Available"}</td>
                                 <td className='fw-bolder'>{vendor?.userId?.UserType || "Not-Available"}</td>
+                                <td className='fw-bolder'>{vendor?.userId?.isAMCUser ? 'Yes' : 'No'}</td>
                                 <td className='fw-bolder'>{vendor?.address || "Not-Available"}</td>
                                 {/* User Detail Button to Open Modal */}
                                 <td className='fw-bolder'>

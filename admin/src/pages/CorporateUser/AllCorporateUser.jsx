@@ -89,6 +89,21 @@ function AllCorporateUser() {
         }
     }
 
+    const handleChangeAMC = async (id, isAMCUser) => {
+        const updated = !isAMCUser
+        try {
+            const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user-amc-status/${id}`, {
+                isAMCUser: updated
+            });
+            if (res.data.success) {
+                toast.success("AMC Status Updated");
+                await fetchUserDetail();
+            }
+        } catch (error) {
+            console.log("Internal server error", error)
+        }
+    }
+
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
@@ -104,7 +119,7 @@ function AllCorporateUser() {
         }
     };
 
-    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Address', 'Deactive', 'Created At', "Action"];
+    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Address', 'AMC Status', 'Deactive', 'Created At', "Action"];
 
     return (
         <div className='page-body'>
@@ -199,6 +214,12 @@ function AllCorporateUser() {
                                 <td className='fw-bolder'>{`${category.HouseNo}, ${category.address}, ${category.PinCode}` || "Not-Available"}</td>
                                 <td>
                                     <Toggle
+                                        isActive={category.isAMCUser}
+                                        onToggle={() => handleChangeAMC(category._id, category.isAMCUser)} // Pass vendor id and current active status
+                                    />
+                                </td>
+                                <td>
+                                    <Toggle
                                         isActive={category.isDeactive}
                                         onToggle={() => handleToggle(category._id, category.isDeactive)} // Pass vendor id and current active status
                                     />
@@ -228,7 +249,7 @@ function AllCorporateUser() {
                         text="Add Corporate"
                         errorMsg=""
                         handleOpen={() => { }}
-                        
+
                     />
                 </>
             )}

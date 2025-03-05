@@ -57,6 +57,15 @@ function ActiveVendorOrder({ userData, activeOrder }) {
         }
     };
 
+    const handleUpdateServiceDone = async (orderId) => {
+        try {
+            const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-service-done-order/${orderId}`);
+            toast.success('Service done updated successfully');
+        } catch (error) {
+            console.log("Internal server error",error)
+        }
+    }
+
     // Handle After Work Image Upload
     const handleAfterWorkImageUpload = async (orderId) => {
         const formData = new FormData();
@@ -224,7 +233,7 @@ function ActiveVendorOrder({ userData, activeOrder }) {
                                                             </button>
                                                         </td>
                                                         <td>
-                                                            <button onClick={() => window.location.href = `/make-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
+                                                            <button disabled={order?.userId?.isAMCUser} onClick={() => window.location.href = `/make-esitimated-bill?OrderId=${order._id}&vendor=${order?.vendorAlloted?._id}`} style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }} className='btn btn-sm theme-bg text-light rounded ft-medium' >
                                                                 Estimated Budget
                                                             </button>
                                                         </td>

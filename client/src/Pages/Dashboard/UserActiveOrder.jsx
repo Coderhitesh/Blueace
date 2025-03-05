@@ -213,7 +213,7 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                             )}
                                                         </td>
 
-                                                        {
+                                                        {!order?.userId?.isAMCUser ? (
                                                             order?.EstimatedBill?.BillStatus === 'Accepted' ? (
                                                                 <td><button
                                                                     style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
@@ -226,7 +226,34 @@ function UserActiveOrder({ userData, activeOrder }) {
                                                             ) : (
                                                                 <td>Bill is not Accepted</td>
                                                             )
-                                                        }
+                                                        ) : (
+                                                            <td>
+                                                                <p>{order?.OrderStatus || "User is not available"}</p>
+                                                                {/* <button
+                                                                    style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                                                    className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                    disabled={order.PaymentStatus === 'paid'}
+                                                                    onClick={() => handlePayment(order?._id, order?.EstimatedBill?.EstimatedTotalPrice)}
+                                                                >
+                                                                    Service Done
+                                                                </button> */}
+                                                            </td>
+                                                        )}
+
+                                                        {/* {
+                                                            order?.EstimatedBill?.BillStatus === 'Accepted' ? (
+                                                                <td><button
+                                                                    style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
+                                                                    className='btn btn-sm theme-bg text-light rounded ft-medium'
+                                                                    disabled={order.PaymentStatus === 'paid'}
+                                                                    onClick={() => handlePayment(order?._id, order?.EstimatedBill?.EstimatedTotalPrice)}
+                                                                >
+                                                                    Pay
+                                                                </button></td>
+                                                            ) : (
+                                                                <td>Bill is not Accepted</td>
+                                                            )
+                                                        } */}
 
                                                         {/* <td>
                                                             {order?.beforeWorkImage?.url ? (

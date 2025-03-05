@@ -10,7 +10,8 @@ require("dotenv").config()
 const crypto = require('crypto')
 const Razorpay = require('razorpay');
 const Commission = require('../Model/Commission.Model');
-const axios = require('axios')
+const axios = require('axios');
+const User = require('../Model/UserModel');
 const merchantId = process.env.PHONEPAY_MERCHANT_ID
 const apiKey = process.env.PHONEPAY_API_KEY
 
@@ -1105,6 +1106,14 @@ exports.updateAfterWorkVideo = async (req, res) => {
 
             })
         }
+        const userDetail = await User.findById(order.userId)
+        if (!userDetail) {
+            return res.status(400).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+
         if (req.file) {
             if (order.afterWorkVideo.public_id) {
                 await deleteVideoFromCloudinary(order.afterWorkVideo.public_id)
@@ -1125,7 +1134,19 @@ exports.updateAfterWorkVideo = async (req, res) => {
                 message: 'Please upload a video',
             })
         }
-        // order.OrderStatus = "Service Done"
+
+        if (userDetail.isAMCUser === true) {
+            order.OrderStatus = "Service Done"
+            order.PaymentStatus = "paid"
+            await order.save()
+            return res.status(200).json({
+                success: true,
+                message: 'After work video is uploaded',
+                data: order
+            })
+        }
+
+
         const updatedOrder = await order.save()
 
         res.status(200).json({
@@ -1711,5 +1732,33 @@ exports.getAllDataOfVendor = async (req, res) => {
             error: error.message
         })
 
+    }
+}
+
+exports.serviceDoneOrder = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = await Order.findById(id);
+        if (!order) {
+            return res.status(400).json({
+                success: false,
+                message: "Order not found",
+            });
+        }
+        order.OrderStatus = "Service Done";
+        order.PaymentStatus = "paid"
+        await order.save();
+        return res.status(200).json({
+            success: true,
+            message: "Order updated successfully",
+            data: order,
+        });
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
     }
 }
