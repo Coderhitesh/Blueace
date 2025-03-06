@@ -55,6 +55,8 @@ import GetServicePopup from "./Components/getservicepopup/GetServicePopup"
 import ErrorCode from "./Pages/ErrorCode/ErrorCode"
 import ShowErrorCode from "./Pages/ErrorCode/ShowErrorCode"
 import DuctableStatic from "./Pages/DuctableStatic/DuctableStatic"
+import ColdStorageContractors from "./Pages/ColdStorageContractors/ColdStorageContractors"
+import AMCManufacturer from "./Pages/AMCManufacturer/AMCManufacturer"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -128,6 +130,8 @@ function App() {
 
           <Route path="/voltas-central-ac" element={<VoltasCentralAC />} />
           <Route path="/hvac" element={<HVAC />} />
+          <Route path="/cold-storage-contractors" element={<ColdStorageContractors />} />
+          <Route path="/amc-manufacturer" element={<AMCManufacturer />} />
           <Route path="/heat-pump-installation" element={<HeatPump />} />
           <Route path="/service/cassette-air-conditioning-system" element={<CassetteAir />} />
           <Route path="/service/ductable-air-conditioners" element={<DuctableStatic />} />

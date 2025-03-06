@@ -6,6 +6,7 @@ const { deleteImageFromCloudinary, uploadImage } = require('../Utils/Cloudnary')
 const fs = require("fs")
 const mongoose = require('mongoose');
 const { sendSMS } = require('../Utils/SMSSender');
+const xlsx = require('xlsx');
 const sendEmail = require('../Utils/SendEmail');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
@@ -999,6 +1000,32 @@ exports.updateIsAMCUser = async (req, res) => {
             message: 'AMC Status Updated',
             data: updatedUser
         })
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: error.message
+        })
+    }
+}
+
+exports.registerCorporateuserByExcel = async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+
+        // Read the uploaded Excel file
+        const workbook = xlsx.readFile(req.file.path);
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+
+        // Convert sheet data to JSON
+        const users = xlsx.utils.sheet_to_json(sheet);
+
+        // Save users to MongoDB
+        await User.insertMany(users);
+
+        res.status(200).json({ message: "Users registered successfully!" });
     } catch (error) {
         console.log("Internal server error", error)
         res.status(500).json({
