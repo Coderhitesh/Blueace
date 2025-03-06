@@ -12,6 +12,12 @@ const Table = ({
     text,
     errorMsg,
     handleOpen,
+    ExcelText,
+    excelHref,
+    EmployeeOrderText,
+    EmployeeOrderHref,
+    AMCOrderText,
+    AMCOrderHref,
 }) => {
     return (
         <div className="container-fluid">
@@ -21,21 +27,26 @@ const Table = ({
                         <div className="card-body">
                             <div className="list-product-header">
                                 <div>
-                                    <div onClick={handleOpen} className="light-box">
-                                        <Link
-                                            data-bs-toggle="collapse"
-                                            href="#collapseProduct"
-                                            role="button"
-                                            aria-expanded="false"
-                                            aria-controls="collapseProduct"
-                                        >
-                                            <i className="fa-solid fa-filter"></i>
-                                            <i className="icon-close filter-close hide"></i>
+                                    {EmployeeOrderText && (
+                                        <Link className="btn btn-primary" to={EmployeeOrderHref}>
+                                            {EmployeeOrderText}
                                         </Link>
-                                    </div>
+                                    )}
+                                    {AMCOrderText && (
+                                        <Link className="btn btn-primary" to={AMCOrderHref}>
+                                            {AMCOrderText}
+                                        </Link>
+                                    )}
+                                    {ExcelText && (
+                                        <Link className="btn btn-primary" to={excelHref}>
+                                            {ExcelText}
+                                        </Link>
+                                    )}
+                                    {text && (
                                     <Link className="btn btn-primary" to={href}>
                                         <i className="fa-solid fa-plus"></i>{text}
                                     </Link>
+                                    )}
                                 </div>
                             </div>
                             <div className="list-product table-responsive">
@@ -53,19 +64,19 @@ const Table = ({
                                         {elements}
                                     </tbody>
                                 </table>
-                               
+
                             </div>
                             <div className="pagination mt-4 d-flex gap-2">
-                                    {Array.from({ length: Math.ceil(productLength / productsPerPage) }, (_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => paginate(i + 1)}
-                                            className={`btn btn-primary page-link ${currentPage === i + 1 ? 'btn-danger' : ''}`}
-                                        >
-                                            {i + 1}
-                                        </button>
-                                    ))}
-                                </div>
+                                {Array.from({ length: Math.ceil(productLength / productsPerPage) }, (_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => paginate(i + 1)}
+                                        className={`btn btn-primary page-link ${currentPage === i + 1 ? 'btn-danger' : ''}`}
+                                    >
+                                        {i + 1}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

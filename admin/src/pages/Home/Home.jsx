@@ -80,6 +80,13 @@ import AddErrorHeading from '../ErrorHeading/AddErrorHeading'
 import EditErrorHeading from '../ErrorHeading/EditErrorHeading'
 import ErrorCode from '../../components/ErrorCode/ErrorCode'
 import VendorDetailPage from '../VendorDetailPage/VendorDetailPage'
+import EditVendor from '../VendorDetails/EditVendor'
+import EditUser from '../UserDetail/EditUser'
+import DownloadVendorInExcel from '../VendorDetails/DownloadVendorInExcel'
+import DownloadEmployeeInExcel from '../Employ/DownloadEmployeeInExcel'
+import DownloadVendorOrderInExcel from '../Orders/DownloadVendorOrderInExcel'
+import DownloadEmployeeOrderInExcel from '../Orders/DownloadEmployeeOrderInExcel'
+import DownloadAmcOrderInExcel from '../Orders/DownloadAmcOrderInExcel'
 
 const Home = () => {
     return (
@@ -143,12 +150,15 @@ const Home = () => {
                         {/* user route here  */}
                         <Route path='/users/all-users' element={<AllUserDetail />} />
                         <Route path='/users/add-user' element={<AddUser />} />
+                        <Route path='/users/edit-user/:id' element={<EditUser />} />
 
                         {/* Vendor route here  */}
                         <Route path='/vendors/all-vendor' element={<AllVendors />} />
                         <Route path='/vendors/add-vendor' element={<AddVendor />} />
+                        <Route path='/vendors/edit-vendor/:id' element={<EditVendor />} />
                         <Route path='/add-vendor-member/:id' element={<AddMembersForm />} />
                         <Route path='/membership-plan/:vendorId' element={<MemberShipPlan />} />
+                        <Route path='/download-vendors-data' element={<DownloadVendorInExcel />} />
 
                         {/* Vendor membership plan route here  */}
                         <Route path='/vendors/all-membership-plan' element={<AllMemberShipPlan />} />
@@ -167,6 +177,7 @@ const Home = () => {
                         {/* employ route  */}
                         <Route path='/vendors/all-employ' element={<AllEmploy />} />
                         <Route path='/vendors/add-employ' element={<AddEmploy />} />
+                        <Route path='/download-employ-data' element={<DownloadEmployeeInExcel />} />
 
                         {/* corporate user route  */}
                         <Route path='/corporate-user/all-corporate-user' element={<AllCorporateUser />} />
@@ -231,6 +242,12 @@ const Home = () => {
                         <Route path='/show-error-code/:id' element={<ErrorCode />} />
 
                         <Route path='/show-vendor/:id' element={<VendorDetailPage />} />
+
+                        {/* excel exports  */}
+
+                        <Route path='/download-vendor-order' element={<DownloadVendorOrderInExcel />} />
+                        <Route path='/download-employee-order' element={<DownloadEmployeeOrderInExcel />} />
+                        <Route path='/download-amc-order' element={<DownloadAmcOrderInExcel />} />
 
                     </Routes>
                 </div>

@@ -4,6 +4,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
+import { Link } from 'react-router-dom';
 
 function AllCorporateUser() {
     const [users, setUsers] = useState([]);
@@ -119,7 +120,7 @@ function AllCorporateUser() {
         }
     };
 
-    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Address', 'AMC Status', 'Deactive', 'Created At', "Action"];
+    const headers = ['S.No', 'Company Name', 'Name', 'Phone Number', 'Email', 'Address', 'AMC Status', 'Deactive', 'Edit', 'Created At', "Action"];
 
     return (
         <div className='page-body'>
@@ -223,6 +224,9 @@ function AllCorporateUser() {
                                         isActive={category.isDeactive}
                                         onToggle={() => handleToggle(category._id, category.isDeactive)} // Pass vendor id and current active status
                                     />
+                                </td>
+                                <td>
+                                    <Link to={`/users/edit-user/${category._id}`} className="btn btn-danger">Edit</Link>
                                 </td>
                                 <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>
                                 {/* <td className='fw-bolder'>

@@ -5,6 +5,7 @@ import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 function AllVendors() {
     const [vendors, setVendors] = useState([]);
@@ -89,7 +90,7 @@ function AllVendors() {
         setModalVisible(true);
     };
 
-    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', "Type", 'View', "Address", 'Deactive', 'Delete', 'Created At'];
+    const headers = ['S.No', 'Company Name', 'Owner Name', 'Owner Number', 'Email', "Type", 'View', "Address", 'Deactive', 'Delete', 'Edit Vendor', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -171,6 +172,9 @@ function AllVendors() {
                                 <td>
                                     <button className="btn btn-danger" onClick={() => handleDelete(vendor._id)}>Delete</button>
                                 </td>
+                                <td>
+                                    <Link to={`/vendors/edit-vendor/${vendor._id}`} className="btn btn-danger">Edit</Link>
+                                </td>
                                 <td>{new Date(vendor.createdAt).toLocaleString()}</td>
                             </tr>
                         ))}
@@ -180,6 +184,8 @@ function AllVendors() {
                         paginate={setCurrentPage}
                         href="/vendors/add-vendor"
                         text="Add Vendor"
+                        ExcelText="Export to Excel"
+                        excelHref={'/download-vendors-data'}
                     />
 
                     {/* Modal for Vendor Details */}

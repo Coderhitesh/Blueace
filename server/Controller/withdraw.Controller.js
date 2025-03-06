@@ -4,49 +4,80 @@ const Withdraw = require('../Model/withDrawal.Model')
 exports.createWithdrawRequest = async (req, res) => {
     try {
         const { vendor, amount } = req.body;
+
         if (!vendor) {
             return res.status(400).json({
                 success: false,
                 message: "Vendor is required",
                 error: "Vendor is required"
-            })
+            });
         }
+
         if (!amount) {
             return res.status(400).json({
                 success: false,
                 message: "Amount is required",
                 error: "Amount is required"
-            })
+            });
         }
-        const findVendor = await Vendor.findById(vendor)
-        const vendorWallet = findVendor?.walletAmount;
+
+        const findVendor = await Vendor.findById(vendor);
+
+        if (!findVendor) {
+            return res.status(404).json({
+                success: false,
+                message: "Vendor not found",
+                error: "Vendor not found"
+            });
+        }
+
+        // Check if bank details exist
+        if (!findVendor.bankDetail || 
+            !findVendor.bankDetail.accountHolderName || 
+            !findVendor.bankDetail.accountNumber || 
+            !findVendor.bankDetail.bankName || 
+            !findVendor.bankDetail.branchName || 
+            !findVendor.bankDetail.ifscCode) {
+            return res.status(400).json({
+                success: false,
+                message: "Bank details are required to create a withdrawal request",
+                error: "Bank details are missing"
+            });
+        }
+
+        const vendorWallet = findVendor.walletAmount;
+
         if (vendorWallet < amount) {
             return res.status(400).json({
                 success: false,
                 message: "Insufficient balance",
                 error: "Insufficient balance"
-            })
+            });
         }
+
         const withdraw = new Withdraw({
             vendor: vendor,
             amount: amount
-        })
-        await withdraw.save()
+        });
+
+        await withdraw.save();
+
         res.status(201).json({
             success: true,
             message: "Withdrawal request created successfully",
             data: withdraw
-        })
+        });
 
     } catch (error) {
-        console.log("Internal server error", error)
+        console.log("Internal server error", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
-        })
+        });
     }
-}
+};
+
 
 exports.getSingleWithdraw = async (req, res) => {
     try {

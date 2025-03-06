@@ -1410,127 +1410,59 @@ exports.updateVendor = async (req, res) => {
         vendor.panNo = panNo || vendor.panNo;
         vendor.gstNo = gstNo || vendor.gstNo;
         vendor.adharNo = adharNo || vendor.adharNo;
-        if (RangeWhereYouWantService) {
-            // console.log("New RangeWhereYouWantService:", RangeWhereYouWantService);
 
-            // Validate the new RangeWhereYouWantService
-            const isValidRange = RangeWhereYouWantService.every((service, index) => {
-                console.log(`Checking service at index ${index}:`, service);
-
+        if (RangeWhereYouWantService && Array.isArray(RangeWhereYouWantService)) {
+            const isValidRange = RangeWhereYouWantService.every(service => {
                 const location = service?.location;
-                console.log(`Location:`, location);
-
                 const type = location?.type;
-                console.log(`Type:`, type);
-
                 const coordinates = location?.coordinates;
-                console.log(`Coordinates:`, coordinates);
 
-                const isTypeValid = type === "Point";
-                const areCoordinatesArray = Array.isArray(coordinates);
-                const hasTwoCoordinates = areCoordinatesArray && coordinates.length === 2;
-                const areCoordinatesValid = hasTwoCoordinates && coordinates.every(coord => coord !== "" && coord !== null && coord !== undefined);
-
-                // console.log(`isTypeValid:`, isTypeValid);
-                // console.log(`areCoordinatesArray:`, areCoordinatesArray);
-                // console.log(`hasTwoCoordinates:`, hasTwoCoordinates);
-                // console.log(`areCoordinatesValid:`, areCoordinatesValid);
-
-                return isTypeValid && areCoordinatesArray && hasTwoCoordinates && areCoordinatesValid;
+                return type === "Point" &&
+                    Array.isArray(coordinates) &&
+                    coordinates.length === 2 &&
+                    coordinates.every(coord => coord !== "" && coord !== null && coord !== undefined);
             });
 
-            if (isValidRange) {
-                const isDifferent = JSON.stringify(RangeWhereYouWantService) !== JSON.stringify(vendor.RangeWhereYouWantService);
-
-                if (isDifferent) {
-                    vendor.RangeWhereYouWantService = RangeWhereYouWantService;
-                    console.log("RangeWhereYouWantService updated.");
-                } else {
-                    console.log("No change detected in RangeWhereYouWantService.");
-                }
-            } else {
-                console.warn("Invalid RangeWhereYouWantService format provided. Skipping update.");
+            if (isValidRange && JSON.stringify(RangeWhereYouWantService) !== JSON.stringify(vendor.RangeWhereYouWantService)) {
+                vendor.RangeWhereYouWantService = RangeWhereYouWantService;
             }
         }
-
 
         if (req.files) {
             const { panImage, adharImage, gstImage, vendorImage } = req.files;
 
-            // Upload and update Pan Image
-            if (panImage && panImage[0]) {
-                if (vendor.panImage?.public_id) {
-                    await deleteImageFromCloudinary(vendor.panImage.public_id);
-                }
-                const imgUrl = await uploadImage(panImage[0]?.path);
-                vendor.panImage = {
-                    url: imgUrl.image,
-                    public_id: imgUrl.public_id
-                };
-                uploadedImages.push(imgUrl.public_id);
-                // await fs.unlink(panImage[0].path);
-                if (await fs.access(panImage[0].path).then(() => true).catch(() => false)) {
-                    await fs.unlink(panImage[0].path);
-                } else {
-                    console.warn("File not found, skipping unlink:", panImage[0].path);
-                }
-            }
+            const processImage = async (image, fieldName) => {
+                if (image && image[0]) {
+                    if (vendor[fieldName]?.public_id) {
+                        try {
+                            await deleteImageFromCloudinary(vendor[fieldName].public_id);
+                        } catch (err) {
+                            console.warn(`Failed to delete existing ${fieldName} from Cloudinary:`, err.message);
+                        }
+                    }
+                    try {
+                        const imgUrl = await uploadImage(image[0].path);
+                        vendor[fieldName] = {
+                            url: imgUrl.image,
+                            public_id: imgUrl.public_id
+                        };
+                        uploadedImages.push(imgUrl.public_id);
 
-            // Upload and update Adhar Image
-            if (adharImage && adharImage[0]) {
-                if (vendor.adharImage?.public_id) {
-                    await deleteImageFromCloudinary(vendor.adharImage.public_id);
+                        if (await fs.access(image[0].path).then(() => true).catch(() => false)) {
+                            await fs.unlink(image[0].path);
+                        }
+                    } catch (err) {
+                        console.error(`Failed to upload ${fieldName}:`, err.message);
+                    }
                 }
-                const imgUrl = await uploadImage(adharImage[0]?.path);
-                vendor.adharImage = {
-                    url: imgUrl.image,
-                    public_id: imgUrl.public_id
-                };
-                uploadedImages.push(imgUrl.public_id);
-                // await fs.unlink(adharImage[0].path);
-                if (await fs.access(adharImage[0].path).then(() => true).catch(() => false)) {
-                    await fs.unlink(adharImage[0].path);
-                } else {
-                    console.warn("File not found, skipping unlink:", adharImage[0].path);
-                }
-            }
+            };
 
-            // Upload and update GST Image
-            if (gstImage && gstImage[0]) {
-                if (vendor.gstImage?.public_id) {
-                    await deleteImageFromCloudinary(vendor.gstImage.public_id);
-                }
-                const imgUrl = await uploadImage(gstImage[0]?.path);
-                vendor.gstImage = {
-                    url: imgUrl.image,
-                    public_id: imgUrl.public_id
-                };
-                uploadedImages.push(imgUrl.public_id);
-                // await fs.unlink(gstImage[0].path);
-                if (await fs.access(gstImage[0].path).then(() => true).catch(() => false)) {
-                    await fs.unlink(gstImage[0].path);
-                } else {
-                    console.warn("File not found, skipping unlink:", gstImage[0].path);
-                }
-            }
-
-            // Upload and update GST Image
-            if (vendorImage && vendorImage[0]) {
-                if (vendor.vendorImage?.public_id) {
-                    await deleteImageFromCloudinary(vendor.vendorImage.public_id);
-                }
-                const imgUrl = await uploadImage(vendorImage[0]?.path);
-                vendor.vendorImage = {
-                    url: imgUrl.image,
-                    public_id: imgUrl.public_id
-                };
-                uploadedImages.push(imgUrl.public_id);
-                if (await fs.access(vendorImage[0].path).then(() => true).catch(() => false)) {
-                    await fs.unlink(vendorImage[0].path);
-                } else {
-                    console.warn("File not found, skipping unlink:", vendorImage[0].path);
-                }
-            }
+            await Promise.all([
+                processImage(panImage, 'panImage'),
+                processImage(adharImage, 'adharImage'),
+                processImage(gstImage, 'gstImage'),
+                processImage(vendorImage, 'vendorImage')
+            ]);
         }
 
         const updatedVendor = await vendor.save();
@@ -1566,6 +1498,7 @@ exports.updateVendor = async (req, res) => {
         });
     }
 };
+
 
 exports.getSingleVendor = async (req, res) => {
     try {

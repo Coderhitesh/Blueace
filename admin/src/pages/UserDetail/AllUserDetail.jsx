@@ -4,6 +4,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
+import { Link } from 'react-router-dom';
 
 function AllUserDetail() {
     const [users, setUsers] = useState([]);
@@ -101,7 +102,7 @@ function AllUserDetail() {
         }
     };
 
-    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Address', "User Type", 'Deactive', 'Created At', "Action"];
+    const headers = ['S.No', 'Name', 'Phone Number', 'Email', 'Address', "User Type", 'Deactive', 'Edit', 'Created At', "Action"];
 
     return (
         <div className='page-body'>
@@ -144,7 +145,7 @@ function AllUserDetail() {
                                         type="text"
                                         className="form-control mb-2"
                                         value={filterAddress}
-                                        onChange={(e) => setFilterAddress(e.target.value)} 
+                                        onChange={(e) => setFilterAddress(e.target.value)}
                                     />
                                 </div>
                                 <div className="col-md-3">
@@ -197,6 +198,10 @@ function AllUserDetail() {
                                         isActive={category.isDeactive}
                                         onToggle={() => handleToggle(category._id, category.isDeactive)} // Pass vendor id and current active status
                                     />
+                                </td>
+
+                                <td>
+                                    <Link to={`/users/edit-user/${category._id}`} className="btn btn-danger">Edit</Link>
                                 </td>
 
                                 <td>{new Date(category.createdAt).toLocaleString() || "Not-Available"}</td>

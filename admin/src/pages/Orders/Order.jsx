@@ -378,6 +378,12 @@ function Order() {
                         text=""
                         errorMsg=""
                         handleOpen={() => { }}
+                        ExcelText="Export Vendor Order"
+                        excelHref={'/download-vendor-order'}
+                        EmployeeOrderText="Export Employee Order"
+                        EmployeeOrderHref={'/download-employ-data'}
+                        AMCOrderText="Export AMC User Order"
+                        AMCOrderHref={'/download-amc-order'}
                     />
 
                     {modalVisible && selectedVendor && (

@@ -5,6 +5,7 @@ import Table from '../../components/Table/Table';
 import toast from 'react-hot-toast';
 import Toggle from '../../components/Forms/toggle';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 function AllEmploy() {
     const [vendors, setVendors] = useState([]);
@@ -96,7 +97,7 @@ function AllEmploy() {
         setModalVisible(true); // Open the modal
     };
 
-    const headers = ['S.No', 'Company Name', 'Employee Name', 'Employee Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Created At'];
+    const headers = ['S.No', 'Company Name', 'Employee Name', 'Employee Number', 'Email', "Type", 'View', 'Deactive', 'Delete', 'Edit', 'Created At'];
 
     return (
         <div className='page-body'>
@@ -191,6 +192,9 @@ function AllEmploy() {
                                         Delete
                                     </button>
                                 </td>
+                                <td>
+                                    <Link to={`/vendors/edit-vendor/${vendor._id}`} className="btn btn-danger">Edit</Link>
+                                </td>
                                 <td>{new Date(vendor.createdAt).toLocaleString() || "Not-Available"}</td>
                             </tr>
                         ))}
@@ -202,6 +206,8 @@ function AllEmploy() {
                         text="Add Employee"
                         errorMsg=""
                         handleOpen={() => { }}
+                        ExcelText="Export to Excel"
+                        excelHref={'/download-employ-data'}
                     />
                     {modalVisible && selectedVendor && (
                         <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false">

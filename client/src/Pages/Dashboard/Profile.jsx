@@ -128,7 +128,7 @@ function Profile({ userData }) {
 
 		// Validate required fields
 		if (!formData.FullName || !formData.ContactNumber || !formData.Email ||
-			!formData.HouseNo || !formData.NearByLandMark) {
+			!formData.HouseNo) {
 			toast.error('Please fill in all required fields');
 			setLoading(false);
 			return;
@@ -232,7 +232,7 @@ function Profile({ userData }) {
 											}
 											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
 												<div className="form-group">
-													<label className="mb-1">First Name</label>
+													<label className="mb-1">Name</label>
 													<input type="text" value={formData.FullName} name='FullName' onChange={handleChange} className="form-control rounded" placeholder="Full Name" />
 												</div>
 											</div>
@@ -312,12 +312,12 @@ function Profile({ userData }) {
 													<input type="text" value={formData.PinCode} onChange={handleChange} name='PinCode' className="form-control rounded" placeholder="91 256 584 7895" />
 												</div>
 											</div>
-											<div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
+											{/* <div className="col-xl-6 col-lg-6 col-md-12 col-sm-12">
 												<div className="form-group">
 													<label className="mb-1">Near By LandMark</label>
 													<input type="text" value={formData.NearByLandMark} onChange={handleChange} name='NearByLandMark' className="form-control rounded" placeholder="91 256 584 7895" />
 												</div>
-											</div>
+											</div> */}
 											<div className="col-lg-6 col-md-6">
 												{imagePreviews && (
 													<div className="mb-3">
