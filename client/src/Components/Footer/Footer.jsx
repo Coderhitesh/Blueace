@@ -99,6 +99,8 @@ function Footer() {
                       ))
                     }
                     <li><Link to={`/air-cooled-chiller`}>- Air Cooled Chiller</Link></li>
+                    <li><Link to={`/cold-storage-contractors`}>- Cold Storage Contractors</Link></li>
+                    <li><Link to={`/amc-manufacturer`}>- AMC Manufacturer</Link></li>
                   </ul>
                 </div>
               </div>

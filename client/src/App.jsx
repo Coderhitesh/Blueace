@@ -90,9 +90,7 @@ function App() {
 
 
           <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/about-us" element={
-            <About />
-          } />
+          <Route path="/about-us" element={<About />} />
           <Route path="/career" element={<Career />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/privacy" element={<Privacy />} />
@@ -144,7 +142,6 @@ function App() {
         <Footer />
         <Whatsapp />
         <GetService handlePopupActive={handlePopupActive} handlePopupDeactive={handlePopupDeactive} isPopUp={isPopUp} />
-
       </BrowserRouter>
     </>
   )
