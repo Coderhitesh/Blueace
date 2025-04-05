@@ -55,7 +55,7 @@ function Dashboard() {
         if (!userId) return;
         const fetchOrderById = async () => {
             try {
-                const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
+                const res = await axios.get(`http://localhost:7987/api/v1/get-order-by-id?vendorAlloted=${userId}`,);
                 const allData = res.data.data
                 const isAccepted = allData.filter((item) => item.VendorAllotedStatus === "Accepted")
                 setAllOrder(isAccepted)
@@ -73,7 +73,7 @@ function Dashboard() {
     }, [userId])
     const findUser = async () => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
+            const res = await axios.get(`http://localhost:7987/api/v1/findUser/${userId}`)
             setUserData(res.data.data)
             setReadyToWork(res.data.data.readyToWork)
         } catch (error) {
@@ -92,7 +92,7 @@ function Dashboard() {
     }, [url])
     const handleLogout = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
+            const res = await axios.get('http://localhost:7987/api/v1/vendor-logout', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -112,7 +112,7 @@ function Dashboard() {
             setReadyToWork(updatedStatus);
 
             await axios.put(
-                `https://www.api.blueaceindia.com/api/v1/update-ready-to-work-status/${userData._id}`,
+                `http://localhost:7987/api/v1/update-ready-to-work-status/${userData._id}`,
                 { readyToWork: updatedStatus }
             );
             toast.success('Status successfully');
@@ -133,7 +133,7 @@ function Dashboard() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-vendor/${userId}`);
+                    await axios.delete(`http://localhost:7987/api/v1/delete-vendor/${userId}`);
                     sessionStorage.clear()
                     toast.success("User Deleted Successfully");
                     window.location.href = '/'

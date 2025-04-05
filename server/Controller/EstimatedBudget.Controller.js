@@ -1,13 +1,15 @@
 const Order = require('../Model/Order.Model')
 const EstimatedBudget = require('../Model/EsitimetBudget')
-const vendors = require('../Model/vendor.Model')
+const vendors = require('../Model/vendor.Model');
+const { SendWhatsapp } = require('../Utils/SendWhatsapp');
 
 exports.makeEstimated = async (req, res) => {
     try {
         const { vendor, orderId,Items, EstimatedTotalPrice } = req.body;
         console.log(req.body)
         // Find the order
-        const order = await Order.findById(orderId);
+        const order = await Order.findById(orderId).populate('userId');
+        const userNumber = order.userId.ContactNumber
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
@@ -50,6 +52,7 @@ exports.makeEstimated = async (req, res) => {
 
         order.EstimatedBill = estimatedBudget._id
         await order.save()
+        await SendWhatsapp(userNumber,'estimate_budget_created_to_user');
         return res.status(201).json({ message: 'Estimated budget created successfully', estimatedBudget });
 
     } catch (error) {
@@ -72,10 +75,25 @@ exports.UpdateStatusOfBill = async (req, res) => {
             return res.status(400).json({ message: 'Bill is already approved' });
         }
 
+        const order = await Order.findById(bill.orderId).populate('userId').populate('vendorAlloted');
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+        const vendorNumber = order.vendorAlloted.ContactNumber
+        const vendorName = order.vendorAlloted.ownerName
+        const userName = order.userId.FullName
+
         // Update the bill status
         bill.statusOfBill = status;
         bill.BillStatus = status ? 'Accepted' : 'Rejected'
+        
         await bill.save();
+        if(status === true){
+            await SendWhatsapp(vendorNumber,'bill_accepted_by_user_to_vendor',[vendorName,userName]);
+        }else{
+            await SendWhatsapp(vendorNumber,'bill_rejected_by_user_to_vendor',[vendorName,userName]);
+            // await SendWhatsapp(adminNumber,'bill_rejected_by_user_to_admin');
+        }
 
         return res.status(200).json({ message: 'Bill status updated successfully', updatedBill: bill });
 

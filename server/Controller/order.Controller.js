@@ -12,6 +12,7 @@ const Razorpay = require('razorpay');
 const Commission = require('../Model/Commission.Model');
 const axios = require('axios');
 const User = require('../Model/UserModel');
+const { SendWhatsapp } = require('../Utils/SendWhatsapp');
 const merchantId = process.env.PHONEPAY_MERCHANT_ID
 const apiKey = process.env.PHONEPAY_API_KEY
 
@@ -102,34 +103,19 @@ exports.makeOrder = async (req, res) => {
             // street,
             nearByLandMark,
             RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
-            orderTime
+            orderTime: orderTime || new Date()
         });
-
-        // await sendSMS(
-        //     phoneNumber,
-        //     `Dear ${fullName}, your order for ${serviceName} (${serviceType}) has been successfully placed. Thank you for choosing our service! We will assign a vendor shortly and be in touch to confirm the details.`
-        // );
-
-        // Create a message for the admin
-        const adminMessage = `
-            New Order Placed:
-            - User Name: ${fullName}
-            - User Email: ${email}
-            - User Phone: ${phoneNumber}
-            - Service Name: ${serviceName}
-            - Service Type: ${serviceType}
-            - Message: ${message || 'No message provided'}
-            - Address: ${houseNo}, ${address}, ${nearByLandMark ? nearByLandMark + ', ' : ''}${pinCode}
-            - Order Time: ${orderTime}
-            
-            Please assign a vendor to this order.
-        `;
-
-        // Send the message to admin
-        // await sendSMS(AdminNumber, adminMessage);
 
         // Save the order to the database
         await newOrder.save();
+
+        var newOrderTime = orderTime ? new Date(orderTime) : orderTime || new Date();
+        newOrderTime = newOrderTime.toISOString().replace('T', ' ').replace('Z', '');
+        const longaddress = address.replace(/,/g, '');
+
+        const Param = [fullName, email, phoneNumber, serviceName, serviceType, message, houseNo, longaddress, pinCode]
+
+        await SendWhatsapp(AdminNumber, 'order_detail_to_admin', Param)
 
         res.status(201).json({
             success: true,
@@ -233,7 +219,14 @@ exports.makeOrderFromApp = async (req, res) => {
 
         });
 
+        const service = await ServiceCategory.findById(serviceId); // Find the service by ID
+        const serviceName = service ? service.name : 'Service';
+
         await newOrder.save();
+        const longaddress = address.replace(/,/g, '');
+        const Param = [fullName, email, phoneNumber, serviceName, serviceType, message, houseNo, longaddress, pinCode]
+
+        await SendWhatsapp(AdminNumber, 'order_detail_to_admin', Param)
         console.log(newOrder)
         res.status(201).json({
             success: true,
@@ -439,7 +432,8 @@ exports.updateOrderStatus = async (req, res) => {
     try {
         const orderId = req.params._id;
         const { OrderStatus } = req.body;
-        const order = await Order.findById(orderId);
+        const order = await Order.findById(orderId).populate('userId');
+        const userNumber = order?.userId?.ContactNumber
         if (!order) {
             return res.status(404).json({
                 success: false,
@@ -448,77 +442,16 @@ exports.updateOrderStatus = async (req, res) => {
         }
         order.OrderStatus = OrderStatus
         await order.save();
-        // if (OrderStatus === "Cancelled") {
-        //     const AdminEmail = process.env.ADMIN_MAIL;
-        //     const emailOptions = {
-        //         email: AdminEmail,
-        //         subject: 'Order Cancellation Notice - Reassign New Vendor',
-        //         message: `
-        //             <html>
-        //             <head>
-        //                 <style>
-        //                     body {
-        //                         font-family: Arial, sans-serif;
-        //                         line-height: 1.6;
-        //                         background-color: #f5f5f5;
-        //                         padding: 20px;
-        //                     }
-        //                     .container {
-        //                         max-width: 600px;
-        //                         margin: 0 auto;
-        //                         background-color: #fff;
-        //                         padding: 20px;
-        //                         border-radius: 8px;
-        //                         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        //                     }
-        //                     .header {
-        //                         background-color: #d9534f;
-        //                         color: #fff;
-        //                         padding: 10px;
-        //                         text-align: center;
-        //                         border-top-left-radius: 8px;
-        //                         border-top-right-radius: 8px;
-        //                     }
-        //                     .content {
-        //                         padding: 20px;
-        //                     }
-        //                     .content p {
-        //                         margin-bottom: 10px;
-        //                     }
-        //                     .footer {
-        //                         text-align: center;
-        //                         margin-top: 20px;
-        //                         color: #666;
-        //                     }
-        //                 </style>
-        //             </head>
-        //             <body>
-        //                 <div class="container">
-        //                     <div class="header">
-        //                         <h1>Order Cancellation Notice</h1>
-        //                     </div>
-        //                     <div class="content">
-        //                         <p>Dear Admin,</p>
-        //                         <p>We want to inform you that the order was canceled as the assigned vendor could not accept it.</p>
-        //                         <p>Please review this order and consider assigning a new vendor.</p>
-        //                     </div>
-        //                     <div class="footer">
-        //                         <p>Best regards,</p>
-        //                         <p>Blueace Team</p>
-        //                     </div>
-        //                 </div>
-        //             </body>
-        //             </html>
-        //         `
-        //     };
-
-        //     await sendEmail(emailOptions);
-        //     res.status(200).json({
-        //         success: true,
-        //         message: 'Order status updated successfully',
-        //         data: order
-        //     });
-        // }
+        if (OrderStatus === "Cancelled") {
+            const AdminNumber = process.env.ADMIN_NUMBER;
+            await SendWhatsapp(userNumber, 'order_cancel_update_user');
+            await SendWhatsapp(AdminNumber, 'order_cancel_update_admin');
+            res.status(200).json({
+                success: true,
+                message: 'Order status updated successfully',
+                data: order
+            });
+        }
 
 
         res.status(200).json({
@@ -754,6 +687,7 @@ exports.AssignVendor = async (req, res) => {
 
         const findVendor = await Vendor.findById(Vendorid);
         const vendorNumber = findVendor?.ContactNumber;
+        const vendorName = findVendor?.ownerName;
 
         // Fetch the specific order by orderId
         const order = await Order.findById(orderId).populate('serviceId');
@@ -829,12 +763,13 @@ exports.AssignVendor = async (req, res) => {
         order.VendorAllotedBoolean = true;
 
         // Construct the full address
-        const fullAddress = `${order.houseNo}, ${order.address}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
+        const fullAddress = `${order.houseNo} ${order.address.replace(/,/g, '')} ${order.pinCode}`;
 
         // Send SMS notification to the vendor
-        const vendorMessage = `You have been assigned a new task for ${serviceName}. The service is scheduled for ${workingDay} at ${workingTime}. The address is: ${fullAddress}. Please confirm and accept the task.`;
+        // const vendorMessage = `Hello ${vendorName}, You have been assigned a new task for ${serviceName}. The service is scheduled for ${workingDay} at ${workingTime}. The address is: ${fullAddress}. Please confirm and accept the task.`;
+        const Param = [vendorName, serviceName, workingDay, workingTime, fullAddress]
 
-        // await sendSMS(vendorNumber, vendorMessage); // Send SMS to the vendor's phone number (make sure you have Vendor's contact)
+        await SendWhatsapp(vendorNumber, 'update_vendor_for_new_order', Param);
         // console.log("order", order)
 
         // Save the updated order
@@ -882,7 +817,7 @@ exports.AcceptOrderRequest = async (req, res) => {
         const AdminNumber = process.env.ADMIN_NUMBER;
         const serviceName = order ? order.serviceId.name : 'Service';
         const serviceType = order ? order.serviceType : 'Not specified';
-        const fullAddress = `${order.houseNo}, ${order.address}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
+        const fullAddress = `${order.houseNo}, ${order.address.replace(/,/g, '')}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
 
         if (VendorAllotedStatus === 'Accepted') {
             order.VendorAllotedStatus = VendorAllotedStatus;
@@ -897,8 +832,8 @@ exports.AcceptOrderRequest = async (req, res) => {
             // const adminMessage = `Order for ${serviceName} (${serviceType}) has been accepted by vendor ${vendorName}. The service will be performed at: ${fullAddress}. Please note the vendor has accepted the task.`;
 
             // Send the messages (Assuming sendSMS is a function that sends SMS to the respective phone numbers)
-            // await sendSMS(userNumber, userMessage); // Sending message to the user
-            // await sendSMS(AdminNumber, adminMessage); // Sending message to admin
+            await SendWhatsapp(userNumber, 'order_accept_reject_status_to_user', [serviceName, serviceType, vendorName, fullAddress]);
+            await SendWhatsapp(AdminNumber, 'order_accept_reject_status_to_admin', [serviceName, serviceType, vendorName, fullAddress]);
             // console.log("finish",order)
             return res.status(200).json({
                 success: true,
@@ -919,8 +854,8 @@ exports.AcceptOrderRequest = async (req, res) => {
             // Message for the admin (rejection)
             // const adminRejectionMessage = `Order for ${serviceName} (${serviceType}) has been rejected by vendor ${vendorName}. The order is now pending. Please assign another vendor to this order. The address is: ${fullAddress}.`;
 
-            // Send the rejection message to admin
-            // await sendSMS(AdminNumber, adminRejectionMessage); // Sending message to admin
+            // Send the rejection message to admin order_reject_by_vendor_send_to_admin
+            await SendWhatsapp(AdminNumber, 'order_reject_by_vendor_send_to_admin', [serviceName, serviceType, vendorName, fullAddress]);
 
             return res.status(200).json({
                 success: true,
@@ -944,13 +879,15 @@ exports.updateBeforWorkImage = async (req, res) => {
     try {
         const id = req.params._id;
         // console.log("id", id)
-        const order = await Order.findById(id)
+        const order = await Order.findById(id).populate('userId');
         if (!order) {
             return res.status(400).json({
                 success: false,
                 message: 'Order not found'
             })
         }
+        const userNumber = order ? order.userId.ContactNumber : '';
+        const userName = order ? order.userId.FullName : '';
         if (req.file) {
             if (order.beforeWorkImage.public_id) {
                 await deleteImageFromCloudinary(order.beforeWorkImage.public_id)
@@ -973,6 +910,10 @@ exports.updateBeforWorkImage = async (req, res) => {
         }
         const updatedOrder = await order.save()
 
+        const Param = [userName]
+
+        await SendWhatsapp(userNumber, 'before_work_video', Param)
+
         res.status(200).json({
             success: true,
             message: 'Before work image is uploaded',
@@ -994,13 +935,16 @@ exports.updateAfterWorkImage = async (req, res) => {
     const uploadedImages = [];
     try {
         const id = req.params._id;
-        const order = await Order.findById(id)
+        const order = await Order.findById(id).populate('userId');
         if (!order) {
             return res.status(400).json({
                 success: false,
                 message: 'Order not found'
             })
         }
+
+        const userNumber = order ? order.userId.ContactNumber : '';
+        const userName = order ? order.userId.FullName : '';
         if (req.file) {
             if (order.afterWorkImage.public_id) {
                 await deleteImageFromCloudinary(order.afterWorkImage.public_id)
@@ -1056,6 +1000,9 @@ exports.updateBeforeWorkVideo = async (req, res) => {
 
             })
         }
+        const userDetail = await User.findById(order.userId)
+        const userNumber = userDetail ? userDetail.ContactNumber : '';
+        const userName = userDetail ? userDetail.FullName : '';
         if (req.file) {
             if (order.beforeWorkVideo.public_id) {
                 await deleteVideoFromCloudinary(order.beforeWorkVideo.public_id)
@@ -1078,6 +1025,10 @@ exports.updateBeforeWorkVideo = async (req, res) => {
         }
         // order.OrderStatus = "Service Done"
         const updatedOrder = await order.save()
+
+        const Param = [userName]
+
+        await SendWhatsapp(userNumber, 'before_work_video', Param)
 
         res.status(200).json({
             success: true,
@@ -1107,6 +1058,8 @@ exports.updateAfterWorkVideo = async (req, res) => {
             })
         }
         const userDetail = await User.findById(order.userId)
+        const userNumber = userDetail ? userDetail.ContactNumber : '';
+        const userName = userDetail ? userDetail.FullName : '';
         if (!userDetail) {
             return res.status(400).json({
                 success: false,
@@ -1139,6 +1092,9 @@ exports.updateAfterWorkVideo = async (req, res) => {
             order.OrderStatus = "Service Done"
             order.PaymentStatus = "paid"
             await order.save()
+
+            const Param = [userName]
+            await SendWhatsapp(userNumber, 'amc_user_order_done', Param)
             return res.status(200).json({
                 success: true,
                 message: 'After work video is uploaded',
@@ -1148,6 +1104,10 @@ exports.updateAfterWorkVideo = async (req, res) => {
 
 
         const updatedOrder = await order.save()
+
+        const Param = [userName]
+
+        await SendWhatsapp(userNumber, 'after_work_video', Param)
 
         res.status(200).json({
             success: true,
@@ -1235,7 +1195,7 @@ exports.makeOrderPayment = async (req, res) => {
             name: "User",
             amount: integerAmount * 100,
             callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-            redirectUrl: `https://www.api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
+            redirectUrl: `http://localhost:7987/api/v1/status-payment/${transactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -1324,7 +1284,7 @@ exports.verifyOrderPayment = async (req, res) => {
             // Fetch payment details
             const amount = data?.data?.amount;
 
-            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId });
+            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId }).populate('userId');
             if (!findOrder) {
                 return res.status(400).json({
                     success: false,
@@ -1335,6 +1295,8 @@ exports.verifyOrderPayment = async (req, res) => {
             const vendorId = findOrder?.vendorAlloted?._id;
             const vendor = await Vendor.findById(vendorId);
             const vendorRole = vendor?.Role;
+            const userNumber = findOrder?.userId?.ContactNumber
+            const vendorNumber = vendor?.ContactNumber
             // console.log("vendor role",vendorRole)
 
             // Fetch commission details
@@ -1373,6 +1335,9 @@ exports.verifyOrderPayment = async (req, res) => {
 
             await vendor.save();
             await findOrder.save();
+            const adminNumber = process.env.ADMIN_NUMBER
+            await SendWhatsapp(userNumber,'payment_done_by_user_to_user',[totalAmount])
+            await SendWhatsapp(vendorNumber,'payment_done_by_user_to_vendor')
 
             const successRedirect = `https://www.blueaceindia.com/successfull-payment`;
             return res.redirect(successRedirect);
@@ -1537,7 +1502,7 @@ exports.verifyOrderPaymentApp = async (req, res) => {
             const amount = data.data.amount
             console.log("Payment successful", { amount })
 
-            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId })
+            const findOrder = await Order.findOne({ razorpayOrderId: merchantTransactionId }).populate('userId');
             if (!findOrder) {
                 console.log("Order not found for transaction", { merchantTransactionId })
                 return res.status(400).json({
@@ -1549,6 +1514,8 @@ exports.verifyOrderPaymentApp = async (req, res) => {
             const vendorId = findOrder.vendorAlloted._id
             const vendor = await Vendor.findById(vendorId)
             const vendorRole = vendor.Role
+            const userNumber = findOrder?.userId?.ContactNumber
+            const vendorNumber = vendor?.ContactNumber
             console.log("Vendor details", { vendorId, vendorRole })
 
             const allCommission = await Commission.find()
@@ -1584,6 +1551,8 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
             await vendor.save()
             await findOrder.save()
+            await SendWhatsapp(userNumber,'payment_done_by_user_to_user',[totalAmount])
+            await SendWhatsapp(vendorNumber,'payment_done_by_user_to_vendor')
 
             console.log("Order and vendor updated successfully")
 
@@ -1738,7 +1707,8 @@ exports.getAllDataOfVendor = async (req, res) => {
 exports.serviceDoneOrder = async (req, res) => {
     try {
         const { id } = req.params;
-        const order = await Order.findById(id);
+        const order = await Order.findById(id).populate('userId');
+        const userNumber = order ? order.userId.ContactNumber : '';
         if (!order) {
             return res.status(400).json({
                 success: false,
@@ -1747,6 +1717,7 @@ exports.serviceDoneOrder = async (req, res) => {
         }
         order.OrderStatus = "Service Done";
         order.PaymentStatus = "paid"
+        await SendWhatsapp(userNumber,'order_done_to_user');
         await order.save();
         return res.status(200).json({
             success: true,

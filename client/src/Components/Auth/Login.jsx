@@ -36,7 +36,7 @@ function Login({ onLoginSuccess }) {
         };
 
         try {
-            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Login', Payload, {
+            const res = await axios.post('http://localhost:7987/api/v1/Login', Payload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -95,11 +95,11 @@ function Login({ onLoginSuccess }) {
 
                             <form className="submit-form" onSubmit={handleSubmit}>
                                 <div className="form-group">
-                                    <label className="mb-1">Email</label>
+                                    <label className="mb-1">Email or Phone Number</label>
                                     <input
                                         type="text"
                                         className="form-control rounded bg-light"
-                                        placeholder="Email*"
+                                        placeholder="Enter your email or phone number*"
                                         name='Email'
                                         value={formData.Email}
                                         onChange={handleChange}

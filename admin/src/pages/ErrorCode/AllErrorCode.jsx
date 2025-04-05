@@ -14,7 +14,7 @@ const AllErrorCode = () => {
     const fetchErrorCodeData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-error-code');
+            const res = await axios.get('http://localhost:7987/api/v1/get-all-error-code');
             if (res.data.success) {
                 const data = res.data.data;
                 setErrorCodes(data.reverse());
@@ -35,7 +35,7 @@ const AllErrorCode = () => {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-error-code/${id}`);
+            const response = await axios.delete(`http://localhost:7987/api/v1/delete-error-code/${id}`);
             if (response.data.success) {
                 toast.success('Error Code deleted successfully!');
                 await fetchErrorCodeData(); // Fetch the list of error codes again after deletion

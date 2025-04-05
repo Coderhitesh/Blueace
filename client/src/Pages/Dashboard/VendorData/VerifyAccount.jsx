@@ -16,15 +16,15 @@ function VerifyAccount({ userData }) {
     const userId = userData?._id;
 
     const [sendOtpFormData, setSendOtpFormData] = useState({
-        Email: '',
+        ContactNumber: '',
         VerifyOTP: '',
     });
 
     useEffect(() => {
-        if (userData?.Email) {
+        if (userData?.ContactNumber) {
             setSendOtpFormData((prev) => ({
                 ...prev,
-                Email: userData.Email,
+                ContactNumber: userData.ContactNumber,
             }));
         }
     }, [userData]);
@@ -37,19 +37,19 @@ function VerifyAccount({ userData }) {
     // Handle Get OTP Submit
     const handleGetOtpSubmit = async (e) => {
         e.preventDefault();
-        if (!sendOtpFormData.Email) {
-            toast.error('Email is required ');
+        if (!sendOtpFormData.ContactNumber) {
+            toast.error('ContactNumber is required ');
             return;
         }
         setLoading(true); // Start loading
         try {
             const payload = {
-                Email: sendOtpFormData.Email,
+                ContactNumber: sendOtpFormData.ContactNumber,
             };
     
-            // console.log('Sending OTP request with email:', sendOtpFormData.Email); // Debugging log
+            // console.log('Sending OTP request with ContactNumber:', sendOtpFormData.ContactNumber); // Debugging log
     
-            await axios.put('https://www.api.blueaceindia.com/api/v1/verify-account-otp-send', payload);
+            await axios.put('http://localhost:7987/api/v1/verify-account-otp-send', payload);
             toast.success('OTP sent successfully!');
             setGetOtp(true);
         } catch (error) {
@@ -67,10 +67,10 @@ function VerifyAccount({ userData }) {
         setLoading(true); // Start loading
         try {
             const payload = {
-                Email: sendOtpFormData.Email,
+                ContactNumber: sendOtpFormData.ContactNumber,
                 VerifyOTP: sendOtpFormData.VerifyOTP,
             };
-            await axios.post('https://www.api.blueaceindia.com/api/v1/verify-account', payload);
+            await axios.post('http://localhost:7987/api/v1/verify-account', payload);
             toast.success('Account Verified!');
             window.location.href = '/vendor-dashboard';
         } catch (error) {
@@ -87,9 +87,9 @@ function VerifyAccount({ userData }) {
         setLoading(true); // Start loading
         try {
             const payload = {
-                Email: sendOtpFormData.Email,
+                ContactNumber: sendOtpFormData.ContactNumber,
             };
-            await axios.post('https://www.api.blueaceindia.com/api/v1/resend-verify-vendor-otp', payload);
+            await axios.post('http://localhost:7987/api/v1/resend-verify-vendor-otp', payload);
             toast.success('OTP resent successfully!');
         } catch (error) {
             console.log('Internal server error', error);
@@ -139,12 +139,12 @@ function VerifyAccount({ userData }) {
                                     <form className="row submit-form" onSubmit={getOtp ? handleSubmitOtp : handleGetOtpSubmit}>
                                         <div className="col-xl-8 col-lg-9 col-md-12 col-sm-12">
                                             <div className="form-group">
-                                                <label>Email</label>
+                                                <label>Number</label>
                                                 <input
                                                     type="text"
-                                                    name="Email"
+                                                    name="ContactNumber"
                                                     onChange={handleChange}
-                                                    value={sendOtpFormData.Email}
+                                                    value={sendOtpFormData.ContactNumber}
                                                     className="form-control rounded"
                                                     placeholder="Email"
                                                 />

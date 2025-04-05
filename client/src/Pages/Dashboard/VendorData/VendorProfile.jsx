@@ -53,7 +53,7 @@ function VendorProfile({ userData }) {
 
     const fetchExistingUser = async () => {
         try {
-            const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/single-vendor/${userId}`);
+            const { data } = await axios.get(`http://localhost:7987/api/v1/single-vendor/${userId}`);
             const existinguser = data.data;
 
             setFormData({
@@ -103,7 +103,7 @@ function VendorProfile({ userData }) {
     const fetchAddressSuggestions = async (query) => {
         try {
             // console.log("query",query)
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            const res = await axios.get(`http://localhost:7987/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
             console.log(res.data)
             setAddressSuggestions(res.data || []);
         } catch (err) {
@@ -114,7 +114,7 @@ function VendorProfile({ userData }) {
     // Fetch latitude and longitude based on selected address
     const fetchGeocode = async (selectedAddress) => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            const res = await axios.get(`http://localhost:7987/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
             console.log("geo", res.data)
             const { latitude, longitude } = res.data;
             setLocation({ latitude, longitude });
@@ -179,7 +179,7 @@ function VendorProfile({ userData }) {
         if (formData.gstImage) Payload.append('gstImage', formData.gstImage);
 
         try {
-            const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-vendor/${userId}`, Payload, {
+            const res = await axios.put(`http://localhost:7987/api/v1/update-vendor/${userId}`, Payload, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success(res.data.message);

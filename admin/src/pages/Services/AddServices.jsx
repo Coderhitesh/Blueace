@@ -30,7 +30,7 @@ function AddServices() {
     // Fetching the main categories from the backend
     const handleFetchMainCategory = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-main-category');
+            const res = await axios.get('http://localhost:7987/api/v1/get-all-service-main-category');
             setMainCategories(res.data.data); // Assuming `data` contains the list of main categories
         } catch (error) {
             console.log(error);
@@ -40,7 +40,7 @@ function AddServices() {
     // Fetch subcategories based on the selected categoryId
     const handleFetchSubCategory = async (categoryId) => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-all-service-category?mainCategoryId=${categoryId}`);
+            const res = await axios.get(`http://localhost:7987/api/v1/get-all-service-category?mainCategoryId=${categoryId}`);
             setSubCategories(res.data.data); // Assuming `data` contains the list of subcategories
         } catch (error) {
             console.log(error);
@@ -121,7 +121,7 @@ function AddServices() {
         }
 
         try {
-            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/create-service', payload, {
+            const res = await axios.post('http://localhost:7987/api/v1/create-service', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

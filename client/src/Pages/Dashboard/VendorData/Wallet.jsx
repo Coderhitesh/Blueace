@@ -12,7 +12,7 @@ function Wallet({ userData }) {
     setLoading(true);
     const userId = userData?._id;
     try {
-      const response = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-withdraw-request-by-vendorId/${userId}`);
+      const response = await axios.get(`http://localhost:7987/api/v1/get-withdraw-request-by-vendorId/${userId}`);
       setAllWithDraw(response.data.data.reverse() || []);
     } catch (error) {
       console.error("Error fetching wallet data:", error);
@@ -26,7 +26,7 @@ function Wallet({ userData }) {
     const userId = userData?._id;
     try {
       const { data } = await axios.post(
-        'https://www.api.blueaceindia.com/api/v1/create-withdraw-request',
+        'http://localhost:7987/api/v1/create-withdraw-request',
         { vendor: userId, amount: withdrawAmount },
         { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } }
       );

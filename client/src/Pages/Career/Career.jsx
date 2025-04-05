@@ -9,7 +9,7 @@ function Career() {
 
     const handleFetchJob = async () => {
         try {
-            const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/careers');
+            const { data } = await axios.get('http://localhost:7987/api/v1/careers');
             setAllJob(data.data);
         } catch (error) {
             console.log("internal server error", error);

@@ -28,7 +28,7 @@ function AddGalleryName() {
         payload.append('name', formData.name);
         // payload.append('answer', formData.answer);
         try {
-            await axios.post('https://www.api.blueaceindia.com/api/v1/create-gallery-category-name', payload, {
+            await axios.post('http://localhost:7987/api/v1/create-gallery-category-name', payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

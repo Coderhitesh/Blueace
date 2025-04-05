@@ -26,7 +26,7 @@ function AddCommission() {
         setLoading(true);
         setError('');
         try {
-            await axios.post(`https://www.api.blueaceindia.com/api/v1/create-commission`, formData, {
+            await axios.post(`http://localhost:7987/api/v1/create-commission`, formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

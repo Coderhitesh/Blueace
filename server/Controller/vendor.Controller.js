@@ -11,6 +11,7 @@ const MembershipPlan = require('../Model/memberShip.Model')
 const User = require('../Model/UserModel');
 const { sendSMS } = require('../Utils/SMSSender');
 const Order = require('../Model/Order.Model');
+const { SendWhatsapp } = require('../Utils/SendWhatsapp');
 require('dotenv').config()
 // Initialize Razorpay instance with your key and secret
 // const razorpayInstance = new Razorpay({
@@ -205,73 +206,9 @@ exports.registerVendor = async (req, res) => {
             });
         }
 
-        // Send welcome email
-        // const emailOptions = {
-        //     email: Email,
-        //     subject: 'Welcome to Blueace!',
-        //     message: `
-        //         <html>
-        //         <head>
-        //             <style>
-        //                 body {
-        //                     font-family: Arial, sans-serif;
-        //                     line-height: 1.6;
-        //                     background-color: #f5f5f5;
-        //                     padding: 20px;
-        //                 }
-        //                 .container {
-        //                     max-width: 600px;
-        //                     margin: 0 auto;
-        //                     background-color: #fff;
-        //                     padding: 20px;
-        //                     border-radius: 8px;
-        //                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        //                 }
-        //                 .header {
-        //                     background-color: #007bff;
-        //                     color: #fff;
-        //                     padding: 10px;
-        //                     text-align: center;
-        //                     border-top-left-radius: 8px;
-        //                     border-top-right-radius: 8px;
-        //                 }
-        //                 .content {
-        //                     padding: 20px;
-        //                 }
-        //                 .content p {
-        //                     margin-bottom: 10px;
-        //                 }
-        //                 .footer {
-        //                     text-align: center;
-        //                     margin-top: 20px;
-        //                     color: #666;
-        //                 }
-        //             </style>
-        //         </head>
-        //         <body>
-        //             <div class="container">
-        //                 <div class="header">
-        //                     <h1>Welcome to Blueace!</h1>
-        //                 </div>
-        //                 <div class="content">
-        //                     <p>Dear ${ownerName},</p>
-        //                     <p>Thank you for registering with Blueace. We are delighted to have you as a part of our community.</p>
-        //                     <p>If you have any questions or need assistance, please feel free to contact us.</p>
-        //                 </div>
-        //                 <div class="footer">
-        //                     <p>Best regards,</p>
-        //                     <p>Blueace Team</p>
-        //                 </div>
-        //             </div>
-        //         </body>
-        //         </html>
-        //     `
-        // };
-
-        // await sendEmail(emailOptions);
-
         const message = `Dear ${ownerName}, Thank you for registering with Blueace. We are delighted to have you as a part of our community. If you have any questions or need assistance, please feel free to contact us.`
         // await sendSMS(ContactNumber, message)
+        await SendWhatsapp(ContactNumber, 'vendorandemp_registeration', [ownerName])
 
         await sendToken(newVendorSave, res, 201);
 
@@ -534,7 +471,6 @@ exports.addNewVendorMember = async (req, res) => {
     }
 };
 
-
 exports.getMembersByVendorId = async (req, res) => {
     try {
         const { vendorId } = req.params;
@@ -701,7 +637,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 name: "User",
                 amount: planPrice * 100,
                 callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-                redirectUrl: `https://www.api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
+                redirectUrl: `http://localhost:7987/api/v1/payment-verify/${transactionId}`,
                 redirectMode: 'POST',
                 paymentInstrument: {
                     type: 'PAY_PAGE'
@@ -1124,6 +1060,8 @@ exports.vendorPasswordChangeRequest = async (req, res) => {
 
         const message = `Your OTP for password reset is: ${OTP}. Please use this OTP within 10 minutes to reset your password.`;
         // await sendSMS(vendorNumber, message)
+        // const 
+        await SendWhatsapp(vendorNumber, 'verificatation_passcode_new',)
 
         res.status(200).json({
             success: true,
@@ -1311,7 +1249,14 @@ exports.updateDeactive = async (req, res) => {
         }
         vendor.isDeactive = isDeactive;
         await vendor.save();
-
+        var valueDeactive
+        if (isDeactive === true) {
+            valueDeactive = 'Deactive'
+        } else {
+            valueDeactive = 'Active'
+        }
+        const Param = [valueDeactive]
+        await SendWhatsapp(vendor?.ContactNumber, 'vendor_and_emp_dynamic_block_value', Param)
         res.status(200).json({
             success: true,
             message: 'Vendor updated successfully',
@@ -1529,15 +1474,15 @@ exports.getSingleVendor = async (req, res) => {
 exports.sendOtpForVerification = async (req, res) => {
     try {
         // console.log("i am hit")
-        const { Email } = req.body;
-        if (!Email) {
+        const { ContactNumber } = req.body;
+        if (!ContactNumber) {
             return res.status(400).json({
                 success: false,
-                message: "Email is required"
+                message: "ContactNumber is required"
             })
         }
 
-        const vendor = await Vendor.findOne({ Email });
+        const vendor = await Vendor.findOne({ ContactNumber });
         if (!vendor) {
             return res.status(400).json({
                 success: false,
@@ -1552,33 +1497,13 @@ exports.sendOtpForVerification = async (req, res) => {
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
 
         vendor.VerifyOTP = OTP,
-            vendor.OtpExpiredTime = OTPExpires
+        vendor.OtpExpiredTime = OTPExpires
         await vendor.save()
+        const Param = [OTP];
+        await SendWhatsapp(vendorNumber, 'verificatation_passcode_new', Param);
 
-        // const emailOptions = {
-        //     email: Email,
-        //     subject: 'Account Verification OTP',
-        //     message: `
-        //         <html>
-        //         <head>
-        //         </head>
-        //         <body>
-        //             <p>Hello,</p>
-        //             <p>Your OTP for verifying your account is: <strong>${OTP}</strong></p>
-        //             <p>Please enter this OTP within 10 minutes to complete your account verification.</p>
-        //             <p>If you did not request this, please disregard this email.</p>
-        //             <br>
-        //             <p>Best Regards,</p>
-        //             <p>Team Blueace India</p>
-        //         </body>
-        //         </html>
-        //     `
-        // };
+        // const message = `Your OTP for verifying your account is: ${OTP}. Please enter this OTP within 10 minutes to complete your account verification. If you did not request this, please disregard this SMS.`
 
-
-        // await sendEmail(emailOptions)
-
-        const message = `Your OTP for verifying your account is: ${OTP}. Please enter this OTP within 10 minutes to complete your account verification. If you did not request this, please disregard this SMS.`
 
         // await sendSMS(vendorNumber, message)
 
@@ -1599,20 +1524,20 @@ exports.sendOtpForVerification = async (req, res) => {
 
 exports.verifyVendor = async (req, res) => {
     try {
-        const { Email, VerifyOTP } = req.body;
+        const { ContactNumber, VerifyOTP } = req.body;
 
-        // console.log("Email",Email)
+        // console.log("ContactNumber",ContactNumber)
 
-        // Check if the Email is provided
-        if (!Email) {
+        // Check if the ContactNumber is provided
+        if (!ContactNumber) {
             return res.status(400).json({
                 success: false,
-                message: 'Email is required',
+                message: 'ContactNumber is required',
             });
         }
 
-        // Find the vendor by email
-        const vendor = await Vendor.findOne({ Email });
+        // Find the vendor by ContactNumber
+        const vendor = await Vendor.findOne({ ContactNumber });
         if (!vendor) {
             return res.status(400).json({
                 success: false,
@@ -1687,8 +1612,8 @@ Team Blueace India`;
 
 exports.resendVerifyOtp = async (req, res) => {
     try {
-        const { Email } = req.body;
-        const vendor = await Vendor.findOne({ Email })
+        const { ContactNumber } = req.body;
+        const vendor = await Vendor.findOne({ ContactNumber })
 
         if (!vendor) {
             return res.status(400).json({

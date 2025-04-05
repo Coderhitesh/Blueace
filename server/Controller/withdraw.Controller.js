@@ -1,5 +1,6 @@
 const Vendor = require('../Model/vendor.Model');
-const Withdraw = require('../Model/withDrawal.Model')
+const Withdraw = require('../Model/withDrawal.Model');
+const { SendWhatsapp } = require('../Utils/SendWhatsapp');
 
 exports.createWithdrawRequest = async (req, res) => {
     try {
@@ -61,6 +62,12 @@ exports.createWithdrawRequest = async (req, res) => {
         });
 
         await withdraw.save();
+
+        const adminNumber = process.env.ADMIN_NUMBER;
+        const vendorName = findVendor?.ownerName;
+        const Param = [vendorName, amount];
+
+        await SendWhatsapp(adminNumber, 'withdraw_request', Param);
 
         res.status(201).json({
             success: true,
@@ -166,6 +173,7 @@ exports.updateWithdrawRequest = async (req, res) => {
         // Handle status updates
         const vendorWallet = vendor?.walletAmount;
         const withdrawAmount = withdraw?.amount;
+        const vendorName = vendor?.ownerName;
 
         if (status === 'Approved') {
             if (vendorWallet < withdrawAmount) {
@@ -177,7 +185,7 @@ exports.updateWithdrawRequest = async (req, res) => {
             vendor.walletAmount -= withdrawAmount;
             await withdraw.save();
             await vendor.save();
-
+            await SendWhatsapp(vendor?.ContactNumber, 'withdrawal_approved', [vendorName,withdrawAmount]);
             return res.status(200).json({
                 success: true,
                 message: "Withdrawal approved",
@@ -187,7 +195,7 @@ exports.updateWithdrawRequest = async (req, res) => {
             // Reject withdrawal
             withdraw.status = status;
             await withdraw.save();
-
+            await SendWhatsapp(vendor?.ContactNumber, 'withdrawal_rejected', [vendorName,withdrawAmount]);
             return res.status(200).json({
                 success: true,
                 message: "Withdrawal rejected",

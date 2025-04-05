@@ -9,7 +9,7 @@ const VendorDetailPage = () => {
   useEffect(() => {
     const handleFetch = async () => {
       try {
-        const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/single-vendor/${id}`);
+        const { data } = await axios.get(`http://localhost:7987/api/v1/single-vendor/${id}`);
         setVendor(data.data);
       } catch (error) {
         console.log(error);

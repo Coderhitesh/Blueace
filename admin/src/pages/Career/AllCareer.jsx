@@ -14,7 +14,7 @@ function AllCareer() {
     const fetchMarqueeData = async () => {
         setLoading(true)
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/careers')
+            const res = await axios.get('http://localhost:7987/api/v1/careers')
             if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
@@ -37,7 +37,7 @@ function AllCareer() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/careers/${id}`);
+            const response = await axios.delete(`http://localhost:7987/api/v1/careers/${id}`);
             if (response.data.success) {
                 toast.success('Carrer deleted successfully!');
                 await fetchMarqueeData(); // Fetch categories again after deletion

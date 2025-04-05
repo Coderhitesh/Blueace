@@ -24,7 +24,7 @@ function AllCorporateUser() {
     const fetchUserDetail = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/AllUser');
+            const res = await axios.get('http://localhost:7987/api/v1/AllUser');
             const datasave = res.data.data;
             const filterdata = datasave.filter((item) => item.UserType === "Corporate");
             const r = filterdata.reverse();
@@ -63,7 +63,7 @@ function AllCorporateUser() {
     // Handle updating the UserType
     const handleUserTypeChange = async (userId, newUserType) => {
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user-type/${userId}`, { UserType: newUserType });
+            await axios.put(`http://localhost:7987/api/v1/update-user-type/${userId}`, { UserType: newUserType });
             toast.success('User type updated successfully!');
             fetchUserDetail(); // Refetch the user details to update the table
         } catch (error) {
@@ -75,7 +75,7 @@ function AllCorporateUser() {
     const handleToggle = async (id, currentDeactiveStatus) => {
         try {
             const newDeactiveStatus = !currentDeactiveStatus;
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user-deactive-status/${id}`, {
+            const response = await axios.put(`http://localhost:7987/api/v1/update-user-deactive-status/${id}`, {
                 isDeactive: newDeactiveStatus
             })
             if (response.data.success) {
@@ -93,7 +93,7 @@ function AllCorporateUser() {
     const handleChangeAMC = async (id, isAMCUser) => {
         const updated = !isAMCUser
         try {
-            const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-user-amc-status/${id}`, {
+            const res = await axios.put(`http://localhost:7987/api/v1/update-user-amc-status/${id}`, {
                 isAMCUser: updated
             });
             if (res.data.success) {
@@ -108,7 +108,7 @@ function AllCorporateUser() {
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-user/${id}`);
+            const response = await axios.delete(`http://localhost:7987/api/v1/delete-user/${id}`);
             if (response.data.success) {
                 toast.success('User deleted successfully!');
                 await fetchUserDetail(); // Fetch categories again after deletion

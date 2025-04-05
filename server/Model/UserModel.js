@@ -54,9 +54,6 @@ const UserSchema = new mongoose.Schema({
         enum: ['Normal', 'Corporate'],
         default: 'Normal'
     },
-    // City: {
-    //     type: String,
-    // },
     PinCode: {
         type: String,
         default: "000000",
@@ -67,10 +64,6 @@ const UserSchema = new mongoose.Schema({
         default: "H. No.",
         // required: true
     },
-    // Street: {
-    //     type: String,
-    //     required: true
-    // },
     NearByLandMark: {
         type: String,
         default: "Landmark",
@@ -81,11 +74,9 @@ const UserSchema = new mongoose.Schema({
     userImage: {
         url: {
             type: String,
-            // required: true
         },
         public_id: {
             type: String,
-            // required: true
         }
     },
     isDeactive: {

@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const { sendSMS } = require('../Utils/SMSSender');
 const xlsx = require('xlsx');
 const sendEmail = require('../Utils/SendEmail');
+const { SendWhatsapp } = require('../Utils/SendWhatsapp');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -100,76 +101,11 @@ exports.register = async (req, res) => {
         // Save user to database
         await newUser.save();
 
-        const message = `Dear ${FullName},Thank you for registering with Blueace. We are delighted to have you as a part of our community. If you have any questions or need assistance, please feel free to contact us.`
+        const Param = [
+            FullName
+        ]
 
-        // await sendSMS(ContactNumber, message)
-
-        // Prepare email options
-        // const emailOptions = {
-        //     email: Email,
-        //     subject: 'Welcome to Blueace!',
-        //     message: `
-        //         <html>
-        //         <head>
-        //             <style>
-        //                 body {
-        //                     font-family: Arial, sans-serif;
-        //                     line-height: 1.6;
-        //                     background-color: #f5f5f5;
-        //                     padding: 20px;
-        //                 }
-        //                 .container {
-        //                     max-width: 600px;
-        //                     margin: 0 auto;
-        //                     background-color: #fff;
-        //                     padding: 20px;
-        //                     border-radius: 8px;
-        //                     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        //                 }
-        //                 .header {
-        //                     background-color: #007bff;
-        //                     color: #fff;
-        //                     padding: 10px;
-        //                     text-align: center;
-        //                     border-top-left-radius: 8px;
-        //                     border-top-right-radius: 8px;
-        //                 }
-        //                 .content {
-        //                     padding: 20px;
-        //                 }
-        //                 .content p {
-        //                     margin-bottom: 10px;
-        //                 }
-        //                 .footer {
-        //                     text-align: center;
-        //                     margin-top: 20px;
-        //                     color: #666;
-        //                 }
-        //             </style>
-        //         </head>
-        //         <body>
-        //             <div class="container">
-        //                 <div class="header">
-        //                     <h1>Welcome to Blueace!</h1>
-        //                 </div>
-        //                 <div class="content">
-        //                     <p>Dear ${FullName},</p>
-        //                     <p>Thank you for registering with Blueace. We are delighted to have you as a part of our community.</p>
-        //                     <p>If you have any questions or need assistance, please feel free to contact us.</p>
-        //                 </div>
-        //                 <div class="footer">
-        //                     <p>Best regards,</p>
-        //                     <p>Blueace Team</p>
-        //                 </div>
-        //             </div>
-        //         </body>
-        //         </html>
-        //     `
-        // };
-
-
-        // Send welcome email
-        // await SendEmail(emailOptions);
+        await SendWhatsapp(ContactNumber, 'registeruserandcorporate', Param)
 
         // Send token to the user
         await SendToken(newUser, res, 201);
@@ -208,7 +144,13 @@ exports.login = async (req, res) => {
     const { Email, Password } = req.body;
 
     try {
-        const user = await User.findOne({ Email });
+        // Find the user by Email or ContactNumber
+        let user = await User.findOne({
+            $or: [
+                { Email: Email },
+                { ContactNumber: Email }
+            ]
+        });
         if (user) {
             const isDeactive = user?.isDeactive;
             if (isDeactive === true) {
@@ -227,7 +169,12 @@ exports.login = async (req, res) => {
 
             await SendToken(user, res, 201)
         } else {
-            const vendor = await Vendor.findOne({ Email })
+            const vendor = await Vendor.findOne({
+                $or: [
+                    { Email: Email },
+                    { ContactNumber: Email }
+                ]
+            });
             const isDeactive = vendor.isDeactive;
             if (isDeactive) {
                 return res.status(401).json({
@@ -269,7 +216,14 @@ exports.updateUserDeactive = async (req, res) => {
         }
         user.isDeactive = isDeactive;
         await user.save();
-
+        var valueDeactive
+        if (isDeactive === true) {
+            valueDeactive = 'Deactive'
+        } else{
+            valueDeactive = 'Active'
+        }
+        const Param = [valueDeactive]
+        await SendWhatsapp(user?.ContactNumber, 'userblockedbyadmin', Param)
         res.status(200).json({
             success: true,
             message: 'User updated successfully',
@@ -966,7 +920,12 @@ exports.changeAMCStatus = async (req, res) => {
             })
         }
         user.isAMCUser = isAMCUser;
+        const FullName = user?.FullName
         const updatedUser = await user.save();
+        const Param = new URLSearchParams({
+            FullName
+        })
+        await SendWhatsapp(user?.ContactNumber, 'userandcorpisAMC', Param)
         res.status(200).json({
             success: true,
             message: 'AMC Status Updated',

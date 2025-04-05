@@ -117,7 +117,8 @@ const OrderSchema = new mongoose.Schema({
         ref: 'EstimatedBudget'
     },
     orderTime: {
-        type: Date
+        type: Date,
+        default: Date.now
     },
     beforeWorkVideo: {
         url: {

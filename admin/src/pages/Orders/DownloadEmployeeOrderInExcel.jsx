@@ -23,7 +23,7 @@ const DownloadEmployeeOrderInExcel = () => {
     const fetchVendorDetail = async () => {
         setLoading(true);
         try {
-            const res = await axios.get("https://www.api.blueaceindia.com/api/v1/get-all-order");
+            const res = await axios.get("http://localhost:7987/api/v1/get-all-order");
             const vendorsData = res.data.data.reverse();
             const allVenodrOrder = vendorsData.filter((item) => item?.OrderStatus === "Service Done");
             const vendorOrder = allVenodrOrder.filter((item) => item?.vendorAlloted?.Role === "employ");

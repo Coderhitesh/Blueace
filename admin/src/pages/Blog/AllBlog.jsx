@@ -15,7 +15,7 @@ function AllBlog() {
     const fetchBlogs = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-blogs');
+            const response = await axios.get('http://localhost:7987/api/v1/get-all-blogs');
             if (response.data.success) {
                 const datasave = response.data.data;
                 const r = datasave.reverse();
@@ -37,7 +37,7 @@ function AllBlog() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-blog/${id}`);
+            const response = await axios.delete(`http://localhost:7987/api/v1/delete-blog/${id}`);
             if (response.data.success) {
                 toast.success('Blog deleted successfully!');
                 await fetchBlogs();
@@ -52,7 +52,7 @@ function AllBlog() {
     const handleToggleIsTranding = async (id, currentStatus) => {
         try {
             const newStatus = !currentStatus;
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-isTranding/${id}`, {
+            const response = await axios.put(`http://localhost:7987/api/v1/update-isTranding/${id}`, {
                 isTranding: newStatus
             });
 

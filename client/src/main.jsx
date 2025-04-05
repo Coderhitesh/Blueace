@@ -8,7 +8,7 @@ import './index.css';
 
 // async function fetchScripts() {
 //   try {
-//     const response = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-script');
+//     const response = await axios.get('http://localhost:7987/api/v1/get-all-script');
 
 //     toast.success('Scripts fetched successfully!');
 //   } catch (error) {

@@ -17,7 +17,7 @@ function EditMemberShipPlan() {
     // Fetch existing membership plan data
     const fetchExistingData = async () => {
         try {
-            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-membership-plan/${id}`);
+            const res = await axios.get(`http://localhost:7987/api/v1/get-single-membership-plan/${id}`);
             const exist = res.data.data;
             setMembershipPlan(exist);
             setName(exist.name || '');
@@ -46,7 +46,7 @@ function EditMemberShipPlan() {
         };
 
         try {
-            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-membership-plan/${id}`, membershipData);
+            const response = await axios.put(`http://localhost:7987/api/v1/update-membership-plan/${id}`, membershipData);
             toast.success('Membership plan updated successfully');
         } catch (error) {
             console.error('Failed to update membership plan:', error);

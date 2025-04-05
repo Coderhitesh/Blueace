@@ -30,7 +30,7 @@ function AddServiceCategory() {
 
     const handleFetchCategory = async () => {
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-main-category')
+            const res = await axios.get('http://localhost:7987/api/v1/get-all-service-main-category')
             setCategories(res.data.data);
         } catch (error) {
             console.log(error)
@@ -136,7 +136,7 @@ function AddServiceCategory() {
         }
 
         try {
-            await axios.post('https://www.api.blueaceindia.com/api/v1/create-service-category', payload, {
+            await axios.post('http://localhost:7987/api/v1/create-service-category', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

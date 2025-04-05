@@ -17,7 +17,7 @@ function EditFAQBanner() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-faq-banner/${id}`)
+                const { data } = await axios.get(`http://localhost:7987/api/v1/get-single-faq-banner/${id}`)
                 const res = data.data;
                 setImagePreviews(res.bannerImage?.url || null)
             } catch (error) {
@@ -53,7 +53,7 @@ function EditFAQBanner() {
         }
 
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-faq-banner/${id}`, payload, {
+            await axios.put(`http://localhost:7987/api/v1/update-faq-banner/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

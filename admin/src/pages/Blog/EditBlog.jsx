@@ -27,7 +27,7 @@ function EditBlog() {
     useEffect(() => {
         const fetchCategoryData = async () => {
             try {
-                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-blog/${id}`);
+                const { data } = await axios.get(`http://localhost:7987/api/v1/get-single-blog/${id}`);
                 const category = data.data;
 
                 setFormData({
@@ -127,7 +127,7 @@ function EditBlog() {
         }
 
         try {
-            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-blog/${id}`, payload, {
+            await axios.put(`http://localhost:7987/api/v1/update-blog/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

@@ -25,7 +25,7 @@ const AddErrorCode = () => {
 
     const handleFetchHeading = async () => {
         try {
-            const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-error-heading');
+            const { data } = await axios.get('http://localhost:7987/api/v1/get-all-error-heading');
             setAllHeading(data.data);  // Set the allHeading data fetched from the API
         } catch (error) {
             console.log("Internal server error", error);
@@ -41,7 +41,7 @@ const AddErrorCode = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post('https://www.api.blueaceindia.com/api/v1/create-error-code', formData, {
+            const response = await axios.post('http://localhost:7987/api/v1/create-error-code', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

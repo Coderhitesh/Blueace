@@ -14,7 +14,7 @@ function AllMemberShipPlan() {
     const fetchMemberShipPlan = async (req, res) => {
         setLoading(true)
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-membership-plan')
+            const res = await axios.get('http://localhost:7987/api/v1/get-all-membership-plan')
             const datasave = res.data.data;
             const r = datasave.reverse();
             setMemberShipPlan(r)
@@ -32,7 +32,7 @@ function AllMemberShipPlan() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-membership-plan/${id}`);
+            const response = await axios.delete(`http://localhost:7987/api/v1/delete-membership-plan/${id}`);
             if (response.data.success) {
                 toast.success('Membership plan deleted successfully!');
                 await fetchMemberShipPlan(); // Fetch categories again after deletion

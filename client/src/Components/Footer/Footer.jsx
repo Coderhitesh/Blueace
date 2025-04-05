@@ -8,7 +8,7 @@ function Footer() {
   const [allService, setService] = useState([])
   const fetchService = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
+      const res = await axios.get('http://localhost:7987/api/v1/get-all-service-category')
       const data = res.data.data
       const reverseData = data.reverse();
       setService(reverseData)
@@ -85,6 +85,9 @@ function Footer() {
                     <li><Link to={'/term-and-conditions'}>- Terms & Conditions</Link></li>
                     <li><Link to={'/gallery'}>- Gallery</Link></li>
                     <li><Link to={'/career'}>- Career</Link></li>
+                    <li>
+                      <a target="_blank" href="https://s3.eu-north-1.amazonaws.com/bucket.hbs.dev/broucher_11zon.pdf">- Download Brochure</a>
+                    </li>
                   </ul>
                 </div>
               </div>

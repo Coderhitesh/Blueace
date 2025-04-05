@@ -42,7 +42,7 @@ function Header() {
   const [allService, setService] = useState([])
   const fetchService = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
+      const res = await axios.get('http://localhost:7987/api/v1/get-all-service-category')
       const data = res.data.data
       const reverseData = data.reverse();
       setService(reverseData)
@@ -56,7 +56,7 @@ function Header() {
 
   const handleLogOut = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/Logout', {
+      const res = await axios.get('http://localhost:7987/api/v1/Logout', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -72,7 +72,7 @@ function Header() {
 
   const handleFetchMarquee = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-marquee')
+      const res = await axios.get('http://localhost:7987/api/v1/get-all-marquee')
       serAllMarquee(res.data.data)
     } catch (error) {
       console.log("Internal server error in fetching marquee", error)
@@ -82,7 +82,7 @@ function Header() {
 
   const handleVendorLogOut = async () => {
     try {
-      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/vendor-logout', {
+      const res = await axios.get('http://localhost:7987/api/v1/vendor-logout', {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -251,9 +251,9 @@ function Header() {
                             id="customSignInDropdown"
                             role="button"
                             data-bs-toggle="dropdown"
-                            aria-expanded="false" 
+                            aria-expanded="false"
                           >
-                            <i class="fa-regular fa-circle-user custom-theme-cl fa-1x"></i>&nbsp;Sign in 
+                            <i class="fa-regular fa-circle-user custom-theme-cl fa-1x"></i>&nbsp;Sign in
                           </Link>
                           <ul className="custom-dropdown-menu" aria-labelledby="customSignInDropdown">
                             <li style={{ width: "100%" }}>

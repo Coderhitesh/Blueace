@@ -32,7 +32,7 @@ function Forget() {
     setLoading(true)
     event.preventDefault()
     try {
-      const response = await axios.post("https://www.api.blueaceindia.com/api/v1/Password-Change", formData)
+      const response = await axios.post("http://localhost:7987/api/v1/Password-Change", formData)
       console.log(response.data);
       toast.success(response.data.msg)
       setgetOtp(true);
@@ -56,7 +56,7 @@ function Forget() {
     Payload.append('NewPassword',formData.NewPassword)
     Payload.append('OTP',formData.PasswordChangeOtp)
     try {
-      const response = await axios.post(`https://www.api.blueaceindia.com/api/v1/Verify-Otp`, formData)
+      const response = await axios.post(`http://localhost:7987/api/v1/Verify-Otp`, formData)
       console.log(response.data);
       // setLoading(false);
       toast.success(response.data.msg)
@@ -78,7 +78,7 @@ function Forget() {
     setLoading(true)
     otpevent.preventDefault()
     try {
-      const response = await axios.post(`https://www.api.blueaceindia.com/api/v1/resend-otp/`, formData)
+      const response = await axios.post(`http://localhost:7987/api/v1/resend-otp/`, formData)
       console.log(response.data);
       // setLoading(false);
 

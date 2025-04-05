@@ -35,7 +35,7 @@ function AddCareer() {
         points: formData.points.split(',').map(point => point.trim())
       };
 
-      await axios.post(`https://www.api.blueaceindia.com/api/v1/careers`, processedData, {
+      await axios.post(`http://localhost:7987/api/v1/careers`, processedData, {
         headers: {
           'Content-Type': 'application/json',
         },

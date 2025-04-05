@@ -26,7 +26,7 @@ function BankDetail() {
 
     const handleFetchExistData = async () => {
         try {
-            const response = await axios.get(`https://www.api.blueaceindia.com/api/v1/single-vendor/${vendorId}`)
+            const response = await axios.get(`http://localhost:7987/api/v1/single-vendor/${vendorId}`)
             if (response.data.success) {
                 setFormData((prev) => ({
                     ...prev,
@@ -53,7 +53,7 @@ function BankDetail() {
         try {
             setLoading(true);
             const response = await axios.put(
-                `https://www.api.blueaceindia.com/api/v1/update-bank-detail/${vendorId}`,
+                `http://localhost:7987/api/v1/update-bank-detail/${vendorId}`,
                 formData
             );
 

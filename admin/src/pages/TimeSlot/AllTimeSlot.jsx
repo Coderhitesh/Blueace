@@ -14,7 +14,7 @@ function AllTimeSlot() {
     const fetchFAQData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-timing')
+            const res = await axios.get('http://localhost:7987/api/v1/get-all-timing')
             // if (res.data.success) {
                 // console.log('data',res.data.data)
                 const datasave = res.data.data;
@@ -38,7 +38,7 @@ function AllTimeSlot() {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-timing/${id}`);
+            const response = await axios.delete(`http://localhost:7987/api/v1/delete-timing/${id}`);
             if (response.data.success) {
                 toast.success('Time Slot deleted successfully!');
                 await fetchFAQData(); // Fetch categories again after deletion

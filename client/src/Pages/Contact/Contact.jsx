@@ -16,17 +16,18 @@ function Contact() {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       // You may switch to JSON payload if not uploading files
-      const res = await axios.post('https://www.api.blueaceindia.com/api/v1/create-contact', formData, {
+      const res = await axios.post('http://localhost:7987/api/v1/create-contact', formData, {
         headers: {
           'Content-Type': 'application/json' // Change if using FormData
         },
       });
-      toast.success('Form Submitted Successfully!');
+      // toast.success('Form Submitted Successfully!');
+      window.location.href = '/thanks';
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || 'Internal server error in sending');
