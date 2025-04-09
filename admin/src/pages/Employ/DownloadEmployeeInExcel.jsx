@@ -23,7 +23,7 @@ const DownloadEmployeeInExcel = () => {
   const fetchVendorDetail = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("http://localhost:7987/api/v1/all-vendor");
+      const res = await axios.get("https://api.blueaceindia.com/api/v1/all-vendor");
       const vendorsData = res.data.data.filter((item) => item.Role === "employ").reverse();
       setVendors(vendorsData);
     } catch (error) {

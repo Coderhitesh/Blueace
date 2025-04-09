@@ -9,7 +9,7 @@ const ShowErrorCode = () => {
 
     const handleFetchData = async () => {
         try {
-            const response = await fetch(`http://localhost:7987/api/v1/get-order-by-id/${id}`);
+            const response = await fetch(`https://api.blueaceindia.com/api/v1/get-order-by-id/${id}`);
             const data = await response.json();
             setErrorCode(data.data.errorCode);
             setLoading(false);

@@ -7,7 +7,7 @@ function Popup() {
 
     const handleFetchCategory = async() => {
         try {
-            const {data} = await axios.get('http://localhost:7987/api/v1/get-all-service-category')
+            const {data} = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category')
             setCategory(data.data)
         } catch (error) {
             console.log("Internal server error",error)
@@ -20,7 +20,7 @@ function Popup() {
 
     const handleFetchService = async() => {
         try {
-            const {data} = await axios.get('http://localhost:7987/api/v1/get-all-service')
+            const {data} = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service')
         } catch (error) {
             console.log("Internal server error",error)
         }

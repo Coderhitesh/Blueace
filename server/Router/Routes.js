@@ -31,6 +31,8 @@ const { createWithdrawRequest, getAllWithdraw, getSingleWithdraw, updateWithdraw
 const { createCareer, getAllCareers, getCareerById, updateCareer, deleteCareer } = require('../Controller/Career.Controller')
 const { createErrorCode, getAllErrorCode, getErrorCodeById, updateErrorCode, deleteErrorCode } = require('../Controller/Error.Controller')
 const { createHeading, getAllHeading, updateHeading, deleteHeading, getHeadingById } = require('../Controller/ErrorCodeHeading.Controller')
+const S3upload = require('../Middleware/AWS.multer')
+const { create_a_issue, get_all_tickets_by_vendor, get_all_tickets_admin, get_single_ticket_by_id, update_ticket_status_by_admin, admin_reply_to_ticket, delete_ticket_by_vendor } = require('../Controller/Ticket_Controller/ticket.controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -42,10 +44,10 @@ router.post('/Password-Change', passwordChangeRequest)
 router.post('/Verify-Otp', verifyOtpAndChangePassword)
 router.post('/resend-otp', resendOtp)
 router.put('/update-user-deactive-status/:_id', updateUserDeactive)
-router.put('/update_amcService/:_id',changeAMCStatus)
+router.put('/update_amcService/:_id', changeAMCStatus)
 
-router.get('/findUser/:_id',universelLogin)
-router.get('/find_me',protect, getMyDetails)
+router.get('/findUser/:_id', universelLogin)
+router.get('/find_me', protect, getMyDetails)
 
 
 router.post('/Add-Delivery-Address', protect, addDeliveryDetails)
@@ -82,7 +84,7 @@ router.get('/get-all-service-category', getServiceCategory)
 router.get('/get-single-service-category/:_id', getSingleServiceCategroy)
 router.get('/get-service-category-by-name/:name', getServiceCategoryByName)
 router.delete('/delete-service-category/:_id', deleteServiceCategory)
-router.put('/update-ispopular/:_id',updateIsPopular)
+router.put('/update-ispopular/:_id', updateIsPopular)
 
 // Router for services
 
@@ -171,9 +173,9 @@ router.delete('/delete-vendor-member/:userId/:memberId', deleteVendorMember);
 
 router.put('/update-vendor-old-password/:_id', ChangeOldVendorPassword)
 
-router.put('/verify-account-otp-send',sendOtpForVerification)
-router.post('/verify-account',verifyVendor)
-router.post('/resend-verify-vendor-otp',resendVerifyOtp)
+router.put('/verify-account-otp-send', sendOtpForVerification)
+router.post('/verify-account', verifyVendor)
+router.post('/resend-verify-vendor-otp', resendVerifyOtp)
 router.put('/update-vendor_app/:_id', updateVendorApp)
 
 router.put('/update-bank-detail/:vendorId', updateBankDetail)
@@ -189,11 +191,11 @@ router.delete('/delete-working-hours/:_id', deleteWorkingHours)
 
 // routes for working hours timing 
 
-router.post('/create-timing',createSlotTiming)
-router.get('/get-all-timing',getAllSlotTiming)
-router.get('/get-single-timing/:_id',getSlotTimingById)
-router.put('/update-timing/:_id',updateSlotTiming)
-router.delete('/delete-timing/:_id',deleteSlotTiming)
+router.post('/create-timing', createSlotTiming)
+router.get('/get-all-timing', getAllSlotTiming)
+router.get('/get-single-timing/:_id', getSlotTimingById)
+router.put('/update-timing/:_id', updateSlotTiming)
+router.delete('/delete-timing/:_id', deleteSlotTiming)
 
 // Routes for membership plan 
 
@@ -220,17 +222,30 @@ router.put('/update-order-status/:_id', updateOrderStatus)
 router.delete('/delete-order/:_id', deleteOrder)
 router.put('/update-befor-work-image/:_id', upload.single('beforeWorkImage'), updateBeforWorkImage)
 router.put('/update-after-work-image/:_id', upload.single('afterWorkImage'), updateAfterWorkImage)
-router.put('/update-before-work-video/:_id', upload.single('beforeWorkVideo'), updateBeforeWorkVideo);
-router.put('/update-after-work-video/:_id', upload.single('afterWorkVideo'), updateAfterWorkVideo);
-router.put('/update-allot-vendor-member/:_id',AllowtVendorMember)
-router.put('/update-error-code-order/:id',updateErrorCodeInOrder)
-router.put('/update-service-done-order/:id',serviceDoneOrder)
+
+// Video Uploadig Routes Start =============== //
+router.put('/update-before-work-video/:_id', S3upload.single('beforeWorkVideo'), updateBeforeWorkVideo);
+router.put('/update-after-work-video/:_id', S3upload.single('afterWorkVideo'), updateAfterWorkVideo);
+// Video Uploadig Routes End =============== //
+
+router.put('/update-allot-vendor-member/:_id', AllowtVendorMember)
+router.put('/update-error-code-order/:id', updateErrorCodeInOrder)
+router.put('/update-service-done-order/:id', serviceDoneOrder)
+
+// Ticket Raising 
+router.post("/create-ticket", S3upload.single("file"), create_a_issue);
+router.get("/vendor-tickets/:vendorId", get_all_tickets_by_vendor);
+router.get("/admin-tickets", get_all_tickets_admin);
+router.get("/ticket/:ticketId", get_single_ticket_by_id);
+router.put("/ticket-status/:ticketId", update_ticket_status_by_admin);
+router.post("/ticket-reply/:ticketId", admin_reply_to_ticket);
+router.delete("/delete-ticket/:ticketId/:vendorId", delete_ticket_by_vendor);
 
 //for fetching vendor for order
 router.get('/fetch-Vendor-By-Location', fetchVendorByLocation)
 router.get('/fetch-all-employee', fetchOnlyEmployee)
 router.post('/assign-Vendor/:orderId/:Vendorid/:type/:workingDay/:workingTime/:workingDate', AssignVendor)
-router.put('/update-vendor-order-request/:orderId',AcceptOrderRequest)
+router.put('/update-vendor-order-request/:orderId', AcceptOrderRequest)
 
 // for blog routes 
 
@@ -251,19 +266,19 @@ router.put('/update-Estimated-bills/:billId', updateBill)
 
 // gallery category name routes 
 
-router.post('/create-gallery-category-name',createGalleryCategory)
-router.get('/get-all-gallery-category-name',getAllImageCategory)
-router.get('/get-single-gallery-category-name/:_id',singleGalleryCategory)
-router.delete('/delete-gallery-category-name/:_id',deleteGalleryCategory)
-router.put('/update-gallery-category-name/:_id',updateGalleryCategory)
+router.post('/create-gallery-category-name', createGalleryCategory)
+router.get('/get-all-gallery-category-name', getAllImageCategory)
+router.get('/get-single-gallery-category-name/:_id', singleGalleryCategory)
+router.delete('/delete-gallery-category-name/:_id', deleteGalleryCategory)
+router.put('/update-gallery-category-name/:_id', updateGalleryCategory)
 
 // gallery image router 
 
-router.post('/create-gallery-image',upload.single('image'),createGalleryImage)
-router.get('/get-single-gallery-image/:_id',getSingleGalleryImage)
-router.get('/get-all-gallery-image',getAllGalleryImage)
-router.delete('/delete-gallery-image/:_id',deleteGalleryImage)
-router.put('/update-gallery-image/:_id',upload.single('image'),updateGalleryImage)
+router.post('/create-gallery-image', upload.single('image'), createGalleryImage)
+router.get('/get-single-gallery-image/:_id', getSingleGalleryImage)
+router.get('/get-all-gallery-image', getAllGalleryImage)
+router.delete('/delete-gallery-image/:_id', deleteGalleryImage)
+router.put('/update-gallery-image/:_id', upload.single('image'), updateGalleryImage)
 
 // all contact route here 
 
@@ -274,59 +289,59 @@ router.delete('/delete-contact/:_id', deleteContact)
 
 // vendor rating routes here 
 
-router.post('/create-vendor-rating',createVendorRating)
-router.get('/get-all-vendor-rating',getAllVendorRatings)
-router.get('/get-single-vendor-rating/:_id',getVendorRatingById)
-router.put('/update-vendor-rating/:_id',updateVendorRating)
-router.delete('/delete-vendor-rating/:_id',deleteVendorRating )
+router.post('/create-vendor-rating', createVendorRating)
+router.get('/get-all-vendor-rating', getAllVendorRatings)
+router.get('/get-single-vendor-rating/:_id', getVendorRatingById)
+router.put('/update-vendor-rating/:_id', updateVendorRating)
+router.delete('/delete-vendor-rating/:_id', deleteVendorRating)
 
 // script router here 
 
-router.post('/create-script',createScript)
-router.get('/get-single-script/:_id',getSingleScript)
-router.get('/get-all-script',getAllScript)
-router.put('/update-script/:_id',updateScript)
-router.delete('/delete-script/:_id',deleteScript)
+router.post('/create-script', createScript)
+router.get('/get-single-script/:_id', getSingleScript)
+router.get('/get-all-script', getAllScript)
+router.put('/update-script/:_id', updateScript)
+router.delete('/delete-script/:_id', deleteScript)
 
 // location router here 
 
-router.post('/Fetch-Current-Location',getCurrentLocationByLatLng)
-router.get('/geocode',getLatLngByAddress)
-router.get('/autocomplete',AutoCompleteAddress)
+router.post('/Fetch-Current-Location', getCurrentLocationByLatLng)
+router.get('/geocode', getLatLngByAddress)
+router.get('/autocomplete', AutoCompleteAddress)
 
 // term router here 
-router.post('/create-term',createTerm)
-router.get('/get-all-term',getAllTerm)
-router.get('/get-single-term/:id',getSingleTerm)
-router.delete('/delete-term/:id',deleteTerm)
-router.put('/update-term/:id',updateTerm)
+router.post('/create-term', createTerm)
+router.get('/get-all-term', getAllTerm)
+router.get('/get-single-term/:id', getSingleTerm)
+router.delete('/delete-term/:id', deleteTerm)
+router.put('/update-term/:id', updateTerm)
 
 // commission router here 
 
-router.post('/create-commission',createCommission)
-router.get('/get-all-commission',getAllCommission)
-router.get('/get-single-commission/:id',getSingleCommission)
-router.put('/update-commission/:id',updateCommission)
-router.delete('/delete-commission/:id',deleteCommission)
+router.post('/create-commission', createCommission)
+router.get('/get-all-commission', getAllCommission)
+router.get('/get-single-commission/:id', getSingleCommission)
+router.put('/update-commission/:id', updateCommission)
+router.delete('/delete-commission/:id', deleteCommission)
 
 // pament of bill route
 
-router.post('/create-bill-payment/:orderId',makeOrderPayment)
+router.post('/create-bill-payment/:orderId', makeOrderPayment)
 // router.post('/verify-bill-payment',verifyOrderPayment)
-router.post('/status-payment/:merchantTransactionId',  verifyOrderPayment);
+router.post('/status-payment/:merchantTransactionId', verifyOrderPayment);
 
-router.post('/create-bill-payment-app/:orderId',makeOrderPaymentApp)
+router.post('/create-bill-payment-app/:orderId', makeOrderPaymentApp)
 // router.post('/verify-bill-payment',verifyOrderPayment)
-router.post('/status-payment-app/:merchantTransactionId',  verifyOrderPaymentApp);
+router.post('/status-payment-app/:merchantTransactionId', verifyOrderPaymentApp);
 
 // withdraw router here 
 
-router.post('/create-withdraw-request',createWithdrawRequest)
-router.get('/get-all-withdraw-request',getAllWithdraw)
-router.get('/get-single-withdraw-request/:id',getSingleWithdraw)
-router.put('/update-withdraw-status/:id',updateWithdrawRequest)
-router.delete('/delete-withdraw-request/:withdrawId',deleteWithdrawRequest)
-router.get('/get-withdraw-request-by-vendorId/:vendorId',getWithdrawByVendorId)
+router.post('/create-withdraw-request', createWithdrawRequest)
+router.get('/get-all-withdraw-request', getAllWithdraw)
+router.get('/get-single-withdraw-request/:id', getSingleWithdraw)
+router.put('/update-withdraw-status/:id', updateWithdrawRequest)
+router.delete('/delete-withdraw-request/:withdrawId', deleteWithdrawRequest)
+router.get('/get-withdraw-request-by-vendorId/:vendorId', getWithdrawByVendorId)
 
 // career router here 
 
@@ -337,21 +352,21 @@ router.put('/careers/:id', updateCareer); // Update
 router.delete('/careers/:id', deleteCareer); // Delete
 
 // error code heading router here 
-router.post('/create-error-heading',createHeading)
-router.get('/get-all-error-heading',getAllHeading)
-router.get('/get-single-error-heading/:id',getHeadingById)
-router.put('/update-error-heading/:id',updateHeading)
-router.delete('/delete-error-heading/:id',deleteHeading)
+router.post('/create-error-heading', createHeading)
+router.get('/get-all-error-heading', getAllHeading)
+router.get('/get-single-error-heading/:id', getHeadingById)
+router.put('/update-error-heading/:id', updateHeading)
+router.delete('/delete-error-heading/:id', deleteHeading)
 
 // error code router here 
-router.post('/create-error-code',createErrorCode)
-router.get('/get-all-error-code',getAllErrorCode)
-router.get('/get-single-error-code/:id',getErrorCodeById)
-router.put('/update-error-code/:id',updateErrorCode)
-router.delete('/delete-error-code/:id',deleteErrorCode)
+router.post('/create-error-code', createErrorCode)
+router.get('/get-all-error-code', getAllErrorCode)
+router.get('/get-single-error-code/:id', getErrorCodeById)
+router.put('/update-error-code/:id', updateErrorCode)
+router.delete('/delete-error-code/:id', deleteErrorCode)
 
 //anylitical
-router.get('/get-Data-Of-Vendor',getAllDataOfVendor)
+router.get('/get-Data-Of-Vendor', getAllDataOfVendor)
 
 
 module.exports = router;

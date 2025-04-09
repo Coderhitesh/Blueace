@@ -38,7 +38,7 @@ function AddFAQBanner() {
         }
 
         try {
-            await axios.post('http://localhost:7987/api/v1/create-faq-banner', payload, {
+            await axios.post('https://api.blueaceindia.com/api/v1/create-faq-banner', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

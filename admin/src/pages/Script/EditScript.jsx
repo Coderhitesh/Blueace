@@ -19,7 +19,7 @@ function EditScript() {
   useEffect(() => {
     const fetchSingleData = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:7987/api/v1/get-single-script/${id}`)
+        const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-script/${id}`)
         const res = data.data;
         setFormData({
           headScript: res.headScript,
@@ -46,7 +46,7 @@ function EditScript() {
     e.preventDefault();
     setLoading(true)
     try {
-      await axios.put(`http://localhost:7987/api/v1/update-script/${id}`, formData)
+      await axios.put(`https://api.blueaceindia.com/api/v1/update-script/${id}`, formData)
       toast.success('Script updated successfully!')
       setError('')
     } catch (error) {

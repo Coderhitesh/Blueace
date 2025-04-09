@@ -52,7 +52,7 @@ function UserAllOrder({ userData, allOrder }) {
         };
 
         try {
-            const response = await axios.post('http://localhost:7987/api/v1/create-vendor-rating', reviewData);
+            const response = await axios.post('https://api.blueaceindia.com/api/v1/create-vendor-rating', reviewData);
 
             if (response.data.success) {
                 toast.success('Rating submitted successfully!');

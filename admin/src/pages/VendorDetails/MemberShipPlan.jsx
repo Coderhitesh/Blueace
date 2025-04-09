@@ -17,7 +17,7 @@ function MemberShipPlan() {
 
     const fetchVendorDetail = async () => {
         try {
-            const res = await axios.get('http://localhost:7987/api/v1/all-vendor')
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/all-vendor')
             const allVendorData = res.data.data
             const filterVendor = allVendorData.filter((item) => item._id === vendorId)
             setVendorData({
@@ -37,7 +37,7 @@ function MemberShipPlan() {
     // Fetch all membership plans
     const fetchMemberShipPlan = async () => {
         try {
-            const res = await axios.get('http://localhost:7987/api/v1/get-all-membership-plan');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-membership-plan');
             setPrice(res.data.data); // Set membership plans to state
         } catch (error) {
             console.log(error);
@@ -49,7 +49,7 @@ function MemberShipPlan() {
         try {
 
             // Create the membership plan order
-            const res = await axios.post(`http://localhost:7987/api/v1/member-ship-plan/${vendorId}`, {
+            const res = await axios.post(`https://api.blueaceindia.com/api/v1/member-ship-plan/${vendorId}`, {
                 memberShipPlan: planId
             });
 

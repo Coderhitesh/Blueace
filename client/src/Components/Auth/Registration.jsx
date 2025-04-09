@@ -53,7 +53,7 @@ function Registration() {
   const fetchAddressSuggestions = async (query) => {
     try {
       // console.log("query",query)
-      const res = await axios.get(`http://localhost:7987/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+      const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
       console.log(res.data)
       setAddressSuggestions(res.data || []);
     } catch (err) {
@@ -64,7 +64,7 @@ function Registration() {
   // Fetch latitude and longitude based on selected address
   const fetchGeocode = async (selectedAddress) => {
     try {
-      const res = await axios.get(`http://localhost:7987/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+      const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
       // console.log("geo", res.data)
       const { latitude, longitude } = res.data;
       setLocation({ latitude, longitude });
@@ -101,7 +101,7 @@ function Registration() {
     }
 
     try {
-      const res = await axios.post('http://localhost:7987/api/v1/Create-User', formData);
+      const res = await axios.post('https://api.blueaceindia.com/api/v1/Create-User', formData);
       sessionStorage.setItem('token', res.data.token);
       sessionStorage.setItem('user', JSON.stringify(res.data.user));
 

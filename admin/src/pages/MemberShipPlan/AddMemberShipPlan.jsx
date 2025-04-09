@@ -26,7 +26,7 @@ function AddMemberShipPlan() {
         };
 
         try {
-            const response = await axios.post('http://localhost:7987/api/v1/create-membership-plan', membershipData);
+            const response = await axios.post('https://api.blueaceindia.com/api/v1/create-membership-plan', membershipData);
             toast.success('Membership plan created successfully')
         } catch (error) {
             console.error('Failed to create membership plan:', error);

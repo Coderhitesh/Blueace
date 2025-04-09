@@ -28,7 +28,7 @@ function AddMarquee() {
         const payload = new FormData();
         payload.append('text', formData.text);
         try {
-            await axios.post(`http://localhost:7987/api/v1/create-marquee`, payload, {
+            await axios.post(`https://api.blueaceindia.com/api/v1/create-marquee`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

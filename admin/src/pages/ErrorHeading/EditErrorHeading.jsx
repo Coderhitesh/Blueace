@@ -17,7 +17,7 @@ const EditErrorHeading = () => {
     useEffect(() => {
         const fetchErrorCodeData = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:7987/api/v1/get-single-error-heading/${id}`);
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-error-heading/${id}`);
                 const errorCode = data.data;
                 setFormData({
                     title: errorCode.title,  // Updated to match the field in the model
@@ -48,7 +48,7 @@ const EditErrorHeading = () => {
         };
 
         try {
-            await axios.put(`http://localhost:7987/api/v1/update-error-heading/${id}`, updatedData, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-error-heading/${id}`, updatedData, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

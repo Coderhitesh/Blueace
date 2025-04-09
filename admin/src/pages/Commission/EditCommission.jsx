@@ -17,7 +17,7 @@ function EditCommission() {
     useEffect(() => {
         const fetchCommissionData = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:7987/api/v1/get-single-commission/${id}`);
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-commission/${id}`);
                 const commission = data.data;
                 setFormData({
                     name: commission.name,
@@ -44,7 +44,7 @@ function EditCommission() {
         setLoading(true);
         setError('');
         try {
-            await axios.put(`http://localhost:7987/api/v1/update-commission/${id}`, formData, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-commission/${id}`, formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 }
