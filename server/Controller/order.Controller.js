@@ -38,7 +38,7 @@ exports.makeOrder = async (req, res) => {
     try {
         // console.log('body', req.body);
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
-        const AdminNumber = process.env.ADMIN_NUMBER;
+        const AdminNumber = process.env.ADMIN_NUMBER || 9079036042;
 
         // Check for missing required fields
         const emptyField = [];
@@ -448,7 +448,7 @@ exports.updateOrderStatus = async (req, res) => {
         order.OrderStatus = OrderStatus
         await order.save();
         if (OrderStatus === "Cancelled") {
-            const AdminNumber = process.env.ADMIN_NUMBER;
+            const AdminNumber = process.env.ADMIN_NUMBER || 9079036042;
             await SendWhatsapp(userNumber, 'order_cancel_update_user');
             await SendWhatsapp(AdminNumber, 'order_cancel_update_admin');
             res.status(200).json({
@@ -819,7 +819,7 @@ exports.AcceptOrderRequest = async (req, res) => {
 
         const userNumber = order ? order.phoneNumber : '';
         const vendorName = order ? order.vendorAlloted.companyName : '';
-        const AdminNumber = process.env.ADMIN_NUMBER;
+        const AdminNumber = process.env.ADMIN_NUMBER || 9079036042;
         const serviceName = order ? order.serviceId.name : 'Service';
         const serviceType = order ? order.serviceType : 'Not specified';
         const fullAddress = `${order.houseNo}, ${order.address.replace(/,/g, '')}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;
