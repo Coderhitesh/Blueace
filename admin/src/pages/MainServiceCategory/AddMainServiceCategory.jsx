@@ -33,7 +33,7 @@ function AddMainServiceCategory() {
     
         try {
             // console.log('Sending request...');
-            const res = await axios.post('http://localhost:7987/api/v1/create-service-main-category', payload, {
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/create-service-main-category', payload, {
                 headers: {
                     'Content-Type': 'application/json', // Set content type to JSON
                 },

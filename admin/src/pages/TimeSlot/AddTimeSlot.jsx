@@ -27,7 +27,7 @@ function AddTimeSlot() {
         const payload = new FormData();
         payload.append('time', formData.time);
         try {
-            await axios.post('http://localhost:7987/api/v1/create-timing', payload, {
+            await axios.post('https://api.blueaceindia.com/api/v1/create-timing', payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

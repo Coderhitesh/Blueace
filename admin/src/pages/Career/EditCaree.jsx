@@ -19,7 +19,7 @@ function EditCaree() {
     useEffect(() => {
         const fetchCareerData = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:7987/api/v1/careers/${id}`);
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/careers/${id}`);
                 const career = data.data;
 
                 setFormData({
@@ -54,7 +54,7 @@ function EditCaree() {
                 points: formData.points.split(',').map(point => point.trim())
             };
 
-            await axios.put(`http://localhost:7987/api/v1/careers/${id}`, processedData, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/careers/${id}`, processedData, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

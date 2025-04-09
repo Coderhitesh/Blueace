@@ -637,7 +637,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 name: "User",
                 amount: planPrice * 100,
                 callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-                redirectUrl: `http://localhost:7987/api/v1/payment-verify/${transactionId}`,
+                redirectUrl: `https://api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
                 redirectMode: 'POST',
                 paymentInstrument: {
                     type: 'PAY_PAGE'
@@ -771,34 +771,51 @@ exports.PaymentVerify = async (req, res) => {
 
 exports.vendorLogin = async (req, res) => {
     try {
-        const { Email, Password } = req.body;
-        const availablevendor = await Vendor.findOne({ Email })
+        const { Email, Number, Password } = req.body;
 
-        if (!availablevendor) {
+        if ((!Email && !Number) || !Password) {
             return res.status(400).json({
                 success: false,
-                message: 'Vendor not found'
-            })
+                message: 'Please provide email or number and password',
+            });
         }
 
-        const isMatch = await availablevendor.comparePassword(Password);
+        // Try finding vendor by Email or ContactNumber
+        const vendor = await Vendor.findOne({
+            $or: [
+                { Email: Email || null },
+                { ContactNumber: Number || null }
+            ]
+        });
+
+        if (!vendor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Vendor not found',
+            });
+        }
+
+        // Compare password
+        const isMatch = await vendor.comparePassword(Password);
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: 'Invalid password'
-            })
+                message: 'Invalid password',
+            });
         }
 
-        await sendToken(availablevendor, res, 201)
+        // Successful login, send token
+        await sendToken(vendor, res, 200);
 
     } catch (error) {
-        console.log(error)
+        console.error('Vendor login error:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error in vendor login',
-        })
+        });
     }
-}
+};
+
 
 exports.vendorLogout = async (req, res) => {
     try {
@@ -1497,7 +1514,7 @@ exports.sendOtpForVerification = async (req, res) => {
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
 
         vendor.VerifyOTP = OTP,
-        vendor.OtpExpiredTime = OTPExpires
+            vendor.OtpExpiredTime = OTPExpires
         await vendor.save()
         const Param = [OTP];
         await SendWhatsapp(vendorNumber, 'verificatation_passcode_new', Param);

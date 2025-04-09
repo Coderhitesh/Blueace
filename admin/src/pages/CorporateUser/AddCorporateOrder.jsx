@@ -50,7 +50,7 @@ function AddCorporateOrder() {
         payload.append('RangeWhereYouWantService[0][location][coordinates][1]', latitude || 74.0060);
 
         try {
-            const res = await axios.post('http://localhost:7987/api/v1/make-order', payload, {
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/make-order', payload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             toast.success('Employee Registration Successful!');

@@ -24,7 +24,7 @@ const AddErrorHeading = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post('http://localhost:7987/api/v1/create-error-heading', formData, {
+            const response = await axios.post('https://api.blueaceindia.com/api/v1/create-error-heading', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

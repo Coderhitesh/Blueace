@@ -106,7 +106,7 @@ function GetServicePopup({ handlePopupDeactive }) {
 
     const handleFetchService = async () => {
         try {
-            const { data } = await axios.get('http://localhost:7987/api/v1/get-all-service-category');
+            const { data } = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category');
             setAllService(data?.data);
         } catch (error) {
             console.log("Internal server error", error);
@@ -131,7 +131,7 @@ function GetServicePopup({ handlePopupDeactive }) {
             try {
                 const selectedService = allService.find((item) => item._id === value); // Find the service by ID
                 const serviceName = selectedService?.name;
-                const res = await axios.get('http://localhost:7987/api/v1/get-all-service');
+                const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service');
                 const allData = res.data.data;
                 const fil = allData.find((item) => item?.subCategoryId?.name === serviceName);
                 setSelectedService(fil)
@@ -162,7 +162,7 @@ function GetServicePopup({ handlePopupDeactive }) {
 
     const fetchAddressSuggestions = async (query) => {
         try {
-            const res = await axios.get(`http://localhost:7987/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
             setAddressSuggestions(res.data || []);
         } catch (err) {
             console.error('Error fetching address suggestions:', err);
@@ -171,7 +171,7 @@ function GetServicePopup({ handlePopupDeactive }) {
 
     const fetchGeocode = async (selectedAddress) => {
         try {
-            const res = await axios.get(`http://localhost:7987/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
             const { latitude, longitude } = res.data;
             setLocation({ latitude, longitude });
             setFormData(prev => ({
@@ -231,7 +231,7 @@ function GetServicePopup({ handlePopupDeactive }) {
             );
             updatedFormData.append('voiceNote', audioURL)
 
-            const res = await axios.post('http://localhost:7987/api/v1/make-order', updatedFormData);
+            const res = await axios.post('https://api.blueaceindia.com/api/v1/make-order', updatedFormData);
             setSelectedService(null)
             toast.success('Service request submitted successfully!');
             localStorage.removeItem('serviceFormData');

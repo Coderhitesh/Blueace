@@ -30,7 +30,7 @@ function AddScript() {
     const payload = new FormData();
     payload.append('text', formData.text);
     try {
-      await axios.post(`http://localhost:7987/api/v1/create-script`, formData)
+      await axios.post(`https://api.blueaceindia.com/api/v1/create-script`, formData)
       toast.success('Script Added Successfully')
     } catch (error) {
       console.error('Error creating script:', error);

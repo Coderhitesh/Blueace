@@ -17,7 +17,7 @@ function EditFAQContent() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get(`http://localhost:7987/api/v1/get-single-faq-content/${id}`)
+                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-faq-content/${id}`)
                 const faq = data.data;
                 setFormData({
                     question: faq.question,
@@ -49,7 +49,7 @@ function EditFAQContent() {
         payload.append('answer', formData.answer)
 
         try {
-            await axios.put(`http://localhost:7987/api/v1/update-faq-content/${id}`, payload, {
+            await axios.put(`https://api.blueaceindia.com/api/v1/update-faq-content/${id}`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

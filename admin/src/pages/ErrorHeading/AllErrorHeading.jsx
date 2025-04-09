@@ -14,7 +14,7 @@ const AllErrorHeading = () => {
     const fetchErrorCodeHeadingData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('http://localhost:7987/api/v1/get-all-error-heading');
+            const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-error-heading');
             if (res.data.success) {
                 const data = res.data.data;
                 setErrorCodeHeadings(data.reverse()); // Reverse to show the latest at top
@@ -35,7 +35,7 @@ const AllErrorHeading = () => {
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`http://localhost:7987/api/v1/delete-error-heading/${id}`);
+            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-error-heading/${id}`);
             if (response.data.success) {
                 toast.success('Error Code Heading deleted successfully!');
                 await fetchErrorCodeHeadingData(); // Fetch the list of error code headings again after deletion

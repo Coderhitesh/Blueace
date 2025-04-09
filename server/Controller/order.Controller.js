@@ -1,7 +1,11 @@
 // const fs = require('fs');
 const Order = require('../Model/Order.Model');
 const { deleteVoiceNoteFromCloudinary, uploadVoiceNote, deleteImageFromCloudinary, uploadImage, deleteVideoFromCloudinary, uploadVideo } = require('../Utils/Cloudnary');
-const fs = require('fs').promises;
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+ffmpeg.setFfmpegPath(ffmpegPath);
+const path = require('path');
 const Vendor = require('../Model/vendor.Model')
 const mongoose = require('mongoose');
 const { Types } = mongoose;
@@ -13,6 +17,7 @@ const Commission = require('../Model/Commission.Model');
 const axios = require('axios');
 const User = require('../Model/UserModel');
 const { SendWhatsapp } = require('../Utils/SendWhatsapp');
+const { pre_signed_url, deleteObject } = require('../Utils/S3');
 const merchantId = process.env.PHONEPAY_MERCHANT_ID
 const apiKey = process.env.PHONEPAY_API_KEY
 
@@ -988,141 +993,347 @@ exports.updateAfterWorkImage = async (req, res) => {
     }
 }
 
+// exports.updateBeforeWorkVideo = async (req, res) => {
+//     const uploadedVideo = [];
+//     try {
+//         const id = req.params._id
+//         const order = await Order.findById(id)
+//         if (!order) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: 'Order not found',
+
+//             })
+//         }
+//         const userDetail = await User.findById(order.userId)
+//         const userNumber = userDetail ? userDetail.ContactNumber : '';
+//         const userName = userDetail ? userDetail.FullName : '';
+//         if (req.file) {
+//             if (order.beforeWorkVideo.public_id) {
+//                 await deleteVideoFromCloudinary(order.beforeWorkVideo.public_id)
+//             }
+
+//             const videoUrl = await uploadVideo(req.file.path)
+//             const { video, public_id } = videoUrl;
+//             order.beforeWorkVideo.url = video;
+//             order.beforeWorkVideo.public_id = public_id;
+//             uploadedVideo.push = order.beforeWorkVideo.public_id;
+//             try {
+//                 fs.unlink(req.file.path)
+//             } catch (error) {
+//                 console.log('Error in deleting video file from local:', error)
+//             }
+//         } else {
+//             res.status(400).json({
+//                 success: false,
+//                 message: 'Please upload a video',
+//             })
+//         }
+//         // order.OrderStatus = "Service Done"
+//         const updatedOrder = await order.save()
+
+//         const Param = [userName]
+
+//         await SendWhatsapp(userNumber, 'before_work_video', Param)
+
+//         res.status(200).json({
+//             success: true,
+//             message: 'Before work video is uploaded',
+//             data: updatedOrder
+//         })
+//     } catch (error) {
+//         console.log('Internal server error in uploading before work video')
+//         res.status(500).json({
+//             success: false,
+//             message: "Internal server error in uploading before work video",
+//             error: error.message
+//         })
+//     }
+// }
+
 exports.updateBeforeWorkVideo = async (req, res) => {
-    const uploadedVideo = [];
     try {
-        const id = req.params._id
-        const order = await Order.findById(id)
+        const id = req.params._id;
+        const file = req.file;
+        console.log("file", file);
+
+
+        const order = await Order.findById(id);
         if (!order) {
             return res.status(400).json({
                 success: false,
                 message: 'Order not found',
-
-            })
+            });
         }
-        const userDetail = await User.findById(order.userId)
-        const userNumber = userDetail ? userDetail.ContactNumber : '';
-        const userName = userDetail ? userDetail.FullName : '';
-        if (req.file) {
-            if (order.beforeWorkVideo.public_id) {
-                await deleteVideoFromCloudinary(order.beforeWorkVideo.public_id)
-            }
-            const videoUrl = await uploadVideo(req.file.path)
-            const { video, public_id } = videoUrl;
-            order.beforeWorkVideo.url = video;
-            order.beforeWorkVideo.public_id = public_id;
-            uploadedVideo.push = order.beforeWorkVideo.public_id;
-            try {
-                fs.unlink(req.file.path)
-            } catch (error) {
-                console.log('Error in deleting video file from local:', error)
-            }
-        } else {
-            res.status(400).json({
-                success: false,
-                message: 'Please upload a video',
-            })
+
+        const userDetail = await User.findById(order.userId);
+        const userNumber = userDetail?.ContactNumber || '';
+        const userName = userDetail?.FullName || '';
+
+        if (order.beforeWorkVideo.url) {
+            await deleteObject(order.beforeWorkVideo.url)
         }
-        // order.OrderStatus = "Service Done"
-        const updatedOrder = await order.save()
 
-        const Param = [userName]
+        const { path: filePath, filename: fileName, mimetype: fileType } = file;
 
-        await SendWhatsapp(userNumber, 'before_work_video', Param)
+
+        const compressedFileName = `compressed_${fileName}`;
+        const compressedFilePath = path.join(path.dirname(filePath), compressedFileName);
+
+        // Compress the video
+        await new Promise((resolve, reject) => {
+            ffmpeg(filePath)
+                .outputOptions([
+                    '-vf scale=-2:720',
+                    '-c:v libx264',
+                    '-crf 23',
+                    '-preset medium',
+                    '-c:a aac',
+                    '-b:a 128k'
+                ])
+                .output(compressedFilePath)
+                .on('end', () => resolve())
+                .on('error', (err) => reject(err))
+                .run();
+        });
+
+
+        const compressedFileStats = fs.statSync(compressedFilePath);
+
+        // Step 1: Get signed URL for the compressed file
+        const { signedUrl, fileLink } = await pre_signed_url({
+            key: compressedFileName,
+            contentType: fileType,
+        });
+
+        console.log("signedUrl, fileLink ", signedUrl, fileLink)
+        // Step 2: Upload the compressed file to S3
+        const compressedFileContent = fs.readFileSync(compressedFilePath);
+
+        const s3UploadResponse = await axios.put(signedUrl, compressedFileContent, {
+            headers: {
+                'Content-Type': fileType,
+                'Content-Length': compressedFileStats.size
+            },
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity
+        });
+
+        if (s3UploadResponse.status !== 200) {
+            throw new Error(`S3 upload failed with status ${s3UploadResponse.status}`);
+        }
+
+        // Step 3: Clean up temporary files
+        fs.unlinkSync(filePath);
+        fs.unlinkSync(compressedFilePath);
+        const publicFileLink = `https://s3.eu-north-1.amazonaws.com/bucket.hbs.dev/${compressedFileName}`;
+
+        order.beforeWorkVideo.url = publicFileLink
+        await order.save();
+
+        // const Param = [userName]
+
+        // await SendWhatsapp(userNumber, 'before_work_video', Param)
+
+        console.log("Compressed file uploaded successfully to:", publicFileLink);
 
         res.status(200).json({
             success: true,
-            message: 'Before work video is uploaded',
-            data: updatedOrder
-        })
+            message: 'File uploaded successfully',
+            data: fileLink,
+        });
+
     } catch (error) {
-        console.log('Internal server error in uploading before work video')
+        console.error('Internal server error in uploading before work video:', error);
         res.status(500).json({
             success: false,
-            message: "Internal server error in uploading before work video",
-            error: error.message
-        })
+            message: 'Internal server error in uploading before work video',
+            error: error.message,
+        });
     }
-}
+};
+
 
 exports.updateAfterWorkVideo = async (req, res) => {
-    const uploadedVideo = [];
     try {
-        const id = req.params._id
-        const order = await Order.findById(id)
+        const id = req.params._id;
+        const file = req.file;
+        console.log("file", file);
+
+
+        const order = await Order.findById(id);
         if (!order) {
             return res.status(400).json({
                 success: false,
                 message: 'Order not found',
-
-            })
-        }
-        const userDetail = await User.findById(order.userId)
-        const userNumber = userDetail ? userDetail.ContactNumber : '';
-        const userName = userDetail ? userDetail.FullName : '';
-        if (!userDetail) {
-            return res.status(400).json({
-                success: false,
-                message: 'User not found'
-            })
+            });
         }
 
-        if (req.file) {
-            if (order.afterWorkVideo.public_id) {
-                await deleteVideoFromCloudinary(order.afterWorkVideo.public_id)
-            }
-            const videoUrl = await uploadVideo(req.file.path)
-            const { video, public_id } = videoUrl;
-            order.afterWorkVideo.url = video;
-            order.afterWorkVideo.public_id = public_id;
-            uploadedVideo.push = order.afterWorkVideo.public_id;
-            try {
-                fs.unlink(req.file.path)
-            } catch (error) {
-                console.log('Error in deleting video file from local:', error)
-            }
-        } else {
-            res.status(400).json({
-                success: false,
-                message: 'Please upload a video',
-            })
+        const userDetail = await User.findById(order.userId);
+        const userNumber = userDetail?.ContactNumber || '';
+        const userName = userDetail?.FullName || '';
+
+        // if (order.afterWorkVideo.url) {
+        //     await deleteObject(order.afterWorkVideo.url)
+        // }
+
+        const { path: filePath, filename: fileName, mimetype: fileType } = file;
+
+
+        const compressedFileName = `compressed_${fileName}`;
+        const compressedFilePath = path.join(path.dirname(filePath), compressedFileName);
+
+        // Compress the video
+        await new Promise((resolve, reject) => {
+            ffmpeg(filePath)
+                .outputOptions([
+                    '-vf scale=-2:720',
+                    '-c:v libx264',
+                    '-crf 23',
+                    '-preset medium',
+                    '-c:a aac',
+                    '-b:a 128k'
+                ])
+                .output(compressedFilePath)
+                .on('end', () => resolve())
+                .on('error', (err) => reject(err))
+                .run();
+        });
+
+
+        const compressedFileStats = fs.statSync(compressedFilePath);
+
+        // Step 1: Get signed URL for the compressed file
+        const { signedUrl, fileLink } = await pre_signed_url({
+            key: compressedFileName,
+            contentType: fileType,
+        });
+
+        console.log("signedUrl, fileLink ", signedUrl, fileLink)
+        // Step 2: Upload the compressed file to S3
+        const compressedFileContent = fs.readFileSync(compressedFilePath);
+
+        const s3UploadResponse = await axios.put(signedUrl, compressedFileContent, {
+            headers: {
+                'Content-Type': fileType,
+                'Content-Length': compressedFileStats.size
+            },
+            maxBodyLength: Infinity,
+            maxContentLength: Infinity
+        });
+
+        if (s3UploadResponse.status !== 200) {
+            throw new Error(`S3 upload failed with status ${s3UploadResponse.status}`);
         }
 
-        if (userDetail.isAMCUser === true) {
-            order.OrderStatus = "Service Done"
-            order.PaymentStatus = "paid"
-            await order.save()
+        // Step 3: Clean up temporary files
+        fs.unlinkSync(filePath);
+        fs.unlinkSync(compressedFilePath);
+        const publicFileLink = `https://s3.eu-north-1.amazonaws.com/bucket.hbs.dev/${compressedFileName}`;
 
-            const Param = [userName]
-            await SendWhatsapp(userNumber, 'amc_user_order_done', Param)
-            return res.status(200).json({
-                success: true,
-                message: 'After work video is uploaded',
-                data: order
-            })
-        }
+        order.afterWorkVideo.url = publicFileLink
+        await order.save();
 
+        // const Param = [userName]
 
-        const updatedOrder = await order.save()
+        // await SendWhatsapp(userNumber, 'before_work_video', Param)
 
-        const Param = [userName]
-
-        await SendWhatsapp(userNumber, 'after_work_video', Param)
+        console.log("Compressed file uploaded successfully to:", publicFileLink);
 
         res.status(200).json({
             success: true,
-            message: 'Before work video is uploaded',
-            data: updatedOrder
-        })
+            message: 'File uploaded successfully',
+            data: fileLink,
+        });
+
     } catch (error) {
-        console.log('Internal server error in uploading before work video')
+        console.error('Internal server error in uploading before work video:', error);
         res.status(500).json({
             success: false,
-            message: "Internal server error in uploading before work video",
-            error: error.message
-        })
+            message: 'Internal server error in uploading before work video',
+            error: error.message,
+        });
     }
-}
+};
+
+// exports.updateAfterWorkVideo = async (req, res) => {
+//     const uploadedVideo = [];
+//     try {
+//         const id = req.params._id
+//         const order = await Order.findById(id)
+//         if (!order) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: 'Order not found',
+
+//             })
+//         }
+//         const userDetail = await User.findById(order.userId)
+//         const userNumber = userDetail ? userDetail.ContactNumber : '';
+//         const userName = userDetail ? userDetail.FullName : '';
+//         if (!userDetail) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: 'User not found'
+//             })
+//         }
+
+//         if (req.file) {
+//             if (order.afterWorkVideo.public_id) {
+//                 await deleteVideoFromCloudinary(order.afterWorkVideo.public_id)
+//             }
+//             const videoUrl = await uploadVideo(req.file.path)
+//             const { video, public_id } = videoUrl;
+//             order.afterWorkVideo.url = video;
+//             order.afterWorkVideo.public_id = public_id;
+//             uploadedVideo.push = order.afterWorkVideo.public_id;
+//             try {
+//                 fs.unlink(req.file.path)
+//             } catch (error) {
+//                 console.log('Error in deleting video file from local:', error)
+//             }
+//         } else {
+//             res.status(400).json({
+//                 success: false,
+//                 message: 'Please upload a video',
+//             })
+//         }
+
+//         if (userDetail.isAMCUser === true) {
+//             order.OrderStatus = "Service Done"
+//             order.PaymentStatus = "paid"
+//             await order.save()
+
+//             const Param = [userName]
+//             await SendWhatsapp(userNumber, 'amc_user_order_done', Param)
+//             return res.status(200).json({
+//                 success: true,
+//                 message: 'After work video is uploaded',
+//                 data: order
+//             })
+//         }
+
+
+//         const updatedOrder = await order.save()
+
+//         const Param = [userName]
+
+//         await SendWhatsapp(userNumber, 'after_work_video', Param)
+
+//         res.status(200).json({
+//             success: true,
+//             message: 'Before work video is uploaded',
+//             data: updatedOrder
+//         })
+//     } catch (error) {
+//         console.log('Internal server error in uploading before work video')
+//         res.status(500).json({
+//             success: false,
+//             message: "Internal server error in uploading before work video",
+//             error: error.message
+//         })
+//     }
+// }
 
 exports.AllowtVendorMember = async (req, res) => {
     try {
@@ -1195,7 +1406,7 @@ exports.makeOrderPayment = async (req, res) => {
             name: "User",
             amount: integerAmount * 100,
             callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-            redirectUrl: `http://localhost:7987/api/v1/status-payment/${transactionId}`,
+            redirectUrl: `https://api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -1336,8 +1547,8 @@ exports.verifyOrderPayment = async (req, res) => {
             await vendor.save();
             await findOrder.save();
             const adminNumber = process.env.ADMIN_NUMBER
-            await SendWhatsapp(userNumber,'payment_done_by_user_to_user',[totalAmount])
-            await SendWhatsapp(vendorNumber,'payment_done_by_user_to_vendor')
+            await SendWhatsapp(userNumber, 'payment_done_by_user_to_user', [totalAmount])
+            await SendWhatsapp(vendorNumber, 'payment_done_by_user_to_vendor')
 
             const successRedirect = `https://www.blueaceindia.com/successfull-payment`;
             return res.redirect(successRedirect);
@@ -1551,8 +1762,8 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
             await vendor.save()
             await findOrder.save()
-            await SendWhatsapp(userNumber,'payment_done_by_user_to_user',[totalAmount])
-            await SendWhatsapp(vendorNumber,'payment_done_by_user_to_vendor')
+            await SendWhatsapp(userNumber, 'payment_done_by_user_to_user', [totalAmount])
+            await SendWhatsapp(vendorNumber, 'payment_done_by_user_to_vendor')
 
             console.log("Order and vendor updated successfully")
 
@@ -1656,32 +1867,46 @@ exports.getSingleOrder = async (req, res) => {
 
 exports.getAllDataOfVendor = async (req, res) => {
     try {
-        const { vendorId } = req.query || {}
+        const { vendorId, stauts = "Service Done" } = req.query;
+
+        console.log("vendorId",vendorId)
         if (!vendorId) {
             return res.status(400).json({
                 success: false,
                 message: "Vendor ID is required"
-            })
+            });
+        }
+      
+
+       
+
+        const id = new mongoose.Types.ObjectId(vendorId);
+        console.log(id)
+
+        const query = {
+            vendorAlloted: id
+        };
+
+        if (stauts !== "All") {
+            query.OrderStatus = stauts;
         }
 
-        const foundInOrders = await Order.find({
-            vendorAlloted: vendorId,
-            OrderStatus: "Service Done"
-        }).populate('errorCode EstimatedBill serviceId')
+        const foundInOrders = await Order.find(query)
+            .populate('errorCode EstimatedBill serviceId');
 
         if (foundInOrders.length === 0) {
             return res.status(200).json({
                 success: true,
                 message: "No data found",
                 data: []
-            })
+            });
         }
 
         const calculateEarning = foundInOrders.reduce((acc, item) => (
             acc + item.adminCommissionAmount
-        ), 0)
+        ), 0);
 
-        const calculateTotalOrders = foundInOrders.length
+        const calculateTotalOrders = foundInOrders.length;
 
         return res.status(200).json({
             success: true,
@@ -1691,18 +1916,18 @@ exports.getAllDataOfVendor = async (req, res) => {
                 totalOrders: calculateTotalOrders,
                 orders: foundInOrders
             }
-        })
+        });
 
     } catch (error) {
-        console.log("Internal server error", error)
+        console.error("Internal server error", error);
         res.status(500).json({
             success: false,
             message: "Internal server error",
             error: error.message
-        })
-
+        });
     }
-}
+};
+
 
 exports.serviceDoneOrder = async (req, res) => {
     try {
@@ -1717,7 +1942,7 @@ exports.serviceDoneOrder = async (req, res) => {
         }
         order.OrderStatus = "Service Done";
         order.PaymentStatus = "paid"
-        await SendWhatsapp(userNumber,'order_done_to_user');
+        await SendWhatsapp(userNumber, 'order_done_to_user');
         await order.save();
         return res.status(200).json({
             success: true,
