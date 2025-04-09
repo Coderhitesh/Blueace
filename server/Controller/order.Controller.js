@@ -20,7 +20,7 @@ const { SendWhatsapp } = require('../Utils/SendWhatsapp');
 const { pre_signed_url, deleteObject } = require('../Utils/S3');
 const merchantId = process.env.PHONEPAY_MERCHANT_ID
 const apiKey = process.env.PHONEPAY_API_KEY
-
+require('dotenv').config();
 const isProd = process.env.NODE_ENV === "production"
 
 const BASE_URL = isProd
@@ -38,9 +38,9 @@ exports.makeOrder = async (req, res) => {
     try {
         // console.log('body', req.body);
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
-        const AdminNumber = process.env.ADMIN_NUMBER || 9079036042;
+        const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
 
-        // Check for missing required fields
+
         const emptyField = [];
         if (!userId) emptyField.push('User');
         if (!serviceId) emptyField.push('Service');
@@ -131,11 +131,10 @@ exports.makeOrder = async (req, res) => {
     } catch (error) {
         console.error("Internal server error in creating order", error);
 
-        // Handle any necessary cleanup if the order creation fails
+       
         if (voiceNoteDetails && voiceNoteDetails.public_id) {
             await deleteVoiceNoteFromCloudinary(voiceNoteDetails.public_id);
         }
-
         res.status(500).json({
             success: false,
             message: "Internal server error in creating order",
@@ -146,9 +145,8 @@ exports.makeOrder = async (req, res) => {
 
 exports.makeOrderFromApp = async (req, res) => {
     try {
-
-        console.log('body', req.files);
-        console.log('body', req.file);
+        const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
+      
 
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
@@ -164,7 +162,7 @@ exports.makeOrderFromApp = async (req, res) => {
         }
 
 
-        console.log("Without", RangeWhereYouWantService)
+      
 
         let parsedRangeWhereYouWantService = null;
         if (RangeWhereYouWantService) {
@@ -179,7 +177,7 @@ exports.makeOrderFromApp = async (req, res) => {
         }
 
 
-        console.log("parsedRangeWhereYouWantService", parsedRangeWhereYouWantService)
+       
 
         let voiceNoteDetails = null;
 
@@ -240,7 +238,7 @@ exports.makeOrderFromApp = async (req, res) => {
         });
 
     } catch (error) {
-        // console.error("Internal server error in creating order", error);
+        console.error("Internal server error in creating order in app", error);
 
         // Handle any necessary cleanup if the order creation fails
         // if (voiceNoteDetails && voiceNoteDetails.public_id) {
