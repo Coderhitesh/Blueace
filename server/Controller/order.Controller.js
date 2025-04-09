@@ -131,7 +131,7 @@ exports.makeOrder = async (req, res) => {
     } catch (error) {
         console.error("Internal server error in creating order", error);
 
-       
+
         if (voiceNoteDetails && voiceNoteDetails.public_id) {
             await deleteVoiceNoteFromCloudinary(voiceNoteDetails.public_id);
         }
@@ -146,7 +146,7 @@ exports.makeOrder = async (req, res) => {
 exports.makeOrderFromApp = async (req, res) => {
     try {
         const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
-      
+
 
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
@@ -162,7 +162,7 @@ exports.makeOrderFromApp = async (req, res) => {
         }
 
 
-      
+
 
         let parsedRangeWhereYouWantService = null;
         if (RangeWhereYouWantService) {
@@ -177,7 +177,7 @@ exports.makeOrderFromApp = async (req, res) => {
         }
 
 
-       
+
 
         let voiceNoteDetails = null;
 
@@ -1571,7 +1571,7 @@ exports.makeOrderPaymentApp = async (req, res) => {
         const { orderId } = req.params
         const { totalAmount } = req.body
 
-        console.log(totalAmount)
+
         const order = await Order.findById(orderId)
 
         if (!order) {
@@ -1596,13 +1596,13 @@ exports.makeOrderPaymentApp = async (req, res) => {
         const merchantUserId = crypto.randomBytes(12).toString("hex")
 
         const data = {
-            merchantId: "TESTPGPAYCREDUAT",
+            merchantId: merchantId,
             merchantTransactionId: transactionId,
             merchantUserId,
             amount: integerAmount * 100,
-            redirectUrl: `${REDIRECT_BASE_URL}/api/v1/status-payment-app/${transactionId}`,
+            redirectUrl: `https://api.blueaceindia.com/api/v1/status-payment-app/${transactionId}`,
             redirectMode: "POST",
-            callbackUrl: `${REDIRECT_BASE_URL}/api/v1/status-payment-app/${transactionId}`,
+            callbackUrl: `https://api.blueaceindia.com/api/v1/status-payment-app/${transactionId}`,
             paymentInstrument: {
                 type: "PAY_PAGE",
             },
@@ -1613,7 +1613,7 @@ exports.makeOrderPaymentApp = async (req, res) => {
         const payload = JSON.stringify(data)
         const payloadMain = Buffer.from(payload).toString("base64")
         const keyIndex = 1
-        const string = payloadMain + "/pg/v1/pay" + "14d6df8a-75bf-4873-9adf-43bc1545094f"
+        const string = payloadMain + "/pg/v1/pay" + apiKey
         const sha256 = crypto.createHash("sha256").update(string).digest("hex")
         const checksum = sha256 + "###" + keyIndex
 
@@ -1688,13 +1688,13 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
     try {
         const keyIndex = 1
-        const string = `/pg/v1/status/TESTPGPAYCREDUAT/${merchantTransactionId}` + "14d6df8a-75bf-4873-9adf-43bc1545094f"
+        const string = `/pg/v1/status/${merchantId}/${merchantTransactionId}` + apiKey
         const sha256 = crypto.createHash("sha256").update(string).digest("hex")
         const checksum = sha256 + "###" + keyIndex
 
         const options = {
             method: "GET",
-            url: `${BASE_URL}/status/TESTPGPAYCREDUAT/${merchantTransactionId}`,
+            url: `${BASE_URL}/status/${merchantId}/${merchantTransactionId}`,
             headers: {
                 accept: "application/json",
                 "Content-Type": "application/json",
@@ -1765,12 +1765,12 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
             console.log("Order and vendor updated successfully")
 
-            const successRedirect = `${REDIRECT_BASE_URL}/successfull-payment-app?orderId=${findOrder._id}`
+            const successRedirect = `https://api.blueaceindia.com/successfull-payment-app?orderId=${findOrder._id}`
             console.log("Redirecting to success page", { successRedirect })
             return res.redirect(successRedirect)
         } else {
             console.log("Payment verification failed", data)
-            const failureRedirect = `${REDIRECT_BASE_URL}/failed-payment`
+            const failureRedirect = `https://blueaceindia.com/failed-payment`
             console.log("Redirecting to failure page", { failureRedirect })
             return res.redirect(failureRedirect)
         }
@@ -1867,16 +1867,16 @@ exports.getAllDataOfVendor = async (req, res) => {
     try {
         const { vendorId, stauts = "Service Done" } = req.query;
 
-        console.log("vendorId",vendorId)
+        console.log("vendorId", vendorId)
         if (!vendorId) {
             return res.status(400).json({
                 success: false,
                 message: "Vendor ID is required"
             });
         }
-      
 
-       
+
+
 
         const id = new mongoose.Types.ObjectId(vendorId);
         console.log(id)
