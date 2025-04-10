@@ -11,11 +11,11 @@ function Forget() {
       behavior: 'smooth'
     });
   }, []);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [getOtp, setgetOtp] = useState(false);
   const [formData, setFormData] = useState({
-    Email: '',
+    ContactNumber: '',
     NewPassword: '',
     PasswordChangeOtp: ''
   })
@@ -32,9 +32,9 @@ function Forget() {
     setLoading(true)
     event.preventDefault()
     try {
-      const response = await axios.post("https://api.blueaceindia.com/api/v1/Password-Change", formData)
+      const response = await axios.post("https://www.api.blueaceindia.com/api/v1/Password-Change", formData)
       console.log(response.data);
-      toast.success(response.data.msg)
+      toast.success(response.data.message)
       setgetOtp(true);
     }
     catch (err) {
@@ -42,7 +42,7 @@ function Forget() {
       console.log(err.response?.data.msg);
       toast.error(err.response?.data?.msg || "Internal Server error")
       setLoading(false)
-    }finally{
+    } finally {
       setLoading(false)
     }
   }
@@ -52,17 +52,17 @@ function Forget() {
     otpevent.preventDefault()
 
     const Payload = new FormData()
-    Payload.append('Email',formData.Email)
-    Payload.append('NewPassword',formData.NewPassword)
-    Payload.append('OTP',formData.PasswordChangeOtp)
+    Payload.append('ContactNumber', formData.ContactNumber)
+    Payload.append('NewPassword', formData.NewPassword)
+    Payload.append('OTP', formData.PasswordChangeOtp)
     try {
-      const response = await axios.post(`https://api.blueaceindia.com/api/v1/Verify-Otp`, formData)
-      console.log(response.data);
+      const response = await axios.post(`https://www.api.blueaceindia.com/api/v1/Verify-Otp`, formData)
+      console.log(response.data.message);
       // setLoading(false);
-      toast.success(response.data.msg)
+      toast.success(response.data.message)
 
-      // window.location.href="/login"
-      navigator('/login')
+      window.location.href="/"
+      // navigator('/login')
 
     } catch (error) {
       console.log(error)
@@ -70,7 +70,7 @@ function Forget() {
       toast.error(error.response.data.msg)
 
       setLoading(false)
-    }finally{
+    } finally {
       setLoading(false)
     }
   }
@@ -78,8 +78,9 @@ function Forget() {
     setLoading(true)
     otpevent.preventDefault()
     try {
-      const response = await axios.post(`https://api.blueaceindia.com/api/v1/resend-otp/`, formData)
+      const response = await axios.post(`https://www.api.blueaceindia.com/api/v1/resend-otp/`, formData)
       console.log(response.data);
+      toast.success(response.data.message)
       // setLoading(false);
 
     } catch (error) {
@@ -87,7 +88,7 @@ function Forget() {
       setLoading(false)
       toast.error(error.response.data.msg)
 
-    }finally{
+    } finally {
       setLoading(false)
     }
   }
@@ -107,13 +108,13 @@ function Forget() {
 
               <form className="submit-form">
                 <div className="form-group">
-                  <label className="mb-1">Email</label>
+                  <label className="mb-1">Number</label>
                   <input
                     type="text"
                     className="form-control rounded bg-light"
-                    placeholder="Email*"
-                    name='Email'
-                    value={formData.Email}
+                    placeholder="Contact Number*"
+                    name='ContactNumber'
+                    value={formData.ContactNumber}
                     onChange={handleChange}
                     required
                   />

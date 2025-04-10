@@ -6,7 +6,7 @@ function Hero() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-banner');
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-banner');
       const bannerData = res.data.data;
       const filterData = bannerData.filter((item) => item.active === true);
       setBanner(filterData);

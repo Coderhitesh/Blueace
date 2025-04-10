@@ -36,7 +36,7 @@ function CorporateLogin() {
         };
 
         try {
-            const res = await axios.post('https://api.blueaceindia.com/api/v1/Login', Payload, {
+            const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Login', Payload, {
                 headers: {
                     'Content-Type': 'application/json'
                 }

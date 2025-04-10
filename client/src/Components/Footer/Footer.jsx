@@ -8,7 +8,7 @@ function Footer() {
   const [allService, setService] = useState([])
   const fetchService = async () => {
     try {
-      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-service-category')
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
       const data = res.data.data
       const reverseData = data.reverse();
       setService(reverseData)

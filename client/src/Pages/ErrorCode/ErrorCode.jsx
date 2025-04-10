@@ -13,7 +13,7 @@ function ErrorCode() {
   // Fetching all error codes from the API
   const handleFetchError = async () => {
     try {
-      const response = await fetch('https://api.blueaceindia.com/api/v1/get-all-error-code');
+      const response = await fetch('https://www.api.blueaceindia.com/api/v1/get-all-error-code');
       const data = await response.json();
       setAllError(data.data);
     } catch (error) {
@@ -45,7 +45,7 @@ function ErrorCode() {
     setIsSubmitting(true);
     try {
       const errorCodes = selectedErrors.map(error => error._id);
-      await fetch(`https://api.blueaceindia.com/api/v1/update-error-code-order/${id}`, {
+      await fetch(`https://www.api.blueaceindia.com/api/v1/update-error-code-order/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

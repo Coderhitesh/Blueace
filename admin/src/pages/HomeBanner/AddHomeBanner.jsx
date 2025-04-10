@@ -38,7 +38,7 @@ function AddHomeBanner() {
         }
 
         try {
-            await axios.post('https://api.blueaceindia.com/api/v1/create-banner', payload, {
+            await axios.post('https://www.api.blueaceindia.com/api/v1/create-banner', payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

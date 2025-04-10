@@ -20,7 +20,7 @@ function AddTimingSlot({ userData }) {
 
   const fetchTimeSlots = async () => {
     try {
-      const res = await axios.get('https://api.blueaceindia.com/api/v1/get-all-timing');
+      const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-timing');
       setTimeSlots(res.data.data);
     } catch (error) {
       toast.error('Error loading time slots');
@@ -56,7 +56,7 @@ function AddTimingSlot({ userData }) {
       }));
 
       await axios.post(
-        `https://api.blueaceindia.com/api/v1/create-working-hours/${userData?._id}`,
+        `https://www.api.blueaceindia.com/api/v1/create-working-hours/${userData?._id}`,
         { schedule },
         { headers: { 'Content-Type': 'application/json' } }
       );

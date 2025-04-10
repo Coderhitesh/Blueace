@@ -21,7 +21,7 @@ const EditErrorCode = () => {
     useEffect(() => {
         const fetchErrorCodeData = async () => {
             try {
-                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-error-code/${id}`);
+                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-error-code/${id}`);
                 const errorCode = data.data;
                 setFormData({
                     Heading: errorCode.Heading,  // Assuming Heading is an ID
@@ -40,7 +40,7 @@ const EditErrorCode = () => {
     // Fetch all headings for the dropdown
     const handleFetchHeading = async () => {
         try {
-            const { data } = await axios.get('https://api.blueaceindia.com/api/v1/get-all-error-heading');
+            const { data } = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-error-heading');
             setAllHeading(data.data);  // Set the allHeading data fetched from the API
         } catch (error) {
             console.log("Internal server error", error);
@@ -74,7 +74,7 @@ const EditErrorCode = () => {
         };
 
         try {
-            await axios.put(`https://api.blueaceindia.com/api/v1/update-error-code/${id}`, updatedData, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-error-code/${id}`, updatedData, {
                 headers: {
                     'Content-Type': 'application/json',
                 }

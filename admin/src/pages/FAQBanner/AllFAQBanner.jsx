@@ -15,7 +15,7 @@ function AllFAQBanner() {
     const handleFetchData = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('https://api.blueaceindia.com/api/v1/get-all-faq-banner');
+            const response = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-faq-banner');
             if (response.data.success) {
                 const datasave = response.data.data;
                 const r = datasave.reverse();
@@ -38,7 +38,7 @@ function AllFAQBanner() {
     // Handle deleting a category
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete(`https://api.blueaceindia.com/api/v1/delete-faq-banner/${id}`);
+            const response = await axios.delete(`https://www.api.blueaceindia.com/api/v1/delete-faq-banner/${id}`);
             if (response.data.success) {
                 toast.success('Banner deleted successfully!');
                 await handleFetchData(); // Fetch categories again after deletion
@@ -53,7 +53,7 @@ function AllFAQBanner() {
     const handleToggle = async (id, currentActiveStatus) => {
         try {
             const newActiveStatus = !currentActiveStatus;
-            const response = await axios.put(`https://api.blueaceindia.com/api/v1/update-faq-banner-active-status/${id}`, {
+            const response = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-faq-banner-active-status/${id}`, {
                 active: newActiveStatus
             });
 

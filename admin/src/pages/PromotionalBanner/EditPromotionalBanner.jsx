@@ -17,7 +17,7 @@ function EditPromotionalBanner() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/get-single-promotional-banner/${id}`)
+                const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-single-promotional-banner/${id}`)
                 const res = data.data;
                 setImagePreviews(res.bannerImage?.url || null)
             } catch (error) {
@@ -53,7 +53,7 @@ function EditPromotionalBanner() {
         }
 
         try {
-            await axios.put(`https://api.blueaceindia.com/api/v1/update-promotional-banner/${id}`, payload, {
+            await axios.put(`https://www.api.blueaceindia.com/api/v1/update-promotional-banner/${id}`, payload, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

@@ -11,7 +11,7 @@ const MembershipPlan = require('../Model/memberShip.Model')
 const User = require('../Model/UserModel');
 const { sendSMS } = require('../Utils/SMSSender');
 const Order = require('../Model/Order.Model');
-const { SendWhatsapp } = require('../Utils/SendWhatsapp');
+const { SendWhatsapp, SendOtpWhatsapp } = require('../Utils/SendWhatsapp');
 require('dotenv').config()
 // Initialize Razorpay instance with your key and secret
 // const razorpayInstance = new Razorpay({
@@ -637,7 +637,7 @@ exports.memberShipPlanGateWay = async (req, res) => {
                 name: "User",
                 amount: planPrice * 100,
                 callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-                redirectUrl: `https://api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
+                redirectUrl: `https://www.api.blueaceindia.com/api/v1/payment-verify/${transactionId}`,
                 redirectMode: 'POST',
                 paymentInstrument: {
                     type: 'PAY_PAGE'
@@ -1516,8 +1516,8 @@ exports.sendOtpForVerification = async (req, res) => {
         vendor.VerifyOTP = OTP,
             vendor.OtpExpiredTime = OTPExpires
         await vendor.save()
-        const Param = [OTP];
-        await SendWhatsapp(vendorNumber, 'verificatation_passcode_new', Param);
+        // const Param = [OTP];
+        await SendOtpWhatsapp(vendorNumber, OTP);
 
         // const message = `Your OTP for verifying your account is: ${OTP}. Please enter this OTP within 10 minutes to complete your account verification. If you did not request this, please disregard this SMS.`
 
@@ -1595,22 +1595,7 @@ exports.verifyVendor = async (req, res) => {
         vendor.OtpExpiredTime = null;
         await vendor.save();
 
-
-        // Generate token if OTP is correct
-        // const token = await generateToken(vendor._id);
-
-        const message = `Dear ${vendorName},
-
-Congratulations! Your verification process has been successfully completed. You are now verified to use our services and platform.
-
-If you have any questions or need further assistance, feel free to contact our support team.
-
-Thank you for being a part of our network.
-
-Best regards,  
-Team Blueace India`;
-
-        // await sendSMS(vendorNumber, message)
+        await SendWhatsapp(vendorNumber, 'verify_vendor_success_message', [vendorName]);
 
         res.status(200).json({
             success: true,
@@ -1660,42 +1645,10 @@ exports.resendVerifyOtp = async (req, res) => {
         OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
 
         vendor.VerifyOTP = OTP,
-            vendor.OtpExpiredTime = OTPExpires
+        vendor.OtpExpiredTime = OTPExpires
         await vendor.save()
 
-        // const emailOptions = {
-        //     email: Email,
-        //     subject: 'Resend: Verify Your Account with OTP',
-        //     message: `
-        //         <html>
-        //         <head>
-        //         </head>
-        //         <body>
-        //             <p>Dear User,</p>
-        //             <p>We noticed that you requested to resend the OTP for verifying your account. Your new OTP is: <strong>${OTP}</strong></p>
-        //             <p>Please use this OTP within the next 10 minutes to complete your account verification process.</p>
-        //             <p>If you did not request this, please ignore this email.</p>
-        //             <br>
-        //             <p>Thank you,</p>
-        //             <p>Team Blueace India</p>
-        //         </body>
-        //         </html>
-        //     `
-        // };
-
-        const message = `Dear ${vendorName},
-        We noticed that you requested to resend the OTP for verifying your account. Your new OTP is: ${OTP},
-
-        Please use this OTP within the next 10 minutes to complete your account verification process.
-
-        If you did not request this, please ignore this email.
-
-        Best regards,  
-        Team Blueace India`
-
-
-        // await sendEmail(emailOptions)
-        // await sendSMS(vendorNumber,message)
+        await SendWhatsapp(vendorNumber, 'verificatation_passcode_new', OTP);
 
         res.status(200).json({
             success: true,

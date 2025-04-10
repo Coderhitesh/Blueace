@@ -1404,7 +1404,7 @@ exports.makeOrderPayment = async (req, res) => {
             name: "User",
             amount: integerAmount * 100,
             callbackUrl: `https://www.blueaceindia.com/failed-payment`,
-            redirectUrl: `https://api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
+            redirectUrl: `https://www.api.blueaceindia.com/api/v1/status-payment/${transactionId}`,
             redirectMode: 'POST',
             paymentInstrument: {
                 type: 'PAY_PAGE'
@@ -1600,9 +1600,9 @@ exports.makeOrderPaymentApp = async (req, res) => {
             merchantTransactionId: transactionId,
             merchantUserId,
             amount: integerAmount * 100,
-            redirectUrl: `https://api.blueaceindia.com/api/v1/status-payment-app/${transactionId}`,
+            redirectUrl: `https://www.api.blueaceindia.com/api/v1/status-payment-app/${transactionId}`,
             redirectMode: "POST",
-            callbackUrl: `https://api.blueaceindia.com/api/v1/status-payment-app/${transactionId}`,
+            callbackUrl: `https://www.api.blueaceindia.com/api/v1/status-payment-app/${transactionId}`,
             paymentInstrument: {
                 type: "PAY_PAGE",
             },
@@ -1765,7 +1765,7 @@ exports.verifyOrderPaymentApp = async (req, res) => {
 
             console.log("Order and vendor updated successfully")
 
-            const successRedirect = `https://api.blueaceindia.com/successfull-payment-app?orderId=${findOrder._id}`
+            const successRedirect = `https://www.api.blueaceindia.com/successfull-payment-app?orderId=${findOrder._id}`
             console.log("Redirecting to success page", { successRedirect })
             return res.redirect(successRedirect)
         } else {
