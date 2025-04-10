@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const { sendSMS } = require('../Utils/SMSSender');
 const xlsx = require('xlsx');
 const sendEmail = require('../Utils/SendEmail');
-const { SendWhatsapp } = require('../Utils/SendWhatsapp');
+const { SendWhatsapp, SendOtpWhatsapp } = require('../Utils/SendWhatsapp');
 // const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
@@ -147,8 +147,8 @@ exports.login = async (req, res) => {
     try {
         let user = await User.findOne({ Email });
 
-        if (!user && ContactNumber) {
-            user = await User.findOne({ ContactNumber });
+        if (!user && Email) {
+            user = await User.findOne({ ContactNumber:Email });
         }
 
         if (user) {
@@ -171,9 +171,11 @@ exports.login = async (req, res) => {
         }
 
         let vendor = await Vendor.findOne({ Email });
+        // console.log("vendor out", vendor)
 
-        if (!vendor && ContactNumber) {
-            vendor = await Vendor.findOne({ ContactNumber });
+        if (!vendor && Email) {
+            vendor = await Vendor.findOne({ ContactNumber:Email });
+            // console.log("vendor in", vendor)
         }
 
         if (vendor) {
@@ -318,11 +320,10 @@ exports.logout = async (req, res) => {
     }
 };
 
+// Request to change password: Send OTP
 exports.passwordChangeRequest = async (req, res) => {
     try {
-        const { Email, NewPassword } = req.body;
-        console.log(req.body)
-
+        const { ContactNumber, NewPassword } = req.body;
 
         if (NewPassword.length <= 6) {
             return res.status(400).json({
@@ -331,48 +332,41 @@ exports.passwordChangeRequest = async (req, res) => {
             });
         }
 
+        // First check if user exists
+        let user = await User.findOne({ ContactNumber });
+        let model = 'User';
 
-        const user = await User.findOne({ Email });
+        if (!user) {
+            // If user not found, check Vendor
+            user = await Vendor.findOne({ ContactNumber });
+            model = user ? 'Vendor' : null;
+        }
+
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'We couldn’t find an account with that email. Please check and try again.'
+                message: 'We couldn’t find an account with that contact number. Please check and try again.'
             });
         }
 
-        const userEmail = user.Email;
-
-        // Generate OTP and set expiration time
         const OTP = Math.floor(100000 + Math.random() * 900000);
-        const OTPExpires = new Date();
-        OTPExpires.setTime(OTPExpires.getTime() + 2 * 60 * 1000);
+        const OTPExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes from now
 
+        if (model === 'User') {
+            await User.findOneAndUpdate(
+                { ContactNumber },
+                { PasswordChangeOtp: OTP, OtpExpiredTime: OTPExpires, NewPassword }
+            );
+        } else {
+            await Vendor.findOneAndUpdate(
+                { ContactNumber },
+                { PasswordChangeOtp: OTP, OtpExpiredTime: OTPExpires, NewPassword }
+            );
+        }
 
-        await User.findOneAndUpdate(
-            { Email },
-            {
-                $set: {
-                    PasswordChangeOtp: OTP,
-                    OtpExpiredTime: OTPExpires,
-                    NewPassword: NewPassword
-                }
-            },
-            { new: true }
-        );
-
-        // Prepare email content
-        const message = `Hi there,\n\nYour OTP for resetting your password is: ${OTP}.\n\nPlease use this OTP within the next 2 minutes to complete your password reset.\n\nIf you didn’t request this change, please ignore this email.\n\nThank you,\nSupport Team`;
-
-        const options = {
-            email: userEmail,
-            subject: 'Your Password Reset OTP',
-            message: message
-        };
-
-        // Send OTP via email
         try {
-            await sendEmail(options);
-            console.log('OTP sent successfully');
+            // await SendWhatsapp(ContactNumber, 'verificatation_passcode_new', [OTP]);
+            await SendOtpWhatsapp(ContactNumber, OTP);
         } catch (error) {
             console.error('Error sending OTP:', error);
             return res.status(500).json({
@@ -381,32 +375,41 @@ exports.passwordChangeRequest = async (req, res) => {
             });
         }
 
-        // Successful response
         res.status(200).json({
             success: true,
-            message: 'An OTP has been sent to your registered email. Please check your inbox and follow the instructions to reset your password.'
+            message: 'An OTP has been sent to your registered number.'
         });
 
     } catch (error) {
         console.error('Password change request error:', error);
         res.status(500).json({
             success: false,
-            message: 'Oops! Something went wrong on our end. Please try again later.'
+            message: 'Something went wrong. Please try again later.'
         });
     }
 };
 
-
+// Verify OTP and change password
 exports.verifyOtpAndChangePassword = async (req, res) => {
-    const { Email, PasswordChangeOtp, NewPassword } = req.body;
+    const { ContactNumber, PasswordChangeOtp, NewPassword } = req.body;
 
     try {
-        // Check if OTP is valid and not expired
-        const user = await User.findOne({
-            Email,
-            PasswordChangeOtp: PasswordChangeOtp,
-            OtpExpiredTime: { $gt: Date.now() } // Check if OTP is not expired
+        let user = await User.findOne({
+            ContactNumber,
+            PasswordChangeOtp,
+            OtpExpiredTime: { $gt: Date.now() }
         });
+
+        let model = 'User';
+
+        if (!user) {
+            user = await Vendor.findOne({
+                ContactNumber,
+                PasswordChangeOtp,
+                OtpExpiredTime: { $gt: Date.now() }
+            });
+            model = user ? 'Vendor' : null;
+        }
 
         if (!user) {
             return res.status(400).json({
@@ -414,20 +417,20 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
                 message: 'Invalid OTP or OTP has expired'
             });
         }
-        const userEmail = user ? user.Email : '';
-        // console.log(user)
-        // Update password
-        user.Password = NewPassword; // Assign NewPassword from user object to Password field
+
+        user.Password = NewPassword;
         user.PasswordChangeOtp = undefined;
         user.OtpExpiredTime = undefined;
-        user.NewPassword = undefined; // Clear NewPassword field after using it
+        user.NewPassword = undefined;
         await user.save();
 
+        await SendWhatsapp(ContactNumber, 'useandcor_password_changed');
 
         res.status(200).json({
             success: true,
             message: 'Password changed successfully'
         });
+
     } catch (error) {
         console.error('Verify OTP and change password error:', error);
         res.status(500).json({
@@ -437,60 +440,55 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
     }
 };
 
+// Resend OTP via email
 exports.resendOtp = async (req, res) => {
-    const { Email } = req.body;
+    const { ContactNumber } = req.body;
 
     try {
-        const user = await User.findOne({ Email });
+        let user = await User.findOne({ ContactNumber });
+        let model = 'User';
+
+        if (!user) {
+            user = await Vendor.findOne({ ContactNumber });
+            model = user ? 'Vendor' : null;
+        }
 
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User not found'
+                message: 'User or vendor not found with that Contact Number'
             });
         }
 
-        // Check if OTP was sent recently
-        const currentTime = Date.now();
-        const otpLastSentTime = user.OtpExpiredTime ? user.OtpExpiredTime.getTime() : 0;
-
-
-
-
         const OTP = Math.floor(100000 + Math.random() * 900000);
-        const OTPExpires = new Date();
-        OTPExpires.setTime(OTPExpires.getTime() + 2 * 60 * 1000);
-
-
+        const OTPExpires = new Date(Date.now() + 2 * 60 * 1000);
 
         user.PasswordChangeOtp = OTP;
         user.OtpExpiredTime = OTPExpires;
         await user.save();
 
+        // const message = `
+        //     Hi there,
 
-        const message = `
-            Hi there,
-            
-            Your OTP for resetting your password is: ${OTP}.
-            
-            Please use this OTP within the next 2 minutes to complete your password reset.
-            
-            If you didn’t request this change, please ignore this email.
-            
-            Thank you,
-            Support Team
-        `;
+        //     Your OTP for resetting your password is: ${OTP}.
 
-        // Email options
-        const options = {
-            email: user.Email,
-            subject: 'Your Password Reset OTP',
-            message: message
-        };
+        //     Please use this OTP within the next 2 minutes to complete your password reset.
+
+        //     If you didn’t request this change, please ignore this email.
+
+        //     Thank you,
+        //     Support Team
+        // `;
+
+        // const options = {
+        //     email: user.Email,
+        //     subject: 'Your Password Reset OTP',
+        //     message
+        // };
 
         try {
-            await sendEmail(options);
-            console.log('OTP sent successfully');
+            // await sendEmail(options);
+            await SendOtpWhatsapp(ContactNumber, OTP);
         } catch (error) {
             console.error('Error sending OTP:', error);
             return res.status(500).json({
@@ -501,7 +499,7 @@ exports.resendOtp = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'New OTP sent successfully. Check your email inbox.'
+            message: 'New OTP sent successfully. Check your Whatsapp.'
         });
 
     } catch (error) {

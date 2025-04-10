@@ -112,7 +112,8 @@ function App() {
           <Route path="/maintenance-ahu-fcu" element={<MaintenanceofAHUandFCU />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<Forget />} />
-          <Route path="/forgot-vendor-password" element={<ForgetVendorPassword />} />
+          <Route path="/forgot-vendor-password" element={<Forget />} />
+          {/* <Route path="/forgot-vendor-password" element={<ForgetVendorPassword />} /> */}
           <Route path="/add-vendor-member/:id" element={<AddMembersForm />} />
           <Route path="/membership-plan/:vendorId" element={<MemberShipPlan />} />
           <Route path="/successfull-payment" element={<SuccessPayment />} />

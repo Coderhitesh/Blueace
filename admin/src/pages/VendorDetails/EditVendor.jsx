@@ -44,7 +44,7 @@ const EditVendor = () => {
 
     const fetchExistingVendor = async () => {
         try {
-            const { data } = await axios.get(`https://api.blueaceindia.com/api/v1/single-vendor/${id}`);
+            const { data } = await axios.get(`https://www.api.blueaceindia.com/api/v1/single-vendor/${id}`);
             const vendor = data.data;
             setRole(vendor.Role);
             setFormData({ ...vendor, RangeWhereYouWantService: vendor.RangeWhereYouWantService || formData.RangeWhereYouWantService });
@@ -72,7 +72,7 @@ const EditVendor = () => {
     const fetchAddressSuggestions = async (query) => {
         try {
             // console.log("query",query)
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/autocomplete?input=${encodeURIComponent(query)}`);
             console.log(res.data)
             setAddressSuggestions(res.data || []);
         } catch (err) {
@@ -83,7 +83,7 @@ const EditVendor = () => {
     // Fetch latitude and longitude based on selected address
     const fetchGeocode = async (selectedAddress) => {
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/geocode?address=${encodeURIComponent(selectedAddress)}`);
             console.log("geo", res.data)
             const { latitude, longitude } = res.data;
             setLocation({ latitude, longitude });
@@ -144,7 +144,7 @@ const EditVendor = () => {
         if (formData.gstImage) Payload.append('gstImage', formData.gstImage);
 
         try {
-            const res = await axios.put(`https://api.blueaceindia.com/api/v1/update-vendor/${id}`, Payload, {
+            const res = await axios.put(`https://www.api.blueaceindia.com/api/v1/update-vendor/${id}`, Payload, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
             toast.success(res.data.message);

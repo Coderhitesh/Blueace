@@ -43,7 +43,7 @@ function VendorDashboard({ userId, readyToWork, handleChangeReadyToWork, }) {
         // setUserId(userDataJson._id);
 
         try {
-            const res = await axios.get(`https://api.blueaceindia.com/api/v1/findUser/${userId}`)
+            const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/findUser/${userId}`)
             setUserData(res.data.data)
             const allData = res.data.data
             setWalletAmount(Math.round(allData?.walletAmount || 0));
@@ -62,7 +62,7 @@ function VendorDashboard({ userId, readyToWork, handleChangeReadyToWork, }) {
         const fetchOrderById = async () => {
             try {
                 const res = await axios.get(
-                    `https://api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`
+                    `https://www.api.blueaceindia.com/api/v1/get-order-by-id?vendorAlloted=${userId}`
                 );
                 const allData = res.data.data;
                 const isAccepted = allData.filter(
@@ -92,7 +92,7 @@ function VendorDashboard({ userId, readyToWork, handleChangeReadyToWork, }) {
     const handleWithdraw = async () => {
         try {
             const { data } = await axios.post(
-                'https://api.blueaceindia.com/api/v1/create-withdraw-request',
+                'https://www.api.blueaceindia.com/api/v1/create-withdraw-request',
                 { vendor: userId, amount: withdrawAmount },
                 { headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` } }
             );
