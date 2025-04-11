@@ -324,80 +324,85 @@ exports.logout = async (req, res) => {
 exports.passwordChangeRequest = async (req, res) => {
     try {
         const { ContactNumber, NewPassword, Email } = req.body;
-        console.log("req.body;", req.body)
-        if (NewPassword.length <= 6) {
+        console.log("Received request body:", req.body);
+
+        if (!NewPassword || NewPassword.length <= 6) {
+            console.log("Password too short");
             return res.status(400).json({
                 success: false,
                 message: 'Your new password must be longer than 6 characters. Please try again with a stronger password.'
             });
         }
 
-        // First check if user exists
+        // Step 1: Check User collection
         let user = await User.findOne({
-            $or: [
-                { ContactNumber: ContactNumber },
-                { Email: Email }
-            ]
+            $or: [{ ContactNumber }, { Email }]
         });
+        console.log("User lookup in User model:", user);
+
         let model = 'User';
 
+        // Step 2: If not found in User, check Vendor
         if (!user) {
-            // If user not found, check Vendor
-            let user = await Vendor.findOne({
-                $or: [
-                    { ContactNumber: ContactNumber },
-                    { Email: Email }
-                ]
+            user = await Vendor.findOne({
+                $or: [{ ContactNumber }, { Email }]
             });
             model = user ? 'Vendor' : null;
+            console.log("User lookup in Vendor model:", user);
         }
 
+        // Step 3: If still not found, return error
         if (!user) {
+            console.log("No user found with given contact/email");
             return res.status(404).json({
                 success: false,
                 message: 'We couldn’t find an account with that contact number. Please check and try again.'
             });
         }
 
+        // Step 4: Generate OTP and expiry time
         const OTP = Math.floor(100000 + Math.random() * 900000);
         const OTPExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes from now
+        console.log("Generated OTP:", OTP);
+        console.log("OTP expiry time:", OTPExpires);
 
-        if (model === 'User') {
-            await User.findOneAndUpdate(
-                { ContactNumber },
-                { PasswordChangeOtp: OTP, OtpExpiredTime: OTPExpires, NewPassword }
-            );
-        } else {
-            await Vendor.findOneAndUpdate(
-                { ContactNumber },
-                { PasswordChangeOtp: OTP, OtpExpiredTime: OTPExpires, NewPassword }
-            );
-        }
+        // Step 5: Update user object directly and save
+        user.PasswordChangeOtp = OTP;
+        user.OtpExpiredTime = OTPExpires;
+        user.NewPassword = NewPassword;
 
+        console.log("Saving user with OTP and new password...");
+        await user.save();
+        console.log("User saved successfully");
+
+        // Step 6: Send OTP via WhatsApp
         try {
-            // await SendWhatsapp(ContactNumber, 'verificatation_passcode_new', [OTP]);
-            await SendOtpWhatsapp(user?.ContactNumber, OTP);
-        } catch (error) {
-            console.error('Error sending OTP:', error);
+            console.log("Sending OTP via WhatsApp...");
+            await SendOtpWhatsapp(user.ContactNumber, OTP);
+            console.log("OTP sent successfully");
+        } catch (sendError) {
+            console.error("Error sending OTP:", sendError);
             return res.status(500).json({
                 success: false,
                 message: 'There was an issue sending the OTP. Please try again later.'
             });
         }
 
-        res.status(200).json({
+        // Step 7: Respond with success
+        return res.status(200).json({
             success: true,
             message: 'An OTP has been sent to your registered number.'
         });
 
     } catch (error) {
-        console.error('Password change request error:', error);
-        res.status(500).json({
+        console.error("Password change request error:", error);
+        return res.status(500).json({
             success: false,
             message: 'Something went wrong. Please try again later.'
         });
     }
 };
+
 
 // Verify OTP and change password
 exports.verifyOtpAndChangePassword = async (req, res) => {
