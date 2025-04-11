@@ -333,12 +333,22 @@ exports.passwordChangeRequest = async (req, res) => {
         }
 
         // First check if user exists
-        let user = await User.findOne({ ContactNumber });
+        let user = await User.findOne({ 
+            $or: [
+              { ContactNumber: ContactNumber },
+              { Email: ContactNumber }
+            ]
+          });
         let model = 'User';
 
         if (!user) {
             // If user not found, check Vendor
-            user = await Vendor.findOne({ ContactNumber });
+            let user = await Vendor.findOne({ 
+                $or: [
+                  { ContactNumber: ContactNumber },
+                  { Email: ContactNumber }
+                ]
+              });
             model = user ? 'Vendor' : null;
         }
 
