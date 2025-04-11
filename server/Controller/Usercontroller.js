@@ -408,6 +408,7 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
         let user = await User.findOne({
             $or: [{ ContactNumber }, { Email }]
         });
+        console.log("user", user)
 
         let model = 'User';
 
@@ -418,12 +419,16 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
             model = user ? 'Vendor' : null;
         }
 
-        if (!user || user.PasswordChangeOtp !== PasswordChangeOtp) {
+        console.log(typeof PasswordChangeOtp)
+        if (!user || user.PasswordChangeOtp == PasswordChangeOtp) {
+            console.log("user 2", user)
             return res.status(400).json({
                 success: false,
                 message: 'Invalid OTP or OTP has expired'
             });
         }
+        console.log("user", user)
+
 
         // Update password and clear sensitive OTP data
         user.Password = NewPassword;
@@ -455,14 +460,21 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
 
 // Resend OTP via email
 exports.resendOtp = async (req, res) => {
-    const { ContactNumber } = req.body;
+    const { ContactNumber ,Email } = req.body;
 
     try {
-        let user = await User.findOne({ ContactNumber });
+        let user = await User.findOne({
+            $or: [{ ContactNumber }, { Email }]
+        });
+
+        console.log("user",user)
         let model = 'User';
 
         if (!user) {
-            user = await Vendor.findOne({ ContactNumber });
+            user = await Vendor.findOne({
+                $or: [{ ContactNumber }, { Email }]
+            });
+            console.log("user user",user)
             model = user ? 'Vendor' : null;
         }
 
@@ -501,7 +513,7 @@ exports.resendOtp = async (req, res) => {
 
         try {
             // await sendEmail(options);
-            await SendOtpWhatsapp(ContactNumber, OTP);
+            await SendOtpWhatsapp(user?.ContactNumber, OTP);
         } catch (error) {
             console.error('Error sending OTP:', error);
             return res.status(500).json({
