@@ -324,7 +324,7 @@ exports.logout = async (req, res) => {
 exports.passwordChangeRequest = async (req, res) => {
     try {
         const { ContactNumber, NewPassword, Email } = req.body;
-        console.log("req.body;",req.body)
+        console.log("req.body;", req.body)
         if (NewPassword.length <= 6) {
             return res.status(400).json({
                 success: false,
@@ -401,40 +401,42 @@ exports.passwordChangeRequest = async (req, res) => {
 
 // Verify OTP and change password
 exports.verifyOtpAndChangePassword = async (req, res) => {
-    const { ContactNumber, PasswordChangeOtp, NewPassword } = req.body;
+    const { ContactNumber, Email, PasswordChangeOtp, NewPassword } = req.body;
 
     try {
+        // Check if user exists in User or Vendor model
         let user = await User.findOne({
-            ContactNumber,
-            PasswordChangeOtp,
-            OtpExpiredTime: { $gt: Date.now() }
+            $or: [{ ContactNumber }, { Email }]
         });
 
         let model = 'User';
 
         if (!user) {
             user = await Vendor.findOne({
-                ContactNumber,
-                PasswordChangeOtp,
-                OtpExpiredTime: { $gt: Date.now() }
+                $or: [{ ContactNumber }, { Email }]
             });
             model = user ? 'Vendor' : null;
         }
 
-        if (!user) {
+        if (!user || user.PasswordChangeOtp !== PasswordChangeOtp) {
             return res.status(400).json({
                 success: false,
                 message: 'Invalid OTP or OTP has expired'
             });
         }
 
+        // Update password and clear sensitive OTP data
         user.Password = NewPassword;
         user.PasswordChangeOtp = undefined;
         user.OtpExpiredTime = undefined;
         user.NewPassword = undefined;
+
         await user.save();
 
-        await SendWhatsapp(ContactNumber, 'useandcor_password_changed');
+        // Notify user via WhatsApp
+        if (user.ContactNumber) {
+            await SendWhatsapp(user.ContactNumber, 'useandcor_password_changed');
+        }
 
         res.status(200).json({
             success: true,
@@ -442,13 +444,14 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Verify OTP and change password error:', error);
+        console.error('Error in verifyOtpAndChangePassword:', error);
         res.status(500).json({
             success: false,
             message: 'Internal Server Error'
         });
     }
 };
+
 
 // Resend OTP via email
 exports.resendOtp = async (req, res) => {
