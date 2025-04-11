@@ -376,7 +376,7 @@ exports.passwordChangeRequest = async (req, res) => {
 
         try {
             // await SendWhatsapp(ContactNumber, 'verificatation_passcode_new', [OTP]);
-            await SendOtpWhatsapp(ContactNumber, OTP);
+            await SendOtpWhatsapp(user?.ContactNumber, OTP);
         } catch (error) {
             console.error('Error sending OTP:', error);
             return res.status(500).json({
