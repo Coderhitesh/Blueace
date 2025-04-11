@@ -150,13 +150,13 @@ exports.login = async (req, res) => {
 
         // Step 1: Try finding a User by Email or ContactNumber
         if (Email) {
-            user = await User.findOne({ Email }) || await User.findOne({ ContactNumber: Email });
+            user = await User.findOne({ Email }) || await User.findOne({ ContactNumber: ContactNumber });
             model = user ? 'User' : '';
         }
 
         // Step 2: If not found in User, check Vendor
         if (!user && Email) {
-            user = await Vendor.findOne({ Email }) || await Vendor.findOne({ ContactNumber: Email });
+            user = await Vendor.findOne({ Email }) || await Vendor.findOne({ ContactNumber: ContactNumber });
             model = user ? 'Vendor' : '';
         }
 
