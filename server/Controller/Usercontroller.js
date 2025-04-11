@@ -145,22 +145,24 @@ exports.login = async (req, res) => {
     console.log("Login Request =>", req.body);
 
     try {
-        let user = null;
-        let model = '';
+        let user = await User.findOne({
+            $or: [{ ContactNumber: ContactNumber }, { Email }]
+        });
 
-        // Step 1: Try finding a User by Email or ContactNumber
-        if (Email) {
-            user = await User.findOne({ Email }) || await User.findOne({ ContactNumber: ContactNumber });
-            model = user ? 'User' : '';
-        }
+        console.log("Login user =>", user);
 
-        // Step 2: If not found in User, check Vendor
-        if (!user && Email) {
-            user = await Vendor.findOne({ Email }) || await Vendor.findOne({ ContactNumber: ContactNumber });
+
+        let model = 'User';
+
+        // If not found in User, search Vendor
+        if (!user) {
+            user = await Vendor.findOne({
+                $or: [{ ContactNumber: ContactNumber }, { Email }]
+            });
             model = user ? 'Vendor' : '';
         }
-
-        // Step 3: If still not found
+        console.log("Login Vendor =>", Vendor);
+        // User/Vendor not found
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -168,7 +170,7 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Step 4: Check if user is deactivated
+        // Account deactivated
         if (user.isDeactive) {
             return res.status(401).json({
                 success: false,
@@ -176,7 +178,7 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Step 5: Validate password
+        // Check password
         const isMatch = await user.comparePassword(Password);
         if (!isMatch) {
             return res.status(401).json({
@@ -185,8 +187,8 @@ exports.login = async (req, res) => {
             });
         }
 
-        // Step 6: Send token
-        console.log(`Login successful for ${model} =>`, user.Email || user.ContactNumber);
+        // Success: send token
+        console.log(`Login successful for ${model}:`, user.Email || user.ContactNumber);
         return await SendToken(user, res, 201);
 
     } catch (error) {
