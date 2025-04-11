@@ -148,7 +148,7 @@ exports.login = async (req, res) => {
         let user = await User.findOne({ Email });
 
         if (!user && Email) {
-            user = await User.findOne({ ContactNumber:Email });
+            user = await User.findOne({ ContactNumber: Email });
         }
 
         if (user) {
@@ -174,7 +174,7 @@ exports.login = async (req, res) => {
         // console.log("vendor out", vendor)
 
         if (!vendor && Email) {
-            vendor = await Vendor.findOne({ ContactNumber:Email });
+            vendor = await Vendor.findOne({ ContactNumber: Email });
             // console.log("vendor in", vendor)
         }
 
@@ -323,8 +323,8 @@ exports.logout = async (req, res) => {
 // Request to change password: Send OTP
 exports.passwordChangeRequest = async (req, res) => {
     try {
-        const { ContactNumber, NewPassword } = req.body;
-
+        const { ContactNumber, NewPassword, Email } = req.body;
+        console.log("req.body;",req.body)
         if (NewPassword.length <= 6) {
             return res.status(400).json({
                 success: false,
@@ -333,22 +333,22 @@ exports.passwordChangeRequest = async (req, res) => {
         }
 
         // First check if user exists
-        let user = await User.findOne({ 
+        let user = await User.findOne({
             $or: [
-              { ContactNumber: ContactNumber },
-              { Email: ContactNumber }
+                { ContactNumber: ContactNumber },
+                { Email: Email }
             ]
-          });
+        });
         let model = 'User';
 
         if (!user) {
             // If user not found, check Vendor
-            let user = await Vendor.findOne({ 
+            let user = await Vendor.findOne({
                 $or: [
-                  { ContactNumber: ContactNumber },
-                  { Email: ContactNumber }
+                    { ContactNumber: ContactNumber },
+                    { Email: Email }
                 ]
-              });
+            });
             model = user ? 'Vendor' : null;
         }
 
