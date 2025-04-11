@@ -142,65 +142,52 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { Email, Password, ContactNumber } = req.body;
-    console.log(" req.body", req.body)
+    console.log("Login Request =>", req.body);
 
     try {
-        let user = await User.findOne({ Email });
+        let user = null;
+        let model = '';
 
+        // Step 1: Try finding a User by Email or ContactNumber
+        if (Email) {
+            user = await User.findOne({ Email }) || await User.findOne({ ContactNumber: Email });
+            model = user ? 'User' : '';
+        }
+
+        // Step 2: If not found in User, check Vendor
         if (!user && Email) {
-            user = await User.findOne({ ContactNumber: Email });
+            user = await Vendor.findOne({ Email }) || await Vendor.findOne({ ContactNumber: Email });
+            model = user ? 'Vendor' : '';
         }
 
-        if (user) {
-            if (user.isDeactive) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Your account is deactivated'
-                });
-            }
-
-            const isMatch = await user.comparePassword(Password);
-            if (!isMatch) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Enter Correct Password'
-                });
-            }
-
-            return await SendToken(user, res, 201);
+        // Step 3: If still not found
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'No existing account. Please register.'
+            });
         }
 
-        let vendor = await Vendor.findOne({ Email });
-        // console.log("vendor out", vendor)
-
-        if (!vendor && Email) {
-            vendor = await Vendor.findOne({ ContactNumber: Email });
-            // console.log("vendor in", vendor)
+        // Step 4: Check if user is deactivated
+        if (user.isDeactive) {
+            return res.status(401).json({
+                success: false,
+                message: 'Your account is deactivated'
+            });
         }
 
-        if (vendor) {
-            if (vendor.isDeactive) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Your account is deactivated'
-                });
-            }
-
-            const isMatch = await vendor.comparePassword(Password);
-            if (!isMatch) {
-                return res.status(401).json({
-                    success: false,
-                    message: 'Enter Correct Password'
-                });
-            }
-
-            return await SendToken(vendor, res, 201);
+        // Step 5: Validate password
+        const isMatch = await user.comparePassword(Password);
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: 'Incorrect password'
+            });
         }
 
-        return res.status(404).json({
-            success: false,
-            message: 'No existing account. Please Register'
-        });
+        // Step 6: Send token
+        console.log(`Login successful for ${model} =>`, user.Email || user.ContactNumber);
+        return await SendToken(user, res, 201);
 
     } catch (error) {
         console.error('Login error:', error);
@@ -211,6 +198,7 @@ exports.login = async (req, res) => {
         });
     }
 };
+
 
 
 exports.updateUserDeactive = async (req, res) => {
