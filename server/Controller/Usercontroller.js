@@ -407,35 +407,44 @@ exports.passwordChangeRequest = async (req, res) => {
 // Verify OTP and change password
 exports.verifyOtpAndChangePassword = async (req, res) => {
     const { ContactNumber, Email, PasswordChangeOtp, NewPassword } = req.body;
+    console.log("Incoming request:", req.body);
 
     try {
-        // Check if user exists in User or Vendor model
-        let user = await User.findOne({
-            $or: [{ ContactNumber }, { Email }]
-        });
-        console.log("user", user)
-
+        let user = await User.findOne({ $or: [{ ContactNumber }, { Email }] });
         let model = 'User';
 
         if (!user) {
-            user = await Vendor.findOne({
-                $or: [{ ContactNumber }, { Email }]
-            });
+            user = await Vendor.findOne({ $or: [{ ContactNumber }, { Email }] });
             model = user ? 'Vendor' : null;
         }
 
-        console.log(typeof PasswordChangeOtp)
-        if (!user || user.PasswordChangeOtp == PasswordChangeOtp) {
-            console.log("user 2", user)
+        console.log("Fetched user:", user);
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        // Log OTPs
+        console.log("Stored OTP:", user.PasswordChangeOtp);
+        console.log("Provided OTP:", PasswordChangeOtp);
+        console.log("OTP Expiry Time:", user.OtpExpiredTime);
+        console.log("Current Time:", new Date());
+
+        // Validate OTP match and expiry
+        const isOtpValid = user.PasswordChangeOtp === PasswordChangeOtp;
+        const isOtpExpired = user.OtpExpiredTime < new Date();
+
+        if (!isOtpValid || isOtpExpired) {
             return res.status(400).json({
                 success: false,
                 message: 'Invalid OTP or OTP has expired'
             });
         }
-        console.log("user", user)
 
-
-        // Update password and clear sensitive OTP data
+        // Update password and clear OTP data
         user.Password = NewPassword;
         user.PasswordChangeOtp = undefined;
         user.OtpExpiredTime = undefined;
@@ -443,19 +452,19 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
 
         await user.save();
 
-        // Notify user via WhatsApp
+        // Notify user
         if (user.ContactNumber) {
             await SendWhatsapp(user.ContactNumber, 'useandcor_password_changed');
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             message: 'Password changed successfully'
         });
 
     } catch (error) {
         console.error('Error in verifyOtpAndChangePassword:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Internal Server Error'
         });
@@ -463,62 +472,44 @@ exports.verifyOtpAndChangePassword = async (req, res) => {
 };
 
 
+
 // Resend OTP via email
 exports.resendOtp = async (req, res) => {
-    const { ContactNumber ,Email } = req.body;
+    const { ContactNumber, Email } = req.body;
 
     try {
-        let user = await User.findOne({
-            $or: [{ ContactNumber }, { Email }]
-        });
-
-        console.log("user",user)
+        // Step 1: Look for user in User and then Vendor
+        let user = await User.findOne({ $or: [{ ContactNumber }, { Email }] });
         let model = 'User';
 
         if (!user) {
-            user = await Vendor.findOne({
-                $or: [{ ContactNumber }, { Email }]
-            });
-            console.log("user user",user)
+            user = await Vendor.findOne({ $or: [{ ContactNumber }, { Email }] });
             model = user ? 'Vendor' : null;
         }
 
+        console.log("User Found in model:", model, "=>", user);
+
+        // Step 2: If no user found
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'User or vendor not found with that Contact Number'
+                message: 'User or vendor not found with that Contact Number or Email'
             });
         }
 
-        const OTP = Math.floor(100000 + Math.random() * 900000);
-        const OTPExpires = new Date(Date.now() + 2 * 60 * 1000);
+        // Step 3: Generate and store OTP
+        const OTP = Math.floor(100000 + Math.random() * 900000).toString();
+        const OTPExpires = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes from now
 
         user.PasswordChangeOtp = OTP;
         user.OtpExpiredTime = OTPExpires;
         await user.save();
 
-        // const message = `
-        //     Hi there,
+        console.log("OTP Generated:", OTP, "| Expires At:", OTPExpires);
 
-        //     Your OTP for resetting your password is: ${OTP}.
-
-        //     Please use this OTP within the next 2 minutes to complete your password reset.
-
-        //     If you didn’t request this change, please ignore this email.
-
-        //     Thank you,
-        //     Support Team
-        // `;
-
-        // const options = {
-        //     email: user.Email,
-        //     subject: 'Your Password Reset OTP',
-        //     message
-        // };
-
+        // Step 4: Send OTP via WhatsApp
         try {
-            // await sendEmail(options);
-            await SendOtpWhatsapp(user?.ContactNumber, OTP);
+            await SendOtpWhatsapp(user.ContactNumber, OTP);
         } catch (error) {
             console.error('Error sending OTP:', error);
             return res.status(500).json({
@@ -527,9 +518,10 @@ exports.resendOtp = async (req, res) => {
             });
         }
 
+        // Step 5: Success response
         res.status(200).json({
             success: true,
-            message: 'New OTP sent successfully. Check your Whatsapp.'
+            message: 'New OTP sent successfully. Check your WhatsApp.'
         });
 
     } catch (error) {
@@ -540,6 +532,7 @@ exports.resendOtp = async (req, res) => {
         });
     }
 };
+
 
 
 exports.deleteUser = async (req, res) => {
