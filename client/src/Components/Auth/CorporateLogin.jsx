@@ -30,10 +30,23 @@ function CorporateLogin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const isPhoneNumber = /^[0-9]{10}$/.test(formData.Email); // basic 10-digit number check
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email); // basic email format check
+
         const Payload = {
-            Email: formData.Email,
             Password: formData.Password
         };
+
+        if (isPhoneNumber) {
+            Payload.ContactNumber = formData.Email;
+        } else if (isEmail) {
+            Payload.Email = formData.Email;
+        } else {
+            toast.error('Please enter a valid email or phone number');
+            setLoading(false);
+            return;
+        }
 
         try {
             const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Login', Payload, {
@@ -56,17 +69,13 @@ function CorporateLogin() {
             }
 
             sessionStorage.setItem('user', JSON.stringify(userData));
-
             toast.success('Login successful');
-
-            // Redirect to the original page or default to home
             navigate(redirectUrl);
 
         } catch (error) {
-            const errorMessage = error?.response?.data?.message;
-            toast.error(`Error logging in: ${errorMessage}`);
-            // console.error('Login failed. Please check your credentials.', errorMessage);
-            console.log(error)
+            const errorMessage = error?.response?.data?.message || error?.response?.data?.error || 'Login failed. Please check your credentials.';
+            toast.error(errorMessage);
+            console.log(error);
         } finally {
             setLoading(false);
         }

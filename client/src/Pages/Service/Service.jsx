@@ -47,10 +47,12 @@ function Service() {
         setSearchTerm(e.target.value); // Update search term
     };
 
+    // console.log("allService",allService)
+
     // Filter services based on selected categories and search term
     const filteredServices = allService.filter(service => {
         const matchesSearchTerm = service.name.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSubCategory = selectedSubCategories.length === 0 || selectedSubCategories.includes(service.subCategoryId._id);
+        const matchesSubCategory = selectedSubCategories.length === 0 || selectedSubCategories.includes(service?.mainCategoryId?._id);
         return matchesSearchTerm && matchesSubCategory;
     });
 

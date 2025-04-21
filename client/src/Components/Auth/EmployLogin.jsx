@@ -10,7 +10,7 @@ function EmployLogin() {
         Email: '',
         Password: ''
     });
-    
+
     const location = useLocation();  // Get the current location
     const navigate = useNavigate();  // Use this for navigation after login
 
@@ -30,10 +30,23 @@ function EmployLogin() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const isPhoneNumber = /^[0-9]{10}$/.test(formData.Email); // basic 10-digit number check
+        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.Email); // basic email format check
+
         const Payload = {
-            Email: formData.Email,
             Password: formData.Password
         };
+
+        if (isPhoneNumber) {
+            Payload.ContactNumber = formData.Email;
+        } else if (isEmail) {
+            Payload.Email = formData.Email;
+        } else {
+            toast.error('Please enter a valid email or phone number');
+            setLoading(false);
+            return;
+        }
 
         try {
             const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Login', Payload, {
@@ -56,17 +69,13 @@ function EmployLogin() {
             }
 
             sessionStorage.setItem('user', JSON.stringify(userData));
-
             toast.success('Login successful');
-            
-            // Redirect to the original page or default to home
             navigate(redirectUrl);
 
         } catch (error) {
-            const errorMessage = error?.response?.data?.message;
-            toast.error(`Error logging in: ${errorMessage}`);
-            // console.error('Login failed. Please check your credentials.', errorMessage);
-            console.log(error)
+            const errorMessage = error?.response?.data?.message || error?.response?.data?.error || 'Login failed. Please check your credentials.';
+            toast.error(errorMessage);
+            console.log(error);
         } finally {
             setLoading(false);
         }
@@ -86,7 +95,7 @@ function EmployLogin() {
                     <div className="modal-content py-4 login-content-border" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F4F4F7' }} id="loginmodal">
                         <div className="modal-body p-5 col-xl-9 col-lg-9 col-md-12" style={{ backgroundColor: 'white' }}>
                             <div className="text-center mb-4">
-                            <img src={logo} className='popup-logo'/> 
+                                <img src={logo} className='popup-logo' />
                                 <h4 className="m-0 ft-medium text-uppercase mt-3">Login as Employee</h4>
                             </div>
 
@@ -159,6 +168,6 @@ function EmployLogin() {
             </div>
         </>
     );
-}  
+}
 
 export default EmployLogin
