@@ -409,24 +409,10 @@ function SubCategory() {
           {/* Sidebar */}
           <div className='col-lg-3 col-md-3'>
             <div className={`services-sidebar ${window.innerWidth >= 992 ? 'sticky-top' : ''}`}>
-              <div className='card px-3 py-3'>
-                <div className='d-flex'>
-                  <div className='flex-shrink-0'>
-                    <img src={qualityAssured} alt='Quality log' className='img-fluid quality-logo' />
-                  </div>
-                  <div className='flex-grow-1 ms-3'>
-                    <h4>Blueace India Promise</h4>
-                    <ul className='promise-list'>
-                      <li><i className='fa fa-chevron-right'></i> Verified Professionals</li>
-                      <li><i className='fa fa-chevron-right'></i> Hassle Free Booking</li>
-                      <li><i className='fa fa-chevron-right'></i> Transparent Pricing</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+              
 
               {/* Enquiry Form */}
-              <div className='sidebar-form mt-5'>
+              <div className='sidebar-form'>
                 <h3 className='text-white text-center'>Get Enquiry</h3>
                 <form onSubmit={handleSubmit}>
                   <div className='row'>
@@ -508,6 +494,21 @@ function SubCategory() {
                   </div>
                 </form>
               </div>
+              <div className='card px-3 py-3 mt-3'>
+                <div className='d-flex'>
+                  <div className='flex-shrink-0'>
+                    <img src={qualityAssured} alt='Quality log' className='img-fluid quality-logo' />
+                  </div>
+                  <div className='flex-grow-1 ms-3'>
+                    <h4>Blueace India Promise</h4>
+                    <ul className='promise-list'>
+                      <li><i className='fa fa-chevron-right'></i> Verified Professionals</li>
+                      <li><i className='fa fa-chevron-right'></i> Hassle Free Booking</li>
+                      <li><i className='fa fa-chevron-right'></i> Transparent Pricing</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -528,7 +529,7 @@ function SubCategory() {
                     <label htmlFor='houseNo' className='col-form-label fw-medium'>Complete Address</label>
                     <input type='text' name='houseNo' className='form-control' id='houseNo' onChange={handleChange} required />
                   </div>
-                  
+
                   <div className='col-md-6 mb-2'>
                     <label htmlFor='pinCode' className='col-form-label fw-medium'>Pin Code:</label>
                     <input type='text' name='pinCode' className='form-control' id='pinCode' onChange={handleChange} required />

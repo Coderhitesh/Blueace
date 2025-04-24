@@ -6755,7 +6755,7 @@ button.aps-clone {
 .sticky-top {
     position: -webkit-sticky;
     position: sticky;
-    top: 80px;
+    top: 8px;
 }
 .dropzone {
     border: 2px solid #e0e4e9;
