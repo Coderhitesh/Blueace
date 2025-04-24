@@ -13,7 +13,7 @@ function BlogPage() {
         try {
             const res = await axios.get(`https://www.api.blueaceindia.com/api/v1/get-all-blogs?page=${page}&limit=6`);
             setAllBlog(res.data.data);
-            setTotalPages(res.data.totalPages); 
+            setTotalPages(res.data.totalPages);
         } catch (error) {
             console.log("Internal server error in getting all blogs");
         }
@@ -45,22 +45,22 @@ function BlogPage() {
                 </div>
             </div> */}
             <MetaTag title={'Blueace india blogs'} />
-            <div style={{backgroundColor:'#00225F'}} class=" py-3">
-				<div class="container">
-					<div class="row">
-						<div class="colxl-12 col-lg-12 col-md-12">
-							<nav aria-label="breadcrumb">
-								<ol class="breadcrumb mb-0">
-									<li class="breadcrumb-item"><Link to={'/'} style={{color:'white'}}>Home</Link></li>
-									<li class="breadcrumb-item"  style={{color:'white'}}>/</li>
+            <div style={{ backgroundColor: '#00225F' }} class=" py-3">
+                <div class="container">
+                    <div class="row">
+                        <div class="colxl-12 col-lg-12 col-md-12">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">
+                                    <li class="breadcrumb-item"><Link to={'/'} style={{ color: 'white' }}>Home</Link></li>
+                                    <li class="breadcrumb-item" style={{ color: 'white' }}>/</li>
                                     {/* hello */}
-									<li class="breadcrumb-item active" style={{color:'white'}} aria-current="page">Blogs</li>
-								</ol>
-							</nav>
-						</div>
-					</div>
-				</div>
-			</div>
+                                    <li class="breadcrumb-item active" style={{ color: 'white' }} aria-current="page">Blogs</li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <section className="middle">
                 <div className="container">
 
@@ -85,7 +85,7 @@ function BlogPage() {
                                         <div className="gup_blg_grid_caption">
                                             {/* <div className="blg_tag"><span>Marketing</span></div> */}
                                             <div className="blg_title"><h4><Link to={`/blog/${item.slug}`}>{item.title}</Link></h4></div>
-                                            <div className="blg_desc"><p  dangerouslySetInnerHTML={{ __html: item.content || 'No description available.' }}></p></div>
+                                            <div className="blg_desc"><p dangerouslySetInnerHTML={{ __html: item.content || 'No description available.' }}></p></div>
                                         </div>
                                     </div>
                                 </div>
@@ -101,8 +101,26 @@ function BlogPage() {
                                 {Array.from({ length: totalPages }, (_, index) => (
                                     <button
                                         key={index}
-                                        className={`btn ${currentPage === index + 1 ? 'gray' : 'gray-outline'} rounded ft-medium mx-1`}
+                                        className={`btn rounded ft-medium mx-1 px-3 py-2 border ${currentPage === index + 1
+                                                ? 'btn-dark border-dark text-white'
+                                                : 'btn-light border-secondary text-dark'
+                                            }`}
                                         onClick={() => handlePageChange(index + 1)}
+                                        style={{
+                                            outline: 'none',
+                                            boxShadow: currentPage === index + 1
+                                                ? '0 0 0 2px #343a40'
+                                                : '0 0 0 0 rgba(0,0,0,0)',
+                                            transition: 'box-shadow 0.2s ease-in-out',
+                                        }}
+                                        onFocus={(e) => {
+                                            e.currentTarget.style.boxShadow = '0 0 0 2px #0d6efd';
+                                        }}
+                                        onBlur={(e) => {
+                                            e.currentTarget.style.boxShadow = currentPage === index + 1
+                                                ? '0 0 0 2px #343a40'
+                                                : 'none';
+                                        }}
                                     >
                                         {index + 1}
                                     </button>
@@ -110,6 +128,7 @@ function BlogPage() {
                             </div>
                         </div>
                     </div>
+
 
                 </div>
             </section>

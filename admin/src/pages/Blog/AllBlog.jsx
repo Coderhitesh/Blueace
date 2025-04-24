@@ -115,6 +115,7 @@ function AllBlog() {
                     productsPerPage={productsPerPage}
                     currentPage={currentPage}
                     paginate={setCurrentPage}
+
                     href="/home-layout/add-blog"
                     text="Add Blog"
                     errorMsg=""

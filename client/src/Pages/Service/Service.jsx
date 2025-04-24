@@ -164,22 +164,48 @@ function Service() {
                             </div>
 
                             <div className="row">
-                                <div className="col-lg-12 col-md-12 col-sm-12">
-                                    <ul className="pagination">
-                                        {[...Array(totalPages)].map((_, index) => (
-                                            <li key={index} className="page-item ">
-                                                <a
-                                                    className={`page-link ${index + 1 === currentPage ? 'active' : ''}`}
-                                                    href="#"
-                                                    onClick={() => paginate(index + 1)}
-                                                >
-                                                    {index + 1}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
+    <div className="col-lg-12 col-md-12 col-sm-12">
+        <ul className="pagination justify-content-center">
+            {[...Array(totalPages)].map((_, index) => {
+                const isActive = index + 1 === currentPage;
+                return (
+                    <li key={index} className="page-item">
+                        <a
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                paginate(index + 1);
+                            }}
+                            className={`page-link px-3 py-2 rounded mx-1 border ${
+                                isActive
+                                    ? 'bg-dark text-white border-dark'
+                                    : 'bg-light text-dark border-secondary'
+                            }`}
+                            style={{
+                                outline: 'none',
+                                boxShadow: isActive
+                                    ? '0 0 0 2px #343a40'
+                                    : '0 0 0 0 rgba(0,0,0,0)',
+                                transition: 'box-shadow 0.2s ease-in-out',
+                            }}
+                            onFocus={(e) => {
+                                e.currentTarget.style.boxShadow = '0 0 0 2px #0d6efd';
+                            }}
+                            onBlur={(e) => {
+                                e.currentTarget.style.boxShadow = isActive
+                                    ? '0 0 0 2px #343a40'
+                                    : 'none';
+                            }}
+                        >
+                            {index + 1}
+                        </a>
+                    </li>
+                );
+            })}
+        </ul>
+    </div>
+</div>
+
                         </div>
 
                     </div>

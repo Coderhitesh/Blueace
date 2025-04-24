@@ -87,6 +87,7 @@ import DownloadEmployeeInExcel from '../Employ/DownloadEmployeeInExcel'
 import DownloadVendorOrderInExcel from '../Orders/DownloadVendorOrderInExcel'
 import DownloadEmployeeOrderInExcel from '../Orders/DownloadEmployeeOrderInExcel'
 import DownloadAmcOrderInExcel from '../Orders/DownloadAmcOrderInExcel'
+import AllJobInquiry from '../JobInquiry/AllJobInquiry'
 
 const Home = () => {
     return (
@@ -248,6 +249,10 @@ const Home = () => {
                         <Route path='/download-vendor-order' element={<DownloadVendorOrderInExcel />} />
                         <Route path='/download-employee-order' element={<DownloadEmployeeOrderInExcel />} />
                         <Route path='/download-amc-order' element={<DownloadAmcOrderInExcel />} />
+
+                        {/* job inquiry route here  */}
+
+                        <Route path='/job-inquiry/all-job-inquiry' element={<AllJobInquiry />} />
 
                     </Routes>
                 </div>

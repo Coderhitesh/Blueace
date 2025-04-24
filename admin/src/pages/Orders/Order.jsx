@@ -22,7 +22,7 @@ function Order() {
     const fetchAllOrders = async () => {
         try {
             const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-order');
-            console.log("res.data.data",res.data.data)
+            console.log("res.data.data", res.data.data)
             setAllOrders(res.data.data);
             setLoading(false);
         } catch (error) {
@@ -176,11 +176,11 @@ function Order() {
                                     </button>
                                 </td>
                                 <td className='fw-bolder'>
-                                    <button 
-                                    className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm" 
-                                    type="button" 
-                                    onClick={() => handleRedirect(vendor?.vendorAlloted?._id)}
-                                    disabled={vendor?.VendorAllotedBoolean === false}
+                                    <button
+                                        className="btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm"
+                                        type="button"
+                                        onClick={() => handleRedirect(vendor?.vendorAlloted?._id)}
+                                        disabled={vendor?.VendorAllotedBoolean === false}
                                     >
                                         View
                                     </button>
@@ -301,7 +301,7 @@ function Order() {
                                         }}
                                         style={{ fontSize: '0.8rem', padding: '0.25rem 0.5rem', whiteSpace: 'nowrap' }}
                                         className='btn btn-info btn-activity-view rounded-pill px-4 py-2 shadow-sm'
-                                        // disabled={!vendor.EstimatedBill}
+                                    // disabled={!vendor.EstimatedBill}
                                     >
                                         See Error Code
                                     </button>
@@ -424,12 +424,17 @@ function Order() {
                                                 </tr>
                                                 <tr>
                                                     <td style={{ width: '28%' }}>Address</td>
-                                                    <td>{`${selectedVendor.HouseNo},${selectedVendor.address} (${selectedVendor.PinCode})` || "Not Available"}</td>
+                                                    <td>
+                                                        {selectedVendor?.HouseNo && selectedVendor?.address && selectedVendor?.PinCode
+                                                            ? `${selectedVendor.HouseNo || ''}, ${selectedVendor.address || ''} (${selectedVendor.PinCode || ''})`
+                                                            : 'User Not Updated Complete Address'}
+                                                    </td>
                                                 </tr>
-                                                <tr>
+
+                                                {/* <tr>
                                                     <td style={{ width: '28%' }}>Land Mark</td>
                                                     <td>{`${selectedVendor.NearByLandMark}` || "Not Available"}</td>
-                                                </tr>
+                                                </tr> */}
 
                                             </tbody>
 

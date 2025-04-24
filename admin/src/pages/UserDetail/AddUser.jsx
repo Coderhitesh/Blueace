@@ -83,7 +83,7 @@ function AddUser() {
     const validateFields = () => {
         const {NearByLandMark, Email, FullName, ContactNumber, address, PinCode, HouseNo, Password } = formData;
 
-        if (!NearByLandMark || !Email || !FullName || !ContactNumber || !address || !PinCode || !HouseNo || !Password) {
+        if ( !Email || !FullName || !ContactNumber || !address || !PinCode || !HouseNo || !Password) {
             toast.error("Please fill out all required fields");
             return false;
         }
@@ -173,9 +173,9 @@ function AddUser() {
                             </div>
                         )}
                     </div>
-                    <div className="col-lg-6 mt-3">
+                    {/* <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.NearByLandMark} name='NearByLandMark' onChange={handleChange} className="form-control rounded" placeholder="Near By LandMark*" required />
-                    </div>
+                    </div> */}
                     <div className="col-lg-6 mt-3">
                         <input type="text" value={formData.PinCode} name='PinCode' onChange={handleChange} className="form-control rounded" placeholder="Pin Code*" required />
                     </div>

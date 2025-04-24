@@ -80,7 +80,7 @@ function SubCategory() {
 
   const handleOpenModel = () => {
     // Check if fullName is not filled or email is not filled
-    if (!formData.fullName || !formData.email || !formData.phoneNumber || !formData.message) {
+    if (!formData.fullName || !formData.phoneNumber) {
 
       toast.error("Please fill all the required fields");
       return;
@@ -343,7 +343,7 @@ function SubCategory() {
             </div>
             <div className='services-content'>
               <div className='services-title'>
-                <h2 className='fw-bold'>{service?.name}</h2>
+                <h1 className='fw-bold'>{service?.name}</h1>
               </div>
               <div className='content-body mt-3' dangerouslySetInnerHTML={{ __html: service?.description || 'No description available.' }}>
               </div>

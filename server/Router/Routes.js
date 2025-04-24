@@ -33,6 +33,7 @@ const { createErrorCode, getAllErrorCode, getErrorCodeById, updateErrorCode, del
 const { createHeading, getAllHeading, updateHeading, deleteHeading, getHeadingById } = require('../Controller/ErrorCodeHeading.Controller')
 const S3upload = require('../Middleware/AWS.multer')
 const { create_a_issue, get_all_tickets_by_vendor, get_all_tickets_admin, get_single_ticket_by_id, update_ticket_status_by_admin, admin_reply_to_ticket, delete_ticket_by_vendor } = require('../Controller/Ticket_Controller/ticket.controller')
+const { createCareerInquiry, getAllCareerInquiry, getSingleCareerInquiry, deleteCareerInquiry } = require('../Controller/CareerInquiry.Controller')
 // const { createCart } = require('../Controller/Cart.Controller')
 
 // user routers 
@@ -367,6 +368,13 @@ router.delete('/delete-error-code/:id', deleteErrorCode)
 
 //anylitical
 router.get('/get-Data-Of-Vendor', getAllDataOfVendor)
+
+// career inquiry 
+
+router.post('/create-career-inquiry', upload.single('resume'), createCareerInquiry)
+router.get('/get-all-career-inquiry', getAllCareerInquiry)
+router.get('/get-single-career-inquiry/:id', getSingleCareerInquiry)
+router.delete('/delete-career-inquiry/:id', deleteCareerInquiry)
 
 
 module.exports = router;

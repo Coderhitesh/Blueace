@@ -101,9 +101,9 @@ function Footer() {
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
-                    <li><Link to={`/air-cooled-chiller`}>- Air Cooled Chiller</Link></li>
+                    {/* <li><Link to={`/air-cooled-chiller`}>- Air Cooled Chiller</Link></li>
                     <li><Link to={`/cold-storage-contractors`}>- Cold Storage Contractors</Link></li>
-                    <li><Link to={`/amc-manufacturer`}>- AMC Manufacturer</Link></li>
+                    <li><Link to={`/amc-manufacturer`}>- AMC Manufacturer</Link></li> */}
                   </ul>
                 </div>
               </div>
@@ -117,11 +117,14 @@ function Footer() {
                         <li key={index}><Link to={`/service/${item.name.replace(/\s+/g, '-').toLowerCase()}`}>- {item.name}</Link></li>
                       ))
                     }
-                    <li><Link to={`/voltas-central-ac`}>- Voltas Central Ac</Link></li>
+                    {/* <li><Link to={`/voltas-central-ac`}>- Voltas Central Ac</Link></li>
                     <li><Link to={`/hvac`}>- HVAC</Link></li>
                     <li><Link to={`/heat-pump-installation`}>- Heat Pump</Link></li>
                     <li><Link to={`/service/cassette-air-conditioning-system`}>- Cassette Air Conditioning</Link></li>
-                    <li><Link to={`/service/ductable-air-conditioners`}>- Ductable Air Conditioners</Link></li>
+                    <li><Link to={`/service/ductable-air-conditioners`}>- Ductable Air Conditioners</Link></li> */}
+                    <li><Link to={`/redefining-cold-storage`}>- Redefining Cold Storage</Link></li>
+                    <li><Link to={`/trusted-cold-storage-partner`}>- Trusted Cold Storage Partner</Link></li>
+                    <li><Link to={`/cold-storage-construction-experts`}>- Cold Storage Construction Experts</Link></li>
                   </ul>
                 </div>
               </div>
@@ -147,13 +150,22 @@ function Footer() {
             <div className="row align-items-center">
               <div className="col-lg-12 col-md-12 text-center">
                 <p className="mb-0">
-                  © 2022 Blueace. Designed By <a href="https://hoverbusinessservices.com/">Hover Business Services LLP</a>.
+                  © 2025 Blueace. Designed By <a href="https://hoverbusinessservices.com/">Hover Business Services LLP</a>.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </footer>
+      {/* <iframe
+        src="https://embeded.chat.adsdigitalmedia.com/?metacode=chatbot-QUP9P-CCQS2"
+        width="400"
+        height="600"
+        style={{position:'fixed',bottom:'100px', right:'20px'}}
+
+        title="Chatbot Verification"
+      >
+      </iframe> */}
       {/* ============================ Footer End ================================== */}
     </>
   );

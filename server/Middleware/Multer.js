@@ -42,6 +42,7 @@ const storage = multer.diskStorage({
 const fileFilter = (req, file, cb) => {
   const allowedMimeTypes = [
     'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp', 'image/tiff', 'image/avif',
+    'application/pdf',
     ...videoMimeTypes, // Video formats
     ...voiceMimeTypes  // Voice note formats
   ];
