@@ -9,7 +9,6 @@ const { sendSMS } = require('../Utils/SMSSender');
 const xlsx = require('xlsx');
 const sendEmail = require('../Utils/SendEmail');
 const { SendWhatsapp, SendOtpWhatsapp } = require('../Utils/SendWhatsapp');
-// const Orders = require('../Model/OrderModel');
 exports.register = async (req, res) => {
     try {
         // console.log("I am hit")
@@ -19,12 +18,6 @@ exports.register = async (req, res) => {
         if (!FullName) emptyField.push('FullName');
         if (!Email) emptyField.push('Email');
         if (!ContactNumber) emptyField.push('ContactNumber');
-        // if (!City) emptyField.push('City');
-        // if (!PinCode) emptyField.push('PinCode');
-        // if (!HouseNo) emptyField.push('HouseNo');
-        // if (!Street) emptyField.push('Street');
-        // if (!address) emptyField.push('address');
-        // if (!NearByLandMark) emptyField.push('NearByLandMark');
         if (emptyField.length > 0) {
             return res.status(400).json({
                 success: false,
@@ -78,21 +71,25 @@ exports.register = async (req, res) => {
             });
         }
 
+        const OTP = Math.floor(100000 + Math.random() * 900000);
+        const OTPExpires = new Date();
+        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
+
         // Define initial user data
         const userData = {
             FullName,
             Password,
             Email,
             ContactNumber,
-            // City,
             PinCode,
             UserType,
             HouseNo,
-            // Street,
             address,
             NearByLandMark,
             RangeWhereYouWantService,
-            companyName
+            companyName,
+            loginOtp: OTP,
+            loginOtpExpiredTime: OTPExpires
         };
 
         // Create new user instance
@@ -100,15 +97,15 @@ exports.register = async (req, res) => {
 
         // Save user to database
         await newUser.save();
-
-        const Param = [
-            FullName
-        ]
-
-        await SendWhatsapp(ContactNumber, 'registeruserandcorporate', Param)
-
         // Send token to the user
-        await SendToken(newUser, res, 201);
+        // await SendToken(newUser, res, 201);
+        await SendOtpWhatsapp(newUser?.ContactNumber, OTP);
+
+        return res.status(200).json({
+            success: true,
+            message: 'User registered successfully',
+            data: newUser
+        })
 
 
     } catch (error) {
@@ -140,9 +137,85 @@ exports.register = async (req, res) => {
     }
 };
 
+exports.verifyOtpForRegister = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { loginOtp } = req.body;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+
+        if (user.loginOtp !== loginOtp) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid OTP'
+            })
+        }
+
+        if (user.loginOtpExpiredTime < Date.now()) {
+            return res.status(400).json({
+                success: false,
+                message: 'OTP has expired'
+            })
+        }
+
+        user.loginOtp = null;
+        user.loginOtpExpiredTime = null;
+        user.isVerify = true;
+        await user.save();
+
+        await SendToken(user, res, 200);
+
+    } catch (error) {
+        console.log("Internal server error in verifyOtpForRegister");
+        return res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in verifyOtpForRegister',
+            error: error.message
+        })
+    }
+}
+
+
+
+exports.resendVerifyUserOtp = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+        const OTP = Math.floor(100000 + Math.random() * 900000);
+        const OTPExpires = new Date();
+        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
+        user.loginOtp = OTP;
+        user.loginOtpExpiredTime = OTPExpires;
+        await user.save();
+        await SendOtpWhatsapp(user?.ContactNumber, OTP);
+        return res.status(200).json({
+            success: true,
+            message: 'OTP sent successfully',
+            data: user
+        })
+    } catch (error) {
+        console.log("Internal server error in sending otp for verifing vendor", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+            error: error.message
+        })
+    }
+}
+
 exports.login = async (req, res) => {
     const { Email, Password, ContactNumber } = req.body;
-    console.log("Login Request =>", req.body);
 
     try {
         let user = await User.findOne({
@@ -161,7 +234,6 @@ exports.login = async (req, res) => {
             });
             model = user ? 'Vendor' : '';
         }
-        console.log("Login Vendor =>", Vendor);
         // User/Vendor not found
         if (!user) {
             return res.status(404).json({

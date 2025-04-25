@@ -166,7 +166,7 @@ function CorporateRegister() {
           latitude: '',
           longitude: ''
         });
-        navigate('/');
+        navigate(`/verify-account/${res.data.data._id}`);
       }
     } catch (err) {
       console.log(err);
@@ -321,7 +321,7 @@ function CorporateRegister() {
                         </div>
 
                       </div>
-                      
+
                       <div className="col-6">
                         <div className="form-group">
                           <label htmlFor="PinCode" className='mb-1 fw-medium'>Pin Code*</label>

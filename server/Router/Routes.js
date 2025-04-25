@@ -1,6 +1,6 @@
 const express = require('express')
 const { protect } = require('../Middleware/Protect')
-const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive, universelLogin, getMyDetails, changeAMCStatus, updateIsAMCUser } = require('../Controller/Usercontroller')
+const { register, login, logout, passwordChangeRequest, verifyOtpAndChangePassword, resendOtp, addDeliveryDetails, userDetails, GetDeliveryAddressOfUser, updateDeliveryAddress, getAllUsers, updateUserType, getSingleUserById, updateUser, ChangeOldPassword, deleteUser, updateUserDeactive, universelLogin, getMyDetails, changeAMCStatus, updateIsAMCUser, verifyOtpForRegister, resendVerifyUserOtp } = require('../Controller/Usercontroller')
 const router = express.Router()
 const upload = require('../Middleware/Multer')
 const { createServiceCategory, updateServiceCategory, getServiceCategory, getSingleServiceCategroy, deleteServiceCategory, getServiceCategoryByName, updateIsPopular } = require('../Controller/serviceCategory.Controller')
@@ -39,6 +39,8 @@ const { createCareerInquiry, getAllCareerInquiry, getSingleCareerInquiry, delete
 // user routers 
 
 router.post('/Create-User', register)
+router.post('/verify_user_otp/:id',verifyOtpForRegister)
+router.post('/resend_verify_user_otp/:id',resendVerifyUserOtp)
 router.post('/Login', login)
 router.get('/Logout', protect, logout)
 router.post('/Password-Change', passwordChangeRequest)

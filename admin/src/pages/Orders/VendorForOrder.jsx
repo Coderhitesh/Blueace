@@ -77,13 +77,33 @@ const VendorForOrder = () => {
 
         for (let d = new Date(today); d <= next30Days; d.setDate(d.getDate() + 1)) {
             const dayOfWeek = d.toLocaleDateString('en-US', { weekday: 'long' });
-            
+
             if (dayOfWeek === selectedDay) {
                 dates.push(new Date(d));
             }
         }
         return dates;
     };
+
+    const generateNext30Days = (vendor) => {
+        const scheduleDays = vendor?.workingHour?.schedule?.map(s => s.day) || [];
+    
+        const dates = [];
+        const today = new Date();
+        const next30 = new Date();
+        next30.setDate(today.getDate() + 30);
+    
+        for (let d = new Date(today); d <= next30; d.setDate(d.getDate() + 1)) {
+            const day = d.toLocaleDateString('en-US', { weekday: 'long' });
+            if (scheduleDays.includes(day)) {
+                dates.push(new Date(d));
+            }
+        }
+    
+        return dates;
+    };
+    
+
 
     const handleAssignOrder = async (vendorId) => {
         const selection = vendorSelections[vendorId] || {};
@@ -127,15 +147,21 @@ const VendorForOrder = () => {
         }));
     };
 
-    const handleDateChange = (vendorId, date) => {
+    const handleDateChange = (vendorId, isoDateStr) => {
+        const date = new Date(isoDateStr);
+        const day = date.toLocaleDateString('en-US', { weekday: 'long' });
+
         setVendorSelections(prev => ({
             ...prev,
             [vendorId]: {
                 ...prev[vendorId],
-                date
+                date: isoDateStr,
+                day, // auto-fill the day
+                time: ''
             }
         }));
     };
+
 
     const handleTimeChange = (vendorId, time) => {
         setVendorSelections(prev => ({
@@ -204,46 +230,33 @@ const VendorForOrder = () => {
                                         <img className="position-absolute top-0 left" src={verify} width={60} alt="Verified" />
                                     )}
 
-                                    {/* Day Selection */}
+                                    {/* Date Selection */}
                                     <div className="mb-3">
-                                        <label className="form-label">Select Day:</label>
+                                        <label className="form-label">Select Date:</label>
                                         <select
                                             className="form-select"
-                                            value={vendorSelection.day || ''}
-                                            onChange={(e) => handleDayChange(vendor._id, e.target.value)}
-                                            // disabled={isPreSelected}
+                                            value={vendorSelection.date || ''}
+                                            onChange={(e) => handleDateChange(vendor._id, e.target.value)}
                                         >
-                                            <option value="">Select a day</option>
-                                            {vendor?.workingHour?.schedule?.map((schedule, index) => (
-                                                <option key={index} value={schedule.day}>
-                                                    {schedule.day}
+                                            <option value="">Select a date</option>
+                                            {generateNext30Days(vendor)?.map((date, index) => (
+                                                <option key={index} value={date.toISOString()}>
+                                                    {date.toLocaleDateString('en-US', {
+                                                        weekday: 'long',
+                                                        year: 'numeric',
+                                                        month: 'long',
+                                                        day: 'numeric',
+                                                    })}
                                                 </option>
                                             ))}
                                         </select>
                                     </div>
 
-                                    {/* Date Selection */}
+                                    {/* Day Display - after selecting date */}
                                     {vendorSelection.day && (
                                         <div className="mb-3">
-                                            <label className="form-label">Select Date:</label>
-                                            <select
-                                                className="form-select"
-                                                value={vendorSelection.date || ''}
-                                                onChange={(e) => handleDateChange(vendor._id, e.target.value)}
-                                                // disabled={isPreSelected}
-                                            >
-                                                <option value="">Select a date</option>
-                                                {vendorDates.map((date, index) => (
-                                                    <option key={index} value={date.toISOString()}>
-                                                        {date.toLocaleDateString('en-US', {
-                                                            weekday: 'long',
-                                                            year: 'numeric',
-                                                            month: 'long',
-                                                            day: 'numeric'
-                                                        })}
-                                                    </option>
-                                                ))}
-                                            </select>
+                                            <label className="form-label">Selected Day:</label>
+                                            <input className="form-control" value={vendorSelection.day} disabled />
                                         </div>
                                     )}
 
@@ -255,13 +268,13 @@ const VendorForOrder = () => {
                                                 className="form-select"
                                                 value={vendorSelection.time || ''}
                                                 onChange={(e) => handleTimeChange(vendor._id, e.target.value)}
-                                                // disabled={isPreSelected}
                                             >
                                                 <option value="">Select a time</option>
                                                 {renderTimeSlots(vendor, vendorSelection.day)}
                                             </select>
                                         </div>
                                     )}
+
 
                                     {/* Pre-selected Info */}
                                     {isPreSelected && (

@@ -61,6 +61,7 @@ import ThankU from "./Components/ThankU/ThankU"
 import RedefiningColdStorage from "./Pages/RedefiningColdStorage/RedefiningColdStorage"
 import TrustedColdStoragePartner from "./Pages/TrustedColdStoragePartner/TrustedColdStoragePartner"
 import ColdStorageConstructionExperts from "./Pages/ColdStorageConstructionExperts/ColdStorageConstructionExperts"
+import UserVerifyOtp from "./Components/Auth/UserVerifyOtp"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -146,6 +147,9 @@ function App() {
           <Route path="/redefining-cold-storage" element={<RedefiningColdStorage />} />
           <Route path="/trusted-cold-storage-partner" element={<TrustedColdStoragePartner />} />
           <Route path="/cold-storage-construction-experts" element={<ColdStorageConstructionExperts />} />
+
+          <Route path="/verify-account/:id" element={<UserVerifyOtp />} />
+
         </Routes>
         {/* <NewsLetter /> */}
         <Footer />

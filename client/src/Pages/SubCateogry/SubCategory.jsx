@@ -161,6 +161,7 @@ function SubCategory() {
     houseNo: '',
     // street: '',
     nearByLandMark: '',
+    workingDateUserWant: '',
     RangeWhereYouWantService: [
       {
         location: {
@@ -271,6 +272,7 @@ function SubCategory() {
     updatedFormData.append('address', formData.address);
     updatedFormData.append('pinCode', formData.pinCode);
     updatedFormData.append('houseNo', formData.houseNo);
+    updatedFormData.append('workingDateUserWant', formData.workingDateUserWant);
     updatedFormData.append('nearByLandMark', formData.nearByLandMark);
 
     // Append voice note file if available
@@ -409,7 +411,7 @@ function SubCategory() {
           {/* Sidebar */}
           <div className='col-lg-3 col-md-3'>
             <div className={`services-sidebar ${window.innerWidth >= 992 ? 'sticky-top' : ''}`}>
-              
+
 
               {/* Enquiry Form */}
               <div className='sidebar-form'>
@@ -534,7 +536,7 @@ function SubCategory() {
                     <label htmlFor='pinCode' className='col-form-label fw-medium'>Pin Code:</label>
                     <input type='text' name='pinCode' className='form-control' id='pinCode' onChange={handleChange} required />
                   </div>
-                  <div className="position-relative col-12">
+                  <div className="position-relative col-6">
                     <div className="form-group">
                       <label htmlFor="address" className='mb-1 fw-medium'>Landmark (e.g., Netaji Subhash Place)</label>
                       <input
@@ -568,10 +570,18 @@ function SubCategory() {
                     </div>
 
                   </div>
-                  {/* <div className='col-md-6 mb-2'>
-                    <label htmlFor='nearByLandMark' className='col-form-label fw-medium'>Nearby Landmark:</label>
-                    <input type='text' name='nearByLandMark' className='form-control' id='nearByLandMark' onChange={handleChange} required />
-                  </div> */}
+                  <div className='col-md-6 mb-2'>
+                    <label htmlFor='workingDateUserWant' className='col-form-label fw-medium'>Service Date:</label>
+                    <input
+                      type='date'
+                      name='workingDateUserWant'
+                      className='form-control'
+                      id='workingDateUserWant'
+                      value={formData.workingDateUserWant}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
                 </div>
               </form>
             </div>

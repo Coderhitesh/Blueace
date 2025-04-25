@@ -186,7 +186,10 @@ const OrderSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'ErrorCode'
         }
-    ]
+    ],
+    workingDateUserWant: {
+        type: Date
+    }
 }, { timestamps: true })
 
 OrderSchema.index({ 'RangeWhereYouWantService.location': '2dsphere' });

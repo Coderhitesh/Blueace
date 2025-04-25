@@ -102,11 +102,13 @@ function Registration() {
 
     try {
       const res = await axios.post('https://www.api.blueaceindia.com/api/v1/Create-User', formData);
-      sessionStorage.setItem('token', res.data.token);
-      sessionStorage.setItem('user', JSON.stringify(res.data.user));
+      // sessionStorage.setItem('token', res.data.token);
+      // sessionStorage.setItem('user', JSON.stringify(res.data.user));
+
+      // console.log("res.data.success", res.data.data._id)
 
       if (res.data.success) {
-        toast.success('User registered successfully');
+        // toast.success('User registered successfully');
         setFormData({
           FullName: '',
           companyName: '',
@@ -125,11 +127,11 @@ function Registration() {
           }]
         });
         setLocation({ latitude: '', longitude: '' });
-        navigate('/');
+        navigate(`/verify-account/${res.data.data._id}`);
       }
     } catch (err) {
       console.error(err);
-      toast.error(err.response.data.message || err.response.data.error || 'An error occurred');
+      toast.log(err.response.data.message || err.response.data.error || 'An error occurred');
     } finally {
       setLoading(false);
     }

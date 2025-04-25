@@ -92,6 +92,16 @@ const UserSchema = new mongoose.Schema({
     isAMCUser: {
         type: Boolean,
         default: false
+    },
+    loginOtp: {
+        type: String
+    },
+    loginOtpExpiredTime: {
+        type: Date
+    },
+    isVerify: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

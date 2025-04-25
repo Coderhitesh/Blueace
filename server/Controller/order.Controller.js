@@ -37,7 +37,7 @@ const razorpayInstance = new Razorpay({
 exports.makeOrder = async (req, res) => {
     try {
         // console.log('body', req.body);
-        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
+        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime, workingDateUserWant } = req.body;
         const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
 
 
@@ -107,6 +107,7 @@ exports.makeOrder = async (req, res) => {
             houseNo,
             // street,
             nearByLandMark,
+            workingDateUserWant,
             RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
             orderTime: orderTime || new Date()
         });
