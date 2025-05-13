@@ -11,7 +11,14 @@ const { rateLimit } = require('express-rate-limit')
 const path = require('path');
 // Middlewares
 ConnectDB()
-app.use(cors());
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl)
+        if (!origin) return callback(null, true);
+        return callback(null, true); // allow all origins dynamically
+    },
+    credentials: true
+}));
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 15 minutes
     limit: 200,
@@ -30,7 +37,7 @@ const limiter = rateLimit({
 })
 
 app.set(express.static('public'))
-app.use('/public',express.static('public'))
+app.use('/public', express.static('public'))
 
 app.use(cookieParser());
 app.use(express.json());

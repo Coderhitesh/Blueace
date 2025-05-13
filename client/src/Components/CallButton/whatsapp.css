@@ -1,0 +1,153 @@
+.call-container {
+  position: fixed;
+  bottom: 100px;
+  right: 30px;
+  z-index: 1000;
+}
+
+.call-wrapper {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.call-button {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(145deg, #2e85cc, #257fd3);
+  border-radius: 50%;
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3),
+              inset 0 2px 8px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.call-button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+}
+
+.button-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.call-button i {
+  color: white;
+  font-size: 50px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  animation: floating 3s ease-in-out infinite;
+}
+
+.call-button svg{
+  font-size: 2rem;
+  color: white;
+}
+
+.call-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+  z-index: 1;
+}
+
+.ripple {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 2s infinite;
+}
+
+.call-tooltip {
+  display: none;
+  position: absolute;
+  right: 75px;
+  background: white;
+  color: #075e54;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateX(20px);
+  transition: all 0.3s ease;
+}
+
+.call-tooltip.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.call-tooltip::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 8px solid white;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+}
+
+@keyframes floating {
+  0%, 100% {
+      transform: translateY(0) scale(1);
+  }
+  50% {
+      transform: translateY(-5px) scale(1.05);
+  }
+}
+
+@keyframes ripple {
+  0% {
+      transform: scale(0);
+      opacity: 1;
+  }
+  100% {
+      transform: scale(2);
+      opacity: 0;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .call-container {
+      bottom: 80px;
+      right: 20px;
+  }
+  
+  .call-button {
+      width: 50px;
+      height: 50px;
+  }
+  
+  .call-button i {
+      font-size: 28px;
+  }
+  
+  .call-tooltip {
+      display: none;
+  }
+
+  
+
+.call-tooltip{
+  display: none;
+}
+}

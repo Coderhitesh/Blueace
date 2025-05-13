@@ -62,6 +62,7 @@ import RedefiningColdStorage from "./Pages/RedefiningColdStorage/RedefiningColdS
 import TrustedColdStoragePartner from "./Pages/TrustedColdStoragePartner/TrustedColdStoragePartner"
 import ColdStorageConstructionExperts from "./Pages/ColdStorageConstructionExperts/ColdStorageConstructionExperts"
 import UserVerifyOtp from "./Components/Auth/UserVerifyOtp"
+import CallButton from "./Components/CallButton/CallButton"
 // import MetaWrapper from "./Components/MetaWrapper/MetaWrapper"
 // import VendorTest from "./Components/Auth/VendorTest"
 
@@ -153,6 +154,7 @@ function App() {
         </Routes>
         {/* <NewsLetter /> */}
         <Footer />
+        <CallButton />
         <Whatsapp />
         <GetService handlePopupActive={handlePopupActive} handlePopupDeactive={handlePopupDeactive} isPopUp={isPopUp} />
       </BrowserRouter>
