@@ -154,7 +154,7 @@ function App() {
         </Routes>
         {/* <NewsLetter /> */}
         <Footer />
-        <CallButton />
+        {/* <CallButton /> */}
         <Whatsapp />
         <GetService handlePopupActive={handlePopupActive} handlePopupDeactive={handlePopupDeactive} isPopUp={isPopUp} />
       </BrowserRouter>

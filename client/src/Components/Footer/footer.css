@@ -1,25 +1,45 @@
-.socailLinks a{
+.socailLinks a {
     font-size: 17px !important;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: white;
-    padding:8px;
+    padding: 8px;
 }
 
-.socailLinks:nth-child(1) a i{
+.socailLinks:nth-child(1) a i {
     color: #0866FF;
 }
 
-.socailLinks:nth-child(2) a i{
+.socailLinks:nth-child(2) a i {
     color: #d62976;
 }
 
-.socailLinks:nth-child(3) a i{
+.socailLinks:nth-child(3) a i {
     color: #0270AA;
 }
 
-.socailLinks:nth-child(4) a svg{
+.socailLinks:nth-child(4) a svg {
     color: #FF0000;
+}
+
+/* .main-chat-container{
+    width: 30vw;
+} */
+
+.main-chat-button {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(145deg, #2e85cc, #257fd3);
+    border-radius: 50%;
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3),
+        inset 0 2px 8px rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
 }
