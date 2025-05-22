@@ -140,21 +140,17 @@ function Footer() {
         </div>
       </footer>
       <div className='main-chat-container'>
-        {activeChatBtn && (
-          <iframe
-            src="https://embeded.chat.adsdigitalmedia.com/?metacode=chatbot-QUP9P-CCQS2"
-            width="400"
-            height="600"
-            style={{ position: 'fixed', bottom: '100px', right: '50px', zIndex: '9999' }}
 
-            title="Chatbot Verification"
-          >
-          </iframe>
-        )}
-        <div onClick={handleActiveChat}
-            style={{ position: 'fixed', bottom: '100px', right: '38px' }} className='main-chat-button'>
-         <i class="fa-brands fa-rocketchat"></i>
-        </div>
+        <iframe
+          src="https://embeded.chat.adsdigitalmedia.com?metacode=chatbot-QUP9P-CCQS2"
+          width="400"
+          height="600"
+          style={{ position: 'fixed', bottom: '80px', right: '10px', zIndex: '9999' }}
+
+          title="Chatbot Verification"
+        >
+        </iframe>
+
       </div>
       {/* ============================ Footer End ================================== */}
     </>

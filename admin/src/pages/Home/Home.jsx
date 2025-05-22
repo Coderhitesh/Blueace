@@ -88,6 +88,8 @@ import DownloadVendorOrderInExcel from '../Orders/DownloadVendorOrderInExcel'
 import DownloadEmployeeOrderInExcel from '../Orders/DownloadEmployeeOrderInExcel'
 import DownloadAmcOrderInExcel from '../Orders/DownloadAmcOrderInExcel'
 import AllJobInquiry from '../JobInquiry/AllJobInquiry'
+import Complaint from '../Chatbots/Complaint'
+import BookingsChatBot from '../Chatbots/BookingsChatBot'
 
 const Home = () => {
     return (
@@ -253,6 +255,11 @@ const Home = () => {
                         {/* job inquiry route here  */}
 
                         <Route path='/job-inquiry/all-job-inquiry' element={<AllJobInquiry />} />
+
+
+                        {/* Complains and booking via chatboat */}
+                        <Route path='/users/chatbot-complaints' element={<Complaint />} />
+                        <Route path='/users/chatbot-bookings' element={<BookingsChatBot />} />
 
                     </Routes>
                 </div>
