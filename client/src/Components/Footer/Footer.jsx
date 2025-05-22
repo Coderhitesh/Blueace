@@ -141,15 +141,22 @@ function Footer() {
       </footer>
       <div className='main-chat-container'>
 
-        <iframe
-          src="https://embeded.chat.adsdigitalmedia.com?metacode=chatbot-QUP9P-CCQS2"
-          width="400"
-          height="600"
-          style={{ position: 'fixed', bottom: '80px', right: '10px', zIndex: '9999' }}
-
-          title="Chatbot Verification"
-        >
-        </iframe>
+    <iframe
+  src="https://embeded.chat.adsdigitalmedia.com?metacode=chatbot-QUP9P-CCQS2"
+  width="400"
+  height="600"
+  style={{
+    position: 'fixed',
+    bottom: '80px',
+    right: '10px',
+    zIndex: 9999,
+    width: '90%', // default for mobile
+    maxWidth: '300px', // limits width on large screens
+    height: '500px', // smaller height for mobile
+    border: 'none',
+  }}
+  title="Chatbot Verification"
+/>
 
       </div>
       {/* ============================ Footer End ================================== */}
