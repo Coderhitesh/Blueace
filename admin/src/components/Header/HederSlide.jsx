@@ -52,7 +52,30 @@ const HederSlide = () => {
                             </ul>
                         )}
                     </li>
-
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                            to="/users/chatbot-complaints"
+                        >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-3">Chatbot Complaints</h6>
+                        </Link>
+                    </li>
+                    <li className="sidebar-list">
+                        <i className="fa-solid fa-thumbtack"></i>
+                        <Link
+                            className="sidebar-link"
+                                to="/users/chatbot-bookings"
+                        >
+                            <svg className="stroke-icon">
+                                <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
+                            </svg>
+                            <h6 className="lan-2">Chatbot Bookings</h6>
+                        </Link>
+                    </li>
                     <li className="sidebar-list">
                         <i className="fa-solid fa-thumbtack"></i>
                         <Link
@@ -83,7 +106,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/all-enquiry"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -95,7 +118,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/users/all-users"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -143,12 +166,13 @@ const HederSlide = () => {
                             </ul>
                         )}
                     </li>
+
                     <li className="sidebar-list">
                         <i className="fa-solid fa-thumbtack"></i>
                         <Link
                             className="sidebar-link"
                             to="/vendors/all-employ"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -172,7 +196,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/Orders/all-order"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -196,7 +220,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/commission/all-commission"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -208,7 +232,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/withdraw/all-withdraw"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -221,7 +245,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/career/all-career"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -234,7 +258,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/job-inquiry/all-job-inquiry"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -247,7 +271,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/error-code-heading/all-error-code-heading"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
@@ -260,7 +284,7 @@ const HederSlide = () => {
                         <Link
                             className="sidebar-link"
                             to="/Error-Code/all-error"
-                           >
+                        >
                             <svg className="stroke-icon">
                                 <use href="../assets/svg/iconly-sprite.svg#Pie"></use>
                             </svg>
