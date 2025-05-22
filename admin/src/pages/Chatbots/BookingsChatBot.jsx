@@ -10,6 +10,7 @@ const BookingsChatBot = () => {
     const [totalBookings, setTotalBookings] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [itemsPerPage] = useState(10); // Set items per page
 
     // Filter states
     const [searchTerm, setSearchTerm] = useState('');
@@ -28,10 +29,19 @@ const BookingsChatBot = () => {
 
     const allowedStatuses = ['confirmed', 'completed', 'cancelled'];
 
-    const fetchBookings = async () => {
+    // Fixed fetchBookings function with proper pagination support
+    const fetchBookings = async (page = 1) => {
         try {
             setLoading(true);
-            const response = await fetch('https://api.chatbot.adsdigitalmedia.com/api/auth/get-my-booking?metacode=chatbot-QUP9P-CCQS2');
+            
+            // Build query parameters
+            const params = new URLSearchParams({
+                metacode: 'chatbot-QUP9P-CCQS2',
+                limit: itemsPerPage.toString(),
+                page: page.toString()
+            });
+
+            const response = await fetch(`https://api.chatbot.adsdigitalmedia.com/api/auth/get-my-booking?${params}`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -42,11 +52,15 @@ const BookingsChatBot = () => {
             if (data && data.bookings) {
                 setBookings(data.bookings);
                 setTotalBookings(data.total || data.bookings.length);
-                setCurrentPage(data.page || 1);
-                setTotalPages(data.totalPages || 1);
+                setCurrentPage(data.page || page);
+                
+                // Calculate total pages
+                const calculatedTotalPages = Math.ceil((data.total || data.bookings.length) / itemsPerPage);
+                setTotalPages(calculatedTotalPages || 1);
             } else {
                 setBookings([]);
                 setTotalBookings(0);
+                setTotalPages(1);
             }
             setError('');
         } catch (err) {
@@ -57,43 +71,63 @@ const BookingsChatBot = () => {
         }
     };
 
- const confirmBooking = async (bookingId) => {
-  try {
-    setActionLoading(true);
+    // Fixed pagination handlers
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages && page !== currentPage) {
+            setCurrentPage(page);
+            fetchBookings(page);
+        }
+    };
 
-    const response = await axios.post(
-      `https://api.chatbot.adsdigitalmedia.com/api/auth/booking-status/confirm/${bookingId}`,
-      {},
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            handlePageChange(currentPage - 1);
+        }
+    };
 
-    const result = response.data;
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            handlePageChange(currentPage + 1);
+        }
+    };
 
-    if (result.success) {
-      setSuccess('Booking confirmed successfully!');
-      setBookings(prev =>
-        prev.map(booking =>
-          booking._id === bookingId
-            ? { ...booking, status: 'confirmed' }
-            : booking
-        )
-      );
-      setTimeout(() => setSuccess(''), 3000);
-    } else {
-      throw new Error(result.message || 'Failed to confirm booking');
-    }
-  } catch (err) {
-    console.error('Error confirming booking:', err);
-    setError('Failed to confirm booking: ' + (err.response?.data?.message || err.message));
-    setTimeout(() => setError(''), 5000);
-  } finally {
-    setActionLoading(false);
-  }
-};
+    const confirmBooking = async (bookingId) => {
+        try {
+            setActionLoading(true);
+
+            const response = await axios.post(
+                `https://api.chatbot.adsdigitalmedia.com/api/auth/booking-status/confirm/${bookingId}`,
+                {},
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            const result = response.data;
+
+            if (result.success) {
+                setSuccess('Booking confirmed successfully!');
+                setBookings(prev =>
+                    prev.map(booking =>
+                        booking._id === bookingId
+                            ? { ...booking, status: 'confirmed' }
+                            : booking
+                    )
+                );
+                setTimeout(() => setSuccess(''), 3000);
+            } else {
+                throw new Error(result.message || 'Failed to confirm booking');
+            }
+        } catch (err) {
+            console.error('Error confirming booking:', err);
+            setError('Failed to confirm booking: ' + (err.response?.data?.message || err.message));
+            setTimeout(() => setError(''), 5000);
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     const cancelBooking = async (bookingId, reason) => {
         try {
@@ -145,7 +179,7 @@ const BookingsChatBot = () => {
         setCancelReason('');
     };
 
-    // Filter bookings
+    // Filter bookings (client-side filtering on current page)
     const filteredBookings = bookings.filter(booking => {
         const matchesSearch = searchTerm === '' ||
             booking.Booking_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -171,8 +205,46 @@ const BookingsChatBot = () => {
     });
 
     useEffect(() => {
-        fetchBookings();
+        fetchBookings(1); // Start with page 1
     }, []);
+
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        if (currentPage !== 1) {
+            setCurrentPage(1);
+            fetchBookings(1);
+        }
+    }, [searchTerm, nameFilter, phoneFilter, statusFilter, dateFromFilter, dateToFilter]);
+
+    const getPageNumbers = () => {
+        const pageNumbers = [];
+        const maxVisiblePages = 5;
+
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers.push(i);
+            }
+        } else {
+            const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (startPage > 1) {
+                pageNumbers.push(1);
+                if (startPage > 2) pageNumbers.push('...');
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                pageNumbers.push(i);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) pageNumbers.push('...');
+                pageNumbers.push(totalPages);
+            }
+        }
+
+        return pageNumbers;
+    };
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -202,6 +274,14 @@ const BookingsChatBot = () => {
         setDateFromFilter('');
         setDateToFilter('');
         setStatusFilter('');
+        // Reset to page 1 when clearing filters
+        setCurrentPage(1);
+        fetchBookings(1);
+    };
+
+    // Fixed refresh function
+    const handleRefresh = () => {
+        fetchBookings(currentPage);
     };
 
     if (loading) {
@@ -334,6 +414,7 @@ const BookingsChatBot = () => {
                         {(searchTerm || nameFilter || phoneFilter || statusFilter || dateFromFilter || dateToFilter) &&
                             <span className="comp-filter-active"> (filtered)</span>
                         }
+                        <span className="comp-page-info"> | Page {currentPage} of {totalPages}</span>
                     </div>
 
                     {/* Table */}
@@ -436,11 +517,46 @@ const BookingsChatBot = () => {
                         </table>
                     </div>
 
+                    {/* Fixed Pagination */}
+                    {totalPages > 1 && (
+                        <div className="comp-pagination">
+                            <button
+                                className={`comp-pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+                                onClick={handlePrevPage}
+                                disabled={currentPage === 1}
+                            >
+                                ← Previous
+                            </button>
+
+                            <div className="comp-pagination-numbers">
+                                {getPageNumbers().map((pageNum, index) => (
+                                    <button
+                                        key={index}
+                                        className={`comp-pagination-number ${pageNum === currentPage ? 'active' : ''
+                                            } ${pageNum === '...' ? 'dots' : ''}`}
+                                        onClick={() => pageNum !== '...' && handlePageChange(pageNum)}
+                                        disabled={pageNum === '...' || pageNum === currentPage}
+                                    >
+                                        {pageNum}
+                                    </button>
+                                ))}
+                            </div>
+
+                            <button
+                                className={`comp-pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                                onClick={handleNextPage}
+                                disabled={currentPage === totalPages}
+                            >
+                                Next →
+                            </button>
+                        </div>
+                    )}
+
                     {/* Actions */}
                     <div className="comp-actions">
                         <button
                             className="comp-btn comp-btn-primary"
-                            onClick={fetchBookings}
+                            onClick={handleRefresh}
                             disabled={loading}
                         >
                             🔄 Refresh Data

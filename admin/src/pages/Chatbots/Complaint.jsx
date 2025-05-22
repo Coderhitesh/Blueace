@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import './BookingsChatBot.css'
 const Complaint = () => {
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,7 +7,7 @@ const Complaint = () => {
   const [totalComplaints, setTotalComplaints] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  
+
   // Filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [nameFilter, setNameFilter] = useState('');
@@ -15,16 +15,16 @@ const Complaint = () => {
   const [dateFromFilter, setDateFromFilter] = useState('');
   const [dateToFilter, setDateToFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  
+
   const allowedStatuses = ['pending', 'in-progress', 'resolved', 'rejected'];
 
   // Fetch complaints
-  const fetchComplaints = async () => {
+  const fetchComplaints = async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch('https://api.chatbot.adsdigitalmedia.com/api/auth/complaints?metacode=chatbot-QUP9P-CCQS2');
+      const response = await fetch(`https://api.chatbot.adsdigitalmedia.com/api/auth/complaints?metacode=chatbot-QUP9P-CCQS2&page=${page}&limit=10`,);
       const data = await response.json();
-      
+
       if (data && data.bookings) {
         setComplaints(data.bookings);
         setTotalComplaints(data.total || 0);
@@ -53,12 +53,12 @@ const Complaint = () => {
           status: newStatus
         })
       });
-      
+
       if (response.ok) {
         // Update the local state
-        setComplaints(prev => 
-          prev.map(complaint => 
-            complaint._id === complaintId 
+        setComplaints(prev =>
+          prev.map(complaint =>
+            complaint._id === complaintId
               ? { ...complaint, status: newStatus }
               : complaint
           )
@@ -73,28 +73,79 @@ const Complaint = () => {
     }
   };
 
+  // Pagination handlers
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
+      setCurrentPage(page);
+      fetchComplaints(page);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+      if (startPage > 1) {
+        pageNumbers.push(1);
+        if (startPage > 2) pageNumbers.push('...');
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) pageNumbers.push('...');
+        pageNumbers.push(totalPages);
+      }
+    }
+
+    return pageNumbers;
+  };
+
   // Filter complaints
   const filteredComplaints = complaints.filter(complaint => {
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       complaint.complaintId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       complaint.complaintId.toLowerCase().includes(`comp-${searchTerm}`.toLowerCase());
-    
-    const matchesName = nameFilter === '' || 
+
+    const matchesName = nameFilter === '' ||
       complaint.name.toLowerCase().includes(nameFilter.toLowerCase());
-    
-    const matchesPhone = phoneFilter === '' || 
+
+    const matchesPhone = phoneFilter === '' ||
       complaint.phone.includes(phoneFilter);
-    
-    const matchesStatus = statusFilter === '' || 
+
+    const matchesStatus = statusFilter === '' ||
       complaint.status === statusFilter;
-    
+
     const complaintDate = new Date(complaint.createdAt);
-    const matchesDateFrom = dateFromFilter === '' || 
+    const matchesDateFrom = dateFromFilter === '' ||
       complaintDate >= new Date(dateFromFilter);
-    
-    const matchesDateTo = dateToFilter === '' || 
+
+    const matchesDateTo = dateToFilter === '' ||
       complaintDate <= new Date(dateToFilter + 'T23:59:59');
-    
+
     return matchesSearch && matchesName && matchesPhone && matchesStatus && matchesDateFrom && matchesDateTo;
   });
 
@@ -144,411 +195,13 @@ const Complaint = () => {
 
   return (
     <>
-      <style>{`
-        .comp-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 20px;
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-          background-color: #f8f9fa;
-          min-height: 100vh;
-        }
-
-        .comp-card {
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
-        }
-
-        .comp-header {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          padding: 24px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .comp-title {
-          font-size: 24px;
-          font-weight: 600;
-          margin: 0;
-        }
-
-        .comp-badge {
-          background: rgba(255, 255, 255, 0.2);
-          padding: 6px 12px;
-          border-radius: 20px;
-          font-size: 14px;
-          font-weight: 500;
-        }
-
-        .comp-body {
-          padding: 24px;
-        }
-
-        .comp-alert {
-          background: #f8d7da;
-          color: #721c24;
-          padding: 12px 16px;
-          border-radius: 8px;
-          margin-bottom: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-        }
-
-        .comp-alert-close {
-          background: none;
-          border: none;
-          color: inherit;
-          cursor: pointer;
-          font-size: 18px;
-          padding: 0;
-        }
-
-        .comp-filters {
-          background: #f8f9fa;
-          border-radius: 8px;
-          padding: 20px;
-          margin-bottom: 24px;
-        }
-
-        .comp-filters-title {
-          font-size: 16px;
-          font-weight: 600;
-          margin-bottom: 16px;
-          color: #495057;
-        }
-
-        .comp-filters-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 16px;
-          align-items: end;
-        }
-
-        .comp-form-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .comp-label {
-          font-size: 14px;
-          font-weight: 500;
-          color: #495057;
-          margin-bottom: 6px;
-        }
-
-        .comp-input,
-        .comp-select {
-          padding: 10px 12px;
-          border: 2px solid #e9ecef;
-          border-radius: 6px;
-          font-size: 14px;
-          transition: border-color 0.3s ease;
-          background: white;
-        }
-
-        .comp-input:focus,
-        .comp-select:focus {
-          outline: none;
-          border-color: #667eea;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .comp-help-text {
-          font-size: 12px;
-          color: #6c757d;
-          margin-top: 4px;
-        }
-
-        .comp-btn {
-          padding: 10px 16px;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 14px;
-          font-weight: 500;
-          transition: all 0.3s ease;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .comp-btn-outline {
-          background: white;
-          color: #6c757d;
-          border: 2px solid #e9ecef;
-        }
-
-        .comp-btn-outline:hover {
-          background: #f8f9fa;
-          border-color: #dee2e6;
-        }
-
-        .comp-btn-primary {
-          background: #667eea;
-          color: white;
-        }
-
-        .comp-btn-primary:hover {
-          background: #5a6fd8;
-        }
-
-        .comp-results-info {
-          color: #6c757d;
-          margin-bottom: 16px;
-          font-size: 14px;
-        }
-
-        .comp-filter-active {
-          color: #667eea;
-          font-weight: 500;
-        }
-
-        .comp-table-container {
-          overflow-x: auto;
-          border-radius: 8px;
-          border: 1px solid #e9ecef;
-        }
-
-        .comp-table {
-          width: 100%;
-          border-collapse: collapse;
-          background: white;
-        }
-
-        .comp-table-header {
-          background: #343a40;
-          color: white;
-        }
-
-        .comp-table th,
-        .comp-table td {
-          padding: 12px;
-          text-align: left;
-          border-bottom: 1px solid #e9ecef;
-        }
-
-        .comp-table th {
-          font-weight: 600;
-          font-size: 14px;
-        }
-
-        .comp-table tbody tr:hover {
-          background: #f8f9fa;
-        }
-
-        .comp-table-empty {
-          text-align: center;
-          padding: 60px 20px;
-          color: #6c757d;
-        }
-
-        .comp-table-empty-icon {
-          font-size: 48px;
-          margin-bottom: 16px;
-          opacity: 0.5;
-        }
-
-        .comp-complaint-id {
-          background: #e3f2fd;
-          color: #1976d2;
-          padding: 4px 8px;
-          border-radius: 4px;
-          font-family: monospace;
-          font-size: 13px;
-        }
-
-        .comp-name {
-          font-weight: 500;
-          color: #212529;
-        }
-
-        .comp-phone {
-          color: #667eea;
-          text-decoration: none;
-        }
-
-        .comp-phone:hover {
-          text-decoration: underline;
-        }
-
-        .comp-category,
-        .comp-service {
-          font-size: 13px;
-          color: #6c757d;
-        }
-
-        .comp-description {
-          max-width: 200px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          font-size: 13px;
-          color: #495057;
-        }
-
-        .comp-status {
-          padding: 4px 8px;
-          border-radius: 12px;
-          font-size: 12px;
-          font-weight: 500;
-          text-transform: capitalize;
-        }
-
-        .comp-status-pending {
-          background: #fff3cd;
-          color: #856404;
-        }
-
-        .comp-status-progress {
-          background: #cce5ff;
-          color: #004085;
-        }
-
-        .comp-status-resolved {
-          background: #d4edda;
-          color: #155724;
-        }
-
-        .comp-status-rejected {
-          background: #f8d7da;
-          color: #721c24;
-        }
-
-        .comp-status-default {
-          background: #e2e3e5;
-          color: #383d41;
-        }
-
-        .comp-date {
-          font-size: 13px;
-          color: #6c757d;
-        }
-
-        .comp-dropdown {
-          position: relative;
-          display: inline-block;
-        }
-
-        .comp-dropdown-btn {
-          background: white;
-          border: 2px solid #667eea;
-          color: #667eea;
-          padding: 6px 12px;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 12px;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        .comp-dropdown-btn:hover {
-          background: #f8f9fa;
-        }
-
-        .comp-dropdown-menu {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          background: white;
-          border: 1px solid #e9ecef;
-          border-radius: 6px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          min-width: 150px;
-          z-index: 1000;
-          display: none;
-        }
-
-        .comp-dropdown-menu.show {
-          display: block;
-        }
-
-        .comp-dropdown-item {
-          padding: 8px 12px;
-          cursor: pointer;
-          font-size: 14px;
-          border: none;
-          background: none;
-          width: 100%;
-          text-align: left;
-          color: #495057;
-        }
-
-        .comp-dropdown-item:hover {
-          background: #f8f9fa;
-        }
-
-        .comp-dropdown-item.active {
-          background: #667eea;
-          color: white;
-        }
-
-        .comp-dropdown-item:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .comp-actions {
-          display: flex;
-          justify-content: flex-end;
-          margin-top: 20px;
-        }
-
-        .comp-loading {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 400px;
-          gap: 16px;
-        }
-
-        .comp-spinner {
-          width: 40px;
-          height: 40px;
-          border: 4px solid #f3f3f3;
-          border-top: 4px solid #667eea;
-          border-radius: 50%;
-          animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-          .comp-container {
-            padding: 10px;
-          }
-          
-          .comp-filters-grid {
-            grid-template-columns: 1fr;
-          }
-          
-          .comp-table-container {
-            font-size: 12px;
-          }
-          
-          .comp-table th,
-          .comp-table td {
-            padding: 8px;
-          }
-        }
-      `}</style>
-
       <div className="comp-container">
         <div className="comp-card">
           <div className="comp-header">
             <h1 className="comp-title">Complaint Management System</h1>
             <div className="comp-badge">{totalComplaints} Total</div>
           </div>
-          
+
           <div className="comp-body">
             {error && (
               <div className="comp-alert">
@@ -574,7 +227,7 @@ const Complaint = () => {
                   />
                   <div className="comp-help-text">You can search with or without 'COMP-' prefix</div>
                 </div>
-                
+
                 <div className="comp-form-group">
                   <label className="comp-label">Name</label>
                   <input
@@ -585,7 +238,7 @@ const Complaint = () => {
                     onChange={(e) => setNameFilter(e.target.value)}
                   />
                 </div>
-                
+
                 <div className="comp-form-group">
                   <label className="comp-label">Phone</label>
                   <input
@@ -596,7 +249,7 @@ const Complaint = () => {
                     onChange={(e) => setPhoneFilter(e.target.value)}
                   />
                 </div>
-                
+
                 <div className="comp-form-group">
                   <label className="comp-label">Status</label>
                   <select
@@ -612,7 +265,7 @@ const Complaint = () => {
                     ))}
                   </select>
                 </div>
-                
+
                 <div className="comp-form-group">
                   <label className="comp-label">Date From</label>
                   <input
@@ -622,7 +275,7 @@ const Complaint = () => {
                     onChange={(e) => setDateFromFilter(e.target.value)}
                   />
                 </div>
-                
+
                 <div className="comp-form-group">
                   <label className="comp-label">Date To</label>
                   <input
@@ -632,7 +285,7 @@ const Complaint = () => {
                     onChange={(e) => setDateToFilter(e.target.value)}
                   />
                 </div>
-                
+
                 <div className="comp-form-group">
                   <button
                     className="comp-btn comp-btn-outline"
@@ -648,9 +301,12 @@ const Complaint = () => {
             {/* Results Info */}
             <div className="comp-results-info">
               Showing {filteredComplaints.length} of {totalComplaints} complaints
-              {(searchTerm || nameFilter || phoneFilter || statusFilter || dateFromFilter || dateToFilter) && 
+              {(searchTerm || nameFilter || phoneFilter || statusFilter || dateFromFilter || dateToFilter) &&
                 <span className="comp-filter-active"> (filtered)</span>
               }
+              {totalPages > 1 && (
+                <span className="comp-page-info"> - Page {currentPage} of {totalPages}</span>
+              )}
             </div>
 
             {/* Table */}
@@ -703,8 +359,8 @@ const Complaint = () => {
                         </td>
                         <td className="comp-date">{formatDate(complaint.createdAt)}</td>
                         <td>
-                          <StatusDropdown 
-                            complaint={complaint} 
+                          <StatusDropdown
+                            complaint={complaint}
                             allowedStatuses={allowedStatuses}
                             onStatusChange={changeStatus}
                           />
@@ -716,11 +372,46 @@ const Complaint = () => {
               </table>
             </div>
 
+            {/* Pagination */}
+            {totalPages > 0 && (
+              <div className="comp-pagination">
+                <button
+                  className={`comp-pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                >
+                  ← Previous
+                </button>
+
+                <div className="comp-pagination-numbers">
+                  {getPageNumbers().map((pageNum, index) => (
+                    <button
+                      key={index}
+                      className={`comp-pagination-number ${pageNum === currentPage ? 'active' : ''
+                        } ${pageNum === '...' ? 'dots' : ''}`}
+                      onClick={() => pageNum !== '...' && handlePageChange(pageNum)}
+                      disabled={pageNum === '...' || pageNum === currentPage}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  className={`comp-pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="comp-actions">
               <button
                 className="comp-btn comp-btn-primary"
-                onClick={fetchComplaints}
+                onClick={() => fetchComplaints(currentPage)}
                 disabled={loading}
               >
                 🔄 Refresh Data

@@ -7,6 +7,7 @@ import './footer.css'
 function Footer() {
   const [allService, setService] = useState([])
   const [activeChatBtn, setActiveChatBtn] = useState(false)
+
   const fetchService = async () => {
     try {
       const res = await axios.get('https://www.api.blueaceindia.com/api/v1/get-all-service-category')
@@ -17,6 +18,7 @@ function Footer() {
       console.log(error)
     }
   }
+
   useEffect(() => {
     fetchService();
   }, [])
@@ -24,6 +26,31 @@ function Footer() {
   const handleActiveChat = () => {
     setActiveChatBtn(!activeChatBtn)
   }
+
+  // Responsive chatbot dimensions
+  const getChatbotStyles = () => {
+    if (!activeChatBtn) {
+      return { display: 'none' }; // Hide completely when inactive
+    }
+
+    const isMobile = window.innerWidth <= 768;
+
+    return {
+      position: 'fixed',
+      bottom: '80px',
+      right: '10px',
+      zIndex: 9999,
+      width: isMobile ? '95%' : '400px',
+      maxWidth: '400px',
+      height: isMobile ? '70vh' : '600px',
+      maxHeight: '600px',
+      border: 'none',
+
+
+      transition: 'all 0.3s ease-in-out',
+    };
+  };
+
   return (
     <>
       {/* ============================ Footer Start ================================== */}
@@ -68,7 +95,7 @@ function Footer() {
                       </li>
                       <li className="list-inline-item socailLinks">
                         <a href="https://www.youtube.com/@Blueaceltd " target='_blank' className="theme-cl">
-                          <i class="fa-brands fa-youtube"></i>
+                          <i className="fa-brands fa-youtube"></i>
                         </a>
                       </li>
                     </ul>
@@ -139,26 +166,79 @@ function Footer() {
           </div>
         </div>
       </footer>
-      <div className='main-chat-container'>
 
-    <iframe
-  src="https://embeded.chat.adsdigitalmedia.com?metacode=chatbot-QUP9P-CCQS2"
-  width="400"
-  height="600"
-  style={{
-    position: 'fixed',
-    bottom: '80px',
-    right: '10px',
-    zIndex: 9999,
-    width: '90%', // default for mobile
-    maxWidth: '300px', // limits width on large screens
-    height: '500px', // smaller height for mobile
-    border: 'none',
-  }}
-  title="Chatbot Verification"
-/>
-
+      {/* Chatbot Toggle Button */}
+      <div className="chatbot-toggle-container">
+        <button
+          className={`chatbot-toggle-btn ${activeChatBtn ? 'active' : ''}`}
+          onClick={handleActiveChat}
+          style={{
+            position: 'fixed',
+            bottom: '30px',
+            right: '35px',
+            zIndex: 10000,
+            width: '60px',
+            height: '60px',
+            borderRadius: '50%',
+            border: 'none',
+            backgroundColor: '#007bff',
+            color: 'white',
+            fontSize: '24px',
+            cursor: 'pointer',
+            boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          {activeChatBtn ? '✕' : '💬'}
+        </button>
       </div>
+
+      {/* Chatbot Container - Only renders when active */}
+      {activeChatBtn && (
+        <div className='main-chat-container'>
+          <iframe
+            src="https://embeded.chat.adsdigitalmedia.com?metacode=chatbot-QUP9P-CCQS2"
+            style={getChatbotStyles()}
+            title="Chatbot Verification"
+            allow="microphone; camera"
+          />
+        </div>
+      )}
+
+      {/* Add responsive styles */}
+      <style jsx>{`
+        .chatbot-toggle-btn:hover {
+          transform: scale(1.1);
+          background-color: #0056b3;
+        }
+        
+        .chatbot-toggle-btn.active {
+          background-color: #dc3545;
+        }
+        
+        .chatbot-toggle-btn.active:hover {
+          background-color: #c82333;
+        }
+        
+        @media (max-width: 768px) {
+          .chatbot-toggle-btn {
+            width: 50px !important;
+            height: 50px !important;
+            font-size: 20px !important;
+            bottom: 15px !important;
+            right: 15px !important;
+          }
+        }
+        
+        /* Prevent body scroll when chatbot is active on mobile */
+        @media (max-width: 768px) {
+          ${activeChatBtn ? 'body { overflow: hidden; }' : ''}
+        }
+      `}</style>
+
       {/* ============================ Footer End ================================== */}
     </>
   );
