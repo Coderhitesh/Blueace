@@ -1,0 +1,416 @@
+
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #00aaa9 0%, #003873 100%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.app-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(0, 170, 169, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(0, 56, 115, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Hero Section */
+.app-hero {
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.app-hero-content {
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.app-hero-text {
+  color: white;
+}
+
+/* Logo Section */
+.app-logo-section {
+  margin-bottom: 2rem;
+}
+
+.app-logo {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.app-logo-svg {
+  width: 80px;
+  height: 50px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+/* Typography */
+.app-title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.app-brand {
+  background: linear-gradient(45deg, #00aaa9, #87CEEB);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: #00aaa9; /* fallback */
+}
+
+.app-description {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Download Section */
+.app-download-section {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.app-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 1rem;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.app-download-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.app-download-android {
+  background: linear-gradient(45deg, #00aaa9, #003873);
+  border-color: transparent;
+  box-shadow: 0 4px 15px rgba(0, 170, 169, 0.4);
+}
+
+.app-download-android:hover {
+  background: linear-gradient(45deg, #008a89, #002555);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 170, 169, 0.5);
+}
+
+.app-download-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: rgba(0, 56, 115, 0.3);
+}
+
+.app-download-disabled:hover {
+  background: rgba(0, 56, 115, 0.3);
+  transform: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.app-download-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.app-download-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-download-small {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  font-weight: 400;
+}
+
+.app-download-large {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Features Section */
+.app-features {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.app-feature {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.95;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 0.5rem 1rem;
+  border-radius: 2rem;
+  backdrop-filter: blur(5px);
+}
+
+.app-feature-icon {
+  width: 20px;
+  height: 20px;
+  color: #00aaa9;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Screenshots Section */
+.app-screenshots {
+  position: relative;
+}
+
+.app-screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  perspective: 1000px;
+}
+
+.app-screenshot {
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 56, 115, 0.4);
+  transition: transform 0.3s ease;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.app-screenshot:hover {
+  transform: translateY(-10px) rotateY(5deg);
+  box-shadow: 0 25px 50px rgba(0, 56, 115, 0.5);
+}
+
+.app-screenshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.app-screenshot:hover img {
+  transform: scale(1.05);
+}
+
+.app-screenshot-1 {
+  transform: rotateY(-5deg) rotateX(5deg);
+}
+
+.app-screenshot-2 {
+  transform: rotateY(5deg) rotateX(5deg);
+  margin-top: 2rem;
+}
+
+.app-screenshot-3 {
+  transform: rotateY(-5deg) rotateX(-5deg);
+  margin-top: -2rem;
+}
+
+.app-screenshot-4 {
+  transform: rotateY(5deg) rotateX(-5deg);
+}
+
+/* Stats Section */
+.app-stats {
+  background: rgba(0, 56, 115, 0.3);
+  backdrop-filter: blur(15px);
+  padding: 2rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.app-stats-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.app-stat {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+  text-align: center;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(5px);
+  transition: transform 0.3s ease;
+}
+
+.app-stat:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.app-stat-icon {
+  width: 32px;
+  height: 32px;
+  color: #00aaa9;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.app-stat-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.app-stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-hero-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    text-align: center;
+  }
+
+  .app-title {
+    font-size: 2rem;
+  }
+
+  .app-description {
+    font-size: 1rem;
+  }
+
+  .app-download-section {
+    justify-content: center;
+  }
+
+  .app-features {
+    justify-content: center;
+  }
+
+  .app-screenshot-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .app-screenshot-2,
+  .app-screenshot-3 {
+    margin-top: 0;
+  }
+
+  .app-stats-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .app-stat {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-hero {
+    padding: 1rem;
+  }
+
+  .app-title {
+    font-size: 1.5rem;
+  }
+
+  .app-download-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .app-download-btn {
+    width: 100%;
+    max-width: 250px;
+    justify-content: center;
+  }
+
+  .app-features {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .app-feature {
+    justify-content: center;
+  }
+
+  .app-screenshot-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+  }
+}
+
+/* Animation for smooth loading */
+@keyframes app-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.app-hero-text > * {
+  animation: app-fadeInUp 0.6s ease-out forwards;
+}
+
+.app-hero-text > *:nth-child(1) { animation-delay: 0.1s; }
+.app-hero-text > *:nth-child(2) { animation-delay: 0.2s; }
+.app-hero-text > *:nth-child(3) { animation-delay: 0.3s; }
+.app-hero-text > *:nth-child(4) { animation-delay: 0.4s; }
+.app-hero-text > *:nth-child(5) { animation-delay: 0.5s; }
+
+.app-screenshot {
+  animation: app-fadeInUp 0.8s ease-out forwards;
+}
+
+.app-screenshot-1 { animation-delay: 0.2s; }
+.app-screenshot-2 { animation-delay: 0.4s; }
+.app-screenshot-3 { animation-delay: 0.6s; }
+.app-screenshot-4 { animation-delay: 0.8s; }
