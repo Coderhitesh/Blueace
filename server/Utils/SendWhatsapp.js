@@ -32,6 +32,7 @@ exports.SendWhatsapp = async (phone, template, Param) => {
             console.log("Message sent successfully!");
         }
     } catch (error) {
+
         console.log("Internal server error in sending Whatsapp", error);
         // Enhanced error handling
         if (error.response) {
@@ -41,8 +42,8 @@ exports.SendWhatsapp = async (phone, template, Param) => {
         } else {
             console.error("Error in setting up the request:", error.message);
         }
-
-        console.error("Internal server error", error);
+        throw new Error('Failed to send WhatsApp message');
+        // console.error("Internal server error", error);
     }
 };
 

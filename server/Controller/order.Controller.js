@@ -149,27 +149,28 @@ exports.makeOrderFromApp = async (req, res) => {
         const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
 
 
-        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
+        const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime } = req.body;
 
         const emptyField = [];
         if (!userId) emptyField.push('User');
         if (!serviceId) emptyField.push('Service');
         if (emptyField.length > 0) {
+            console.log('❌ Missing required fields:', emptyField);
             return res.status(400).json({
                 success: false,
                 message: `Please fill in the following fields: ${emptyField.join(', ')}`
             });
         }
 
-
-
-
+        // Parse RangeWhereYouWantService
         let parsedRangeWhereYouWantService = null;
         if (RangeWhereYouWantService) {
             try {
                 parsedRangeWhereYouWantService = JSON.parse(RangeWhereYouWantService);
+                console.log('✅ Range parsed successfully:', parsedRangeWhereYouWantService);
             } catch (parseError) {
+                console.log('❌ Error parsing RangeWhereYouWantService:', parseError.message);
                 return res.status(400).json({
                     success: false,
                     message: 'Invalid format for RangeWhereYouWantService. It must be a valid JSON.'
@@ -177,32 +178,46 @@ exports.makeOrderFromApp = async (req, res) => {
             }
         }
 
-
-
-
+        // Handle voice note upload
         let voiceNoteDetails = null;
 
+        if (req.files && req.files.length > 0 && req.files[0]) {
+            console.log('🎵 Voice note file detected:', req.files[0].filename);
+            console.log('📍 File path:', req.files[0].path);
 
-        if (req.files) {
-            const voiceNoteUpload = await uploadVoiceNote(req.files[0].path);
-            const { url, public_id } = voiceNoteUpload;
+            try {
+                const voiceNoteUpload = await uploadVoiceNote(req.files[0].path);
+                const { url, public_id } = voiceNoteUpload;
 
-            voiceNoteDetails = {
-                url: url,
-                public_id: public_id
-            };
+                voiceNoteDetails = {
+                    url: url,
+                    public_id: public_id
+                };
 
+                console.log('✅ Voice note uploaded successfully:', {
+                    url: voiceNoteDetails.url,
+                    public_id: voiceNoteDetails.public_id
+                });
 
-            fs.unlink(req.files[0].path, (err) => {
-                if (err) {
-                    console.error('Error deleting local voice note file:', err);
-                }
-            });
+                // Clean up local file
+                fs.unlink(req.files[0].path, (err) => {
+                    if (err) {
+                        console.error('❌ Error deleting local voice note file:', err);
+                    } else {
+                        console.log('🗑️ Local voice note file deleted successfully');
+                    }
+                });
+            } catch (uploadError) {
+                console.error('❌ Error uploading voice note:', uploadError);
+                // Continue without voice note if upload fails
+                console.log('⚠️ Continuing order creation without voice note due to upload error');
+            }
         } else {
-            console.warn('No voice note uploaded, proceeding to create order without it.');
+            console.log('ℹ️ No voice note file uploaded, proceeding without it');
         }
 
-
+        // Create new order
+        console.log('📦 Creating new order...');
         const newOrder = new Order({
             userId,
             serviceId,
@@ -213,25 +228,43 @@ exports.makeOrderFromApp = async (req, res) => {
             phoneNumber,
             serviceType,
             message,
-
             address,
             pinCode,
             houseNo,
-
             nearByLandMark,
             RangeWhereYouWantService: parsedRangeWhereYouWantService,
-
         });
 
-        const service = await ServiceCategory.findById(serviceId); // Find the service by ID
+        // Get service details
+        console.log('🔍 Finding service details for serviceId:', serviceId);
+        const service = await ServiceCategory.findById(serviceId);
         const serviceName = service ? service.name : 'Service';
+        console.log('📋 Service found:', serviceName);
 
+        // Save order
         await newOrder.save();
-        const longaddress = address.replace(/,/g, '');
-        const Param = [fullName, email, phoneNumber, serviceName, serviceType, message, houseNo, longaddress, pinCode]
+        console.log('✅ Order saved successfully with ID:', newOrder._id);
 
-        await SendWhatsapp(AdminNumber, 'order_detail_to_admin', Param)
-        console.log(newOrder)
+        // Send WhatsApp notification
+        console.log('📱 Sending WhatsApp notification to admin:', AdminNumber);
+        const longaddress = address.replace(/,/g, '');
+        const Param = [fullName, email, phoneNumber, serviceName, serviceType, message, houseNo, longaddress, pinCode];
+
+        try {
+            await SendWhatsapp(AdminNumber, 'order_detail_to_admin', Param);
+            console.log('✅ WhatsApp notification sent successfully');
+        } catch (whatsappError) {
+            console.error('❌ Error sending WhatsApp notification:', whatsappError);
+            // Don't fail the order creation if WhatsApp fails
+        }
+
+        console.log('🎉 Order created successfully:', {
+            orderId: newOrder._id,
+            userId: newOrder.userId,
+            serviceId: newOrder.serviceId,
+            hasVoiceNote: !!newOrder.voiceNote
+        });
+
         res.status(201).json({
             success: true,
             message: 'Order created successfully',
@@ -239,11 +272,18 @@ exports.makeOrderFromApp = async (req, res) => {
         });
 
     } catch (error) {
-        console.error("Internal server error in creating order in app", error);
+        console.error("❌ Internal server error in creating order in app:", error);
+        console.error("📍 Error stack:", error.stack);
 
-        // Handle any necessary cleanup if the order creation fails
+        // Handle cleanup if order creation fails and voice note was uploaded
+        // Uncomment if you want to clean up uploaded voice notes on error
         // if (voiceNoteDetails && voiceNoteDetails.public_id) {
-        //     await deleteVoiceNoteFromCloudinary(voiceNoteDetails.public_id);
+        //     try {
+        //         await deleteVoiceNoteFromCloudinary(voiceNoteDetails.public_id);
+        //         console.log('🗑️ Voice note cleaned up from Cloudinary');
+        //     } catch (cleanupError) {
+        //         console.error('❌ Error cleaning up voice note:', cleanupError);
+        //     }
         // }
 
         res.status(500).json({
