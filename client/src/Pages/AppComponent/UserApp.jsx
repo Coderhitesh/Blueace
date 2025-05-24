@@ -25,7 +25,7 @@ const UserApp = () => {
                         {/* Download Buttons */}
                         <div className="app-download-section">
                             <a
-                                href="http://blueaceindia.com/apk/bluacev1.apk"
+                                href="https://www.blueaceindia.com/apk/bluacev1.apk"
                                 className="app-download-btn app-download-android"
                                 target="_blank"
                                 download={'Blueace.apk'}
