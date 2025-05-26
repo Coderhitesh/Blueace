@@ -4,7 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 // MIME types for voice notes
-const voiceMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'];
+const voiceMimeTypes = ['audio/wav', 'audio/x-wav', 'audio/m4a', 'audio/x-m4a', 'audio/mp4', 'audio/aac'];
 const videoMimeTypes = ['video/mp4', 'video/mpeg']; // Define video MIME types
 
 const storage = multer.diskStorage({
