@@ -11,116 +11,135 @@ const sendEmail = require('../Utils/SendEmail');
 const { SendWhatsapp, SendOtpWhatsapp } = require('../Utils/SendWhatsapp');
 exports.register = async (req, res) => {
     try {
-        // console.log("I am hit")
-        const { companyName, address, FullName, Email, ContactNumber, Password, PinCode, HouseNo, NearByLandMark, RangeWhereYouWantService, UserType } = req.body;
-
-        const emptyField = [];
-        if (!FullName) emptyField.push('FullName');
-        if (!Email) emptyField.push('Email');
-        if (!ContactNumber) emptyField.push('ContactNumber');
-        if (emptyField.length > 0) {
-            return res.status(400).json({
-                success: false,
-                message: `Please fill all the required fields: ${emptyField.join(', ')}`
-            })
-        }
-
-        // console.log('body',req.body)
-
-
-        // Check if email or contact number already exists
-        const existingUserEmail = await User.findOne({ Email });
-        if (existingUserEmail) {
-            return res.status(400).json({
-                success: false,
-                message: 'Email already exists as a User'
-            });
-        }
-
-        const existingUserContact = await User.findOne({ ContactNumber });
-        if (existingUserContact) {
-            return res.status(403).json({
-                success: false,
-                message: 'Number already exists as a User'
-            });
-        }
-
-        // Check for existing vendor email
-        const existingVendorEmail = await Vendor.findOne({ Email });
-        if (existingVendorEmail) {
-            return res.status(403).json({
-                success: false,
-                message: "Email already exists as a Vendor"
-            });
-        }
-
-        // Check for existing vendor number
-        const existingVendorNumber = await Vendor.findOne({ ContactNumber });
-        if (existingVendorNumber) {
-            return res.status(403).json({
-                success: false,
-                message: "Number already exists as a Vendor"
-            });
-        }
-
-        // Check password length
-        if (Password.length <= 6) {
-            return res.status(403).json({
-                success: false,
-                message: 'Password Length Must be Greater than 6 Digits'
-            });
-        }
-
-        const OTP = Math.floor(100000 + Math.random() * 900000);
-        const OTPExpires = new Date();
-        OTPExpires.setMinutes(OTPExpires.getMinutes() + 10);
-
-        // Define initial user data
-        const userData = {
+        const {
+            companyName,
+            address,
             FullName,
-            Password,
             Email,
             ContactNumber,
+            Password,
             PinCode,
-            UserType,
+            HouseNo,
+            NearByLandMark,
+            RangeWhereYouWantService,
+            UserType
+        } = req.body;
+
+        // Required field check
+        const missingFields = [];
+        if (!FullName) missingFields.push('FullName');
+        if (!Email) missingFields.push('Email');
+        if (!ContactNumber) missingFields.push('ContactNumber');
+        if (!Password) missingFields.push('Password');
+
+        if (missingFields.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: `Missing required fields: ${missingFields.join(', ')}`
+            });
+        }
+
+        if (Password.length <= 6) {
+            return res.status(400).json({
+                success: false,
+                message: 'Password must be longer than 6 characters'
+            });
+        }
+
+        // Normalize email and contact
+        const normalizedEmail = Email.trim().toLowerCase();
+        const normalizedContact = ContactNumber.trim();
+
+        // Check if user or vendor already exists
+        const [existingUser, existingVendor] = await Promise.all([
+            User.findOne({
+                $or: [
+                    { Email: normalizedEmail },
+                    { ContactNumber: normalizedContact }
+                ]
+            }),
+            Vendor.findOne({
+                $or: [
+                    { Email: normalizedEmail },
+                    { ContactNumber: normalizedContact }
+                ]
+            })
+        ]);
+
+        // Handle existing user
+        if (existingUser) {
+            if (!existingUser.isVerify) {
+                // Resend OTP
+                const OTP = Math.floor(100000 + Math.random() * 900000);
+                const OTPExpires = new Date(Date.now() + 10 * 60000); // 10 minutes
+
+                existingUser.loginOtp = OTP;
+                existingUser.loginOtpExpiredTime = OTPExpires;
+                await existingUser.save();
+
+                await SendOtpWhatsapp(existingUser.ContactNumber, OTP);
+
+                return res.status(200).json({
+                    success: true,
+                    message: 'You are already registered but not verified. A new OTP has been sent to your WhatsApp.',
+                    data: existingUser
+                });
+            }
+
+            return res.status(400).json({
+                success: false,
+                message: 'User already registered and verified. Please log in instead.'
+            });
+        }
+
+        // Handle existing vendor
+        if (existingVendor) {
+            return res.status(400).json({
+                success: false,
+                message: 'This email or contact number is already registered as a vendor.'
+            });
+        }
+
+        // Create new OTP
+        const OTP = Math.floor(100000 + Math.random() * 900000);
+        const OTPExpires = new Date(Date.now() + 10 * 60000); // 10 minutes
+
+        const newUser = new User({
+            FullName,
+            Email: normalizedEmail,
+            ContactNumber: normalizedContact,
+            Password,
+            PinCode,
             HouseNo,
             address,
             NearByLandMark,
             RangeWhereYouWantService,
+            UserType,
             companyName,
             loginOtp: OTP,
             loginOtpExpiredTime: OTPExpires
-        };
+        });
 
-        // Create new user instance
-        const newUser = new User(userData);
-
-        // Save user to database
         await newUser.save();
-        // Send token to the user
-        // await SendToken(newUser, res, 201);
-        await SendOtpWhatsapp(newUser?.ContactNumber, OTP);
+        await SendOtpWhatsapp(newUser.ContactNumber, OTP);
 
-        return res.status(200).json({
+        return res.status(201).json({
             success: true,
-            message: 'User registered successfully',
+            message: 'User registered successfully. OTP has been sent to your WhatsApp for verification.',
             data: newUser
-        })
-
+        });
 
     } catch (error) {
-        console.error('Error creating user:', error);
+        console.error('Error in register:', error);
 
-        // Handle duplicate key error
         if (error.code === 11000) {
-            const duplicateField = Object.keys(error.keyValue)[0];
+            const field = Object.keys(error.keyValue)[0];
             return res.status(400).json({
                 success: false,
-                message: `${duplicateField} already exists`
+                message: `The ${field} is already in use.`
             });
         }
 
-        // Handle validation errors
         if (error.name === 'ValidationError') {
             const messages = Object.values(error.errors).map(err => err.message);
             return res.status(400).json({
@@ -129,10 +148,9 @@ exports.register = async (req, res) => {
             });
         }
 
-        // Handle other errors
         return res.status(500).json({
             success: false,
-            message: 'Internal Server Error in user registration'
+            message: 'Something went wrong during registration. Please try again later.'
         });
     }
 };
@@ -180,8 +198,6 @@ exports.verifyOtpForRegister = async (req, res) => {
     }
 }
 
-
-
 exports.resendVerifyUserOtp = async (req, res) => {
     try {
         const { id } = req.params;
@@ -216,56 +232,94 @@ exports.resendVerifyUserOtp = async (req, res) => {
 
 exports.login = async (req, res) => {
     const { Email, Password, ContactNumber } = req.body;
+    console.log("Login attempt with body:", req.body);
 
     try {
+        const normalizedEmail = Email?.trim().toLowerCase();
+        const normalizedContact = ContactNumber?.trim();
+
         let user = await User.findOne({
-            $or: [{ ContactNumber: ContactNumber }, { Email }]
+            $or: [
+                { Email: normalizedEmail },
+                { ContactNumber: normalizedContact }
+            ]
         });
-
-        console.log("Login user =>", user);
-
 
         let model = 'User';
 
-        // If not found in User, search Vendor
+        // If not found in User, try Vendor
         if (!user) {
             user = await Vendor.findOne({
-                $or: [{ ContactNumber: ContactNumber }, { Email }]
+                $or: [
+                    { Email: normalizedEmail },
+                    { ContactNumber: normalizedContact }
+                ]
             });
             model = user ? 'Vendor' : '';
         }
-        // User/Vendor not found
+
+        // Not found in either
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: 'No existing account. Please register.'
+                message: 'No account found. Please register first.'
             });
         }
 
-        // Account deactivated
-        if (user.isDeactive) {
-            return res.status(401).json({
+        // Handle soft deleted account
+        if (user.isSoftDeleted) {
+            return res.status(403).json({
                 success: false,
-                message: 'Your account is deactivated'
+                message: 'This account has been deleted. Please contact support.'
             });
         }
 
-        // Check password
+        // Handle deactivated account
+        if (user.isDeactive) {
+            return res.status(403).json({
+                success: false,
+                message: 'Your account has been deactivated.'
+            });
+        }
+
+        // If not verified, resend OTP
+        if (!user.isVerify) {
+            const OTP = Math.floor(100000 + Math.random() * 900000);
+            const OTPExpires = new Date(Date.now() + 10 * 60000); // 10 minutes
+
+            user.loginOtp = OTP;
+            user.loginOtpExpiredTime = OTPExpires;
+            await user.save();
+
+            await SendOtpWhatsapp(user.ContactNumber, OTP);
+
+            return res.status(200).json({
+                success: true,
+                message: 'Your account is not verified. OTP has been sent to your WhatsApp.',
+                data: {
+                    id: user._id,
+                    isVerify: false,
+                    ContactNumber: user.ContactNumber
+                }
+            });
+        }
+
+        // Verify password
         const isMatch = await user.comparePassword(Password);
         if (!isMatch) {
             return res.status(401).json({
                 success: false,
-                message: 'Incorrect password'
+                message: 'Incorrect password.'
             });
         }
 
-        // Success: send token
+        // Successful login
         console.log(`Login successful for ${model}:`, user.Email || user.ContactNumber);
-        return await SendToken(user, res, 201);
+        return await SendToken(user, res, 200);
 
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
             message: 'Server error. Please try again later.',
             error: error.message
@@ -1083,5 +1137,37 @@ exports.registerCorporateuserByExcel = async (req, res) => {
             message: 'Internal Server Error',
             error: error.message
         })
+    }
+}
+
+
+exports.deleteMyAccounSoft = async (req, res) => {
+    try {
+        const id = req.params?.id;
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            })
+        }
+        // Soft delete the user by setting isSoftDeleted to true
+        user.isSoftDeleted = true;
+        await user.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Account deleted successfully',
+            data: user
+        });
+
+    } catch (error) {
+        console.log("Internal server error in deleting account soft", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error in deleting account soft',
+            error: error.message
+        })
+
     }
 }

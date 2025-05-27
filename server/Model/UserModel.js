@@ -102,6 +102,10 @@ const UserSchema = new mongoose.Schema({
     isVerify: {
         type: Boolean,
         default: false
+    },
+    isSoftDeleted: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 
