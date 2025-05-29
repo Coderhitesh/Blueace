@@ -388,6 +388,8 @@ function Order() {
                         EmployeeOrderHref={'/download-employ-data'}
                         AMCOrderText="Export AMC User Order"
                         AMCOrderHref={'/download-amc-order'}
+                        allOrderText="Create Order"
+                        allOrderHref={'/Orders/create-order'}
                     />
 
                     {modalVisible && selectedVendor && (

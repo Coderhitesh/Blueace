@@ -90,6 +90,7 @@ import DownloadAmcOrderInExcel from '../Orders/DownloadAmcOrderInExcel'
 import AllJobInquiry from '../JobInquiry/AllJobInquiry'
 import Complaint from '../Chatbots/Complaint'
 import BookingsChatBot from '../Chatbots/BookingsChatBot'
+import CreateOrder from '../Orders/CreateOrder'
 
 const Home = () => {
     return (
@@ -203,6 +204,7 @@ const Home = () => {
 
                         {/* Order route here  */}
                         <Route path='/Orders/all-order' element={<Order />} />
+                        <Route path='/Orders/create-order' element={<CreateOrder />} />
 
                         {/* payment status route here  */}
 

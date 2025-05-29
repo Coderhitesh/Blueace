@@ -38,7 +38,7 @@ exports.makeOrder = async (req, res) => {
     try {
         // console.log('body', req.body);
         const { userId, serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime, workingDateUserWant } = req.body;
-        const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
+        const AdminNumber = process.env.ADMIN_NUMBER || '9311539090';
 
 
         const emptyField = [];
@@ -144,9 +144,135 @@ exports.makeOrder = async (req, res) => {
     }
 };
 
+exports.makeOrderFromAdmin = async (req, res) => {
+    try {
+        const { serviceId, fullName, email, phoneNumber, serviceType, message, pinCode, address, houseNo, nearByLandMark, RangeWhereYouWantService, orderTime, workingDateUserWant } = req.body;
+        const AdminNumber = process.env.ADMIN_NUMBER || '9311539090';
+
+
+        const emptyField = [];
+        // if (!userId) emptyField.push('User');
+        if (!serviceId) emptyField.push('Service');
+        if (!fullName) emptyField.push('Name');
+        if (!email) emptyField.push('Email');
+        if (!phoneNumber) emptyField.push('Phone Number');
+        if (emptyField.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: `Please fill in the following fields: ${emptyField.join(', ')}`
+            });
+        }
+        let newUserId;
+        const findUSer = await User.find({ ContactNumber: phoneNumber });
+        console.log("findUSer", findUSer);
+
+        if (findUSer.length === 0) {
+            const newUser = new User({
+                FullName: fullName,
+                ContactNumber: phoneNumber,
+                Email: email,
+                Password: '12345678'
+            });
+
+            await newUser.save();
+            newUserId = newUser._id;
+        } else {
+            newUserId = findUSer[0]._id;
+        }
+
+
+
+        // Parse RangeWhereYouWantService if it exists
+        let parsedRangeWhereYouWantService = null;
+        if (RangeWhereYouWantService) {
+            try {
+                parsedRangeWhereYouWantService = JSON.parse(RangeWhereYouWantService);
+            } catch (parseError) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid format for RangeWhereYouWantService. It must be a valid JSON.'
+                });
+            }
+        }
+
+        // Initialize voice note details
+        let voiceNoteDetails = null;
+
+        // Check if voice note file exists in the request
+        if (req.file) {
+            const voiceNoteUpload = await uploadVoiceNote(req.file.path);
+            const { url, public_id } = voiceNoteUpload;
+
+            voiceNoteDetails = {
+                url: url,
+                public_id: public_id
+            };
+
+            // Delete the local voice note file after uploading
+            fs.unlink(req.file.path, (err) => {
+                if (err) {
+                    console.error('Error deleting local voice note file:', err);
+                }
+            });
+        } else {
+            console.warn('No voice note uploaded, proceeding to create order without it.');
+        }
+
+        // Fetch service name using populate
+        const service = await ServiceCategory.findById(serviceId); // Find the service by ID
+        const serviceName = service ? service.name : 'Service'; // Use the service name or a default value if not found
+
+        // Create new order with voice note details if available
+        const newOrder = new Order({
+            userId: newUserId,
+            serviceId,
+            voiceNote: voiceNoteDetails || null,
+            fullName,
+            email,
+            phoneNumber,
+            serviceType,
+            message,
+            // city,
+            address,
+            pinCode,
+            houseNo,
+            // street,
+            nearByLandMark,
+            workingDateUserWant,
+            RangeWhereYouWantService: parsedRangeWhereYouWantService, // Use parsed JSON
+            orderTime: orderTime || new Date()
+        });
+
+        // Save the order to the database
+        await newOrder.save();
+
+        var newOrderTime = orderTime ? new Date(orderTime) : orderTime || new Date();
+        newOrderTime = newOrderTime.toISOString().replace('T', ' ').replace('Z', '');
+        const longaddress = address.replace(/,/g, '');
+
+        const Param = [fullName, email, phoneNumber, serviceName, serviceType, message, houseNo, longaddress, pinCode]
+
+        await SendWhatsapp(AdminNumber, 'order_detail_to_admin', Param)
+
+        res.status(201).json({
+            success: true,
+            message: 'Order created successfully',
+            data: newOrder
+        });
+
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: "Internal server error",
+            error: error.message
+        })
+    }
+}
+
 exports.makeOrderFromApp = async (req, res) => {
     try {
-        const AdminNumber = process.env.ADMIN_NUMBER || '9079036042';
+        const AdminNumber = process.env.ADMIN_NUMBER || '9311539090';
 
 
 
@@ -487,7 +613,7 @@ exports.updateOrderStatus = async (req, res) => {
         order.OrderStatus = OrderStatus
         await order.save();
         if (OrderStatus === "Cancelled") {
-            const AdminNumber = process.env.ADMIN_NUMBER || 9079036042;
+            const AdminNumber = process.env.ADMIN_NUMBER || 9311539090;
             await SendWhatsapp(userNumber, 'order_cancel_update_user');
             await SendWhatsapp(AdminNumber, 'order_cancel_update_admin');
             res.status(200).json({
@@ -858,7 +984,7 @@ exports.AcceptOrderRequest = async (req, res) => {
 
         const userNumber = order ? order.phoneNumber : '';
         const vendorName = order ? order.vendorAlloted.companyName : '';
-        const AdminNumber = process.env.ADMIN_NUMBER || 9079036042;
+        const AdminNumber = process.env.ADMIN_NUMBER || 9311539090;
         const serviceName = order ? order.serviceId.name : 'Service';
         const serviceType = order ? order.serviceType : 'Not specified';
         const fullAddress = `${order.houseNo}, ${order.address.replace(/,/g, '')}, ${order.nearByLandMark ? order.nearByLandMark + ', ' : ''}${order.pinCode}`;

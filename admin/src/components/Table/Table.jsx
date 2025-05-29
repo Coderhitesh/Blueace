@@ -18,6 +18,8 @@ const Table = ({
     EmployeeOrderHref,
     AMCOrderText,
     AMCOrderHref,
+    allOrderHref,
+    allOrderText,
 }) => {
     return (
         <div className="container-fluid">
@@ -45,6 +47,11 @@ const Table = ({
                                     {text && (
                                     <Link className="btn btn-primary" to={href}>
                                         <i className="fa-solid fa-plus"></i>{text}
+                                    </Link>
+                                    )}
+                                    {allOrderText && (
+                                    <Link className="btn btn-primary" to={allOrderHref}>
+                                        <i className="fa-solid fa-plus"></i>{allOrderText}
                                     </Link>
                                     )}
                                 </div>
